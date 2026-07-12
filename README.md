@@ -1,0 +1,147 @@
+<div align="center">
+
+# 🟩 VAR-ified XI
+
+**Machine-checked. Math-approved. Your FPL squad, reviewed.**
+
+An AI-driven Fantasy Premier League optimizer that predicts player points with XGBoost and solves for the mathematically optimal squad with a Mixed-Integer Linear Program — then reviews the decision on a live, VAR-inspired dashboard.
+
+[![Python](https://img.shields.io/badge/Python-3.12-3776AB?style=flat-square&logo=python&logoColor=white)](https://python.org)
+[![XGBoost](https://img.shields.io/badge/XGBoost-ML-EB1834?style=flat-square)](https://xgboost.ai)
+[![PuLP](https://img.shields.io/badge/PuLP-MILP_Solver-2E8B57?style=flat-square)](https://coin-or.github.io/pulp/)
+[![Next.js](https://img.shields.io/badge/Next.js-16-black?style=flat-square&logo=next.js&logoColor=white)](https://nextjs.org)
+[![Tailwind](https://img.shields.io/badge/Tailwind-CSS-06B6D4?style=flat-square&logo=tailwindcss&logoColor=white)](https://tailwindcss.com)
+[![Vercel](https://img.shields.io/badge/Deployed_on-Vercel-black?style=flat-square&logo=vercel)](https://vercel.com)
+
+[Live Demo](https://var-ified-xi.vercel.app) · [Report a Bug](https://github.com/Vatsal-cs/var-ified-xi/issues)
+
+</div>
+
+---
+
+## What this actually does
+
+Most "FPL AI" projects sort players by points-per-million and call it a day. This one doesn't.
+
+VAR-ified XI runs a real two-stage decision pipeline:
+
+1. **Prediction** — an XGBoost regressor trained fresh on this season's actual gameweek results, using shifted rolling-form features (so it never sees the answer it's predicting).
+2. **Optimization** — a Mixed-Integer Linear Program (PuLP/CBC) that simultaneously solves for the 15-man squad, the best valid starting XI, and the captain — under FPL's real constraints: £100.0m budget, 2/5/5/3 position quota, valid formation, max 3 players per club.
+
+The result is mathematically provable as optimal *given the model's predictions* — not a heuristic, not a top-N sort.
+
+---
+
+## Architecture
+
+```
+┌─────────────────────┐         ┌──────────────────────────┐
+│   Local Data Engine   │        │      Vercel Frontend      │
+│   (runs on your machine)       │   (free tier, static)     │
+│                        │        │                          │
+│  FPL API → Features    │  JSON  │  Reads optimized_team.json│
+│  → XGBoost → PuLP MILP │ ─────► │  → Renders VAR-style      │
+│  → optimized_team.json │        │     review dashboard      │
+└─────────────────────┘         └──────────────────────────┘
+```
+
+No backend hosting, no database, no paid API — the entire system runs on free tiers.
+
+---
+
+## Quickstart
+
+### 1. Clone the repo
+
+```bash
+git clone https://github.com/Vatsal-cs/var-ified-xi.git
+cd var-ified-xi
+```
+
+### 2. Backend — generate a squad
+
+```bash
+cd backend
+python3 -m venv venv
+source venv/bin/activate        # Windows: venv\Scripts\activate
+pip install -r requirements.txt
+python main.py
+```
+
+This fetches live FPL data, trains the model, solves the optimizer, and writes `optimized_team.json` into both `backend/data/output/` and `frontend/public/`.
+
+### 3. Frontend — view the dashboard
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+Open `localhost:3000`.
+
+### 4. Deploy (free)
+
+Push to GitHub → import into [Vercel](https://vercel.com) → set **Root Directory** to `frontend` → deploy. Every `python main.py` + `git push` refreshes the live squad automatically.
+
+---
+
+## How the decision is made
+
+| Stage | What happens |
+|---|---|
+| **01 · Data Capture** | Pulls every player's gameweek history from FPL's free public API |
+| **02 · Feature Model** | Converts raw stats into shifted rolling-form averages (3/5 gameweek windows) — no data leakage |
+| **03 · Prediction Engine** | XGBoost (400 trees, depth 4) trained on real results, validated on unseen gameweeks |
+| **04 · Constraint Solver** | PuLP MILP jointly picks squad, starting XI, and captain under every real FPL rule |
+| **05 · Decision** | Writes the confirmed squad to JSON — this is exactly what the dashboard renders |
+
+The dashboard itself explains all five stages in full, in plain language, with a glossary for the jargon.
+
+---
+
+## Project structure
+
+```
+var-ified-xi/
+├── backend/                  # Local Python data engine
+│   ├── main.py                # Entrypoint — run this
+│   ├── config.py               # Rules, paths, constants
+│   └── data_engine/
+│       ├── fetch_data.py        # FPL API client
+│       ├── feature_engineering.py
+│       ├── train_model.py       # XGBoost
+│       └── optimizer.py         # PuLP MILP
+│
+└── frontend/                 # Next.js dashboard (Vercel)
+    ├── app/                    # Pages + layout
+    ├── components/             # PitchView, PipelineExplainer, etc.
+    ├── lib/                    # Types + data loading
+    └── public/optimized_team.json  # Generated by the backend
+```
+
+---
+
+## Tech stack
+
+| Layer | Tools |
+|---|---|
+| Data | FPL public API (free, no auth) |
+| ML | XGBoost, scikit-learn, pandas |
+| Optimization | PuLP (CBC solver) |
+| Frontend | Next.js 16, React 19, TypeScript, Tailwind CSS |
+| Hosting | Vercel (free tier) |
+
+---
+
+## Disclaimer
+
+Not affiliated with the Premier League, Fantasy Premier League, or the Premier League's official VAR system. Predictions are model estimates, not guarantees — your mini-league rivals have been warned regardless.
+
+---
+
+<div align="center">
+
+Built by [Vatsal](https://github.com/Vatsal-cs) to beat the group chat.
+
+</div>
