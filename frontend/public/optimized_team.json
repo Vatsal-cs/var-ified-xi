@@ -1,0 +1,163 @@
+{
+  "generated_at": "2026-07-12T02:51:06.481426+00:00",
+  "gameweek": null,
+  "budget_used_m": 98.3,
+  "budget_total_m": 100.0,
+  "predicted_total_points": 64.93,
+  "starting_xi": [
+    {
+      "player_id": 235,
+      "name": "Palmer",
+      "position": "MID",
+      "team": "Chelsea",
+      "now_cost_m": 10.3,
+      "predicted_points": 4.869999885559082,
+      "is_captain": false,
+      "is_vice_captain": false
+    },
+    {
+      "player_id": 6,
+      "name": "Saliba",
+      "position": "DEF",
+      "team": "Arsenal",
+      "now_cost_m": 6.3,
+      "predicted_points": 5.150000095367432,
+      "is_captain": false,
+      "is_vice_captain": false
+    },
+    {
+      "player_id": 1,
+      "name": "Raya",
+      "position": "GK",
+      "team": "Arsenal",
+      "now_cost_m": 6.2,
+      "predicted_points": 3.8299999237060547,
+      "is_captain": false,
+      "is_vice_captain": false
+    },
+    {
+      "player_id": 387,
+      "name": "Szoboszlai",
+      "position": "MID",
+      "team": "Liverpool",
+      "now_cost_m": 7.1,
+      "predicted_points": 4.869999885559082,
+      "is_captain": false,
+      "is_vice_captain": false
+    },
+    {
+      "player_id": 624,
+      "name": "Bowen",
+      "position": "FWD",
+      "team": "West Ham",
+      "now_cost_m": 7.8,
+      "predicted_points": 5.53000020980835,
+      "is_captain": false,
+      "is_vice_captain": false
+    },
+    {
+      "player_id": 515,
+      "name": "Gibbs-White",
+      "position": "MID",
+      "team": "Nott'm Forest",
+      "now_cost_m": 7.6,
+      "predicted_points": 5.940000057220459,
+      "is_captain": false,
+      "is_vice_captain": false
+    },
+    {
+      "player_id": 526,
+      "name": "Igor Jesus",
+      "position": "FWD",
+      "team": "Nott'm Forest",
+      "now_cost_m": 5.9,
+      "predicted_points": 4.659999847412109,
+      "is_captain": false,
+      "is_vice_captain": false
+    },
+    {
+      "player_id": 568,
+      "name": "Pedro Porro",
+      "position": "DEF",
+      "team": "Spurs",
+      "now_cost_m": 5.2,
+      "predicted_points": 4.929999828338623,
+      "is_captain": false,
+      "is_vice_captain": false
+    },
+    {
+      "player_id": 570,
+      "name": "Danso",
+      "position": "DEF",
+      "team": "Spurs",
+      "now_cost_m": 4.2,
+      "predicted_points": 4.400000095367432,
+      "is_captain": false,
+      "is_vice_captain": false
+    },
+    {
+      "player_id": 449,
+      "name": "B.Fernandes",
+      "position": "MID",
+      "team": "Man Utd",
+      "now_cost_m": 10.4,
+      "predicted_points": 7.21999979019165,
+      "is_captain": true,
+      "is_vice_captain": false
+    },
+    {
+      "player_id": 64,
+      "name": "Watkins",
+      "position": "FWD",
+      "team": "Aston Villa",
+      "now_cost_m": 8.7,
+      "predicted_points": 6.309999942779541,
+      "is_captain": false,
+      "is_vice_captain": true
+    }
+  ],
+  "bench": [
+    {
+      "player_id": 314,
+      "name": "Leno",
+      "position": "GK",
+      "team": "Fulham",
+      "now_cost_m": 5.0,
+      "predicted_points": 3.7200000286102295,
+      "is_captain": false,
+      "is_vice_captain": false
+    },
+    {
+      "player_id": 706,
+      "name": "Justin",
+      "position": "DEF",
+      "team": "Leeds",
+      "now_cost_m": 4.0,
+      "predicted_points": 4.210000038146973,
+      "is_captain": false,
+      "is_vice_captain": false
+    },
+    {
+      "player_id": 74,
+      "name": "Truffert",
+      "position": "DEF",
+      "team": "Bournemouth",
+      "now_cost_m": 4.8,
+      "predicted_points": 4.190000057220459,
+      "is_captain": false,
+      "is_vice_captain": false
+    },
+    {
+      "player_id": 210,
+      "name": "Tchaouna",
+      "position": "MID",
+      "team": "Burnley",
+      "now_cost_m": 4.8,
+      "predicted_points": 4.559999942779541,
+      "is_captain": false,
+      "is_vice_captain": false
+    }
+  ],
+  "captain_id": 449,
+  "vice_captain_id": 64
+}

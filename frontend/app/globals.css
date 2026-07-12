@@ -1,0 +1,48 @@
+/* File: globals.css */
+/* Path: var-ified-xi/frontend/app/globals.css */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+}
+
+body {
+  background-image:
+    linear-gradient(rgba(0, 255, 135, 0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 255, 135, 0.025) 1px, transparent 1px);
+  background-size: 32px 32px;
+}
+
+::selection {
+  background: #00ff87;
+  color: #0b0f0d;
+}
+
+/* visible keyboard focus everywhere, no exceptions */
+:focus-visible {
+  outline: 2px solid #00ff87;
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+.scrollbar-thin::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background: #26332c;
+  border-radius: 4px;
+}
