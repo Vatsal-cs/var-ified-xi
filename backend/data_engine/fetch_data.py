@@ -1,6 +1,6 @@
 """
 File: fetch_data.py
-Path: fpl-optimizer/backend/data_engine/fetch_data.py
+Path: var-ified-xi/backend/data_engine/fetch_data.py
 
 Pulls raw data from the free, public FPL API:
   - bootstrap-static: all players, teams, current gameweek

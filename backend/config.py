@@ -1,6 +1,6 @@
 """
 File: config.py
-Path: fpl-optimizer/backend/config.py
+Path: var-ified-xi/backend/config.py
 
 Central configuration: API endpoints, squad rules, MILP weights, and file paths.
 Nothing in this file makes network calls — pure constants.
@@ -27,6 +27,13 @@ for d in (RAW_DIR, OUTPUT_DIR, MODELS_DIR, FRONTEND_PUBLIC_DIR):
 MODEL_PATH = MODELS_DIR / "xgb_points_model.pkl"
 OUTPUT_JSON_PATH = OUTPUT_DIR / "optimized_team.json"
 FRONTEND_JSON_PATH = FRONTEND_PUBLIC_DIR / "optimized_team.json"
+
+# Injury/availability log — persists ACROSS runs (unlike RAW_DIR, which is
+# a same-day cache). This file is intentionally NOT in .gitignore's
+# data/raw or data/output patterns, so it should be committed to git —
+# it's the accumulated history that makes "times flagged this season"
+# meaningful instead of resetting to zero on every fresh clone.
+INJURY_LOG_PATH = DATA_DIR / "injury_log.json"
 
 # ---------------------------------------------------------------------------
 # FPL public API (no auth required)
@@ -94,7 +101,54 @@ FEATURE_COLUMNS = [
     "now_cost",
     "selected_by_percent",
     "element_type",
+    "days_since_last_match",
+    "age",
+    "xgi_avg_3",
+    "xgc_avg_3",
 ]
+
+# Used when a player's birth date isn't available (some new signings, and
+# ALL historical-season rows, since that dataset doesn't include birth
+# dates). A neutral fallback avoids biasing the model toward "age == 0",
+# which would read as an implausible outlier rather than "unknown".
+FALLBACK_AGE = 26.0
+
+# Rows/predictions with fewer rest days than this are flagged as short-rest
+# in the output (informational — the model already sees days_since_last_match
+# as a raw feature, this is just for the "why" surfaced to the frontend).
+SHORT_REST_THRESHOLD_DAYS = 4
+
+# ---------------------------------------------------------------------------
+# Multi-season historical training data
+# ---------------------------------------------------------------------------
+# Past COMPLETED seasons pulled from the open-source vaastav/Fantasy-Premier-
+# League archive to give the model far more (features -> points) examples
+# than the current season alone can provide — especially valuable early in
+# a season, or during the close season when the current season has no data
+# yet. Never used for prediction, only concatenated into TRAINING data (see
+# historical_data.py). Add/remove seasons here as more become available.
+HISTORICAL_SEASONS = ["2023-24", "2024-25", "2025-26"]
+HISTORICAL_DATA_BASE_URL = "https://raw.githubusercontent.com/vaastav/Fantasy-Premier-League/master/data"
+
+# ---------------------------------------------------------------------------
+# Validation
+# ---------------------------------------------------------------------------
+# Time-based holdout: hold out the most recent N gameweeks as validation
+# instead of a random split. FPL data is a time series — random splits let
+# the model "peek" at future gameweeks during training, which inflates the
+# reported accuracy. This gives an honest, if slightly worse-looking, MAE.
+VALIDATION_HOLDOUT_GAMEWEEKS = 5
+
+# ---------------------------------------------------------------------------
+# Injury/availability dampening
+# ---------------------------------------------------------------------------
+# A player flagged as fitness-doubtful this many times or more (even if
+# currently marked "available") gets an extra caution multiplier applied
+# at PREDICTION time only — never used as a trained model feature, since
+# we don't have this history retroactively for past gameweeks and adding
+# it as a feature would create a train/predict distribution mismatch.
+REPEAT_FLAG_THRESHOLD = 3
+REPEAT_FLAG_DAMPEN_FACTOR = 0.85
 
 # ---------------------------------------------------------------------------
 # Optimizer weights

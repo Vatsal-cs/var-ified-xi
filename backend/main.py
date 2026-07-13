@@ -1,11 +1,13 @@
 """
 File: main.py
-Path: fpl-optimizer/backend/main.py
+Path: var-ified-xi/backend/main.py
+
+VAR-ified XI — local data engine entrypoint.
 
 THE SCRIPT YOU RUN LOCALLY.
 
 Usage:
-    cd fpl-optimizer/backend
+    cd var-ified-xi/backend
     python -m venv venv && source venv/bin/activate   # (or venv\\Scripts\\activate on Windows)
     pip install -r requirements.txt
     python main.py
@@ -21,10 +23,11 @@ Pipeline:
 import sys
 import json
 import logging
+import pandas as pd
 from datetime import datetime, timezone
 
 import config
-from data_engine import fetch_data, feature_engineering, train_model, optimizer
+from data_engine import fetch_data, feature_engineering, train_model, optimizer, injury_log, historical_data
 
 logging.basicConfig(
     level=logging.INFO,
@@ -49,6 +52,7 @@ def build_output_json(bootstrap: dict, predictions_df, result: dict) -> dict:
             "team": teams_lookup.get(row.get("team"), "Unknown"),
             "now_cost_m": round(float(row.get("now_cost", 0)) / 10, 1),
             "predicted_points": float(row.get("predicted_points", 0)),
+            "start_probability": round(float(row.get("p_full", 1.0)), 2),
             "is_captain": is_captain,
             "is_vice_captain": is_vice,
         }
@@ -79,7 +83,7 @@ def build_output_json(bootstrap: dict, predictions_df, result: dict) -> dict:
 
 
 def run_pipeline() -> None:
-    logger.info("=== FPL Optimizer: local pipeline starting ===")
+    logger.info("=== VAR-ified XI: local data engine starting ===")
 
     # 1. Fetch raw data
     bootstrap = fetch_data.fetch_bootstrap_static()
@@ -87,13 +91,19 @@ def run_pipeline() -> None:
     player_ids = [p["id"] for p in bootstrap["elements"]]
     histories = fetch_data.fetch_all_player_histories(player_ids)
 
+    # Log today's availability flags (injured/doubtful/suspended players)
+    # so repeat fitness concerns are visible even after the API's own
+    # "chance of playing" resets to 100% between flare-ups.
+    injury_log.update_injury_log(bootstrap)
+    flag_counts = injury_log.get_flag_counts()
+
     # 2. Feature engineering
     logger.info("Building feature table...")
     history_df = feature_engineering.build_gameweek_history_df(bootstrap, histories)
     history_df = feature_engineering.add_rolling_features(history_df)
 
     train_df = feature_engineering.build_training_set(history_df)
-    predict_df = feature_engineering.build_prediction_set(bootstrap, history_df)
+    predict_df = feature_engineering.build_prediction_set(bootstrap, history_df, histories)
 
     if train_df.empty or len(train_df) < 50:
         logger.error(
@@ -103,10 +113,19 @@ def run_pipeline() -> None:
         )
         sys.exit(1)
 
-    # 3. Train / predict
-    logger.info("Training XGBoost model on %d historical rows...", len(train_df))
-    model = train_model.train_xgb_model(train_df)
-    predictions_df = train_model.predict_points(model, predict_df)
+    # 3. Historical multi-season augmentation (training only, never prediction)
+    logger.info("Fetching historical seasons for training augmentation...")
+    historical_raw = historical_data.build_historical_training_df()
+    historical_train_df = pd.DataFrame()
+    if not historical_raw.empty:
+        historical_with_rolling = feature_engineering.add_rolling_features(historical_raw)
+        historical_train_df = feature_engineering.build_training_set(historical_with_rolling)
+        logger.info("Historical augmentation: %d additional training rows", len(historical_train_df))
+
+    # 4. Train / predict
+    logger.info("Training 2-stage model (minutes classifier + conditional points) on %d current-season rows...", len(train_df))
+    model_bundle = train_model.train_models(train_df, historical_df=historical_train_df)
+    predictions_df = train_model.predict_points(model_bundle, predict_df, flag_counts)
 
     # 4. Optimize
     logger.info("Solving MILP squad optimizer over %d available players...", len(predictions_df))
@@ -124,7 +143,7 @@ def run_pipeline() -> None:
         "Squad: %.1fm / %.1fm | Predicted GW points: %.2f",
         output["budget_used_m"], output["budget_total_m"], output["predicted_total_points"],
     )
-    logger.info("=== Pipeline complete ===")
+    logger.info("=== VAR-ified XI: decision confirmed, no VAR check needed ===")
 
 
 if __name__ == "__main__":

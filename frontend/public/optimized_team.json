@@ -1,27 +1,29 @@
 {
-  "generated_at": "2026-07-12T02:51:06.481426+00:00",
+  "generated_at": "2026-07-13T07:18:08.214068+00:00",
   "gameweek": null,
-  "budget_used_m": 98.3,
+  "budget_used_m": 100.0,
   "budget_total_m": 100.0,
-  "predicted_total_points": 64.93,
+  "predicted_total_points": 56.56,
   "starting_xi": [
-    {
-      "player_id": 235,
-      "name": "Palmer",
-      "position": "MID",
-      "team": "Chelsea",
-      "now_cost_m": 10.3,
-      "predicted_points": 4.869999885559082,
-      "is_captain": false,
-      "is_vice_captain": false
-    },
     {
       "player_id": 6,
       "name": "Saliba",
       "position": "DEF",
       "team": "Arsenal",
       "now_cost_m": 6.3,
-      "predicted_points": 5.150000095367432,
+      "predicted_points": 4.55,
+      "start_probability": 0.89,
+      "is_captain": false,
+      "is_vice_captain": false
+    },
+    {
+      "player_id": 691,
+      "name": "Calvert-Lewin",
+      "position": "FWD",
+      "team": "Leeds",
+      "now_cost_m": 5.8,
+      "predicted_points": 4.24,
+      "start_probability": 0.92,
       "is_captain": false,
       "is_vice_captain": false
     },
@@ -31,7 +33,30 @@
       "position": "GK",
       "team": "Arsenal",
       "now_cost_m": 6.2,
-      "predicted_points": 3.8299999237060547,
+      "predicted_points": 3.99,
+      "start_probability": 0.93,
+      "is_captain": false,
+      "is_vice_captain": false
+    },
+    {
+      "player_id": 299,
+      "name": "Ndiaye",
+      "position": "MID",
+      "team": "Everton",
+      "now_cost_m": 6.3,
+      "predicted_points": 4.25,
+      "start_probability": 0.9,
+      "is_captain": false,
+      "is_vice_captain": false
+    },
+    {
+      "player_id": 5,
+      "name": "Gabriel",
+      "position": "DEF",
+      "team": "Arsenal",
+      "now_cost_m": 7.3,
+      "predicted_points": 4.6,
+      "start_probability": 0.85,
       "is_captain": false,
       "is_vice_captain": false
     },
@@ -41,7 +66,19 @@
       "position": "MID",
       "team": "Liverpool",
       "now_cost_m": 7.1,
-      "predicted_points": 4.869999885559082,
+      "predicted_points": 5.01,
+      "start_probability": 0.95,
+      "is_captain": false,
+      "is_vice_captain": true
+    },
+    {
+      "player_id": 708,
+      "name": "M.Fernandes",
+      "position": "MID",
+      "team": "West Ham",
+      "now_cost_m": 5.5,
+      "predicted_points": 4.1,
+      "start_probability": 0.91,
       "is_captain": false,
       "is_vice_captain": false
     },
@@ -51,27 +88,8 @@
       "position": "FWD",
       "team": "West Ham",
       "now_cost_m": 7.8,
-      "predicted_points": 5.53000020980835,
-      "is_captain": false,
-      "is_vice_captain": false
-    },
-    {
-      "player_id": 515,
-      "name": "Gibbs-White",
-      "position": "MID",
-      "team": "Nott'm Forest",
-      "now_cost_m": 7.6,
-      "predicted_points": 5.940000057220459,
-      "is_captain": false,
-      "is_vice_captain": false
-    },
-    {
-      "player_id": 526,
-      "name": "Igor Jesus",
-      "position": "FWD",
-      "team": "Nott'm Forest",
-      "now_cost_m": 5.9,
-      "predicted_points": 4.659999847412109,
+      "predicted_points": 4.54,
+      "start_probability": 0.9,
       "is_captain": false,
       "is_vice_captain": false
     },
@@ -81,17 +99,19 @@
       "position": "DEF",
       "team": "Spurs",
       "now_cost_m": 5.2,
-      "predicted_points": 4.929999828338623,
+      "predicted_points": 4.14,
+      "start_probability": 0.92,
       "is_captain": false,
       "is_vice_captain": false
     },
     {
-      "player_id": 570,
-      "name": "Danso",
-      "position": "DEF",
-      "team": "Spurs",
-      "now_cost_m": 4.2,
-      "predicted_points": 4.400000095367432,
+      "player_id": 430,
+      "name": "Haaland",
+      "position": "FWD",
+      "team": "Man City",
+      "now_cost_m": 14.7,
+      "predicted_points": 4.58,
+      "start_probability": 0.69,
       "is_captain": false,
       "is_vice_captain": false
     },
@@ -101,29 +121,21 @@
       "position": "MID",
       "team": "Man Utd",
       "now_cost_m": 10.4,
-      "predicted_points": 7.21999979019165,
+      "predicted_points": 6.28,
+      "start_probability": 0.92,
       "is_captain": true,
       "is_vice_captain": false
-    },
-    {
-      "player_id": 64,
-      "name": "Watkins",
-      "position": "FWD",
-      "team": "Aston Villa",
-      "now_cost_m": 8.7,
-      "predicted_points": 6.309999942779541,
-      "is_captain": false,
-      "is_vice_captain": true
     }
   ],
   "bench": [
     {
-      "player_id": 314,
-      "name": "Leno",
-      "position": "GK",
-      "team": "Fulham",
-      "now_cost_m": 5.0,
-      "predicted_points": 3.7200000286102295,
+      "player_id": 242,
+      "name": "Dewsbury-Hall",
+      "position": "MID",
+      "team": "Everton",
+      "now_cost_m": 5.3,
+      "predicted_points": 3.93,
+      "start_probability": 0.91,
       "is_captain": false,
       "is_vice_captain": false
     },
@@ -133,31 +145,34 @@
       "position": "DEF",
       "team": "Leeds",
       "now_cost_m": 4.0,
-      "predicted_points": 4.210000038146973,
+      "predicted_points": 3.52,
+      "start_probability": 0.9,
       "is_captain": false,
       "is_vice_captain": false
     },
     {
-      "player_id": 74,
-      "name": "Truffert",
+      "player_id": 567,
+      "name": "Kinsky",
+      "position": "GK",
+      "team": "Spurs",
+      "now_cost_m": 3.9,
+      "predicted_points": 3.29,
+      "start_probability": 0.91,
+      "is_captain": false,
+      "is_vice_captain": false
+    },
+    {
+      "player_id": 570,
+      "name": "Danso",
       "position": "DEF",
-      "team": "Bournemouth",
-      "now_cost_m": 4.8,
-      "predicted_points": 4.190000057220459,
-      "is_captain": false,
-      "is_vice_captain": false
-    },
-    {
-      "player_id": 210,
-      "name": "Tchaouna",
-      "position": "MID",
-      "team": "Burnley",
-      "now_cost_m": 4.8,
-      "predicted_points": 4.559999942779541,
+      "team": "Spurs",
+      "now_cost_m": 4.2,
+      "predicted_points": 3.77,
+      "start_probability": 0.89,
       "is_captain": false,
       "is_vice_captain": false
     }
   ],
   "captain_id": 449,
-  "vice_captain_id": 64
+  "vice_captain_id": 387
 }
