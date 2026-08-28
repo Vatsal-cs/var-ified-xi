@@ -39,6 +39,10 @@ POSITION_TO_ELEMENT_TYPE = {"GK": 1, "GKP": 1, "DEF": 2, "MID": 3, "FWD": 4}
 # integers (well under 10,000), so this range can never collide with them.
 PLAYER_ID_BASE = 1_000_000
 
+# Same idea for club ids: live FPL team ids are 1-20, so historical clubs are
+# offset far above that range.
+HISTORICAL_TEAM_ID_BASE = 10_000
+
 
 def _season_cache_path(season: str, name: str):
     return RAW_DIR / f"historical_{season}_{name}.csv"
@@ -66,6 +70,16 @@ def _team_strength_lookups(teams_df: pd.DataFrame):
     return by_id, by_name
 
 
+def _numeric(gw_df: pd.DataFrame, col: str, default: float = 0.0):
+    """Safely pulls a numeric column that may not exist in every season's
+    export (FPL adds new stats over time — e.g. defensive_contribution only
+    exists from 2025-26, when the scoring rule was introduced).
+    """
+    if col not in gw_df.columns:
+        return default
+    return pd.to_numeric(gw_df[col], errors="coerce").fillna(default)
+
+
 def fetch_season(season: str, season_index: int):
     """Downloads one completed season's per-gameweek player data + team
     strength ratings, returns a DataFrame in the SAME raw schema as
@@ -88,6 +102,7 @@ def fetch_season(season: str, season_index: int):
         return None
 
     id_strength, name_strength = _team_strength_lookups(teams_df)
+    name_to_id = dict(zip(teams_df["name"], teams_df["id"]))
 
     # Unique per (season, element) — offset so it never collides with a
     # live FPL player_id or with another season's ids in this same load.
@@ -101,21 +116,50 @@ def fetch_season(season: str, season_index: int):
         "round": gw_df["GW"],
         "minutes": gw_df["minutes"].fillna(0),
         "total_points": gw_df["total_points"].fillna(0),
-        "ict_index": pd.to_numeric(gw_df["ict_index"], errors="coerce").fillna(0),
-        "influence": pd.to_numeric(gw_df["influence"], errors="coerce").fillna(0),
-        "creativity": pd.to_numeric(gw_df["creativity"], errors="coerce").fillna(0),
-        "threat": pd.to_numeric(gw_df["threat"], errors="coerce").fillna(0),
+        "ict_index": _numeric(gw_df, "ict_index"),
+        "influence": _numeric(gw_df, "influence"),
+        "creativity": _numeric(gw_df, "creativity"),
+        "threat": _numeric(gw_df, "threat"),
         "was_home": gw_df["was_home"].astype(bool).astype(int),
         "now_cost": gw_df["value"].fillna(50),
         "kickoff_time": pd.to_datetime(gw_df["kickoff_time"], errors="coerce", utc=True).dt.tz_localize(None),
         "age": FALLBACK_AGE,  # birth dates aren't available in this dataset
-        "expected_goal_involvements": pd.to_numeric(
-            gw_df["expected_goal_involvements"], errors="coerce"
-        ).fillna(0) if "expected_goal_involvements" in gw_df.columns else 0.0,
-        "expected_goals_conceded": pd.to_numeric(
-            gw_df["expected_goals_conceded"], errors="coerce"
-        ).fillna(0) if "expected_goals_conceded" in gw_df.columns else 0.0,
+        "expected_goal_involvements": _numeric(gw_df, "expected_goal_involvements"),
+        "expected_goals_conceded": _numeric(gw_df, "expected_goals_conceded"),
+        # Bonus-point proxy and start-share signal — present in every season.
+        "bps": _numeric(gw_df, "bps"),
+        "bonus": _numeric(gw_df, "bonus"),
+        "starts": _numeric(gw_df, "starts"),
+        # Split xG/xA carry more signal than the combined involvement figure:
+        # a striker's xG and a playmaker's xA decay differently.
+        "expected_goals": _numeric(gw_df, "expected_goals"),
+        "expected_assists": _numeric(gw_df, "expected_assists"),
+        # Goalkeeper / defender scoring inputs.
+        "saves": _numeric(gw_df, "saves"),
+        "clean_sheets": _numeric(gw_df, "clean_sheets"),
+        "goals_conceded": _numeric(gw_df, "goals_conceded"),
+        # FPL's own published expected-points figure. Never a model feature
+        # (it's a forecast, not an observation) and no longer used as a
+        # benchmark either: a squad built from these values scores ~99 points
+        # per gameweek against ~148 for perfect hindsight, which no
+        # pre-deadline forecast could manage. The archive evidently records
+        # them after lineups are known. Kept only so the finding stays
+        # checkable — see backtest.py's module docstring.
+        "fpl_xp": _numeric(gw_df, "xP"),
+        # Defensive-contribution scoring, introduced in 2025-26. Older
+        # seasons return 0.0 rather than failing.
+        "defensive_contribution": _numeric(gw_df, "defensive_contribution"),
     })
+
+    # Real club identity, needed by the optimizer's max-3-per-club constraint
+    # when backtesting on historical seasons. Offset into a private range so
+    # a historical club id can never be confused with a live FPL team id
+    # (1-20) after these rows are concatenated into the training set.
+    out["team"] = (
+        gw_df["team"].map(lambda t: name_to_id.get(t, 0)).fillna(0).astype(int)
+        + HISTORICAL_TEAM_ID_BASE
+        + season_index * 100
+    )
 
     out["team_strength_attack"] = gw_df["team"].map(lambda t: name_strength.get(t, {}).get("attack", 1100))
     out["team_strength_defence"] = gw_df["team"].map(lambda t: name_strength.get(t, {}).get("defence", 1100))

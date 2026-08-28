@@ -4,7 +4,15 @@
 const TERMS: { term: string; def: string }[] = [
   {
     term: "Predicted points (xP)",
-    def: "The XGBoost model's estimate of how many points a player will score in the upcoming gameweek, based on their recent form and fixture.",
+    def: "The model's estimate of how many points a player scores in the upcoming gameweek: the odds he actually starts, multiplied by what he's worth when he does.",
+  },
+  {
+    term: "Planning horizon",
+    def: "The solver judges players over the next six gameweeks, not just the coming one, with later weeks discounted. It's what stops the squad chasing one good fixture into a run of hard ones.",
+  },
+  {
+    term: "Hit (−4)",
+    def: "FPL charges 4 points for each transfer beyond your free ones. The planner only takes a hit when the extra points it expects to gain are worth more than the 4 it costs.",
   },
   {
     term: "MILP",
