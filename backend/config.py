@@ -75,6 +75,11 @@ STARTING_XI_LIMITS = {
 
 MAX_PLAYERS_PER_CLUB = 3
 
+# Transfer economy. One free transfer is earned per gameweek and they bank up
+# to five; anything beyond what you have banked costs points.
+MAX_FREE_TRANSFERS = 5
+TRANSFER_HIT_COST = 4  # points deducted per extra transfer
+
 # ---------------------------------------------------------------------------
 # ML feature engineering
 # ---------------------------------------------------------------------------
@@ -82,7 +87,14 @@ ROLLING_WINDOWS = [3, 5]        # gameweeks, for rolling form features
 MIN_MINUTES_HISTORY = 1         # drop rows where player didn't play at all
 TARGET_COL = "total_points"
 
+# The model's input columns. Every one of these is produced identically for
+# live FPL data and for the historical archive (see
+# feature_engineering.ROLLING_FEATURE_SPEC), so the training and prediction
+# distributions match. Anything only available live — injury-flag history,
+# set-piece order — is deliberately NOT here; it is applied as a
+# prediction-time adjustment instead. See REPEAT_FLAG_THRESHOLD below.
 FEATURE_COLUMNS = [
+    # Form
     "minutes_avg_3",
     "minutes_avg_5",
     "points_avg_3",
@@ -92,19 +104,39 @@ FEATURE_COLUMNS = [
     "creativity_avg_3",
     "threat_avg_3",
     "form",
+    # Underlying chance quality
+    "xgi_avg_3",
+    "xgc_avg_3",
+    "xg_avg_3",
+    "xg_avg_5",
+    "xa_avg_3",
+    "xa_avg_5",
+    # Bonus-point potential
+    "bps_avg_3",
+    "bps_avg_5",
+    "bonus_avg_5",
+    # Rotation / starting risk
+    "starts_avg_3",
+    "starts_avg_5",
+    # Defensive scoring (defensive contribution, clean sheets, saves)
+    "dc_avg_3",
+    "dc_avg_5",
+    "saves_avg_3",
+    "cs_avg_5",
+    "gc_avg_3",
+    # Fixture context
     "was_home",
     "team_strength_attack",
     "team_strength_defence",
     "opp_strength_attack",
     "opp_strength_defence",
     "fixture_difficulty",
+    # Player context
     "now_cost",
     "selected_by_percent",
     "element_type",
     "days_since_last_match",
     "age",
-    "xgi_avg_3",
-    "xgc_avg_3",
 ]
 
 # Used when a player's birth date isn't available (some new signings, and
@@ -139,6 +171,11 @@ HISTORICAL_DATA_BASE_URL = "https://raw.githubusercontent.com/vaastav/Fantasy-Pr
 # reported accuracy. This gives an honest, if slightly worse-looking, MAE.
 VALIDATION_HOLDOUT_GAMEWEEKS = 5
 
+# A position needs at least this many 60+-minute training rows before it gets
+# its own stage-2 regressor; below it, the pooled regressor is used instead.
+# Guards against a badly overfit model for a thin position early in a season.
+MIN_ROWS_PER_POSITION = 400
+
 # ---------------------------------------------------------------------------
 # Injury/availability dampening
 # ---------------------------------------------------------------------------
@@ -151,7 +188,49 @@ REPEAT_FLAG_THRESHOLD = 3
 REPEAT_FLAG_DAMPEN_FACTOR = 0.85
 
 # ---------------------------------------------------------------------------
+# Planning horizon
+# ---------------------------------------------------------------------------
+# How many gameweeks ahead to predict and optimize over. Planning only one
+# gameweek ahead is how you end up buying a player for one great fixture and
+# then watching him face the top three defences in a row. Six weeks is the
+# usual sweet spot: far enough to see a fixture swing, near enough that form
+# and team news still mean something.
+HORIZON_GWS = 6
+
+# Future gameweeks are discounted in the objective — a point next week is
+# worth more than a projected point five weeks out, because the projection is
+# less certain and because you can always transfer again before then.
+HORIZON_DECAY = 0.85
+
+# ---------------------------------------------------------------------------
 # Optimizer weights
 # ---------------------------------------------------------------------------
 BENCH_WEIGHT = 0.12   # bench players contribute a small fraction to objective
 CAPTAIN_MULTIPLIER = 1.0  # extra points added on top of base (captain scores 2x total)
+
+# How heavily squad membership is rewarded for its whole-horizon value on top
+# of this gameweek's points. horizon_points is a decayed sum over HORIZON_GWS
+# (roughly 4x a single gameweek), so 0.3 makes future fixtures matter about
+# as much as the coming one without letting them dominate it.
+HORIZON_SQUAD_WEIGHT = 0.3
+
+# ---------------------------------------------------------------------------
+# Transfer planner (multi-gameweek MILP)
+# ---------------------------------------------------------------------------
+# The full player pool across a six-gameweek horizon is a far bigger integer
+# program than CBC wants to prove optimal. Restricting each position to its
+# best candidates costs nothing real — a midfielder outside the top 60 by
+# projected points over the horizon was never going to be transferred in —
+# and turns a multi-hour solve into a few seconds. Players already in your
+# squad are always included regardless of where they rank.
+CANDIDATE_POOL_PER_POSITION = {
+    1: 20,   # GK
+    2: 55,   # DEF
+    3: 60,   # MID
+    4: 35,   # FWD
+}
+
+# Seconds before the solver returns its best plan so far instead of continuing
+# to prove optimality. A near-optimal plan delivered before the deadline beats
+# a perfect one delivered after it.
+SOLVER_TIME_LIMIT = 120

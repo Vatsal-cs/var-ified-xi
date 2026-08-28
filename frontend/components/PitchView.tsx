@@ -14,6 +14,38 @@ const ROW_Y: Record<Player["position"], number> = {
   GK: 88,
 };
 
+/** The player's projected points for each gameweek in the planning horizon.
+ *  Bar heights are relative to that player's own best week, so the shape
+ *  reads as "when are his fixtures good", not "is he good". */
+function FixtureRun({ xpByGw }: { xpByGw: Record<string, number> }) {
+  const weeks = Object.entries(xpByGw)
+    .map(([gw, xp]) => ({ gw: Number(gw), xp }))
+    .sort((a, b) => a.gw - b.gw);
+
+  if (weeks.length < 2) return null;
+  const peak = Math.max(...weeks.map((w) => w.xp), 0.1);
+
+  return (
+    <div className="mt-4 border-t border-pitch-line pt-3">
+      <p className="mb-2 font-mono text-[10px] uppercase tracking-wider text-ink-500">
+        Next {weeks.length} gameweeks
+      </p>
+      <div className="flex items-end gap-1.5">
+        {weeks.map((w) => (
+          <div key={w.gw} className="flex flex-1 flex-col items-center gap-1">
+            <span className="font-mono text-[9px] text-ink-300">{w.xp.toFixed(1)}</span>
+            <div
+              className="w-full rounded-sm bg-var-greendim"
+              style={{ height: `${Math.max(3, (w.xp / peak) * 34)}px` }}
+            />
+            <span className="font-mono text-[9px] text-ink-500">{w.gw}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 function groupByRow(startingXi: Player[]) {
   const rows: Record<Player["position"], Player[]> = { GK: [], DEF: [], MID: [], FWD: [] };
   for (const p of startingXi) rows[p.position].push(p);
@@ -113,7 +145,7 @@ export default function PitchView({ startingXi }: { startingXi: Player[] }) {
               CLOSE
             </button>
           </div>
-          <div className="mt-3 flex gap-6 font-mono text-sm">
+          <div className="mt-3 flex flex-wrap gap-6 font-mono text-sm">
             <div>
               <p className="text-[10px] uppercase tracking-wider text-ink-500">Predicted pts</p>
               <p className="text-var-green">{active.predicted_points.toFixed(2)}</p>
@@ -122,7 +154,13 @@ export default function PitchView({ startingXi }: { startingXi: Player[] }) {
               <p className="text-[10px] uppercase tracking-wider text-ink-500">Price</p>
               <p className="text-ink-100">&pound;{active.now_cost_m.toFixed(1)}m</p>
             </div>
+            <div>
+              <p className="text-[10px] uppercase tracking-wider text-ink-500">Starts 60&apos;+</p>
+              <p className="text-ink-100">{Math.round(active.start_probability * 100)}%</p>
+            </div>
           </div>
+
+          <FixtureRun xpByGw={active.xp_by_gw} />
         </div>
       )}
       {!active && (

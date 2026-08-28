@@ -26,19 +26,19 @@ const STAGES = [
   {
     tag: "03",
     title: "Prediction Engine",
-    summary: "An XGBoost regressor trained on this season's actual results.",
+    summary: "Two models, because \"will he play?\" and \"how well?\" are different questions.",
     body: [
-      "A gradient-boosted decision tree model (400 trees, depth 4) is trained fresh on every historical gameweek row this season — literally: given a player's form going into a gameweek, what points did they actually score? The model learns that mapping directly from your league's real results, not a generic pre-trained model.",
-      "It's validated on a held-out 15% slice of gameweeks it never trained on, so the reported accuracy reflects genuine unseen-data performance, not a model grading its own homework. Predictions for injured, suspended, or unlikely-to-play players are automatically dampened using FPL's own official status flags.",
+      "Rotation risk is the single biggest source of error in fantasy football, so it gets its own model rather than being smeared into one number. A classifier estimates the odds a player doesn't play at all, comes off the bench, or starts properly. A second model then estimates how many points he scores given that he did start — trained only on players who actually played 60 minutes, so it learns quality rather than availability. Multiply the two together and you get expected points.",
+      "Both are gradient-boosted tree models trained on this season plus the three before it — over 40,000 real gameweek results. Accuracy is measured on gameweeks the model never saw, and only then is it retrained on everything, so it goes into the weekend having learned from the most recent form rather than being deliberately blind to it. Injured, suspended and doubtful players are dampened using FPL's own status flags, plus a record of who has been flagged repeatedly this season.",
     ],
   },
   {
     tag: "04",
     title: "Constraint Solver",
-    summary: "A real optimizer, not a top-15-by-points list.",
+    summary: "A real optimizer, planning several gameweeks at once.",
     body: [
-      "This is the part that actually separates this from a spreadsheet sort. A Mixed-Integer Linear Program (solved with PuLP/CBC) simultaneously decides three things at once: which 15 players fill the squad, which 11 of those start, and who wears the armband.",
-      "It's bound by every real FPL rule: a hard £100.0m budget, an exact 2 goalkeeper / 5 defender / 5 midfielder / 3 forward squad split, a valid starting formation, and no more than 3 players from any one club. The objective function rewards the starting XI's predicted points at full weight, the bench at a small fraction, and adds a bonus for whichever player is made captain — so the solver is mathematically proven optimal for those constraints, not just \"pretty good.\"",
+      "This is the part that separates it from a spreadsheet sort. A Mixed-Integer Linear Program (solved with PuLP/CBC) decides everything simultaneously: which 15 players fill the squad, which 11 start, who wears the armband — and, when it knows your real team, which transfers to make in each of the next six gameweeks.",
+      "It's bound by every real FPL rule: a £100.0m budget, an exact 2/5/5/3 squad split, a valid formation, no more than 3 players from one club, one free transfer per week banked up to five, and −4 points for each extra. Planning six weeks at once is what stops it chasing a single good fixture into a wall of hard ones — and it's the only way to find moves like banking a transfer this week to afford two next week.",
     ],
   },
   {
@@ -46,8 +46,8 @@ const STAGES = [
     title: "Decision",
     summary: "The confirmed squad, written out and shown above.",
     body: [
-      "The solver's output — starting XI, bench, captain, and vice-captain — gets written to a single JSON file. This exact page reads that file directly. There's no live server making these picks on request; every player position and prediction above came from that one offline solve.",
-      "Re-running the engine (weekly, ideally the day before your deadline) regenerates this file with fresh form data and a fresh solve.",
+      "The solver's output — starting XI, bench, captain, vice-captain and the transfer plan — gets written to a single JSON file. This exact page reads that file directly. There's no live server making these picks on request; everything above came from one offline solve.",
+      "A scheduled job re-runs the whole engine in the day before each deadline and commits the result, which redeploys this page automatically. Every number here is regenerated from fresh form, fresh prices and a fresh solve.",
     ],
   },
 ];

@@ -1,0 +1,76 @@
+name: Refresh squad
+
+# Runs the data engine before each FPL deadline and commits the result, which
+# is what triggers Vercel to redeploy the dashboard. The whole thing fits in
+# GitHub's free tier: the job only does real work in the hours before a
+# deadline, and exits in seconds otherwise.
+on:
+  schedule:
+    # Twice daily. GitHub's scheduler is best-effort and can run late under
+    # load, so the deadline window below is generous rather than exact.
+    - cron: "0 7 * * *"
+    - cron: "0 19 * * *"
+  workflow_dispatch:
+    inputs:
+      force:
+        description: "Run even if no deadline is near"
+        type: boolean
+        default: true
+
+concurrency:
+  group: refresh-squad
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: backend/requirements.txt
+
+      - name: Install dependencies
+        working-directory: backend
+        run: pip install -r requirements.txt
+
+      # The archive CSVs for past seasons are large and never change once a
+      # season is complete, so downloading them every run is pure waste.
+      - name: Restore historical data cache
+        uses: actions/cache@v4
+        with:
+          path: backend/data/raw/historical_*
+          key: fpl-historical-v1
+
+      - name: Check whether a deadline is near
+        id: gate
+        working-directory: backend
+        env:
+          FORCE: ${{ inputs.force }}
+        run: python check_deadline.py
+
+      - name: Run the data engine
+        if: steps.gate.outputs.should_run == 'true'
+        working-directory: backend
+        env:
+          FPL_TEAM_ID: ${{ vars.FPL_TEAM_ID }}
+        run: python main.py
+
+      - name: Commit the refreshed squad
+        if: steps.gate.outputs.should_run == 'true'
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add frontend/public/optimized_team.json backend/data/injury_log.json
+          if git diff --staged --quiet; then
+            echo "Nothing changed — skipping commit."
+          else
+            git commit -m "Refresh squad for GW${{ steps.gate.outputs.gameweek }}"
+            git push
+          fi

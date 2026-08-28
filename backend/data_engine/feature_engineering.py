@@ -33,7 +33,7 @@ from datetime import date, datetime
 import pandas as pd
 import numpy as np
 
-from config import ROLLING_WINDOWS, FALLBACK_AGE
+from config import ROLLING_WINDOWS, FALLBACK_AGE, HORIZON_DECAY
 
 logger = logging.getLogger(__name__)
 
@@ -42,6 +42,41 @@ logger = logging.getLogger(__name__)
 # A real blank gameweek (e.g. FA Cup replay clashes) affects at most a
 # couple of clubs — nowhere near half the league.
 FIXTURES_PUBLISHED_THRESHOLD = 0.5
+
+# Every rolling-average feature the model can see, declared once.
+#   (source column, output prefix, windows)
+# Each is computed per player as shift(1).rolling(w).mean() — the shift is
+# what keeps a row's features strictly in its own past. A source column that
+# a given season's data doesn't carry is filled with 0.0 rather than failing,
+# which is what lets one spec serve both the live API and the historical
+# archive without either side drifting out of schema.
+ROLLING_FEATURE_SPEC = [
+    ("minutes", "minutes_avg", ROLLING_WINDOWS),
+    ("total_points", "points_avg", ROLLING_WINDOWS),
+    ("ict_index", "ict_index_avg", ROLLING_WINDOWS),
+    ("influence", "influence_avg", [3]),
+    ("creativity", "creativity_avg", [3]),
+    ("threat", "threat_avg", [3]),
+    # Underlying chance quality — a better forward-looking signal than ICT,
+    # which is partly a descriptive scoring of what already happened.
+    ("expected_goal_involvements", "xgi_avg", [3]),
+    ("expected_goals_conceded", "xgc_avg", [3]),
+    ("expected_goals", "xg_avg", [3, 5]),
+    ("expected_assists", "xa_avg", [3, 5]),
+    # Bonus points are ~10% of all FPL scoring and highly persistent — BPS is
+    # the underlying score the bonus is awarded from.
+    ("bps", "bps_avg", [3, 5]),
+    ("bonus", "bonus_avg", [5]),
+    # Started-or-not is a far sharper rotation signal than minutes alone: 45
+    # minutes off the bench and 45 before a red card look identical otherwise.
+    ("starts", "starts_avg", [3, 5]),
+    # Defensive-contribution scoring, new in 2025-26.
+    ("defensive_contribution", "dc_avg", [3, 5]),
+    # Goalkeeper and defender scoring inputs.
+    ("saves", "saves_avg", [3]),
+    ("clean_sheets", "cs_avg", [5]),
+    ("goals_conceded", "gc_avg", [3]),
+]
 
 
 def _team_strength_lookup(bootstrap: dict) -> dict:
@@ -115,6 +150,18 @@ def build_gameweek_history_df(bootstrap: dict, player_histories: dict) -> pd.Dat
                 "age": _player_age(meta.get("birth_date")),
                 "expected_goal_involvements": float(gw.get("expected_goal_involvements", 0) or 0),
                 "expected_goals_conceded": float(gw.get("expected_goals_conceded", 0) or 0),
+                # Every field below also exists in the vaastav archive's
+                # merged_gw export, so training and prediction rows carry
+                # identical schemas — no train/predict skew.
+                "expected_goals": float(gw.get("expected_goals", 0) or 0),
+                "expected_assists": float(gw.get("expected_assists", 0) or 0),
+                "bps": float(gw.get("bps", 0) or 0),
+                "bonus": float(gw.get("bonus", 0) or 0),
+                "starts": float(gw.get("starts", 0) or 0),
+                "defensive_contribution": float(gw.get("defensive_contribution", 0) or 0),
+                "saves": float(gw.get("saves", 0) or 0),
+                "clean_sheets": float(gw.get("clean_sheets", 0) or 0),
+                "goals_conceded": float(gw.get("goals_conceded", 0) or 0),
             })
 
     df = pd.DataFrame(rows)
@@ -132,36 +179,18 @@ def add_rolling_features(df: pd.DataFrame) -> pd.DataFrame:
     df = df.copy()
     grp = df.groupby("player_id", group_keys=False)
 
-    for w in ROLLING_WINDOWS:
-        df[f"minutes_avg_{w}"] = grp["minutes"].apply(
-            lambda s: s.shift(1).rolling(w, min_periods=1).mean()
-        )
-        df[f"points_avg_{w}"] = grp["total_points"].apply(
-            lambda s: s.shift(1).rolling(w, min_periods=1).mean()
-        )
-        df[f"ict_index_avg_{w}"] = grp["ict_index"].apply(
-            lambda s: s.shift(1).rolling(w, min_periods=1).mean()
-        )
-
-    df["influence_avg_3"] = grp["influence"].apply(lambda s: s.shift(1).rolling(3, min_periods=1).mean())
-    df["creativity_avg_3"] = grp["creativity"].apply(lambda s: s.shift(1).rolling(3, min_periods=1).mean())
-    df["threat_avg_3"] = grp["threat"].apply(lambda s: s.shift(1).rolling(3, min_periods=1).mean())
-
-    # xG/xA-derived rolling features — a stronger forward-looking signal
-    # than ICT index alone, since ICT is partly backward-looking descriptive
-    # scoring rather than a true underlying-chance-quality metric.
-    if "expected_goal_involvements" in df.columns:
-        df["xgi_avg_3"] = grp["expected_goal_involvements"].apply(
-            lambda s: s.shift(1).rolling(3, min_periods=1).mean()
-        )
-    else:
-        df["xgi_avg_3"] = 0.0
-    if "expected_goals_conceded" in df.columns:
-        df["xgc_avg_3"] = grp["expected_goals_conceded"].apply(
-            lambda s: s.shift(1).rolling(3, min_periods=1).mean()
-        )
-    else:
-        df["xgc_avg_3"] = 0.0
+    for source, prefix, windows in ROLLING_FEATURE_SPEC:
+        for w in windows:
+            name = f"{prefix}_{w}"
+            if source in df.columns:
+                df[name] = grp[source].apply(
+                    lambda s: s.shift(1).rolling(w, min_periods=1).mean()
+                )
+            else:
+                # A stat FPL only started publishing in a later season (e.g.
+                # defensive_contribution, new in 2025-26). Zero is the honest
+                # value: the scoring rule didn't exist, so it earned nothing.
+                df[name] = 0.0
 
     # 'form' as FPL defines it loosely: average points over last 5 played gameweeks
     df["form"] = df["points_avg_5"]
@@ -188,11 +217,104 @@ def add_rolling_features(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
-def build_training_set(df_with_rolling: pd.DataFrame) -> pd.DataFrame:
-    """Historical rows used to TRAIN the model: every past gameweek row
-    (minus the very first appearance per player, which has no rolling history).
+def latest_form_snapshot(df: pd.DataFrame) -> pd.DataFrame:
+    """One row per player holding their form going INTO the next fixture.
+
+    add_rolling_features() shifts every window by one gameweek, because a
+    training row must never see its own match. A prediction row is the
+    opposite case: the match hasn't been played yet, so the most recent
+    completed match is legitimate input, not leakage — and excluding it means
+    every prediction is made on week-old form. In the opening weeks of a
+    season that is fatal, because shifting away the only gameweek played
+    leaves every feature at zero.
+
+    So the windows here are computed UNSHIFTED and read off the last played
+    row. The semantics then match training exactly: a training row for
+    gameweek t averages matches [t-w, t-1]; this averages the last w played
+    matches, which are precisely the w matches before the fixture being
+    predicted.
     """
-    train_df = df_with_rolling[df_with_rolling["minutes_avg_3"] > 0].copy()
+    df = df.sort_values(["player_id", "round"])
+    grp = df.groupby("player_id", group_keys=False)
+
+    out = df.copy()
+    for source, prefix, windows in ROLLING_FEATURE_SPEC:
+        for w in windows:
+            name = f"{prefix}_{w}"
+            if source in df.columns:
+                out[name] = grp[source].apply(
+                    lambda s: s.rolling(w, min_periods=1).mean()
+                )
+            else:
+                out[name] = 0.0
+
+    out["form"] = out["points_avg_5"]
+    if "age" in out.columns:
+        out["age"] = out["age"].fillna(FALLBACK_AGE)
+    out = out.fillna(0)
+    return out.groupby("player_id", as_index=False).tail(1).copy()
+
+
+def aggregate_horizon(predictions_df: pd.DataFrame, decay: float = HORIZON_DECAY) -> pd.DataFrame:
+    """Collapses (player, fixture) prediction rows into one row per player.
+
+    Adds three columns the optimizer and the dashboard need:
+      predicted_points — expected points in the NEXT gameweek alone, summed
+                         across both matches if it's a double.
+      horizon_points   — decay-weighted sum across the whole horizon. This is
+                         what the optimizer maximizes, so a player is judged
+                         on the run of fixtures you'd actually hold him for.
+      xp_by_gw         — {gameweek: expected points}, for the dashboard's
+                         fixture strip.
+    """
+    df = predictions_df.copy()
+    if "gw" not in df.columns:
+        # Single-gameweek mode (or the close-season fallback): nothing to fold.
+        df["horizon_points"] = df["predicted_points"]
+        df["xp_by_gw"] = [{} for _ in range(len(df))]
+        return df
+
+    first_gw = df["gw"].min()
+
+    # Sum within a gameweek first — that is what makes a double gameweek
+    # score as two matches rather than being averaged away.
+    per_gw = df.groupby(["player_id", "gw"], as_index=False)["predicted_points"].sum()
+    per_gw["weight"] = decay ** (per_gw["gw"] - first_gw)
+    per_gw["weighted"] = per_gw["predicted_points"] * per_gw["weight"]
+
+    horizon = per_gw.groupby("player_id")["weighted"].sum()
+    next_gw = (
+        per_gw[per_gw["gw"] == first_gw].set_index("player_id")["predicted_points"]
+    )
+    xp_by_gw = per_gw.groupby("player_id").apply(
+        lambda g: {int(gw): round(float(p), 2) for gw, p in zip(g["gw"], g["predicted_points"])},
+        include_groups=False,
+    )
+
+    out = df.drop_duplicates("player_id").set_index("player_id")
+    out["predicted_points"] = next_gw.reindex(out.index).fillna(0.0)
+    out["horizon_points"] = horizon.reindex(out.index).fillna(0.0).round(2)
+    out["xp_by_gw"] = xp_by_gw.reindex(out.index)
+    out["xp_by_gw"] = out["xp_by_gw"].apply(lambda v: v if isinstance(v, dict) else {})
+    return out.reset_index()
+
+
+def build_training_set(df_with_rolling: pd.DataFrame) -> pd.DataFrame:
+    """Every past gameweek row, used to train the model.
+
+    This deliberately keeps players with no recent minutes. An earlier version
+    dropped them, on the reasoning that chronic non-players are noise — but
+    the stage-1 model's entire job is judging whether someone will play, and
+    it cannot learn that from a sample containing only players who do. With
+    them filtered out the model concluded nearly everyone starts and
+    over-predicted every squad by roughly a fifth.
+
+    The stage-2 quality model still wants the cleaner population, and applies
+    that filter itself (see train_model._fit_bundle's quality_filter).
+    Backtested over 2024-25 and 2025-26: mean absolute error fell from ~1.16
+    to ~1.05 points with no loss of simulated points.
+    """
+    train_df = df_with_rolling.copy()
     if "selected_by_percent" not in train_df.columns:
         train_df["selected_by_percent"] = 0.0
     return train_df
@@ -208,25 +330,66 @@ def _get_next_fixture(summary: dict):
     return fixtures[0] if fixtures else None
 
 
-def build_prediction_set(bootstrap: dict, df_with_rolling: pd.DataFrame, player_histories: dict) -> pd.DataFrame:
-    """One row per currently-available player, using their MOST RECENT rolling
-    form as the feature snapshot, but their NEXT UPCOMING fixture's opponent
-    and venue — not their last-played match's opponent — WHEN that data is
-    actually available.
+def next_gameweek(bootstrap: dict):
+    """The gameweek currently being planned for."""
+    for e in bootstrap.get("events", []):
+        if e.get("is_next"):
+            return e["id"]
+    # Season over, or the flag isn't set yet — fall back to the first
+    # unfinished gameweek.
+    for e in bootstrap.get("events", []):
+        if not e.get("finished"):
+            return e["id"]
+    return None
+
+
+def _horizon_fixtures(summary: dict, first_gw, horizon: int) -> list:
+    """The player's upcoming fixtures falling inside the planning horizon.
+
+    Returns a list because a player can have two fixtures in one gameweek (a
+    double) or none at all (a blank) — both are real, and both matter more
+    than almost anything else the model says.
+    """
+    if first_gw is None:
+        fixtures = summary.get("fixtures", [])
+        return fixtures[:horizon]
+
+    last_gw = first_gw + horizon - 1
+    return [
+        f for f in summary.get("fixtures", [])
+        if f.get("event") is not None and first_gw <= f["event"] <= last_gw
+    ]
+
+
+def build_prediction_set(
+    bootstrap: dict,
+    df_with_rolling: pd.DataFrame,
+    player_histories: dict,
+    horizon: int = 1,
+) -> pd.DataFrame:
+    """Feature rows for the gameweeks we are planning for.
+
+    Each row is one (player, upcoming fixture) pair: the player's MOST RECENT
+    rolling form as the feature snapshot, combined with that specific
+    fixture's opponent, venue and rest days. With horizon=1 this is one row
+    per player for the next gameweek; with horizon=6 it spans the next six,
+    which is what lets the optimizer see a fixture swing coming instead of
+    buying into a wall.
+
+    Emitting one row per fixture (rather than per player) is what makes
+    double gameweeks work correctly — a player with two fixtures simply gets
+    two rows, and their expected points add up the same way their real points
+    would. Players with no fixture in a gameweek get no row for it, which is
+    exactly right for a blank.
 
     If FPL hasn't published the upcoming fixture list at all (checked via
     FIXTURES_PUBLISHED_THRESHOLD across the whole player pool, not just one
-    player), this falls back to each player's last-known match context
-    instead of zeroing everyone out. This commonly happens during the close
-    season, when last season's history is still cached but next season's
-    fixtures haven't gone live yet.
+    player), this falls back to one row per player carrying their last-known
+    match context, instead of zeroing everyone out. That happens during the
+    close season, when last season's history is still cached but the new
+    fixture list isn't live yet.
     """
-    latest = (
-        df_with_rolling.sort_values("round")
-        .groupby("player_id", as_index=False)
-        .tail(1)
-        .copy()
-    )
+    latest = latest_form_snapshot(df_with_rolling)
 
     players_meta = {p["id"]: p for p in bootstrap["elements"]}
     team_strength = _team_strength_lookup(bootstrap)
@@ -247,39 +410,18 @@ def build_prediction_set(bootstrap: dict, df_with_rolling: pd.DataFrame, player_
         lambda pid: _player_age(players_meta.get(pid, {}).get("birth_date"))
     )
 
-    # Preserve the LAST-PLAYED-match context (already computed by
-    # add_rolling_features) before we potentially overwrite it below —
-    # this is the fallback data source if fixtures aren't published yet.
-    last_opp_attack = latest["opp_strength_attack"].copy()
-    last_opp_defence = latest["opp_strength_defence"].copy()
-    last_was_home = latest["was_home"].copy()
-    last_fixture_difficulty = latest["fixture_difficulty"].copy()
+    first_gw = next_gameweek(bootstrap)
 
-    # --- Pull each player's NEXT fixture, not their last one ---
-    has_fixture, next_was_home, opp_ids, next_kickoffs = [], [], [], []
-    for pid in latest["player_id"]:
-        summary = player_histories.get(pid, {})
-        nxt = _get_next_fixture(summary)
-        if nxt is None:
-            has_fixture.append(False)
-            next_was_home.append(0)
-            opp_ids.append(None)
-            next_kickoffs.append(None)
-            continue
-
-        is_home = bool(nxt.get("is_home"))
-        opponent = nxt.get("team_a") if is_home else nxt.get("team_h")
-        has_fixture.append(True)
-        next_was_home.append(int(is_home))
-        opp_ids.append(opponent)
-        next_kickoffs.append(_parse_kickoff(nxt.get("kickoff_time")))
-
-    latest["has_fixture"] = has_fixture
-
-    # Decide: are fixtures actually published league-wide, or are we in the
-    # close-season gap where nobody has one yet?
-    fixtures_published = (sum(has_fixture) / max(len(has_fixture), 1)) >= FIXTURES_PUBLISHED_THRESHOLD
-    latest["fixtures_published"] = fixtures_published
+    # Which players have any upcoming fixture at all? This decides whether we
+    # are looking at genuine blanks or at an unpublished fixture list.
+    per_player_fixtures = {
+        pid: _horizon_fixtures(player_histories.get(pid, {}), first_gw, horizon)
+        for pid in latest["player_id"]
+    }
+    with_fixtures = sum(1 for f in per_player_fixtures.values() if f)
+    fixtures_published = (
+        with_fixtures / max(len(per_player_fixtures), 1)
+    ) >= FIXTURES_PUBLISHED_THRESHOLD
 
     if not fixtures_published:
         logger.warning(
@@ -290,46 +432,65 @@ def build_prediction_set(bootstrap: dict, df_with_rolling: pd.DataFrame, player_
             "publishes the new fixture list for a true forward-looking prediction.",
             FIXTURES_PUBLISHED_THRESHOLD * 100,
         )
+        latest["has_fixture"] = [bool(per_player_fixtures[p]) for p in latest["player_id"]]
+        latest["fixtures_published"] = False
+        latest["gw"] = first_gw
+        latest["fixture_index"] = 0
+        return latest
 
-    next_opp_attack, next_opp_defence, next_fixture_difficulty, final_was_home = [], [], [], []
-    for i, (has_fix, opp) in enumerate(zip(has_fixture, opp_ids)):
-        if has_fix:
-            next_opp_attack.append(team_strength.get(opp, {}).get("attack", 1100))
-            next_opp_defence.append(team_strength.get(opp, {}).get("defence", 1100))
-            final_was_home.append(next_was_home[i])
-        elif not fixtures_published:
-            # Close-season fallback: reuse last-played-match context rather
-            # than a neutral default or a hard zero.
-            next_opp_attack.append(last_opp_attack.iloc[i])
-            next_opp_defence.append(last_opp_defence.iloc[i])
-            final_was_home.append(last_was_home.iloc[i])
-        else:
-            # Genuine isolated blank gameweek — neutral placeholder, doesn't
-            # matter since predict_points will zero this player's points.
-            next_opp_attack.append(1100)
-            next_opp_defence.append(1100)
-            final_was_home.append(0)
+    # --- One row per (player, upcoming fixture) inside the horizon ---
+    rows = []
+    for _, snapshot in latest.iterrows():
+        pid = snapshot["player_id"]
+        fixtures = per_player_fixtures.get(pid, [])
+        previous_kickoff = snapshot.get("kickoff_time")
 
-    latest["opp_strength_attack"] = next_opp_attack
-    latest["opp_strength_defence"] = next_opp_defence
-    latest["was_home"] = final_was_home
+        if not fixtures:
+            # A genuine blank across the whole horizon. Keep one row so the
+            # player still appears in the output (predict_points zeroes it),
+            # rather than vanishing from the pool entirely.
+            row = snapshot.to_dict()
+            row.update({"gw": first_gw, "fixture_index": 0, "has_fixture": False,
+                        "fixtures_published": True})
+            rows.append(row)
+            continue
 
-    if fixtures_published:
-        latest["fixture_difficulty"] = (
-            latest["opp_strength_defence"] - latest["team_strength_attack"]
-        ) / 100.0
-    else:
-        latest["fixture_difficulty"] = last_fixture_difficulty
+        for idx, fixture in enumerate(fixtures):
+            is_home = bool(fixture.get("is_home"))
+            opponent = fixture.get("team_a") if is_home else fixture.get("team_h")
+            kickoff = _parse_kickoff(fixture.get("kickoff_time"))
 
-    # Rest days going into the upcoming match, where known; otherwise fall
-    # back to the last-known gap between matches.
-    last_kickoffs = latest["kickoff_time"] if "kickoff_time" in latest.columns else [None] * len(latest)
-    rest_days = []
-    for i, (last_ko, next_ko) in enumerate(zip(last_kickoffs, next_kickoffs)):
-        if last_ko is not None and next_ko is not None and pd.notna(last_ko):
-            rest_days.append((next_ko - last_ko).days)
-        else:
-            rest_days.append(latest["days_since_last_match"].iloc[i] if "days_since_last_match" in latest.columns else 0)
-    latest["days_since_last_match"] = rest_days
+            opp = team_strength.get(opponent, {})
+            row = snapshot.to_dict()
+            row.update({
+                "gw": fixture.get("event", first_gw),
+                "fixture_index": idx,
+                "has_fixture": True,
+                "fixtures_published": True,
+                "was_home": int(is_home),
+                "opponent_team": opponent,
+                "opp_strength_attack": opp.get("attack", 1100),
+                "opp_strength_defence": opp.get("defence", 1100),
+                "fixture_difficulty": (
+                    opp.get("defence", 1100) - snapshot["team_strength_attack"]
+                ) / 100.0,
+                # Rest measured against the previous match in this chain, so
+                # a midweek-then-weekend double reads as congested rather than
+                # every fixture being measured from the same past match.
+                "days_since_last_match": (
+                    (kickoff - previous_kickoff).days
+                    if kickoff is not None and previous_kickoff is not None
+                    and pd.notna(previous_kickoff)
+                    else snapshot.get("days_since_last_match", 0)
+                ),
+            })
+            rows.append(row)
+            if kickoff is not None:
+                previous_kickoff = kickoff
 
-    return latest
+    out = pd.DataFrame(rows)
+    logger.info(
+        "Prediction set: %d rows over GW%s-%s (%d players)",
+        len(out), first_gw, (first_gw or 0) + horizon - 1, len(latest),
+    )
+    return out

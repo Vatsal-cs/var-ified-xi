@@ -7,6 +7,7 @@ import PitchView from "@/components/PitchView";
 import BenchStrip from "@/components/BenchStrip";
 import BudgetGauge from "@/components/BudgetGauge";
 import PipelineExplainer from "@/components/PipelineExplainer";
+import TransfersPanel from "@/components/TransfersPanel";
 import Glossary from "@/components/Glossary";
 
 export default function Home() {
@@ -51,6 +52,12 @@ export default function Home() {
           </div>
           <PitchView startingXi={team.starting_xi} />
         </section>
+
+        {team.transfer_plan && (
+          <section className="border-t border-pitch-line py-14">
+            <TransfersPanel weeks={team.transfer_plan.weeks} team={team.team} />
+          </section>
+        )}
 
         <section className="border-t border-pitch-line py-14">
           <PipelineExplainer />

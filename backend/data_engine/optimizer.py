@@ -23,15 +23,22 @@ from config import (
     STARTING_XI_LIMITS,
     MAX_PLAYERS_PER_CLUB,
     BENCH_WEIGHT,
+    HORIZON_SQUAD_WEIGHT,
 )
 
 logger = logging.getLogger(__name__)
 
 
-def optimize_squad(players_df: pd.DataFrame) -> dict:
+def optimize_squad(players_df: pd.DataFrame, objective_col: str = "predicted_points") -> dict:
     """
     players_df must contain columns:
       player_id, web_name, element_type, team, now_cost, predicted_points
+
+    objective_col: which column the solver maximizes. Defaults to next-
+    gameweek points; pass "horizon_points" to pick the squad that is best
+    over the whole planning horizon rather than best for one week. Reported
+    totals always describe the NEXT gameweek, so the headline number stays
+    comparable regardless of what was optimized.
 
     Returns a dict with squad / starting_xi / bench / captain / vice_captain
     player_ids plus summary totals.
@@ -40,7 +47,13 @@ def optimize_squad(players_df: pd.DataFrame) -> dict:
     df["player_id"] = df["player_id"].astype(int)
     ids = df["player_id"].tolist()
 
+    if objective_col not in df.columns:
+        logger.warning("Objective column %r not present — falling back to predicted_points.",
+                       objective_col)
+        objective_col = "predicted_points"
+
     points = df.set_index("player_id")["predicted_points"].to_dict()
+    obj_points = df.set_index("player_id")[objective_col].to_dict()
     cost = df.set_index("player_id")["now_cost"].to_dict()
     pos = df.set_index("player_id")["element_type"].to_dict()
     club = df.set_index("player_id")["team"].to_dict()
@@ -81,9 +94,21 @@ def optimize_squad(players_df: pd.DataFrame) -> dict:
 
     # Objective: starting XI at full weight + bench at reduced weight
     #            + captain bonus (extra 1x points on top of their base points)
+    # Starting XI and captaincy are decisions for THIS gameweek, so they are
+    # valued on this gameweek's points. Squad membership is a multi-week
+    # commitment — you keep these 15 until you spend a transfer — so it is
+    # additionally rewarded for the whole horizon. Without that second term
+    # the solver happily buys a player for one glamour fixture and strands
+    # you with him through the next five.
     objective = pulp.lpSum(points[i] * starts[i] for i in ids)
     objective += pulp.lpSum(points[i] * BENCH_WEIGHT * (squad[i] - starts[i]) for i in ids)
     objective += pulp.lpSum(points[i] * captain[i] for i in ids)  # captain's 2nd multiplier
+
+    if objective_col != "predicted_points":
+        objective += pulp.lpSum(
+            HORIZON_SQUAD_WEIGHT * obj_points[i] * squad[i] for i in ids
+        )
+
     prob += objective
 
     solver = pulp.PULP_CBC_CMD(msg=False)
