@@ -32,6 +32,14 @@ last-five average, no model) is the floor a model must clear to justify
 existing, and `hindsight` (optimize on the actual result) is the unreachable
 ceiling.
 
+One rejected idea can't live in VARIANTS: early-season shrinkage
+(FORM_SHRINKAGE_GAMES) acts while features are BUILT, before any variant
+runs, so an in-list variant can't reproduce it faithfully. To re-test it,
+set the knob in config.py and re-run this harness; last verdict (k=3,
+gameweeks 2-38, both seasons, --augment): 4481 points vs 4545 without —
+rejected. The matches_played feature already lets the model learn its own
+early-season discount.
+
 A note on a benchmark that ISN'T here. The archive carries FPL's own published
 expected-points figure, and comparing against it looked like an obvious free
 yardstick — until a squad built from it scored 98.7 points per gameweek across
@@ -64,8 +72,10 @@ from data_engine import feature_engineering, historical_data, optimizer, train_m
 
 logger = logging.getLogger(__name__)
 
-# Gameweeks before this have too little rolling history to train on.
-DEFAULT_START_GW = 8
+# Simulation starts here. It used to start at gameweek 8, which quietly meant
+# the opening weeks — the regime where form features rest on one or two
+# matches and are least trustworthy — were never tested at all. They are now.
+DEFAULT_START_GW = 2
 
 # FPL's real bench/autosub rules, mirrored from config.STARTING_XI_LIMITS.
 GK = 1
@@ -299,7 +309,7 @@ def simulate_season(
         if prior_seasons_df is not None and not prior_seasons_df.empty:
             train_df = pd.concat([train_df, prior_seasons_df], ignore_index=True)
 
-        if len(train_df) < 200:
+        if len(train_df) < 100:
             logger.debug("GW%d: only %d training rows, skipping", gw, len(train_df))
             continue
 

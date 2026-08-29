@@ -33,7 +33,12 @@ from datetime import date, datetime
 import pandas as pd
 import numpy as np
 
-from config import ROLLING_WINDOWS, FALLBACK_AGE, HORIZON_DECAY
+from config import (
+    ROLLING_WINDOWS,
+    FALLBACK_AGE,
+    HORIZON_DECAY,
+    FORM_SHRINKAGE_GAMES,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -113,19 +118,88 @@ def _player_age(birth_date_str) -> float:
         return np.nan
 
 
-def build_gameweek_history_df(bootstrap: dict, player_histories: dict) -> pd.DataFrame:
+
+def _positional_priors(df: pd.DataFrame, source: str) -> pd.Series:
+    """Typical per-match value of a stat for each position.
+
+    Used as the fallback belief about a player we have barely seen. A
+    defender who has played once is much more likely to be an ordinary
+    defender than the best in the league.
+    """
+    if "element_type" not in df.columns:
+        return pd.Series(dtype=float)
+    return df.groupby("element_type")[source].mean()
+
+
+def _shrink(observed: pd.Series, counts: pd.Series, priors: pd.Series,
+            element_type: pd.Series, k: float) -> pd.Series:
+    """Pulls a rolling average toward the positional prior when it rests on
+    very few matches.
+
+    A three-game average built from one game is not a three-game average —
+    it is one result wearing a trustworthy label. In the opening weeks that
+    makes every high scorer look like a permanent star: after gameweek 1 of
+    2026-27 the squad picked 31% of players who scored 11+ and 0.7% of those
+    who scored 0-1, which is chasing noise, not form.
+
+    The standard remedy is to blend the observation with a prior in
+    proportion to how much evidence there is:
+
+        shrunk = (n * observed + k * prior) / (n + k)
+
+    With one match played the estimate sits mostly on the prior; by the time
+    k matches have been played the observation dominates. k is
+    FORM_SHRINKAGE_GAMES in config.
+    """
+    if k <= 0:
+        return observed
+    prior_values = element_type.map(priors)
+    prior_values = prior_values.fillna(observed.mean() if len(observed) else 0.0)
+    n = counts.fillna(0)
+    return (n * observed.fillna(0) + k * prior_values) / (n + k)
+
+
+def build_gameweek_history_df(bootstrap: dict, player_histories: dict,
+                              fixtures: list = None) -> pd.DataFrame:
     """Flattens every player's gameweek-by-gameweek 'history' entries into one
     long DataFrame: one row = one player's performance in one past gameweek.
+
+    fixtures: the season fixture list, used to keep only rows from matches
+    that have actually been played. Once a gameweek kicks off, FPL's API
+    pre-creates a zero-filled history row for every player whose match is
+    still to come — run the pipeline mid-gameweek without this filter and
+    every such player appears to have just been benched for a duck, which
+    (observed on 2026-08-29, mid-GW2) halves their play probability and
+    throws the premiums out of the squad. Without a fixtures list, rows
+    whose kickoff is still in the future are dropped as a fallback.
     """
     team_strength = _team_strength_lookup(bootstrap)
     players_meta = {p["id"]: p for p in bootstrap["elements"]}
 
+    played_fixtures = None
+    if fixtures is not None:
+        played_fixtures = {
+            f["id"] for f in fixtures
+            if f.get("finished") or f.get("finished_provisional")
+        }
+    now = pd.Timestamp.utcnow().tz_localize(None)
+
     rows = []
+    skipped = 0
     for pid, summary in player_histories.items():
         meta = players_meta.get(pid)
         if meta is None:
             continue
         for gw in summary.get("history", []):
+            if played_fixtures is not None:
+                if gw.get("fixture") not in played_fixtures:
+                    skipped += 1
+                    continue
+            else:
+                ko = _parse_kickoff(gw.get("kickoff_time"))
+                if ko is not None and ko > now:
+                    skipped += 1
+                    continue
             opp_id = gw.get("opponent_team")
             rows.append({
                 "player_id": pid,
@@ -164,6 +238,10 @@ def build_gameweek_history_df(bootstrap: dict, player_histories: dict) -> pd.Dat
                 "goals_conceded": float(gw.get("goals_conceded", 0) or 0),
             })
 
+    if skipped:
+        logger.info("Dropped %d history rows for matches not yet played "
+                    "(mid-gameweek run).", skipped)
+
     df = pd.DataFrame(rows)
     if df.empty:
         raise ValueError("No gameweek history rows built — check player_histories input.")
@@ -180,17 +258,28 @@ def add_rolling_features(df: pd.DataFrame) -> pd.DataFrame:
     grp = df.groupby("player_id", group_keys=False)
 
     for source, prefix, windows in ROLLING_FEATURE_SPEC:
+        priors = _positional_priors(df, source) if source in df.columns else None
         for w in windows:
             name = f"{prefix}_{w}"
             if source in df.columns:
                 df[name] = grp[source].apply(
                     lambda s: s.shift(1).rolling(w, min_periods=1).mean()
                 )
+                counts = grp[source].apply(
+                    lambda s: s.shift(1).rolling(w, min_periods=1).count()
+                )
+                df[name] = _shrink(df[name], counts, priors,
+                                   df["element_type"], FORM_SHRINKAGE_GAMES)
             else:
                 # A stat FPL only started publishing in a later season (e.g.
                 # defensive_contribution, new in 2025-26). Zero is the honest
                 # value: the scoring rule didn't exist, so it earned nothing.
                 df[name] = 0.0
+
+    # How many matches this player has actually played. Lets the model itself
+    # learn how far to trust the form features, rather than treating a
+    # one-game average and a twenty-game average as equally solid.
+    df["matches_played"] = grp["minutes"].apply(lambda s: s.shift(1).expanding().count())
 
     # 'form' as FPL defines it loosely: average points over last 5 played gameweeks
     df["form"] = df["points_avg_5"]
@@ -239,14 +328,22 @@ def latest_form_snapshot(df: pd.DataFrame) -> pd.DataFrame:
 
     out = df.copy()
     for source, prefix, windows in ROLLING_FEATURE_SPEC:
+        priors = _positional_priors(df, source) if source in df.columns else None
         for w in windows:
             name = f"{prefix}_{w}"
             if source in df.columns:
                 out[name] = grp[source].apply(
                     lambda s: s.rolling(w, min_periods=1).mean()
                 )
+                counts = grp[source].apply(
+                    lambda s: s.rolling(w, min_periods=1).count()
+                )
+                out[name] = _shrink(out[name], counts, priors,
+                                    out["element_type"], FORM_SHRINKAGE_GAMES)
             else:
                 out[name] = 0.0
+
+    out["matches_played"] = grp["minutes"].apply(lambda s: s.expanding().count())
 
     out["form"] = out["points_avg_5"]
     if "age" in out.columns:

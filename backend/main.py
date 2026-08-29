@@ -177,7 +177,7 @@ def run_pipeline(team_id: int = None) -> None:
 
     # 2. Feature engineering
     logger.info("Building feature table...")
-    history_df = feature_engineering.build_gameweek_history_df(bootstrap, histories)
+    history_df = feature_engineering.build_gameweek_history_df(bootstrap, histories, fixtures=fixtures)
     history_df = feature_engineering.add_rolling_features(history_df)
 
     train_df = feature_engineering.build_training_set(history_df)

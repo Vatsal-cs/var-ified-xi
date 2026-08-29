@@ -85,6 +85,18 @@ TRANSFER_HIT_COST = 4  # points deducted per extra transfer
 # ---------------------------------------------------------------------------
 ROLLING_WINDOWS = [3, 5]        # gameweeks, for rolling form features
 MIN_MINUTES_HISTORY = 1         # drop rows where player didn't play at all
+
+# Early-season shrinkage: blend rolling averages toward the positional norm
+# in proportion to how few matches back them (n/(n+k) weight on the
+# observation). Sounded obviously right; the backtest disagreed — with the
+# harness extended to start at gameweek 2, the plain pipeline scored 4587
+# simulated points across 2024-25 + 2025-26, against 4545 with a
+# matches_played feature and 4481 with that feature plus k=3 shrinkage.
+# Multi-season historical training already carries the model through the
+# thin-history weeks, and a forced discount only blunts real early signal.
+# OFF by default; to re-test, set this knob and re-run backtest.py (it acts
+# at feature-build time, so it can't be an in-harness variant).
+FORM_SHRINKAGE_GAMES = 0.0
 TARGET_COL = "total_points"
 
 # The model's input columns. Every one of these is produced identically for
@@ -137,6 +149,15 @@ FEATURE_COLUMNS = [
     "element_type",
     "days_since_last_match",
     "age",
+    # NOT here, though it sounds like it should be: "matches_played" (how many
+    # games back the form averages). Tested alongside the early-season
+    # shrinkage idea after the GW1-form-chasing scare; with the backtest
+    # extended to start at gameweek 2, the plain pipeline scored 4587
+    # simulated points across 2024-25 + 2025-26, matches_played 4545, and
+    # matches_played + shrinkage 4481. Multi-season training already covers
+    # the thin-history regime. The column is still computed by
+    # feature_engineering for future experiments — it is just not a model
+    # input.
 ]
 
 # Used when a player's birth date isn't available (some new signings, and
