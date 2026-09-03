@@ -255,3 +255,10 @@ CANDIDATE_POOL_PER_POSITION = {
 # to prove optimality. A near-optimal plan delivered before the deadline beats
 # a perfect one delivered after it.
 SOLVER_TIME_LIMIT = 120
+
+# A points hit (-4) is only worth taking if the transfer gains clearly MORE
+# than 4 — breaking even on paper isn't worth the certainty of losing 4,
+# since the projection might be wrong. The planner treats a hit as costing
+# TRANSFER_HIT_COST + HIT_MARGIN when deciding whether to take one, so a hit
+# only shows up when the decay-weighted gain over the horizon clears ~6.
+HIT_MARGIN = 2.0

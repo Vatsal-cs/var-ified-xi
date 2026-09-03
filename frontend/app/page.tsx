@@ -55,7 +55,11 @@ export default function Home() {
 
         {team.transfer_plan && (
           <section className="border-t border-pitch-line py-14">
-            <TransfersPanel weeks={team.transfer_plan.weeks} team={team.team} />
+            <TransfersPanel
+              weeks={team.transfer_plan.weeks}
+              team={team.team}
+              hitRecommendation={team.transfer_plan.hit_recommendation}
+            />
           </section>
         )}
 
