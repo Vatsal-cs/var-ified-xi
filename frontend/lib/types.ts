@@ -46,6 +46,15 @@ export interface PlannedWeek {
   captain_id: number | null;
 }
 
+export interface HitRecommendation {
+  worth_it: boolean;
+  hit_cost: number;
+  net_gain_over_horizon: number;
+  extra_transfers_in: TransferMove[];
+  extra_transfers_out: TransferMove[];
+  verdict: string;
+}
+
 export interface TeamInfo {
   name: string;
   entry_id: number;
@@ -69,7 +78,7 @@ export interface OptimizedTeam {
   captain_id: number;
   vice_captain_id: number | null;
   /** Present only in transfer_plan mode. */
-  transfer_plan?: { weeks: PlannedWeek[] };
+  transfer_plan?: { weeks: PlannedWeek[]; hit_recommendation?: HitRecommendation | null };
   /** Present only in transfer_plan mode. */
   team?: TeamInfo;
 }

@@ -37,6 +37,7 @@ from config import (
     HORIZON_DECAY,
     SOLVER_TIME_LIMIT,
     CANDIDATE_POOL_PER_POSITION,
+    HIT_MARGIN,
 )
 
 logger = logging.getLogger(__name__)
@@ -76,6 +77,7 @@ def plan_transfers(
     xp_by_gw: dict,
     gameweeks: list,
     free_hit_gw: int = None,
+    max_total_hits: int = None,
 ) -> dict:
     """Solves the multi-gameweek transfer problem.
 
@@ -84,6 +86,10 @@ def plan_transfers(
     team_state: entry_data.TeamState — your current squad, bank and transfers.
     xp_by_gw:   {player_id: {gameweek: expected points}}.
     gameweeks:  the gameweeks to plan across, in order.
+    max_total_hits: hard cap on point-hits across the whole horizon.
+                Pass 0 for a plan that only ever spends free transfers;
+                leave None to let the solver take a hit whenever it
+                clears its cost by HIT_MARGIN.
 
     Returns the full plan: transfers per gameweek, the resulting squad, and
     the starting XI and captain for the immediate gameweek.
@@ -191,6 +197,9 @@ def plan_transfers(
             # largest value allowed, since free transfers only ever relax it.
             prob += free[t] <= free[prev] - used + 1
 
+    if max_total_hits is not None:
+        prob += pulp.lpSum(hits[t] for t in gameweeks) <= max_total_hits
+
     # --- Objective ---
     # Points from the XI, doubled for the captain, plus a little credit for
     # bench strength (they score when a starter doesn't play). Later gameweeks
@@ -204,7 +213,7 @@ def plan_transfers(
             objective.append(weight * points * start[i, t])
             objective.append(weight * points * cap[i, t])
             objective.append(weight * BENCH_WEIGHT * points * (squad[i, t] - start[i, t]))
-        objective.append(-weight * TRANSFER_HIT_COST * hits[t])
+        objective.append(-weight * (TRANSFER_HIT_COST + HIT_MARGIN) * hits[t])
 
     prob += pulp.lpSum(objective)
 

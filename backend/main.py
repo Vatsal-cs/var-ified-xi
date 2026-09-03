@@ -157,7 +157,17 @@ def _plan_payload(plan: dict, pred_lookup: dict, pos_lookup: dict, teams_lookup:
             "predicted_points": week["predicted_points"],
             "captain_id": week["captain_id"],
         })
-    return {"weeks": weeks}
+
+    payload = {"weeks": weeks}
+
+    rec = plan.get("hit_recommendation")
+    if rec:
+        payload["hit_recommendation"] = {
+            **rec,
+            "extra_transfers_in": [decorate(p) for p in rec["extra_transfers_in"]],
+            "extra_transfers_out": [decorate(p) for p in rec["extra_transfers_out"]],
+        }
+    return payload
 
 
 def run_pipeline(team_id: int = None) -> None:
@@ -257,10 +267,59 @@ def run_pipeline(team_id: int = None) -> None:
     logger.info("=== VAR-ified XI: decision confirmed, no VAR check needed ===")
 
 
+def _horizon_score(plan: dict) -> float:
+    """Decay-weighted expected points across the whole plan, hits already
+    netted out. This is the single number the two plans are compared on.
+    """
+    return sum(config.HORIZON_DECAY ** i * w["predicted_points"]
+               for i, w in enumerate(plan["weeks"]))
+
+
+def _hit_recommendation(free_plan: dict, hit_plan: dict) -> dict | None:
+    """Decides whether a points hit this gameweek is actually worth taking.
+
+    Two plans are solved: one forbidden from ever taking a hit, one free to.
+    If the unconstrained plan doesn't want a hit this week, there's nothing
+    to recommend. If it does, the extra points it projects over the horizon
+    — after subtracting the real -4 per hit — is the verdict: positive means
+    take it, and by how much.
+    """
+    hit_week = hit_plan["immediate"]
+    if hit_week["hits"] <= 0:
+        return None
+
+    gain = _horizon_score(hit_plan) - _horizon_score(free_plan)
+    free_week = free_plan["immediate"]
+
+    # Which transfers are the ones the hit buys, on top of the free plan?
+    free_ins = {p["player_id"] for p in free_week["transfers_in"]}
+    extra_in = [p for p in hit_week["transfers_in"] if p["player_id"] not in free_ins]
+    free_outs = {p["player_id"] for p in free_week["transfers_out"]}
+    extra_out = [p for p in hit_week["transfers_out"] if p["player_id"] not in free_outs]
+
+    return {
+        "worth_it": gain > 0,
+        "hit_cost": hit_week["hit_cost"],
+        "net_gain_over_horizon": round(gain, 1),
+        "extra_transfers_in": extra_in,
+        "extra_transfers_out": extra_out,
+        "verdict": (
+            f"Taking the -{hit_week['hit_cost']} projects {gain:+.1f} pts over "
+            f"{len(hit_plan['weeks'])} gameweeks after the hit — "
+            + ("worth it." if gain > 0 else "not worth it, use free transfers only.")
+        ),
+    }
+
+
 def _plan_from_team(predictions_df, team_state, upcoming_gw):
     """Runs the multi-gameweek transfer planner and reshapes its answer for
     the immediate gameweek into the same shape optimize_squad() returns, so
     everything downstream is indifferent to which mode produced it.
+
+    Solves twice: a conservative plan that never takes a hit, and an
+    unconstrained one. The conservative plan is what gets shipped as the
+    recommendation; the hit plan is only surfaced when its extra transfers
+    genuinely out-earn their -4 cost over the horizon.
     """
     xp_by_gw = {
         int(row["player_id"]): {int(k): float(v) for k, v in (row["xp_by_gw"] or {}).items()}
@@ -268,10 +327,27 @@ def _plan_from_team(predictions_df, team_state, upcoming_gw):
     }
     gameweeks = [upcoming_gw + i for i in range(config.HORIZON_GWS)]
 
-    logger.info("Planning transfers across GW%d-%d...", gameweeks[0], gameweeks[-1])
-    plan = transfer_optimizer.plan_transfers(
+    logger.info("Planning transfers across GW%d-%d (free transfers only)...",
+                gameweeks[0], gameweeks[-1])
+    free_plan = transfer_optimizer.plan_transfers(
+        predictions_df, team_state, xp_by_gw, gameweeks, max_total_hits=0
+    )
+
+    logger.info("Planning again, allowing points hits where they clear their cost...")
+    hit_plan = transfer_optimizer.plan_transfers(
         predictions_df, team_state, xp_by_gw, gameweeks
     )
+
+    hit_rec = _hit_recommendation(free_plan, hit_plan)
+    if hit_rec and hit_rec["worth_it"]:
+        logger.info("  A -%d hit IS worth taking this week: %s",
+                    hit_rec["hit_cost"], hit_rec["verdict"])
+    else:
+        logger.info("  No hit worth taking this week — free transfers only.")
+
+    plan = free_plan
+    plan["hit_recommendation"] = hit_rec
+    plan["hit_plan"] = hit_plan
 
     week = plan["immediate"]
     costs = predictions_df.set_index("player_id")["now_cost"].to_dict()

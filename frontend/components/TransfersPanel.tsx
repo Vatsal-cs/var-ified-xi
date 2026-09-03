@@ -5,7 +5,7 @@
 // the decision you have to make before the deadline; the rest is the plan it
 // belongs to, which is the whole reason the solver looks several weeks ahead.
 
-import type { PlannedWeek, TeamInfo } from "@/lib/types";
+import type { PlannedWeek, TeamInfo, HitRecommendation } from "@/lib/types";
 
 function MoveRow({ week }: { week: PlannedWeek }) {
   const pairs = week.transfers_out.map((out, i) => ({
@@ -46,13 +46,16 @@ function MoveRow({ week }: { week: PlannedWeek }) {
 export default function TransfersPanel({
   weeks,
   team,
+  hitRecommendation,
 }: {
   weeks: PlannedWeek[];
   team?: TeamInfo;
+  hitRecommendation?: HitRecommendation | null;
 }) {
   if (weeks.length === 0) return null;
 
   const [immediate, ...rest] = weeks;
+  const hit = hitRecommendation ?? null;
 
   return (
     <section aria-labelledby="transfers-heading">
@@ -114,6 +117,40 @@ export default function TransfersPanel({
           Projected after transfer costs:{" "}
           <span className="text-var-green">{immediate.predicted_points.toFixed(1)} pts</span>
         </p>
+      </div>
+
+      {/* Whether a -4 hit is worth taking on top of the free transfers */}
+      <div
+        className={`mt-4 rounded-lg border p-4 ${
+          hit?.worth_it
+            ? "border-var-amber/50 bg-var-amber/5"
+            : "border-pitch-line bg-pitch-panel"
+        }`}
+      >
+        <p className="font-mono text-[11px] uppercase tracking-[0.25em] text-ink-500">
+          Points hit &mdash; worth it?
+        </p>
+        {hit?.worth_it ? (
+          <>
+            <p className="mt-2 font-mono text-sm text-var-amber">
+              Yes. Take the &minus;{hit.hit_cost}:{" "}
+              {hit.extra_transfers_out.map((o, i) => (
+                <span key={o.player_id}>
+                  {i > 0 && ", "}
+                  <span className="text-var-crimson line-through decoration-var-crimson/50">
+                    {o.name}
+                  </span>{" "}
+                  &rarr; <span className="text-var-green">{hit.extra_transfers_in[i]?.name}</span>
+                </span>
+              ))}
+            </p>
+            <p className="mt-1 font-mono text-xs text-ink-300">{hit.verdict}</p>
+          </>
+        ) : (
+          <p className="mt-2 font-mono text-sm text-ink-300">
+            No. {hit ? hit.verdict : "No extra transfer this week out-earns its −4 cost."}
+          </p>
+        )}
       </div>
 
       {/* The rest of the plan */}
