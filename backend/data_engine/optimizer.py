@@ -29,7 +29,8 @@ from config import (
 logger = logging.getLogger(__name__)
 
 
-def optimize_squad(players_df: pd.DataFrame, objective_col: str = "predicted_points") -> dict:
+def optimize_squad(players_df: pd.DataFrame, objective_col: str = "predicted_points",
+                   captain_col: str = "predicted_points") -> dict:
     """
     players_df must contain columns:
       player_id, web_name, element_type, team, now_cost, predicted_points
@@ -53,6 +54,13 @@ def optimize_squad(players_df: pd.DataFrame, objective_col: str = "predicted_poi
         objective_col = "predicted_points"
 
     points = df.set_index("player_id")["predicted_points"].to_dict()
+    # Captain-selection values. Defaults to the mean projection: a
+    # ceiling ("good day") regressor was tried here on the theory that the
+    # doubled armband rewards upside, but it lost 8 simulated points over
+    # 2024-25 + 2025-26 (4609 vs 4617) — tied one season, lost the other.
+    # The column is still produced by train_model for future experiments;
+    # pass captain_col="ceiling_points" to use it.
+    ceiling = df.set_index("player_id")[captain_col].to_dict() if captain_col in df.columns else points
     obj_points = df.set_index("player_id")[objective_col].to_dict()
     cost = df.set_index("player_id")["now_cost"].to_dict()
     pos = df.set_index("player_id")["element_type"].to_dict()
@@ -120,11 +128,12 @@ def optimize_squad(players_df: pd.DataFrame, objective_col: str = "predicted_poi
     squad_ids = [i for i in ids if pulp.value(squad[i]) > 0.5]
     starting_ids = [i for i in ids if pulp.value(starts[i]) > 0.5]
     bench_ids = [i for i in squad_ids if i not in starting_ids]
-    captain_id = next(i for i in ids if pulp.value(captain[i]) > 0.5)
-
-    # Vice-captain: highest predicted points among remaining starters
+    # The MILP's own captain pick is ignored: captaincy doesn't change which
+    # 15 or which 11, so it's a clean post-solve argmax on the ceiling.
+    captain_id = max(starting_ids, key=lambda i: ceiling.get(i, points[i]))
     vice_candidates = [i for i in starting_ids if i != captain_id]
-    vice_captain_id = max(vice_candidates, key=lambda i: points[i]) if vice_candidates else None
+    vice_captain_id = (max(vice_candidates, key=lambda i: ceiling.get(i, points[i]))
+                       if vice_candidates else None)
 
     total_cost = sum(cost[i] for i in squad_ids)
     starting_xi_points = sum(points[i] for i in starting_ids)

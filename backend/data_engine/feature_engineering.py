@@ -365,17 +365,21 @@ def aggregate_horizon(predictions_df: pd.DataFrame, decay: float = HORIZON_DECAY
                          fixture strip.
     """
     df = predictions_df.copy()
+    has_ceiling = "ceiling_points" in df.columns
     if "gw" not in df.columns:
         # Single-gameweek mode (or the close-season fallback): nothing to fold.
         df["horizon_points"] = df["predicted_points"]
         df["xp_by_gw"] = [{} for _ in range(len(df))]
+        if not has_ceiling:
+            df["ceiling_points"] = df["predicted_points"]
         return df
 
     first_gw = df["gw"].min()
 
     # Sum within a gameweek first — that is what makes a double gameweek
     # score as two matches rather than being averaged away.
-    per_gw = df.groupby(["player_id", "gw"], as_index=False)["predicted_points"].sum()
+    agg_cols = ["predicted_points"] + (["ceiling_points"] if has_ceiling else [])
+    per_gw = df.groupby(["player_id", "gw"], as_index=False)[agg_cols].sum()
     per_gw["weight"] = decay ** (per_gw["gw"] - first_gw)
     per_gw["weighted"] = per_gw["predicted_points"] * per_gw["weight"]
 
@@ -391,6 +395,13 @@ def aggregate_horizon(predictions_df: pd.DataFrame, decay: float = HORIZON_DECAY
     out = df.drop_duplicates("player_id").set_index("player_id")
     out["predicted_points"] = next_gw.reindex(out.index).fillna(0.0)
     out["horizon_points"] = horizon.reindex(out.index).fillna(0.0).round(2)
+    if has_ceiling:
+        next_ceiling = (per_gw[per_gw["gw"] == first_gw]
+                        .set_index("player_id")["ceiling_points"])
+        out["ceiling_points"] = next_ceiling.reindex(out.index).fillna(
+            out["predicted_points"]).round(2)
+    else:
+        out["ceiling_points"] = out["predicted_points"]
     out["xp_by_gw"] = xp_by_gw.reindex(out.index)
     out["xp_by_gw"] = out["xp_by_gw"].apply(lambda v: v if isinstance(v, dict) else {})
     return out.reset_index()

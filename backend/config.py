@@ -262,3 +262,10 @@ SOLVER_TIME_LIMIT = 120
 # TRANSFER_HIT_COST + HIT_MARGIN when deciding whether to take one, so a hit
 # only shows up when the decay-weighted gain over the horizon clears ~6.
 HIT_MARGIN = 2.0
+
+# The captain's points are doubled, so the pick that matters is the one
+# with the highest realistic CEILING, not the highest average. A second
+# stage-2 regressor is fit to this quantile of points-given-a-start and
+# used only for the captain/vice choice. 0.80 = "a good day, not a
+# miracle". backtest.py's captain_mean variant is the A/B control.
+CAPTAIN_QUANTILE = 0.80

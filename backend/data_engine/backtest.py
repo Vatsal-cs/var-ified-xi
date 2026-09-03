@@ -97,6 +97,9 @@ class Variant:
     fit: Callable[[pd.DataFrame], object]
     predict: Callable[[object, pd.DataFrame], pd.Series]
     prepare: Callable[[pd.DataFrame], pd.DataFrame] = None
+    # Returns a Series of captain-selection values aligned to the gw rows.
+    # None => captain on predicted_points (the pre-ceiling behaviour).
+    captain_values: Callable[[object, pd.DataFrame], pd.Series] = None
 
     def build_training_set(self, history: pd.DataFrame) -> pd.DataFrame:
         prep = self.prepare or feature_engineering.build_training_set
@@ -105,6 +108,10 @@ class Variant:
 
 def _bundle_predict(bundle, predict_df: pd.DataFrame) -> pd.Series:
     return train_model.predict_points(bundle, predict_df)["predicted_points"]
+
+
+def _bundle_ceiling(bundle, predict_df: pd.DataFrame) -> pd.Series:
+    return train_model.predict_points(bundle, predict_df)["ceiling_points"]
 
 
 def _legacy_training_set(history: pd.DataFrame) -> pd.DataFrame:
@@ -140,9 +147,17 @@ VARIANTS = {
     # to prove it should be replaced.
     "production": Variant(
         name="production",
-        description="shipping pipeline: 2-stage, split training populations, full refit",
+        description="shipping pipeline: 2-stage, split populations, full refit, "
+                    "captain on the mean projection",
         fit=lambda df: train_model.train_models(df, save=False),
         predict=_bundle_predict,
+    ),
+    "captain_ceiling": Variant(
+        name="captain_ceiling",
+        description="REJECTED: captain by an 80th-percentile \"good day\" regressor instead of the mean (-8 points; tied 2024-25, lost 2025-26)",
+        fit=lambda df: train_model.train_models(df, save=False),
+        predict=_bundle_predict,
+        captain_values=_bundle_ceiling,
     ),
     # --- Rejected alternatives, kept so the evidence stays reproducible ---
     "legacy_filtered": Variant(
@@ -322,7 +337,11 @@ def simulate_season(
         model = variant.fit(train_df)
         gw_rows["predicted_points"] = variant.predict(model, gw_rows).to_numpy()
 
-        result = optimizer.optimize_squad(gw_rows)
+        if variant.captain_values is not None:
+            gw_rows["ceiling_points"] = variant.captain_values(model, gw_rows).to_numpy()
+            result = optimizer.optimize_squad(gw_rows, captain_col="ceiling_points")
+        else:
+            result = optimizer.optimize_squad(gw_rows, captain_col="predicted_points")
         pred_lookup = gw_rows.set_index("player_id")["predicted_points"].to_dict()
         scored = score_gameweek(result, gw_rows, pred_lookup)
 
