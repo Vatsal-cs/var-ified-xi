@@ -46,6 +46,7 @@ from config import (
     VALIDATION_HOLDOUT_GAMEWEEKS,
     REPEAT_FLAG_THRESHOLD,
     REPEAT_FLAG_DAMPEN_FACTOR,
+    CAPTAIN_QUANTILE,
 )
 
 logger = logging.getLogger(__name__)
@@ -112,10 +113,18 @@ def _predict_conditional_points(bundle: dict, X: pd.DataFrame, element_types: pd
     return np.clip(out, 0, None)
 
 
-def _decomposed_xp(bundle: dict, X: pd.DataFrame, element_types: pd.Series) -> np.ndarray:
-    """Combine the two stages into a single expected-points array."""
+def _decomposed_xp(bundle: dict, X: pd.DataFrame, element_types: pd.Series,
+                   ceiling: bool = False) -> np.ndarray:
+    """Combine the two stages into a single expected-points array.
+
+    ceiling=True swaps the mean points-if-full regressor for the high-quantile
+    one, giving an upside estimate used only for the captain decision.
+    """
     proba = bundle["minutes_clf"].predict_proba(X)  # columns: DNP, CAMEO, FULL
-    pts_if_full = _predict_conditional_points(bundle, X, element_types)
+    if ceiling and bundle.get("ceiling_reg") is not None:
+        pts_if_full = np.clip(bundle["ceiling_reg"].predict(X), 0, None)
+    else:
+        pts_if_full = _predict_conditional_points(bundle, X, element_types)
     cameo_pts = element_types.map(bundle["cameo_means"]).fillna(bundle["cameo_global"]).to_numpy()
     return proba[:, FULL] * pts_if_full + proba[:, CAMEO] * cameo_pts
 
@@ -131,6 +140,20 @@ def _points_regressor() -> "xgb.XGBRegressor":
         objective="reg:squarederror",
         random_state=42,
         n_jobs=-1,
+    )
+
+
+def _ceiling_regressor() -> "xgb.XGBRegressor":
+    """Same shape as the mean regressor, but fit to a high quantile of
+    points-given-a-start instead of the average. This is the number that
+    matters for the captain pick: the armband doubles points, so what you
+    want under it is the biggest realistic upside, not the steadiest return.
+    """
+    return xgb.XGBRegressor(
+        n_estimators=400, max_depth=4, learning_rate=0.03,
+        subsample=0.8, colsample_bytree=0.8, reg_lambda=1.5,
+        objective="reg:quantileerror", quantile_alpha=CAPTAIN_QUANTILE,
+        random_state=42, n_jobs=-1,
     )
 
 
@@ -174,7 +197,13 @@ def _fit_bundle(part: pd.DataFrame, per_position: bool = False,
     # ---- Stage 2: points regressor, trained ONLY on 60+ minute rows ----
     quality_part = part
     if quality_filter and "minutes_avg_3" in part.columns:
-        quality_part = part[part["minutes_avg_3"] > 0]
+        filtered = part[part["minutes_avg_3"] > 0]
+        # In the opening week or two of a season the rolling-form filter can
+        # leave nothing behind (every average still rests on zero games).
+        # Fall back to the unfiltered set rather than fitting on an empty
+        # frame, which crashes the quantile regressor.
+        if len(filtered) >= 200:
+            quality_part = filtered
 
     full_rows = quality_part[quality_part["minutes"] >= 60]
     X_full = _prep_X(full_rows)
@@ -182,6 +211,14 @@ def _fit_bundle(part: pd.DataFrame, per_position: bool = False,
 
     points_reg = _points_regressor()
     points_reg.fit(X_full, y_full, verbose=False)
+
+    # The ceiling (quantile) model is fussier about tiny/degenerate inputs;
+    # only fit it when there's real data, otherwise the captain pick falls
+    # back to the mean projection.
+    ceiling_reg = None
+    if len(full_rows) >= 300:
+        ceiling_reg = _ceiling_regressor()
+        ceiling_reg.fit(X_full, y_full, verbose=False)
 
     points_reg_by_pos = {}
     if per_position:
@@ -205,6 +242,7 @@ def _fit_bundle(part: pd.DataFrame, per_position: bool = False,
     return {
         "minutes_clf": minutes_clf,
         "points_reg": points_reg,
+        "ceiling_reg": ceiling_reg,
         "points_reg_by_pos": points_reg_by_pos,
         "cameo_means": cameo_means,
         "cameo_global": cameo_global,
@@ -333,32 +371,52 @@ def predict_points(bundle: dict, prediction_df: pd.DataFrame, flag_counts: dict 
     out["p_cameo"] = proba[:, CAMEO].round(3)
     out["p_full"] = proba[:, FULL].round(3)
 
-    xp = _decomposed_xp(bundle, X, out["element_type"])
-
     # chance_of_playing scales play probability (and therefore xP linearly)
+    chance = None
     if "chance_of_playing" in out.columns:
-        chance = out["chance_of_playing"].fillna(100).astype(float) / 100.0
-        xp = xp * chance.to_numpy()
+        chance = out["chance_of_playing"].fillna(100).astype(float).to_numpy() / 100.0
 
-    out["predicted_points"] = np.clip(xp, 0, None).round(2)
-
-    # Zero out players with no fixture next gameweek — but ONLY when
-    # fixtures are actually published league-wide (see feature_engineering).
+    # Blank-gameweek and hard-status masks, computed once and reused for both
+    # the mean projection and the captain-ceiling projection so they stay
+    # consistent with each other.
+    zero_mask = pd.Series(False, index=out.index)
     if "has_fixture" in out.columns and "fixtures_published" in out.columns:
-        should_zero = (~out["has_fixture"]) & out["fixtures_published"]
-        out.loc[should_zero, "predicted_points"] = 0.0
+        zero_mask = (~out["has_fixture"]) & out["fixtures_published"]
     elif "has_fixture" in out.columns:
-        out.loc[~out["has_fixture"], "predicted_points"] = 0.0
+        zero_mask = ~out["has_fixture"]
 
-    # Hard status flags: injured/suspended/unavailable/not-in-squad
-    if "status" in out.columns:
-        out.loc[out["status"].isin(["i", "s", "u", "n"]), "predicted_points"] *= 0.1
+    status_mask = (
+        out["status"].isin(["i", "s", "u", "n"]) if "status" in out.columns
+        else pd.Series(False, index=out.index)
+    )
 
-    # Extra dampening for recurring fitness-doubt history (injury_log),
-    # even if today's snapshot shows the player as fully available
+    repeat_mask = pd.Series(False, index=out.index)
     if flag_counts:
-        repeat_flagged = out["player_id"].map(lambda pid: flag_counts.get(pid, 0) >= REPEAT_FLAG_THRESHOLD)
-        out.loc[repeat_flagged, "predicted_points"] *= REPEAT_FLAG_DAMPEN_FACTOR
-        out["predicted_points"] = out["predicted_points"].round(2)
+        repeat_mask = out["player_id"].map(
+            lambda pid: flag_counts.get(pid, 0) >= REPEAT_FLAG_THRESHOLD
+        )
+
+    def _apply(raw: np.ndarray) -> np.ndarray:
+        v = np.clip(raw, 0, None)
+        if chance is not None:
+            v = v * chance
+        v = pd.Series(v, index=out.index)
+        v.loc[zero_mask] = 0.0
+        v.loc[status_mask] *= 0.1
+        v.loc[repeat_mask] *= REPEAT_FLAG_DAMPEN_FACTOR
+        return v.round(2).to_numpy()
+
+    out["predicted_points"] = _apply(_decomposed_xp(bundle, X, out["element_type"]))
+
+    # Upside estimate — same pipeline, high-quantile regressor. Used only to
+    # choose the captain (points doubled ⇒ you want the biggest realistic
+    # score, not the safest). Falls back to the mean if the bundle predates
+    # the ceiling model.
+    if bundle.get("ceiling_reg") is not None:
+        out["ceiling_points"] = _apply(
+            _decomposed_xp(bundle, X, out["element_type"], ceiling=True)
+        )
+    else:
+        out["ceiling_points"] = out["predicted_points"]
 
     return out

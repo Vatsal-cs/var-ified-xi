@@ -64,6 +64,7 @@ export default function Home() {
                 points={team.predicted_total_points}
                 formation={formation}
                 horizonGws={team.horizon_gws}
+                valueLabel={isPlan ? "Squad value" : "Budget used"}
               />
               <BenchStrip bench={team.bench} />
             </div>

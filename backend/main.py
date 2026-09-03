@@ -353,12 +353,20 @@ def _plan_from_team(predictions_df, team_state, upcoming_gw):
     costs = predictions_df.set_index("player_id")["now_cost"].to_dict()
     bench_ids = [p for p in week["squad_ids"] if p not in week["starting_ids"]]
 
+    # Captain the highest projected points in the XI. (A ceiling-based pick
+    # was A/B'd and lost — see optimizer.optimize_squad.) The transfer
+    # MILP's own captain variable is discarded in favour of this argmax.
+    proj = predictions_df.set_index("player_id")["predicted_points"].to_dict()
+    ranked = sorted(week["starting_ids"], key=lambda i: proj.get(i, 0), reverse=True)
+    captain_id = ranked[0] if ranked else week["captain_id"]
+    vice_captain_id = ranked[1] if len(ranked) > 1 else week["vice_captain_id"]
+
     result = {
         "squad_ids": week["squad_ids"],
         "starting_ids": week["starting_ids"],
         "bench_ids": bench_ids,
-        "captain_id": week["captain_id"],
-        "vice_captain_id": week["vice_captain_id"],
+        "captain_id": captain_id,
+        "vice_captain_id": vice_captain_id,
         "total_cost": sum(costs.get(p, 0) for p in week["squad_ids"]),
         "total_predicted_points": week["predicted_points"],
     }

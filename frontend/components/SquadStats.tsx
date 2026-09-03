@@ -9,18 +9,20 @@ export default function SquadStats({
   points,
   formation,
   horizonGws,
+  valueLabel = "Budget used",
 }: {
   used: number;
   total: number;
   points: number;
   formation: string;
   horizonGws: number;
+  valueLabel?: string;
 }) {
   const pct = Math.min(100, (used / total) * 100);
   return (
     <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
       <div className="card p-4">
-        <p className="label">Budget used</p>
+        <p className="label">{valueLabel}</p>
         <p className="mt-1.5 stat">
           &pound;{used.toFixed(1)}
           <span className="text-sm text-ink-500">m</span>
