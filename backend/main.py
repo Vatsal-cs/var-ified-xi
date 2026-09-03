@@ -317,14 +317,24 @@ def main() -> None:
         description="VAR-ified XI — FPL prediction and squad optimization engine.",
     )
     parser.add_argument(
-        "--team-id", type=int, default=os.environ.get("FPL_TEAM_ID"),
+        # Not type=int: the value can arrive as "" from an unset CI variable
+        # (GitHub expands ${{ vars.FPL_TEAM_ID }} to an empty string, not to
+        # nothing), and argparse would apply int("") to that default and abort
+        # the whole run. Parsed by hand below instead.
+        "--team-id", default=(os.environ.get("FPL_TEAM_ID") or "").strip() or None,
         help="Your FPL team id (the number in your team's public URL). With it, "
              "the engine plans transfers from the squad you actually own; "
              "without it, it builds the best possible squad from scratch.",
     )
     args = parser.parse_args()
 
-    team_id = int(args.team_id) if args.team_id else None
+    team_id = None
+    if args.team_id not in (None, ""):
+        try:
+            team_id = int(args.team_id)
+        except (TypeError, ValueError):
+            parser.error(f"--team-id must be a number, got {args.team_id!r}")
+
     run_pipeline(team_id=team_id)
 
 
