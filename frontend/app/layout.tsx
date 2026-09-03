@@ -7,13 +7,13 @@ import "./globals.css";
 
 const oswald = Oswald({
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
+  weight: ["500", "600", "700"],
   variable: "--font-oswald",
 });
 
 const jbMono = JetBrains_Mono({
   subsets: ["latin"],
-  weight: ["400", "500", "700"],
+  weight: ["400", "500", "600"],
   variable: "--font-jbmono",
 });
 
@@ -24,14 +24,17 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "VAR-ified XI",
-  description: "Machine-checked. Math-approved. Your optimal FPL squad, reviewed.",
+  title: "VAR-ified XI — your FPL week, decided",
+  description:
+    "An FPL engine that predicts every player's points and solves for the best transfer to make this week — under the real rules. Reviewed weekly.",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={`${oswald.variable} ${jbMono.variable} ${inter.variable}`}>
-      <body className="bg-pitch-night text-ink-100 font-body antialiased">{children}</body>
+      <body className="min-h-screen bg-pitch-night font-body text-ink-200 antialiased">
+        {children}
+      </body>
     </html>
   );
 }

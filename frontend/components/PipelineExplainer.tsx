@@ -1,93 +1,83 @@
 // File: PipelineExplainer.tsx
 // Path: var-ified-xi/frontend/components/PipelineExplainer.tsx
 //
-// This is a genuine 5-stage sequence (the actual order backend/main.py
-// executes in), so numbered stage markers are earned here, not decorative.
+// The five stages the backend actually runs, in order. Plain language, one
+// expandable panel each.
 
 const STAGES = [
   {
-    tag: "01",
-    title: "Data Capture",
-    summary: "Pulls the raw material straight from FPL's free public API.",
+    n: "1",
+    title: "Pull the data",
+    summary: "Every player's match history, straight from FPL's free API.",
     body: [
-      "Every run starts by fetching three things from fantasy.premierleague.com: the full player and team list, the season's fixture list, and a gameweek-by-gameweek history for every single player in the game (600+ individual calls, cached locally so re-runs on the same day are instant).",
-      "This is real official data, not scraped or estimated — minutes played, goals, assists, bonus points, ICT index, and more, for every past match.",
+      "Each run fetches the full player and team list, the fixture list, and a gameweek-by-gameweek history for all 600+ players. That's official data — minutes, goals, assists, bonus, expected goals and assists, defensive actions — for every match played this season.",
+      "It's combined with three past seasons from a public archive, so the model has around 90,000 real (form → points) examples to learn from rather than just the handful this season has produced so far.",
     ],
   },
   {
-    tag: "02",
-    title: "Feature Model",
-    summary: "Turns raw match history into rolling form signals.",
+    n: "2",
+    title: "Turn it into form signals",
+    summary: "Rolling averages over the last 3–5 games, plus the fixture ahead.",
     body: [
-      "Raw stats alone don't predict much — a striker's one big haul three months ago says little about next week. So each player's history is converted into rolling averages over their last 3 and 5 gameweeks: minutes, points, ICT index, influence, creativity, and threat.",
-      "Every rolling average is shifted back by one gameweek before being used, so the model is never accidentally shown the answer it's trying to predict. Fixture difficulty is also folded in, comparing a player's attacking team strength against their next opponent's defensive strength.",
+      "Raw stats don't predict much on their own. Each player's history becomes rolling averages — minutes, points, expected goals/assists, bonus-point score, how often they actually start, defensive contributions.",
+      "For training, every average is shifted back a gameweek so a row never sees its own result. For the prediction it isn't shifted — the last match played is fair information about the next one. Fixture difficulty is folded in by comparing each team's attacking strength against the opponent's defence.",
     ],
   },
   {
-    tag: "03",
-    title: "Prediction Engine",
-    summary: "Two models, because \"will he play?\" and \"how well?\" are different questions.",
+    n: "3",
+    title: "Predict points — two models",
+    summary: "\"Will he play?\" and \"how well?\" are different questions.",
     body: [
-      "Rotation risk is the single biggest source of error in fantasy football, so it gets its own model rather than being smeared into one number. A classifier estimates the odds a player doesn't play at all, comes off the bench, or starts properly. A second model then estimates how many points he scores given that he did start — trained only on players who actually played 60 minutes, so it learns quality rather than availability. Multiply the two together and you get expected points.",
-      "Both are gradient-boosted tree models trained on this season plus the three before it — over 40,000 real gameweek results. Accuracy is measured on gameweeks the model never saw, and only then is it retrained on everything, so it goes into the weekend having learned from the most recent form rather than being deliberately blind to it. Injured, suspended and doubtful players are dampened using FPL's own status flags, plus a record of who has been flagged repeatedly this season.",
+      "Rotation risk is the biggest single source of error in fantasy football, so it gets its own model: a classifier estimates the odds a player doesn't play, comes off the bench, or starts properly. A second model estimates points given a proper start, trained only on players who actually played 60+ minutes — so it learns quality, not availability. Multiplying the two gives expected points.",
+      "A third model estimates each player's ceiling — a good-day score rather than an average one — which is what the captain pick uses, since the armband doubles points. Accuracy is measured on gameweeks the model never saw, then it's retrained on everything so it goes into the weekend current.",
     ],
   },
   {
-    tag: "04",
-    title: "Constraint Solver",
-    summary: "A real optimizer, planning several gameweeks at once.",
+    n: "4",
+    title: "Solve for the best move",
+    summary: "A real optimizer, planning six gameweeks at once.",
     body: [
-      "This is the part that separates it from a spreadsheet sort. A Mixed-Integer Linear Program (solved with PuLP/CBC) decides everything simultaneously: which 15 players fill the squad, which 11 start, who wears the armband — and, when it knows your real team, which transfers to make in each of the next six gameweeks.",
-      "It's bound by every real FPL rule: a £100.0m budget, an exact 2/5/5/3 squad split, a valid formation, no more than 3 players from one club, one free transfer per week banked up to five, and −4 points for each extra. Planning six weeks at once is what stops it chasing a single good fixture into a wall of hard ones — and it's the only way to find moves like banking a transfer this week to afford two next week.",
+      "A Mixed-Integer Linear Program (PuLP/CBC) decides everything together: which 15 players, which 11 start, who captains, and — when it knows your real team — which transfers to make in each of the next six gameweeks.",
+      "It obeys every FPL rule: £100m budget, 2/5/5/3 squad, a legal formation, max 3 per club, one free transfer a week banked up to five, and −4 for each extra. It only takes a hit when the extra points clearly beat the 4 it costs. Planning six weeks at once is what stops it chasing one fixture into a wall.",
     ],
   },
   {
-    tag: "05",
-    title: "Decision",
-    summary: "The confirmed squad, written out and shown above.",
+    n: "5",
+    title: "Write it out",
+    summary: "One JSON file — exactly what this page shows.",
     body: [
-      "The solver's output — starting XI, bench, captain, vice-captain and the transfer plan — gets written to a single JSON file. This exact page reads that file directly. There's no live server making these picks on request; everything above came from one offline solve.",
-      "A scheduled job re-runs the whole engine in the day before each deadline and commits the result, which redeploys this page automatically. Every number here is regenerated from fresh form, fresh prices and a fresh solve.",
+      "The result — transfers, starting XI, captain, and the six-week plan — is written to a single file that this page reads directly. No live server picks anything on request.",
+      "A scheduled job re-runs the whole engine before every deadline and commits the result, which redeploys the page automatically. Every number here comes from fresh form, fresh prices, and a fresh solve.",
     ],
   },
 ];
 
 export default function PipelineExplainer() {
   return (
-    <section aria-labelledby="pipeline-heading" className="mx-auto max-w-3xl">
-      <h2
-        id="pipeline-heading"
-        className="mb-1 font-display text-2xl uppercase tracking-tight text-ink-100"
-      >
-        How the decision was made
-      </h2>
-      <p className="mb-6 font-body text-sm text-ink-300">
-        Five stages, run in order, every time. Expand any stage for the actual mechanics behind it.
-      </p>
-
-      <div className="divide-y divide-pitch-line rounded-lg border border-pitch-line bg-pitch-panel">
-        {STAGES.map((stage) => (
-          <details key={stage.tag} className="group open:bg-pitch-panel2/40">
-            <summary className="flex cursor-pointer list-none items-center gap-4 px-5 py-4 marker:content-none">
-              <span className="font-mono text-xs text-var-greendim">{stage.tag}</span>
-              <span className="flex-1">
-                <span className="block font-display text-base uppercase tracking-wide text-ink-100">
-                  {stage.title}
-                </span>
-                <span className="block font-body text-xs text-ink-500">{stage.summary}</span>
+    <div className="card divide-y divide-pitch-line overflow-hidden">
+      {STAGES.map((s) => (
+        <details key={s.n} className="group">
+          <summary className="flex cursor-pointer list-none items-center gap-4 px-5 py-4 marker:content-none hover:bg-pitch-panel2/40">
+            <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-pitch-line font-mono text-xs text-ink-400">
+              {s.n}
+            </span>
+            <span className="flex-1">
+              <span className="block font-display text-base font-semibold tracking-tight text-ink-100">
+                {s.title}
               </span>
-              <span className="font-mono text-ink-500 transition-transform group-open:rotate-45">
-                +
-              </span>
-            </summary>
-            <div className="space-y-3 px-5 pb-5 pl-[3.25rem] font-body text-sm leading-relaxed text-ink-300">
-              {stage.body.map((para, i) => (
-                <p key={i}>{para}</p>
-              ))}
-            </div>
-          </details>
-        ))}
-      </div>
-    </section>
+              <span className="block font-body text-[13px] text-ink-400">{s.summary}</span>
+            </span>
+            <span className="font-mono text-ink-500 transition-transform group-open:rotate-45">
+              +
+            </span>
+          </summary>
+          <div className="space-y-3 px-5 pb-5 pl-16 font-body text-[15px] leading-relaxed text-ink-300">
+            {s.body.map((para, i) => (
+              <p key={i}>{para}</p>
+            ))}
+          </div>
+        </details>
+      ))}
+    </div>
   );
 }

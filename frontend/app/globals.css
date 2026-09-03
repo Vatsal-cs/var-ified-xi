@@ -9,40 +9,73 @@
   color-scheme: dark;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 body {
-  background-image:
-    linear-gradient(rgba(0, 255, 135, 0.025) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0, 255, 135, 0.025) 1px, transparent 1px);
-  background-size: 32px 32px;
+  /* Very faint vignette instead of the old hard grid — texture without noise. */
+  background:
+    radial-gradient(1200px 600px at 50% -10%, rgba(34, 227, 138, 0.06), transparent 70%),
+    #0a0e0c;
+  background-attachment: fixed;
 }
 
 ::selection {
-  background: #00ff87;
-  color: #0b0f0d;
+  background: #22e38a;
+  color: #0a0e0c;
 }
 
-/* visible keyboard focus everywhere, no exceptions */
 :focus-visible {
-  outline: 2px solid #00ff87;
+  outline: 2px solid #22e38a;
   outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Reusable surfaces — keeps every card visually consistent. */
+@layer components {
+  .card {
+    @apply rounded-xl border border-pitch-line bg-pitch-panel shadow-card;
+  }
+  .card-hi {
+    @apply rounded-xl border border-var-green/40 bg-var-greensoft shadow-glow;
+  }
+  .label {
+    @apply font-mono text-[10px] font-medium uppercase tracking-[0.18em] text-ink-500;
+  }
+  .stat {
+    @apply font-mono text-2xl tabular-nums text-ink-100;
+  }
+  .prose-note {
+    @apply font-body text-[15px] leading-relaxed text-ink-300;
+  }
+  /* Dotted-underline term with a native tooltip. */
+  .term {
+    @apply cursor-help border-b border-dotted border-ink-400 text-ink-200;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
   *,
   *::before,
   *::after {
     animation-duration: 0.001ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.001ms !important;
-    scroll-behavior: auto !important;
   }
 }
 
-.scrollbar-thin::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+*::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
 }
-.scrollbar-thin::-webkit-scrollbar-thumb {
-  background: #26332c;
-  border-radius: 4px;
+*::-webkit-scrollbar-thumb {
+  background: #283430;
+  border-radius: 8px;
+}
+*::-webkit-scrollbar-track {
+  background: transparent;
 }
