@@ -69,6 +69,7 @@ import xgboost as xgb
 
 import config
 from data_engine import feature_engineering, historical_data, optimizer, train_model
+from data_engine.odds_data import ODDS_FEATURE_COLUMNS
 
 logger = logging.getLogger(__name__)
 
@@ -106,8 +107,59 @@ class Variant:
         return prep(history)
 
 
+_BASE_FEATURES = list(config.FEATURE_COLUMNS)
+
+
+class _with_features:
+    """Temporarily extends config.FEATURE_COLUMNS and turns on the odds join."""
+    def __init__(self, extra): self.extra = extra
+    def __enter__(self):
+        config.FEATURE_COLUMNS = _BASE_FEATURES + [c for c in self.extra if c not in _BASE_FEATURES]
+        self._old_odds = config.ATTACH_ODDS
+        config.ATTACH_ODDS = True
+    def __exit__(self, *a):
+        config.FEATURE_COLUMNS = list(_BASE_FEATURES)
+        config.ATTACH_ODDS = self._old_odds
+
+
 def _bundle_predict(bundle, predict_df: pd.DataFrame) -> pd.Series:
     return train_model.predict_points(bundle, predict_df)["predicted_points"]
+
+
+RECENCY_DECAY_UNDER_TEST = 0.7
+
+
+class _recency_ctx:
+    def __enter__(self):
+        self._old = config.RECENCY_SEASON_DECAY
+        config.RECENCY_SEASON_DECAY = RECENCY_DECAY_UNDER_TEST
+    def __exit__(self, *a):
+        config.RECENCY_SEASON_DECAY = self._old
+
+
+def _recency_fit(df):
+    with _recency_ctx():
+        return train_model.train_models(df, save=False, recency_weight=True)
+
+
+def _odds_recency_fit(df):
+    with _with_features(ODDS_FEATURE_COLUMNS), _recency_ctx():
+        return train_model.train_models(df, save=False, recency_weight=True)
+
+
+def _odds_ctx(fn):
+    with _with_features(ODDS_FEATURE_COLUMNS):
+        return fn()
+
+
+def _odds_fit(df):
+    with _with_features(ODDS_FEATURE_COLUMNS):
+        return train_model.train_models(df, save=False)
+
+
+def _odds_predict(bundle, predict_df):
+    with _with_features(ODDS_FEATURE_COLUMNS):
+        return train_model.predict_points(bundle, predict_df)["predicted_points"]
 
 
 def _bundle_ceiling(bundle, predict_df: pd.DataFrame) -> pd.Series:
@@ -151,6 +203,27 @@ VARIANTS = {
                     "captain on the mean projection",
         fit=lambda df: train_model.train_models(df, save=False),
         predict=_bundle_predict,
+    ),
+    "odds": Variant(
+        name="odds",
+        description="REJECTED: +4 betting-odds fixture features -32 points "
+                    "(split: +20 in 2025-26, -52 in 2024-25); redundant with "
+                    "existing rolling xG + strength features",
+        fit=_odds_fit,
+        predict=_odds_predict,
+    ),
+    "recency": Variant(
+        name="recency",
+        description="REJECTED: season-level recency weighting (decay 0.7) "
+                    "-58 points, lost both seasons",
+        fit=_recency_fit,
+        predict=_bundle_predict,
+    ),
+    "odds_recency": Variant(
+        name="odds_recency",
+        description="REJECTED: odds + recency combined, -80 points (worst)",
+        fit=_odds_recency_fit,
+        predict=_odds_predict,
     ),
     "captain_ceiling": Variant(
         name="captain_ceiling",

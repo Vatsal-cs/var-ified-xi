@@ -29,7 +29,9 @@ import logging
 import requests
 import pandas as pd
 
+import config
 from config import HISTORICAL_SEASONS, HISTORICAL_DATA_BASE_URL, RAW_DIR, FALLBACK_AGE
+from data_engine import odds_data
 
 logger = logging.getLogger(__name__)
 
@@ -166,7 +168,37 @@ def fetch_season(season: str, season_index: int):
     out["opp_strength_attack"] = gw_df["opponent_team"].map(lambda o: id_strength.get(o, {}).get("attack", 1100))
     out["opp_strength_defence"] = gw_df["opponent_team"].map(lambda o: id_strength.get(o, {}).get("defence", 1100))
 
+    _attach_odds_features(out, gw_df, season)
+
     return out
+
+
+def _attach_odds_features(out: pd.DataFrame, gw_df: pd.DataFrame, season: str) -> None:
+    """Joins betting-odds-derived fixture expectations onto each player row by
+    (match date, the player's own team). Missing matches get league-median
+    neutrals so the columns are never NaN.
+    """
+    for col, neutral in odds_data.ODDS_NEUTRAL.items():
+        out[col] = neutral
+    if not config.ATTACH_ODDS:
+        return  # rejected feature — see config.ATTACH_ODDS
+    odds_df = odds_data.fetch_season_odds(season)
+    if odds_df.empty:
+        return
+
+    lut = odds_data.per_team_lookup(odds_df)
+    match_date = pd.to_datetime(gw_df["kickoff_time"], errors="coerce", utc=True).dt.tz_localize(None).dt.date
+    team_canon = gw_df["team"].map(odds_data.canonical_team)
+
+    matched = 0
+    for col in odds_data.ODDS_FEATURE_COLUMNS:
+        vals = []
+        for d, t in zip(match_date, team_canon):
+            hit = lut.get((d, t))
+            vals.append(hit[col] if hit else odds_data.ODDS_NEUTRAL[col])
+        out[col] = vals
+    matched = sum(1 for d, t in zip(match_date, team_canon) if (d, t) in lut)
+    logger.info("Odds join %s: %d / %d player-rows matched", season, matched, len(out))
 
 
 def build_historical_training_df(seasons=None) -> pd.DataFrame:

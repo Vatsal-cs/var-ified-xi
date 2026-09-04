@@ -38,8 +38,8 @@ import pandas as pd
 from sklearn.metrics import mean_absolute_error, accuracy_score
 import xgboost as xgb
 
+import config
 from config import (
-    FEATURE_COLUMNS,
     TARGET_COL,
     MODEL_PATH,
     MIN_ROWS_PER_POSITION,
@@ -56,7 +56,7 @@ DNP, CAMEO, FULL = 0, 1, 2
 
 
 def _prep_X(df: pd.DataFrame) -> pd.DataFrame:
-    X = df.reindex(columns=FEATURE_COLUMNS, fill_value=0).copy()
+    X = df.reindex(columns=config.FEATURE_COLUMNS, fill_value=0).copy()
     return X.apply(pd.to_numeric, errors="coerce").fillna(0)
 
 
@@ -129,6 +129,31 @@ def _decomposed_xp(bundle: dict, X: pd.DataFrame, element_types: pd.Series,
     return proba[:, FULL] * pts_if_full + proba[:, CAMEO] * cameo_pts
 
 
+def _recency_weights(part: pd.DataFrame) -> "np.ndarray | None":
+    """Down-weights rows from older seasons so a match from two years ago
+    counts for less than one from this season, without discarding it.
+
+    Historical player_ids are PLAYER_ID_BASE + season_index * 100_000 (see
+    historical_data), season_index 0 = oldest. Current-season rows sit below
+    PLAYER_ID_BASE and get full weight. Within a season every gameweek is
+    weighted equally — deliberately, so this doesn't reintroduce the
+    single-gameweek chasing the model was already caught doing once.
+    """
+    decay = config.RECENCY_SEASON_DECAY
+    if decay >= 1.0:
+        return None
+    pid = part["player_id"].to_numpy()
+    BASE = 1_000_000
+    season_idx = np.where(pid >= BASE, (pid - BASE) // 100_000, -1)
+    max_hist = season_idx.max()
+    if max_hist < 0:
+        return None
+    # current season (season_idx == -1) -> exponent 0 -> weight 1
+    # newest historical -> exponent 1, older -> 2, 3 ...
+    exponent = np.where(season_idx < 0, 0, max_hist + 1 - season_idx)
+    return decay ** exponent
+
+
 def _points_regressor() -> "xgb.XGBRegressor":
     return xgb.XGBRegressor(
         n_estimators=400,
@@ -158,7 +183,7 @@ def _ceiling_regressor() -> "xgb.XGBRegressor":
 
 
 def _fit_bundle(part: pd.DataFrame, per_position: bool = False,
-                quality_filter: bool = False) -> dict:
+                quality_filter: bool = False, recency_weight: bool = False) -> dict:
     """Fits the two-stage bundle (minutes classifier + conditional points
     regressor + cameo lookup) on one partition of rows.
 
@@ -177,6 +202,7 @@ def _fit_bundle(part: pd.DataFrame, per_position: bool = False,
     cleanest when learned from established starters.
     """
     X = _prep_X(part)
+    w_all = _recency_weights(part) if recency_weight else None
 
     # ---- Stage 1: minutes classifier ----
     y_minutes = _minutes_class(part["minutes"])
@@ -192,7 +218,7 @@ def _fit_bundle(part: pd.DataFrame, per_position: bool = False,
         random_state=42,
         n_jobs=-1,
     )
-    minutes_clf.fit(X, y_minutes, verbose=False)
+    minutes_clf.fit(X, y_minutes, sample_weight=w_all, verbose=False)
 
     # ---- Stage 2: points regressor, trained ONLY on 60+ minute rows ----
     quality_part = part
@@ -209,8 +235,9 @@ def _fit_bundle(part: pd.DataFrame, per_position: bool = False,
     X_full = _prep_X(full_rows)
     y_full = full_rows[TARGET_COL].astype(float)
 
+    w_full = _recency_weights(full_rows) if recency_weight else None
     points_reg = _points_regressor()
-    points_reg.fit(X_full, y_full, verbose=False)
+    points_reg.fit(X_full, y_full, sample_weight=w_full, verbose=False)
 
     # The ceiling (quantile) model is fussier about tiny/degenerate inputs;
     # only fit it when there's real data, otherwise the captain pick falls
@@ -218,7 +245,7 @@ def _fit_bundle(part: pd.DataFrame, per_position: bool = False,
     ceiling_reg = None
     if len(full_rows) >= 300:
         ceiling_reg = _ceiling_regressor()
-        ceiling_reg.fit(X_full, y_full, verbose=False)
+        ceiling_reg.fit(X_full, y_full, sample_weight=w_full, verbose=False)
 
     points_reg_by_pos = {}
     if per_position:
@@ -256,6 +283,7 @@ def train_models(
     refit_full: bool = True,
     per_position: bool = False,
     quality_filter: bool = True,
+    recency_weight: bool = False,
 ) -> dict:
     """Trains the two-stage model bundle (plus a flat baseline for honest
     comparison) and returns it as a dict.
@@ -294,7 +322,7 @@ def train_models(
     y_val_points = val_part[TARGET_COL].astype(float)
 
     bundle = _fit_bundle(train_part, per_position=per_position,
-                         quality_filter=quality_filter)
+                         quality_filter=quality_filter, recency_weight=recency_weight)
 
     # ---- Flat baseline (the old single-regressor approach), for honest
     #      side-by-side comparison on the SAME holdout every run ----
@@ -335,6 +363,7 @@ def train_models(
             pd.concat([train_part, val_part], ignore_index=True),
             per_position=per_position,
             quality_filter=quality_filter,
+            recency_weight=recency_weight,
         )
 
     if save:

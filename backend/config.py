@@ -269,3 +269,21 @@ HIT_MARGIN = 2.0
 # used only for the captain/vice choice. 0.80 = "a good day, not a
 # miracle". backtest.py's captain_mean variant is the A/B control.
 CAPTAIN_QUANTILE = 0.80
+
+# Older training seasons are down-weighted by this factor per season of
+# age (current season = 1.0, newest past season = 0.7, the one before
+# 0.49, ...). Every gameweek WITHIN a season keeps equal weight — this is
+# season-level recency only, not within-season, on purpose. 1.0 disables
+# it. backtest.py's `recency` variant is the A/B.
+# Verdict (backtest, GW2-38, 2024-25 + 2025-26, --augment): season-level
+# recency weighting scored 4559 vs 4617 for equal weighting — it lost
+# both seasons. Kept as backtest.py's `recency` variant. 1.0 = disabled.
+RECENCY_SEASON_DECAY = 1.0
+
+# Betting-odds fixture features (odds_data.py) were joined onto training
+# rows and tested: 4585 vs 4617, a split (helped 2025-26 +20, hurt
+# 2024-25 -52). Rejected — the model's existing rolling xG/xGC and
+# team-strength features already carry most of that signal, so the odds
+# columns mostly added noise. The join is off unless this is set True
+# (backtest.py's `odds` variant sets it); odds_data.py is otherwise unused.
+ATTACH_ODDS = False
