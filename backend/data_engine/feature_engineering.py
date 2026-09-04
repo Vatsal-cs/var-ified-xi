@@ -39,6 +39,7 @@ from config import (
     HORIZON_DECAY,
     FORM_SHRINKAGE_GAMES,
 )
+from data_engine.odds_data import ODDS_NEUTRAL
 
 logger = logging.getLogger(__name__)
 
@@ -255,6 +256,9 @@ def add_rolling_features(df: pd.DataFrame) -> pd.DataFrame:
     Also adds days_since_last_match, a rest/fixture-congestion proxy.
     """
     df = df.copy()
+    for _c, _v in ODDS_NEUTRAL.items():
+        if _c not in df.columns:
+            df[_c] = _v
     grp = df.groupby("player_id", group_keys=False)
 
     for source, prefix, windows in ROLLING_FEATURE_SPEC:
