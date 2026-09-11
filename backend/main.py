@@ -275,38 +275,76 @@ def _horizon_score(plan: dict) -> float:
                for i, w in enumerate(plan["weeks"]))
 
 
-def _hit_recommendation(free_plan: dict, hit_plan: dict) -> dict | None:
-    """Decides whether a points hit this gameweek is actually worth taking.
-
-    Two plans are solved: one forbidden from ever taking a hit, one free to.
-    If the unconstrained plan doesn't want a hit this week, there's nothing
-    to recommend. If it does, the extra points it projects over the horizon
-    — after subtracting the real -4 per hit — is the verdict: positive means
-    take it, and by how much.
+def _team_state_after(team_state, free_week: dict, predictions_df) -> "entry_data.TeamState":
+    """A synthetic team as it would stand right after making the free plan's
+    gameweek-1 moves — the starting point for asking "is one more hit worth
+    it FROM HERE", rather than "what does an unrelated all-hits plan look
+    like". This is what makes the follow-up solve additive instead of just
+    another independent optimum that happens to also spend some hits.
     """
-    hit_week = hit_plan["immediate"]
-    if hit_week["hits"] <= 0:
+    costs = predictions_df.set_index("player_id")["now_cost"].to_dict()
+    sell_prices = dict(team_state.sell_prices)
+    for p in free_week["transfers_in"]:
+        # A player bought today hasn't accrued any profit yet, so his sell
+        # price is exactly his buy price (see entry_data.compute_sell_price).
+        sell_prices[p["player_id"]] = round(p["cost_m"] * 10)
+
+    remaining_free = max(0, team_state.free_transfers - free_week["transfer_count"])
+
+    return entry_data.TeamState(
+        entry_id=team_state.entry_id,
+        name=team_state.name,
+        gameweek=team_state.gameweek,
+        squad=list(free_week["squad_ids"]),
+        bank=round(free_week["bank_m"] * 10),
+        squad_value=sum(costs.get(p, sell_prices.get(p, 0)) for p in free_week["squad_ids"]),
+        # Free transfers the free plan chose to bank stay available here —
+        # only transfers beyond those genuinely cost a hit.
+        free_transfers=max(1, remaining_free),
+        sell_prices=sell_prices,
+        chips_used=team_state.chips_used,
+        chips_available=team_state.chips_available,
+    )
+
+
+def _hit_recommendation(team_state, free_plan: dict, predictions_df, xp_by_gw: dict,
+                        gameweeks: list) -> dict | None:
+    """Decides whether a points hit this gameweek is actually worth taking —
+    ON TOP OF the free plan, not instead of it.
+
+    Re-solves from the squad the free plan would leave you with, allowing
+    further hits. Because that solve starts from the free plan's own result,
+    its gameweek-1 transfers ARE the exact extra moves a hit would buy — no
+    guessing by diffing two unrelated optimal solutions, which can (and did)
+    land on entirely different squads that merely happened to both spend
+    close to the same number of transfers.
+    """
+    free_week = free_plan["immediate"]
+    topup_state = _team_state_after(team_state, free_week, predictions_df)
+
+    topup_plan = transfer_optimizer.plan_transfers(
+        predictions_df, topup_state, xp_by_gw, gameweeks
+    )
+    topup_week = topup_plan["immediate"]
+    if topup_week["hits"] <= 0:
         return None
 
-    gain = _horizon_score(hit_plan) - _horizon_score(free_plan)
-    free_week = free_plan["immediate"]
-
-    # Which transfers are the ones the hit buys, on top of the free plan?
-    free_ins = {p["player_id"] for p in free_week["transfers_in"]}
-    extra_in = [p for p in hit_week["transfers_in"] if p["player_id"] not in free_ins]
-    free_outs = {p["player_id"] for p in free_week["transfers_out"]}
-    extra_out = [p for p in hit_week["transfers_out"] if p["player_id"] not in free_outs]
+    # Both solves start from the SAME real squad and cover the SAME horizon,
+    # one with the extra hit-funded moves priced in (hit cost already
+    # subtracted into predicted_points — see transfer_optimizer._extract_plan)
+    # and one without, so this difference is a fair like-for-like gain.
+    gain = _horizon_score(topup_plan) - _horizon_score(free_plan)
 
     return {
         "worth_it": gain > 0,
-        "hit_cost": hit_week["hit_cost"],
+        "hit_cost": topup_week["hit_cost"],
         "net_gain_over_horizon": round(gain, 1),
-        "extra_transfers_in": extra_in,
-        "extra_transfers_out": extra_out,
+        "extra_transfers_in": topup_week["transfers_in"],
+        "extra_transfers_out": topup_week["transfers_out"],
         "verdict": (
-            f"Taking the -{hit_week['hit_cost']} projects {gain:+.1f} pts over "
-            f"{len(hit_plan['weeks'])} gameweeks after the hit — "
-            + ("worth it." if gain > 0 else "not worth it, use free transfers only.")
+            f"On top of the free transfer(s) above, taking the -{topup_week['hit_cost']} "
+            f"projects {gain:+.1f} pts over {len(topup_plan['weeks'])} gameweeks after "
+            "the hit — " + ("worth it." if gain > 0 else "not worth it, use free transfers only.")
         ),
     }
 
@@ -333,12 +371,8 @@ def _plan_from_team(predictions_df, team_state, upcoming_gw):
         predictions_df, team_state, xp_by_gw, gameweeks, max_total_hits=0
     )
 
-    logger.info("Planning again, allowing points hits where they clear their cost...")
-    hit_plan = transfer_optimizer.plan_transfers(
-        predictions_df, team_state, xp_by_gw, gameweeks
-    )
-
-    hit_rec = _hit_recommendation(free_plan, hit_plan)
+    logger.info("Checking whether a hit ON TOP of that plan is worth it...")
+    hit_rec = _hit_recommendation(team_state, free_plan, predictions_df, xp_by_gw, gameweeks)
     if hit_rec and hit_rec["worth_it"]:
         logger.info("  A -%d hit IS worth taking this week: %s",
                     hit_rec["hit_cost"], hit_rec["verdict"])
@@ -347,7 +381,6 @@ def _plan_from_team(predictions_df, team_state, upcoming_gw):
 
     plan = free_plan
     plan["hit_recommendation"] = hit_rec
-    plan["hit_plan"] = hit_plan
 
     week = plan["immediate"]
     costs = predictions_df.set_index("player_id")["now_cost"].to_dict()
