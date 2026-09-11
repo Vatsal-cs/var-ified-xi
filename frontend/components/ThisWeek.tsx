@@ -123,13 +123,36 @@ export default function ThisWeek({ team }: { team: OptimizedTeam }) {
                 — worth it?
               </p>
               {hit?.worth_it ? (
-                <p className="mt-1.5 font-body text-sm text-var-amber">
-                  Yes, take the &minus;{hit.hit_cost}.{" "}
-                  <span className="text-ink-200">{hit.verdict}</span>
-                </p>
+                <>
+                  <p className="mt-1.5 font-body text-sm text-var-amber">
+                    Yes — on top of the free transfer(s) above, also take the &minus;
+                    {hit.hit_cost}:
+                  </p>
+                  <ul className="mt-2 space-y-1.5">
+                    {hit.extra_transfers_out.map((out, i) => {
+                      const inn = hit.extra_transfers_in[i];
+                      return (
+                        <li
+                          key={out.player_id}
+                          className="flex flex-wrap items-center gap-x-2 gap-y-0.5 font-mono text-sm"
+                        >
+                          <span className="text-var-crimson line-through decoration-var-crimson/40">
+                            {out.name}
+                          </span>
+                          <span aria-hidden className="text-ink-500">
+                            &rarr;
+                          </span>
+                          <span className="font-medium text-var-green">{inn?.name ?? "—"}</span>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                  <p className="mt-2 font-body text-xs text-ink-300">{hit.verdict}</p>
+                </>
               ) : (
                 <p className="mt-1.5 font-body text-sm text-ink-300">
-                  No — nothing this week out-earns its &minus;4. Use free transfers only.
+                  No — nothing beyond the free transfer(s) above out-earns its &minus;4.
+                  Stop there.
                 </p>
               )}
             </div>
