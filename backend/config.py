@@ -75,9 +75,12 @@ STARTING_XI_LIMITS = {
 
 MAX_PLAYERS_PER_CLUB = 3
 
-# Transfer economy. One free transfer is earned per gameweek and they bank up
-# to five; anything beyond what you have banked costs points.
-MAX_FREE_TRANSFERS = 5
+# Transfer economy. One free transfer is earned per gameweek; unused ones
+# bank up to a maximum of 2 available at once (this week's plus one rolled
+# over) — NOT 5. Verified against a real entry's history (GW2 0 used -> GW3
+# had 2 available; GW3 1 used, GW4 0 used -> GW5 had 2 available, not 3 as
+# the old cap of 5 would predict). Anything beyond what's banked costs points.
+MAX_FREE_TRANSFERS = 2
 TRANSFER_HIT_COST = 4  # points deducted per extra transfer
 
 # ---------------------------------------------------------------------------
