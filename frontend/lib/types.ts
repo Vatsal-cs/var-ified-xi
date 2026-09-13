@@ -55,6 +55,18 @@ export interface HitRecommendation {
   verdict: string;
 }
 
+export interface ChipSuggestion {
+  chip: "wildcard" | "bboost" | "3xc" | "freehit";
+  gameweek: number;
+  reason: string;
+}
+
+export interface ChipWatch {
+  checked_through_gw: number;
+  next_double_gw: number | null;
+  next_blank_gw: number | null;
+}
+
 export interface TeamInfo {
   name: string;
   entry_id: number;
@@ -81,4 +93,8 @@ export interface OptimizedTeam {
   transfer_plan?: { weeks: PlannedWeek[]; hit_recommendation?: HitRecommendation | null };
   /** Present only in transfer_plan mode. */
   team?: TeamInfo;
+  /** Named, actionable chip suggestions inside the planning horizon. */
+  chip_advice?: ChipSuggestion[];
+  /** Whole-season DGW/BGW scan, so "nothing suggested" reads as watched, not silent. */
+  chip_watch?: ChipWatch;
 }

@@ -8,6 +8,7 @@ import PitchView from "@/components/PitchView";
 import BenchStrip from "@/components/BenchStrip";
 import SquadStats from "@/components/SquadStats";
 import TransfersPanel from "@/components/TransfersPanel";
+import ChipAdvice from "@/components/ChipAdvice";
 import PipelineExplainer from "@/components/PipelineExplainer";
 import Glossary from "@/components/Glossary";
 import { Section } from "@/components/ui";
@@ -44,6 +45,22 @@ export default function Home() {
       <main className="mx-auto max-w-5xl space-y-14 px-5 py-10 pb-28 sm:space-y-16">
         {/* The decision that's due */}
         <ThisWeek team={team} />
+
+        {/* Wildcard / Triple Captain / Bench Boost / Free Hit — named the
+            moment a double or blank gameweek is close enough to act on,
+            and explicit about "watching, nothing yet" otherwise. */}
+        <Section
+          id="chips"
+          eyebrow="Chip watch"
+          title="When to play a chip"
+          lede="Double and blank gameweeks are the biggest single-week point swings in the game. This checks the full fixture calendar every run."
+        >
+          <ChipAdvice
+            advice={team.chip_advice}
+            watch={team.chip_watch}
+            horizonGws={team.horizon_gws}
+          />
+        </Section>
 
         {/* The squad it produces */}
         <Section
