@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-13T20:10:10.731869+00:00",
+  "generated_at": "2026-09-13T20:50:20.709146+00:00",
   "gameweek": 5,
   "horizon_gws": 6,
   "mode": "transfer_plan",
@@ -312,6 +312,11 @@
   ],
   "captain_id": 411,
   "vice_captain_id": 154,
+  "chip_watch": {
+    "checked_through_gw": 38,
+    "next_double_gw": null,
+    "next_blank_gw": null
+  },
   "transfer_plan": {
     "weeks": [
       {

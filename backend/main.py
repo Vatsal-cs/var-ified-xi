@@ -69,7 +69,7 @@ def order_bench(bench_ids: list, pred_lookup: dict) -> list:
 
 def build_output_json(bootstrap: dict, predictions_df, result: dict,
                       plan: dict = None, team_state=None,
-                      chip_advice: list = None) -> dict:
+                      chip_advice: list = None, chip_watch: dict = None) -> dict:
     """Assembles the final clean JSON contract the frontend will consume."""
     teams_lookup = {t["id"]: t["name"] for t in bootstrap["teams"]}
     pos_lookup = config.POSITIONS
@@ -118,6 +118,8 @@ def build_output_json(bootstrap: dict, predictions_df, result: dict,
 
     if chip_advice:
         output["chip_advice"] = chip_advice
+    if chip_watch:
+        output["chip_watch"] = chip_watch
     if plan:
         output["transfer_plan"] = _plan_payload(plan, pred_lookup, pos_lookup, teams_lookup)
     if team_state:
@@ -248,15 +250,29 @@ def run_pipeline(team_id: int = None) -> None:
                     len(predictions_df), config.HORIZON_GWS)
         result = optimizer.optimize_squad(predictions_df, objective_col="horizon_points")
 
-    # 6. Chip advice from the fixture calendar
+    # 6. Chip advice from the fixture calendar. Actionable advice only covers
+    # the planning horizon (it needs to know your actual squad that week);
+    # the full-season scan is a lightweight "is there even anything to
+    # watch for" check so the dashboard can say so explicitly instead of
+    # going quiet, which reads the same as broken.
     chip_advice = chips.advise(
         fixtures, bootstrap["teams"], upcoming_gw,
         chips_available=team_state.chips_available if team_state else None,
+        predictions_df=predictions_df,
+        owned_squad=result["squad_ids"] if team_state else None,
+        bench_ids=result["bench_ids"],
     )
+    season_scan = chips.scan_full_season(fixtures, bootstrap["teams"], last_finished_gw=upcoming_gw - 1)
+    chip_watch = {
+        "checked_through_gw": 38,
+        "next_double_gw": min((d["gameweek"] for d in season_scan["doubles"]), default=None),
+        "next_blank_gw": min((b["gameweek"] for b in season_scan["blanks"]), default=None),
+    }
 
     # 7. Write output
     output = build_output_json(bootstrap, predictions_df, result, plan=plan,
-                               team_state=team_state, chip_advice=chip_advice)
+                               team_state=team_state, chip_advice=chip_advice,
+                               chip_watch=chip_watch)
 
     config.OUTPUT_JSON_PATH.write_text(json.dumps(output, indent=2))
     config.FRONTEND_JSON_PATH.write_text(json.dumps(output, indent=2))
