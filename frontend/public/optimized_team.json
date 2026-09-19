@@ -1,11 +1,11 @@
 {
-  "generated_at": "2026-09-18T12:14:47.789924+00:00",
-  "gameweek": 5,
+  "generated_at": "2026-09-19T03:18:35.965564+00:00",
+  "gameweek": 6,
   "horizon_gws": 6,
   "mode": "transfer_plan",
-  "budget_used_m": 99.8,
+  "budget_used_m": 99.9,
   "budget_total_m": 100.0,
-  "predicted_total_points": 59.82,
+  "predicted_total_points": 60.52,
   "starting_xi": [
     {
       "player_id": 350,
@@ -13,98 +13,78 @@
       "position": "GK",
       "team": "Liverpool",
       "now_cost_m": 5.5,
-      "predicted_points": 4.69,
-      "horizon_points": 17.32,
+      "predicted_points": 4.23,
+      "horizon_points": 17.15,
       "xp_by_gw": {
-        "5": 4.69,
-        "6": 3.96,
-        "7": 3.99,
-        "8": 4.05,
-        "9": 4.06,
-        "10": 3.99
+        "6": 4.23,
+        "7": 4.1,
+        "8": 4.07,
+        "9": 4.09,
+        "10": 4.1,
+        "11": 4.16
       },
-      "start_probability": 0.96,
+      "start_probability": 0.93,
       "is_captain": false,
       "is_vice_captain": false
     },
     {
-      "player_id": 330,
-      "name": "Bogle",
+      "player_id": 277,
+      "name": "Egan",
       "position": "DEF",
-      "team": "Leeds",
-      "now_cost_m": 4.6,
-      "predicted_points": 4.97,
-      "horizon_points": 20.48,
+      "team": "Hull City",
+      "now_cost_m": 4.1,
+      "predicted_points": 5.03,
+      "horizon_points": 18.13,
       "xp_by_gw": {
-        "5": 4.97,
-        "6": 5.23,
-        "7": 4.86,
-        "8": 4.68,
-        "9": 4.81,
-        "10": 4.88
+        "6": 5.03,
+        "7": 4.05,
+        "8": 4.09,
+        "9": 3.43,
+        "10": 4.86,
+        "11": 4.65
       },
-      "start_probability": 0.85,
+      "start_probability": 0.88,
       "is_captain": false,
       "is_vice_captain": false
     },
     {
-      "player_id": 115,
-      "name": "De Cuyper",
+      "player_id": 472,
+      "name": "Murillo",
       "position": "DEF",
-      "team": "Brighton",
-      "now_cost_m": 4.9,
-      "predicted_points": 3.73,
-      "horizon_points": 15.38,
+      "team": "Nott'm Forest",
+      "now_cost_m": 5.5,
+      "predicted_points": 4.42,
+      "horizon_points": 16.4,
       "xp_by_gw": {
-        "5": 3.73,
-        "6": 3.47,
-        "7": 3.75,
-        "8": 3.81,
-        "9": 3.8,
-        "10": 3.75
+        "6": 4.42,
+        "7": 3.84,
+        "8": 3.76,
+        "9": 3.76,
+        "10": 3.84,
+        "11": 3.81
+      },
+      "start_probability": 0.86,
+      "is_captain": false,
+      "is_vice_captain": false
+    },
+    {
+      "player_id": 449,
+      "name": "Hall",
+      "position": "DEF",
+      "team": "Newcastle",
+      "now_cost_m": 5.2,
+      "predicted_points": 3.53,
+      "horizon_points": 14.43,
+      "xp_by_gw": {
+        "6": 3.53,
+        "7": 3.57,
+        "8": 3.39,
+        "9": 3.44,
+        "10": 3.42,
+        "11": 3.43
       },
       "start_probability": 0.89,
       "is_captain": false,
-      "is_vice_captain": false
-    },
-    {
-      "player_id": 391,
-      "name": "Gvardiol",
-      "position": "DEF",
-      "team": "Man City",
-      "now_cost_m": 5.7,
-      "predicted_points": 3.77,
-      "horizon_points": 15.19,
-      "xp_by_gw": {
-        "5": 3.77,
-        "6": 3.31,
-        "7": 3.84,
-        "8": 3.68,
-        "9": 3.74,
-        "10": 3.66
-      },
-      "start_probability": 0.87,
-      "is_captain": false,
-      "is_vice_captain": false
-    },
-    {
-      "player_id": 426,
-      "name": "B.Fernandes",
-      "position": "MID",
-      "team": "Man Utd",
-      "now_cost_m": 12.0,
-      "predicted_points": 6.57,
-      "horizon_points": 27.08,
-      "xp_by_gw": {
-        "5": 6.57,
-        "6": 6.18,
-        "7": 6.57,
-        "8": 6.69,
-        "9": 6.58,
-        "10": 6.69
-      },
-      "start_probability": 0.95,
-      "is_captain": true,
       "is_vice_captain": false
     },
     {
@@ -113,35 +93,15 @@
       "position": "MID",
       "team": "Brighton",
       "now_cost_m": 5.7,
-      "predicted_points": 5.21,
-      "horizon_points": 24.69,
+      "predicted_points": 6.73,
+      "horizon_points": 28.12,
       "xp_by_gw": {
-        "5": 5.21,
-        "6": 6.19,
-        "7": 5.83,
-        "8": 6.87,
-        "9": 6.14,
-        "10": 5.83
-      },
-      "start_probability": 0.95,
-      "is_captain": false,
-      "is_vice_captain": false
-    },
-    {
-      "player_id": 40,
-      "name": "Rogers",
-      "position": "MID",
-      "team": "Chelsea",
-      "now_cost_m": 7.7,
-      "predicted_points": 5.88,
-      "horizon_points": 23.9,
-      "xp_by_gw": {
-        "5": 5.88,
-        "6": 5.31,
-        "7": 5.88,
-        "8": 5.85,
-        "9": 5.89,
-        "10": 5.84
+        "6": 6.73,
+        "7": 6.34,
+        "8": 7.36,
+        "9": 6.77,
+        "10": 6.34,
+        "11": 7.24
       },
       "start_probability": 0.91,
       "is_captain": false,
@@ -153,17 +113,17 @@
       "position": "MID",
       "team": "Chelsea",
       "now_cost_m": 9.7,
-      "predicted_points": 5.46,
-      "horizon_points": 22.25,
+      "predicted_points": 4.21,
+      "horizon_points": 18.86,
       "xp_by_gw": {
-        "5": 5.46,
-        "6": 5.04,
-        "7": 5.46,
-        "8": 5.4,
-        "9": 5.44,
-        "10": 5.42
+        "6": 4.21,
+        "7": 4.67,
+        "8": 4.71,
+        "9": 4.72,
+        "10": 4.66,
+        "11": 4.39
       },
-      "start_probability": 0.93,
+      "start_probability": 0.86,
       "is_captain": false,
       "is_vice_captain": false
     },
@@ -173,38 +133,78 @@
       "position": "MID",
       "team": "Liverpool",
       "now_cost_m": 7.0,
-      "predicted_points": 4.39,
-      "horizon_points": 18.34,
+      "predicted_points": 4.82,
+      "horizon_points": 18.42,
       "xp_by_gw": {
-        "5": 4.39,
-        "6": 4.33,
-        "7": 4.46,
-        "8": 4.46,
-        "9": 4.47,
-        "10": 4.46
+        "6": 4.82,
+        "7": 4.32,
+        "8": 4.33,
+        "9": 4.33,
+        "10": 4.32,
+        "11": 4.24
       },
-      "start_probability": 0.94,
+      "start_probability": 0.91,
       "is_captain": false,
       "is_vice_captain": false
     },
     {
-      "player_id": 106,
-      "name": "Thiago",
-      "position": "FWD",
+      "player_id": 98,
+      "name": "Janelt",
+      "position": "MID",
       "team": "Brentford",
-      "now_cost_m": 7.8,
-      "predicted_points": 4.85,
-      "horizon_points": 19.72,
+      "now_cost_m": 5.0,
+      "predicted_points": 4.74,
+      "horizon_points": 16.97,
       "xp_by_gw": {
-        "5": 4.85,
-        "6": 4.55,
-        "7": 4.82,
-        "8": 4.72,
-        "9": 4.85,
-        "10": 4.72
+        "6": 4.74,
+        "7": 3.82,
+        "8": 3.8,
+        "9": 3.81,
+        "10": 3.8,
+        "11": 4.31
       },
       "start_probability": 0.92,
       "is_captain": false,
+      "is_vice_captain": false
+    },
+    {
+      "player_id": 367,
+      "name": "Gakpo",
+      "position": "MID",
+      "team": "Liverpool",
+      "now_cost_m": 7.2,
+      "predicted_points": 3.8,
+      "horizon_points": 16.38,
+      "xp_by_gw": {
+        "6": 3.8,
+        "7": 4.03,
+        "8": 3.96,
+        "9": 3.97,
+        "10": 4.03,
+        "11": 3.94
+      },
+      "start_probability": 0.79,
+      "is_captain": false,
+      "is_vice_captain": false
+    },
+    {
+      "player_id": 411,
+      "name": "Haaland",
+      "position": "FWD",
+      "team": "Man City",
+      "now_cost_m": 15.6,
+      "predicted_points": 7.46,
+      "horizon_points": 34.28,
+      "xp_by_gw": {
+        "6": 7.46,
+        "7": 8.73,
+        "8": 8.53,
+        "9": 8.43,
+        "10": 8.37,
+        "11": 8.31
+      },
+      "start_probability": 0.89,
+      "is_captain": true,
       "is_vice_captain": false
     },
     {
@@ -213,17 +213,17 @@
       "position": "FWD",
       "team": "Newcastle",
       "now_cost_m": 6.2,
-      "predicted_points": 3.73,
-      "horizon_points": 15.1,
+      "predicted_points": 4.09,
+      "horizon_points": 15.42,
       "xp_by_gw": {
-        "5": 3.73,
-        "6": 3.36,
-        "7": 3.73,
-        "8": 3.65,
-        "9": 3.73,
-        "10": 3.67
+        "6": 4.09,
+        "7": 3.71,
+        "8": 3.48,
+        "9": 3.63,
+        "10": 3.5,
+        "11": 3.62
       },
-      "start_probability": 0.86,
+      "start_probability": 0.8,
       "is_captain": false,
       "is_vice_captain": false
     }
@@ -235,37 +235,57 @@
       "position": "GK",
       "team": "Coventry City",
       "now_cost_m": 4.5,
-      "predicted_points": 3.19,
-      "horizon_points": 12.59,
+      "predicted_points": 3.89,
+      "horizon_points": 13.14,
       "xp_by_gw": {
-        "5": 3.19,
-        "6": 2.74,
-        "7": 3.19,
-        "8": 2.95,
-        "9": 2.94,
-        "10": 3.19
+        "6": 3.89,
+        "7": 2.98,
+        "8": 2.91,
+        "9": 2.87,
+        "10": 2.98,
+        "11": 2.93
       },
-      "start_probability": 0.92,
+      "start_probability": 0.91,
       "is_captain": false,
       "is_vice_captain": false
     },
     {
-      "player_id": 472,
-      "name": "Murillo",
+      "player_id": 388,
+      "name": "Gu\u00e9hi",
       "position": "DEF",
-      "team": "Nott'm Forest",
-      "now_cost_m": 5.5,
-      "predicted_points": 3.64,
-      "horizon_points": 15.41,
+      "team": "Man City",
+      "now_cost_m": 6.0,
+      "predicted_points": 3.23,
+      "horizon_points": 14.37,
       "xp_by_gw": {
-        "5": 3.64,
-        "6": 3.89,
-        "7": 3.64,
-        "8": 3.72,
-        "9": 3.7,
-        "10": 3.64
+        "6": 3.23,
+        "7": 3.63,
+        "8": 3.46,
+        "9": 3.55,
+        "10": 3.47,
+        "11": 3.52
       },
-      "start_probability": 0.91,
+      "start_probability": 0.89,
+      "is_captain": false,
+      "is_vice_captain": false
+    },
+    {
+      "player_id": 115,
+      "name": "De Cuyper",
+      "position": "DEF",
+      "team": "Brighton",
+      "now_cost_m": 4.9,
+      "predicted_points": 2.95,
+      "horizon_points": 13.36,
+      "xp_by_gw": {
+        "6": 2.95,
+        "7": 3.34,
+        "8": 3.28,
+        "9": 3.28,
+        "10": 3.34,
+        "11": 3.26
+      },
+      "start_probability": 0.81,
       "is_captain": false,
       "is_vice_captain": false
     },
@@ -275,43 +295,23 @@
       "position": "FWD",
       "team": "Chelsea",
       "now_cost_m": 7.8,
-      "predicted_points": 3.28,
-      "horizon_points": 13.63,
+      "predicted_points": 2.5,
+      "horizon_points": 10.32,
       "xp_by_gw": {
-        "5": 3.28,
-        "6": 3.2,
-        "7": 3.28,
-        "8": 3.35,
-        "9": 3.37,
-        "10": 3.26
+        "6": 2.5,
+        "7": 2.41,
+        "8": 2.54,
+        "9": 2.53,
+        "10": 2.41,
+        "11": 2.53
       },
-      "start_probability": 0.95,
-      "is_captain": false,
-      "is_vice_captain": false
-    },
-    {
-      "player_id": 449,
-      "name": "Hall",
-      "position": "DEF",
-      "team": "Newcastle",
-      "now_cost_m": 5.2,
-      "predicted_points": 3.27,
-      "horizon_points": 13.34,
-      "xp_by_gw": {
-        "5": 3.27,
-        "6": 3.02,
-        "7": 3.27,
-        "8": 3.27,
-        "9": 3.2,
-        "10": 3.3
-      },
-      "start_probability": 0.91,
+      "start_probability": 0.78,
       "is_captain": false,
       "is_vice_captain": false
     }
   ],
-  "captain_id": 426,
-  "vice_captain_id": 40,
+  "captain_id": 411,
+  "vice_captain_id": 124,
   "chip_watch": {
     "checked_through_gw": 38,
     "next_double_gw": null,
@@ -320,99 +320,53 @@
   "transfer_plan": {
     "weeks": [
       {
-        "gameweek": 5,
-        "transfers_in": [
-          {
-            "player_id": 330,
-            "name": "Bogle",
-            "cost_m": 4.6,
-            "predicted_points": 4.97,
-            "position": "DEF",
-            "team": "Leeds"
-          },
-          {
-            "player_id": 40,
-            "name": "Rogers",
-            "cost_m": 7.7,
-            "predicted_points": 5.88,
-            "position": "MID",
-            "team": "Chelsea"
-          }
-        ],
-        "transfers_out": [
-          {
-            "player_id": 388,
-            "name": "Gu\u00e9hi",
-            "sell_price_m": 6.0,
-            "predicted_points": 3.39,
-            "position": "DEF",
-            "team": "Man City"
-          },
-          {
-            "player_id": 367,
-            "name": "Gakpo",
-            "sell_price_m": 7.1,
-            "predicted_points": 4.3,
-            "position": "MID",
-            "team": "Liverpool"
-          }
-        ],
-        "transfer_count": 2,
-        "free_transfers": 2,
-        "hits": 0,
-        "hit_cost": 0,
-        "bank_m": 1.6,
-        "predicted_points": 59.82,
-        "captain_id": 426
-      },
-      {
         "gameweek": 6,
         "transfers_in": [
           {
-            "player_id": 379,
-            "name": "Isak",
-            "cost_m": 9.1,
-            "predicted_points": 5.84,
-            "position": "FWD",
-            "team": "Liverpool"
+            "player_id": 277,
+            "name": "Egan",
+            "cost_m": 4.1,
+            "predicted_points": 5.03,
+            "position": "DEF",
+            "team": "Hull City"
           }
         ],
         "transfers_out": [
           {
-            "player_id": 165,
-            "name": "Jo\u00e3o Pedro",
-            "sell_price_m": 7.6,
-            "predicted_points": 3.2,
-            "position": "FWD",
-            "team": "Chelsea"
+            "player_id": 391,
+            "name": "Gvardiol",
+            "sell_price_m": 5.6,
+            "predicted_points": 3.17,
+            "position": "DEF",
+            "team": "Man City"
           }
         ],
         "transfer_count": 1,
         "free_transfers": 1,
         "hits": 0,
         "hit_cost": 0,
-        "bank_m": 0.1,
-        "predicted_points": 60.18,
-        "captain_id": 124
+        "bank_m": 1.7,
+        "predicted_points": 60.52,
+        "captain_id": 411
       },
       {
         "gameweek": 7,
         "transfers_in": [
           {
-            "player_id": 544,
-            "name": "Xhaka",
-            "cost_m": 5.5,
-            "predicted_points": 5.41,
+            "player_id": 397,
+            "name": "Semenyo",
+            "cost_m": 8.4,
+            "predicted_points": 6.21,
             "position": "MID",
-            "team": "Sunderland"
+            "team": "Man City"
           }
         ],
         "transfers_out": [
           {
-            "player_id": 368,
-            "name": "Szoboszlai",
-            "sell_price_m": 7.0,
-            "predicted_points": 4.46,
+            "player_id": 367,
+            "name": "Gakpo",
+            "sell_price_m": 7.1,
+            "predicted_points": 4.03,
             "position": "MID",
             "team": "Liverpool"
           }
@@ -421,9 +375,9 @@
         "free_transfers": 1,
         "hits": 0,
         "hit_cost": 0,
-        "bank_m": 1.6,
-        "predicted_points": 62.98,
-        "captain_id": 426
+        "bank_m": 0.4,
+        "predicted_points": 62.15,
+        "captain_id": 411
       },
       {
         "gameweek": 8,
@@ -432,37 +386,67 @@
             "player_id": 229,
             "name": "Tarkowski",
             "cost_m": 6.1,
-            "predicted_points": 5.31,
+            "predicted_points": 5.78,
             "position": "DEF",
             "team": "Everton"
           }
         ],
         "transfers_out": [
           {
-            "player_id": 449,
-            "name": "Hall",
-            "sell_price_m": 5.1,
-            "predicted_points": 3.27,
+            "player_id": 388,
+            "name": "Gu\u00e9hi",
+            "sell_price_m": 6.0,
+            "predicted_points": 3.46,
             "position": "DEF",
-            "team": "Newcastle"
+            "team": "Man City"
           }
         ],
         "transfer_count": 1,
         "free_transfers": 1,
         "hits": 0,
         "hit_cost": 0,
-        "bank_m": 0.6,
-        "predicted_points": 65.01,
-        "captain_id": 124
+        "bank_m": 0.3,
+        "predicted_points": 64.32,
+        "captain_id": 411
       },
       {
         "gameweek": 9,
         "transfers_in": [
           {
+            "player_id": 26,
+            "name": "Havertz",
+            "cost_m": 7.6,
+            "predicted_points": 4.64,
+            "position": "FWD",
+            "team": "Arsenal"
+          }
+        ],
+        "transfers_out": [
+          {
+            "player_id": 165,
+            "name": "Jo\u00e3o Pedro",
+            "sell_price_m": 7.6,
+            "predicted_points": 2.53,
+            "position": "FWD",
+            "team": "Chelsea"
+          }
+        ],
+        "transfer_count": 1,
+        "free_transfers": 1,
+        "hits": 0,
+        "hit_cost": 0,
+        "bank_m": 0.3,
+        "predicted_points": 64.16,
+        "captain_id": 411
+      },
+      {
+        "gameweek": 10,
+        "transfers_in": [
+          {
             "player_id": 12,
             "name": "Saka",
             "cost_m": 9.5,
-            "predicted_points": 6.12,
+            "predicted_points": 6.16,
             "position": "MID",
             "team": "Arsenal"
           }
@@ -472,7 +456,7 @@
             "player_id": 154,
             "name": "Palmer",
             "sell_price_m": 9.6,
-            "predicted_points": 5.44,
+            "predicted_points": 4.66,
             "position": "MID",
             "team": "Chelsea"
           }
@@ -481,48 +465,48 @@
         "free_transfers": 1,
         "hits": 0,
         "hit_cost": 0,
-        "bank_m": 0.7,
-        "predicted_points": 65.09,
-        "captain_id": 426
+        "bank_m": 0.4,
+        "predicted_points": 65.22,
+        "captain_id": 411
       },
       {
-        "gameweek": 10,
+        "gameweek": 11,
         "transfers_in": [
           {
-            "player_id": 277,
-            "name": "Egan",
-            "cost_m": 4.1,
-            "predicted_points": 4.61,
-            "position": "DEF",
-            "team": "Hull City"
+            "player_id": 544,
+            "name": "Xhaka",
+            "cost_m": 5.5,
+            "predicted_points": 5.6,
+            "position": "MID",
+            "team": "Sunderland"
           }
         ],
         "transfers_out": [
           {
-            "player_id": 472,
-            "name": "Murillo",
-            "sell_price_m": 5.5,
-            "predicted_points": 3.64,
-            "position": "DEF",
-            "team": "Nott'm Forest"
+            "player_id": 368,
+            "name": "Szoboszlai",
+            "sell_price_m": 7.0,
+            "predicted_points": 4.24,
+            "position": "MID",
+            "team": "Liverpool"
           }
         ],
         "transfer_count": 1,
         "free_transfers": 1,
         "hits": 0,
         "hit_cost": 0,
-        "bank_m": 2.1,
-        "predicted_points": 64.09,
-        "captain_id": 426
+        "bank_m": 1.9,
+        "predicted_points": 68.21,
+        "captain_id": 411
       }
     ]
   },
   "team": {
     "name": "Var-ified XI",
     "entry_id": 9927826,
-    "bank_m": 0.8,
-    "squad_value_m": 101.2,
-    "free_transfers": 2,
+    "bank_m": 0.2,
+    "squad_value_m": 101.7,
+    "free_transfers": 1,
     "chips_available": [
       "wildcard",
       "bboost",
