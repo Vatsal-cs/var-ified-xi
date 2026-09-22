@@ -1,0 +1,93 @@
+name: Season simulation
+
+# Races transfer policies over completed seasons and writes the result table
+# into the run summary, so it can be read on github.com without pulling
+# anything down.
+#
+# Manual only. This is a research job, not part of the weekly pipeline: it
+# takes hours rather than minutes and nothing downstream depends on it.
+on:
+  workflow_dispatch:
+    inputs:
+      seasons:
+        description: "Seasons to simulate, space separated"
+        type: string
+        default: "2025-26 2024-25"
+      policies:
+        description: "Policies to race, space separated"
+        type: string
+        default: "baseline no_transfers ft_margin_1.0 ft_margin_1.5 no_hits captain_ceiling"
+      stride:
+        description: "Simulate every Nth gameweek (1 = every week; higher is faster but distorts the transfer economy)"
+        type: string
+        default: "1"
+      start_gw:
+        description: "First gameweek to simulate"
+        type: string
+        default: "2"
+
+concurrency:
+  group: season-simulation
+  cancel-in-progress: false
+
+jobs:
+  simulate:
+    runs-on: ubuntu-latest
+    # A full two-season, six-policy race is a few hours of MILP solving on a
+    # two-core runner. Well inside GitHub's 6-hour ceiling, but not by so much
+    # that the default 360 can be left implicit.
+    timeout-minutes: 350
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: backend/requirements.txt
+
+      - name: Install dependencies
+        working-directory: backend
+        run: pip install -r requirements.txt
+
+      - name: Restore historical data cache
+        uses: actions/cache@v4
+        with:
+          path: backend/data/raw/historical_*
+          key: fpl-historical-v1
+
+      - name: Run the simulation
+        working-directory: backend
+        run: |
+          set -o pipefail
+          python -u -m data_engine.season_sim \
+            --seasons ${{ inputs.seasons }} \
+            --policies ${{ inputs.policies }} \
+            --start-gw ${{ inputs.start_gw }} \
+            --stride ${{ inputs.stride }} \
+            2>&1 | tee simulation.log
+
+      - name: Publish the result table to the run summary
+        if: always()
+        working-directory: backend
+        run: |
+          {
+            echo "## Season simulation"
+            echo ""
+            echo "\`seasons: ${{ inputs.seasons }}\` &middot; \`policies: ${{ inputs.policies }}\` &middot; \`stride: ${{ inputs.stride }}\`"
+            echo ""
+            echo '```'
+            # The verdict table is the tail; the per-gameweek lines above it
+            # are in the uploaded log for anyone who wants them.
+            tail -n 25 simulation.log
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload the full log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: simulation-log
+          path: backend/simulation.log
+          retention-days: 30

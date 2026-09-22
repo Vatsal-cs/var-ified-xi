@@ -26,6 +26,7 @@ import logging
 import pandas as pd
 import pulp
 
+import config
 from config import (
     SQUAD_SIZE,
     SQUAD_POSITION_LIMITS,
@@ -78,6 +79,7 @@ def plan_transfers(
     gameweeks: list,
     free_hit_gw: int = None,
     max_total_hits: int = None,
+    free_transfer_margin: float = None,
 ) -> dict:
     """Solves the multi-gameweek transfer problem.
 
@@ -90,6 +92,10 @@ def plan_transfers(
                 Pass 0 for a plan that only ever spends free transfers;
                 leave None to let the solver take a hit whenever it
                 clears its cost by HIT_MARGIN.
+    free_transfer_margin: expected points a FREE transfer must gain before it
+                is worth making. Defaults to config.FREE_TRANSFER_MARGIN.
+                Read through the module rather than bound at import so the
+                simulation harness can sweep it.
 
     Returns the full plan: transfers per gameweek, the resulting squad, and
     the starting XI and captain for the immediate gameweek.
@@ -205,6 +211,9 @@ def plan_transfers(
     # bench strength (they score when a starter doesn't play). Later gameweeks
     # are discounted: a projection five weeks out is a weaker claim than one
     # for Saturday, and you'll get to revise it before then anyway.
+    if free_transfer_margin is None:
+        free_transfer_margin = config.FREE_TRANSFER_MARGIN
+
     objective = []
     for idx, t in enumerate(gameweeks):
         weight = HORIZON_DECAY ** idx
@@ -214,6 +223,10 @@ def plan_transfers(
             objective.append(weight * points * cap[i, t])
             objective.append(weight * BENCH_WEIGHT * points * (squad[i, t] - start[i, t]))
         objective.append(-weight * (TRANSFER_HIT_COST + HIT_MARGIN) * hits[t])
+        # Transfers not paid for with points still aren't free: banking one is
+        # worth something, and a sub-noise projected gain is worth nothing.
+        if free_transfer_margin:
+            objective.append(-weight * free_transfer_margin * (transfers[t] - hits[t]))
 
     prob += pulp.lpSum(objective)
 
