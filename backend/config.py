@@ -266,6 +266,20 @@ SOLVER_TIME_LIMIT = 120
 # only shows up when the decay-weighted gain over the horizon clears ~6.
 HIT_MARGIN = 2.0
 
+# The same idea for transfers that cost no points. A free transfer looks free,
+# so with no margin the solver makes one every single week: there is always
+# SOME player projecting 0.1 higher, and nothing in the objective to say that
+# 0.1 is indistinguishable from zero. Three real costs are invisible to it —
+# the option value of banking toward two transfers, the ability to react to
+# team news you don't have yet, and the fact that the projected gain carries
+# an error bar of about 1.3 points per player per week.
+#
+# So a free transfer is charged this many expected points. Set it to 0.0 to
+# get the old always-transfer behaviour. season_sim.py is the harness that
+# decides the value — it is the first thing in this project able to measure a
+# transfer-planner setting at all.
+FREE_TRANSFER_MARGIN = 0.0
+
 # The captain's points are doubled, so the pick that matters is the one
 # with the highest realistic CEILING, not the highest average. A second
 # stage-2 regressor is fit to this quantile of points-given-a-start and
