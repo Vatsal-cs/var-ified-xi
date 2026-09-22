@@ -113,6 +113,8 @@ class Policy:
     captain_col: str = "predicted_points"
     max_total_hits: int = None
     horizon: int = HORIZON_GWS
+    # A hit is charged TRANSFER_HIT_COST + this. None keeps config.HIT_MARGIN.
+    hit_margin: float = None
     # Never transfers at all. The floor: how far does the opening squad get
     # you on its own? Any policy that can't beat this is doing harm.
     frozen_squad: bool = False
@@ -152,6 +154,34 @@ POLICIES = {
         name="no_hits",
         description="free transfers only, never take a -4",
         max_total_hits=0,
+    ),
+
+    # Hit pricing. A hit really costs 4; the margin on top is how much MORE
+    # than 4 the move has to gain before it's worth the certainty of losing
+    # them. The first full run had the shipping margin of 2.0 spending 228
+    # points on hits and still finishing behind a policy that took none, so
+    # the sweep runs upward from there.
+    "hit_margin_4": Policy(
+        name="hit_margin_4",
+        description="a hit must gain 8 (4 cost + 4 margin)",
+        hit_margin=4.0,
+    ),
+    "hit_margin_6": Policy(
+        name="hit_margin_6",
+        description="a hit must gain 10 (4 cost + 6 margin)",
+        hit_margin=6.0,
+    ),
+    "combined": Policy(
+        name="combined",
+        description="best of both: free transfers must gain 1.5, hits must gain 8",
+        free_transfer_margin=1.5,
+        hit_margin=4.0,
+    ),
+    "combined_6": Policy(
+        name="combined_6",
+        description="free transfers must gain 1.5, hits must gain 10",
+        free_transfer_margin=1.5,
+        hit_margin=6.0,
     ),
     "captain_ceiling": Policy(
         name="captain_ceiling",
@@ -376,6 +406,7 @@ def _plan_week(state: ManagerState, players: pd.DataFrame, per_gw: pd.DataFrame,
         players, team_state, xp_by_gw, gameweeks,
         max_total_hits=policy.max_total_hits,
         free_transfer_margin=policy.free_transfer_margin,
+        hit_margin=policy.hit_margin,
     )
     return plan["immediate"]
 
@@ -515,7 +546,8 @@ def simulate(season_df: pd.DataFrame, policies: list, prior_seasons_df=None,
     }
 
 
-def _report(results: dict, policies: list) -> None:
+def _report(results: dict, policies: list,
+            title: str = "TRANSFER-CONSTRAINED SEASON SIMULATION") -> None:
     rows = []
     for policy in policies:
         r = results.get(policy.name)
@@ -545,7 +577,7 @@ def _report(results: dict, policies: list) -> None:
 
     print()
     print("=" * 84)
-    print("TRANSFER-CONSTRAINED SEASON SIMULATION")
+    print(title)
     print("=" * 84)
     print(f"{'policy':<18}{'NET':>7}{'raw':>7}{'hits':>6}{'cost':>7}"
           f"{'trans':>7}{'capt':>7}{'pts/gw':>8}{'vs base':>9}")
@@ -610,7 +642,13 @@ def main():
             for k in totals[name]:
                 totals[name][k] += r[k]
 
-    _report(totals, policies)
+        # Per season as well as pooled: this project's standard is that a
+        # change has to win EVERY season, because one big season can carry a
+        # change that is actually harmful into looking like an improvement.
+        _report(res, policies, title=f"SEASON {season}")
+
+    if len(args.seasons) > 1:
+        _report(totals, policies, title="BOTH SEASONS POOLED")
 
 
 if __name__ == "__main__":

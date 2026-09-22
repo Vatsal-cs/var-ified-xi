@@ -80,6 +80,7 @@ def plan_transfers(
     free_hit_gw: int = None,
     max_total_hits: int = None,
     free_transfer_margin: float = None,
+    hit_margin: float = None,
 ) -> dict:
     """Solves the multi-gameweek transfer problem.
 
@@ -213,6 +214,8 @@ def plan_transfers(
     # for Saturday, and you'll get to revise it before then anyway.
     if free_transfer_margin is None:
         free_transfer_margin = config.FREE_TRANSFER_MARGIN
+    if hit_margin is None:
+        hit_margin = config.HIT_MARGIN
 
     objective = []
     for idx, t in enumerate(gameweeks):
@@ -222,7 +225,7 @@ def plan_transfers(
             objective.append(weight * points * start[i, t])
             objective.append(weight * points * cap[i, t])
             objective.append(weight * BENCH_WEIGHT * points * (squad[i, t] - start[i, t]))
-        objective.append(-weight * (TRANSFER_HIT_COST + HIT_MARGIN) * hits[t])
+        objective.append(-weight * (TRANSFER_HIT_COST + hit_margin) * hits[t])
         # Transfers not paid for with points still aren't free: banking one is
         # worth something, and a sub-noise projected gain is worth nothing.
         if free_transfer_margin:
