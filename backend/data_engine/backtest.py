@@ -57,6 +57,7 @@ Usage:
 """
 
 import argparse
+import contextlib
 import logging
 import sys
 import time
@@ -70,6 +71,7 @@ import xgboost as xgb
 import config
 from data_engine import feature_engineering, historical_data, optimizer, train_model
 from data_engine.odds_data import ODDS_FEATURE_COLUMNS
+from data_engine.setpiece_data import SETPIECE_FEATURE_COLUMNS
 
 logger = logging.getLogger(__name__)
 
@@ -101,6 +103,13 @@ class Variant:
     # Returns a Series of captain-selection values aligned to the gw rows.
     # None => captain on predicted_points (the pre-ceiling behaviour).
     captain_values: Callable[[object, pd.DataFrame], pd.Series] = None
+    # A context manager held open for the WHOLE variant, data loading
+    # included. Anything that changes how rows are BUILT — an optional
+    # feature join, a flag read inside historical_data — has to be active
+    # before load_season_frame runs, not just around fit and predict. A
+    # variant that only wrapped its fit would silently race against neutral
+    # columns and report a verdict on nothing. See main().
+    context: Callable[[], object] = None
 
     def build_training_set(self, history: pd.DataFrame) -> pd.DataFrame:
         prep = self.prepare or feature_engineering.build_training_set
@@ -120,6 +129,25 @@ class _with_features:
     def __exit__(self, *a):
         config.FEATURE_COLUMNS = list(_BASE_FEATURES)
         config.ATTACH_ODDS = self._old_odds
+
+
+class _setpiece_ctx:
+    """Turns on the set-piece join and widens the feature list.
+
+    Held open across data loading as well as fitting — the join happens in
+    historical_data while rows are built, so a fit-only wrapper would train
+    on columns that were never populated.
+    """
+    def __enter__(self):
+        config.FEATURE_COLUMNS = _BASE_FEATURES + [
+            c for c in SETPIECE_FEATURE_COLUMNS if c not in _BASE_FEATURES
+        ]
+        self._old = config.ATTACH_SETPIECE
+        config.ATTACH_SETPIECE = True
+
+    def __exit__(self, *a):
+        config.FEATURE_COLUMNS = list(_BASE_FEATURES)
+        config.ATTACH_SETPIECE = self._old
 
 
 def _bundle_predict(bundle, predict_df: pd.DataFrame) -> pd.Series:
@@ -203,6 +231,14 @@ VARIANTS = {
                     "captain on the mean projection",
         fit=lambda df: train_model.train_models(df, save=False),
         predict=_bundle_predict,
+    ),
+    "setpiece": Variant(
+        name="setpiece",
+        description="production plus set-piece duty (penalties/free kicks/corners) "
+                    "as 1/order features, joined per gameweek",
+        fit=lambda df: train_model.train_models(df, save=False),
+        predict=_bundle_predict,
+        context=_setpiece_ctx,
     ),
     "odds": Variant(
         name="odds",
@@ -530,29 +566,35 @@ def main(argv=None) -> None:
         logging.getLogger("data_engine.optimizer").setLevel(logging.WARNING)
         logging.getLogger("data_engine.feature_engineering").setLevel(logging.WARNING)
 
-    frames = {s: load_season_frame(s, i) for i, s in enumerate(args.seasons)}
-
     results = {}
     for variant_name in args.variants:
         variant = VARIANTS[variant_name]
-        for i, season in enumerate(args.seasons):
-            prior = None
-            if args.augment and i > 0:
-                prior = pd.concat(
-                    [feature_engineering.build_training_set(frames[s])
-                     for s in args.seasons[:i]],
-                    ignore_index=True,
-                )
+        # Data is rebuilt per variant, inside that variant's context, because
+        # an optional feature join happens while rows are BUILT. Loading once
+        # up front and flipping the flag later races the variant against
+        # neutral columns — a test that reports a number and measures nothing.
+        # The season CSVs are disk-cached, so the cost is a re-parse.
+        with (variant.context() if variant.context else contextlib.nullcontext()):
+            frames = {s: load_season_frame(s, i) for i, s in enumerate(args.seasons)}
 
-            logger.info("=== %s | season %s ===", variant_name, season)
-            started = time.time()
-            results[(variant_name, season)] = simulate_season(
-                frames[season], variant,
-                prior_seasons_df=prior,
-                start_gw=args.start_gw,
-                stride=args.stride,
-            )
-            logger.info("    finished in %.0fs", time.time() - started)
+            for i, season in enumerate(args.seasons):
+                prior = None
+                if args.augment and i > 0:
+                    prior = pd.concat(
+                        [feature_engineering.build_training_set(frames[s])
+                         for s in args.seasons[:i]],
+                        ignore_index=True,
+                    )
+
+                logger.info("=== %s | season %s ===", variant_name, season)
+                started = time.time()
+                results[(variant_name, season)] = simulate_season(
+                    frames[season], variant,
+                    prior_seasons_df=prior,
+                    start_gw=args.start_gw,
+                    stride=args.stride,
+                )
+                logger.info("    finished in %.0fs", time.time() - started)
 
     _print_report(results)
 

@@ -39,7 +39,10 @@ from config import (
     HORIZON_DECAY,
     FORM_SHRINKAGE_GAMES,
 )
+import config
+from data_engine import setpiece_data
 from data_engine.odds_data import ODDS_NEUTRAL
+from data_engine.setpiece_data import SETPIECE_NEUTRAL
 
 logger = logging.getLogger(__name__)
 
@@ -247,7 +250,30 @@ def build_gameweek_history_df(bootstrap: dict, player_histories: dict,
     if df.empty:
         raise ValueError("No gameweek history rows built — check player_histories input.")
     df.sort_values(["player_id", "round"], inplace=True)
+    attach_live_setpieces(df, bootstrap)
     return df
+
+
+def attach_live_setpieces(df: pd.DataFrame, bootstrap: dict) -> None:
+    """Stamps today's set-piece duties onto live rows, in place.
+
+    The bootstrap publishes only the CURRENT ordering, so unlike the
+    historical join this is one snapshot applied to every gameweek — a player
+    who took the job in October is credited for September too. The historical
+    seasons carry genuine per-gameweek values and are most of the training
+    data, so this is a small anachronism confined to the current season's
+    rows rather than a systematic one.
+    """
+    for col, neutral in SETPIECE_NEUTRAL.items():
+        df[col] = neutral
+    if not config.ATTACH_SETPIECE:
+        return
+
+    duties = setpiece_data.from_bootstrap(bootstrap)
+    for col in SETPIECE_NEUTRAL:
+        df[col] = df["player_id"].map(
+            lambda pid: duties.get(pid, {}).get(col, 0.0)
+        ).astype(float)
 
 
 def add_rolling_features(df: pd.DataFrame) -> pd.DataFrame:
@@ -256,7 +282,7 @@ def add_rolling_features(df: pd.DataFrame) -> pd.DataFrame:
     Also adds days_since_last_match, a rest/fixture-congestion proxy.
     """
     df = df.copy()
-    for _c, _v in ODDS_NEUTRAL.items():
+    for _c, _v in {**ODDS_NEUTRAL, **SETPIECE_NEUTRAL}.items():
         if _c not in df.columns:
             df[_c] = _v
     grp = df.groupby("player_id", group_keys=False)

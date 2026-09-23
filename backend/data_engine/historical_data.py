@@ -31,7 +31,7 @@ import pandas as pd
 
 import config
 from config import HISTORICAL_SEASONS, HISTORICAL_DATA_BASE_URL, RAW_DIR, FALLBACK_AGE
-from data_engine import odds_data
+from data_engine import odds_data, setpiece_data
 
 logger = logging.getLogger(__name__)
 
@@ -169,6 +169,7 @@ def fetch_season(season: str, season_index: int):
     out["opp_strength_defence"] = gw_df["opponent_team"].map(lambda o: id_strength.get(o, {}).get("defence", 1100))
 
     _attach_odds_features(out, gw_df, season)
+    _attach_setpiece_features(out, gw_df, season)
 
     return out
 
@@ -199,6 +200,34 @@ def _attach_odds_features(out: pd.DataFrame, gw_df: pd.DataFrame, season: str) -
         out[col] = vals
     matched = sum(1 for d, t in zip(match_date, team_canon) if (d, t) in lut)
     logger.info("Odds join %s: %d / %d player-rows matched", season, matched, len(out))
+
+
+def _attach_setpiece_features(out: pd.DataFrame, gw_df: pd.DataFrame, season: str) -> None:
+    """Joins per-gameweek set-piece duty onto each player row by (element,
+    gameweek). Rows with no match — a whole season this dataset doesn't cover,
+    or simply a player who takes nothing — get zero, which is what "no duty"
+    means in this encoding.
+    """
+    for col, neutral in setpiece_data.SETPIECE_NEUTRAL.items():
+        out[col] = neutral
+    if not config.ATTACH_SETPIECE:
+        return  # see config.ATTACH_SETPIECE
+
+    sp = setpiece_data.fetch_season_setpieces(season)
+    if sp.empty:
+        return
+
+    lut = sp.set_index(["element", "round"])[setpiece_data.SETPIECE_FEATURE_COLUMNS]
+    keys = pd.MultiIndex.from_arrays([
+        gw_df["element"].astype(int), gw_df["GW"].astype(int)
+    ])
+    joined = lut.reindex(keys).fillna(0.0)
+    for col in setpiece_data.SETPIECE_FEATURE_COLUMNS:
+        out[col] = joined[col].to_numpy()
+
+    duties = int((joined.sum(axis=1) > 0).sum())
+    logger.info("Set-piece join %s: %d / %d player-rows carry a duty",
+                season, duties, len(out))
 
 
 def build_historical_training_df(seasons=None) -> pd.DataFrame:
