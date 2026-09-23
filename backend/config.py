@@ -304,11 +304,35 @@ HIT_MARGIN = 4.0
 # finding is worth being able to re-run. Raise it only with new evidence.
 FREE_TRANSFER_MARGIN = 0.0
 
-# The captain's points are doubled, so the pick that matters is the one
-# with the highest realistic CEILING, not the highest average. A second
-# stage-2 regressor is fit to this quantile of points-given-a-start and
-# used only for the captain/vice choice. 0.80 = "a good day, not a
-# miracle". backtest.py's captain_mean variant is the A/B control.
+# The quantile of points-given-a-start that the ceiling regressor is fit to.
+# 0.80 = "a good day, not a miracle". The theory: the armband doubles one
+# player, so what you want is the biggest realistic haul, not the safest
+# average.
+#
+# TESTED TWICE, REJECTED TWICE. The column is still produced, and both
+# harnesses can still race it, but nothing uses it by default.
+#
+#   1. backtest.py (squad rebuilt from scratch each week): 4609 vs 4617
+#      across two seasons. Within noise, so not really a verdict either way.
+#
+#   2. season_sim.py (transfer-constrained, the real test — and the first one
+#      that actually EXERCISED it, since plan_transfers previously ignored
+#      the captain column entirely):
+#
+#         2025-26   -10      captain pts 231 vs 222
+#         2024-25   -65      captain pts 302 vs 312
+#         pooled    -75
+#
+#      Lost both seasons, which is the bar. The 2025-26 line is the
+#      interesting one: captaining on upside DID earn more captain points
+#      there and still lost overall, because valuing the armband on ceiling
+#      also pulls high-variance players into the squad and the squad lost
+#      more than the armband gained.
+#
+# The one test not yet run is the decoupled version: choose the squad on the
+# mean, then pick the captain from the finished XI on the ceiling. That would
+# separate the two effects the run above conflates. 2024-25 argues against it
+# (captain points fell there too), so it is not obviously worth the work.
 CAPTAIN_QUANTILE = 0.80
 
 # Older training seasons are down-weighted by this factor per season of
