@@ -433,4 +433,18 @@ DIFFERENTIAL_WEIGHT = 0.0
 # team-strength features already carry most of that signal, so the odds
 # columns mostly added noise. The join is off unless this is set True
 # (backtest.py's `odds` variant sets it); odds_data.py is otherwise unused.
+#
+# RE-TESTED 2026-09-23, after Variant.context was added so the join is live
+# while rows are built. Suspicion at the time was that the original verdict
+# had raced neutral constants. It reproduced EXACTLY — 4585 pooled, +20 and
+# -52 by season — so the original verdict was sound and that suspicion was
+# wrong. Recorded because a re-test that changes nothing is still evidence.
+#
+# Worth knowing for anyone tempted to try again: the model does use these
+# columns when they are present (about 11% of stage-2 gain between them,
+# odds_team_xg alone ranking alongside threat_avg_3). They are not ignored —
+# they are used, and the squad still scores slightly worse. That is the
+# stronger form of the rejection: bookmaker odds genuinely are informative
+# about matches, and this model already extracts that information from
+# rolling xG, xGC and team strength.
 ATTACH_ODDS = False

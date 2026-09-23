@@ -242,10 +242,10 @@ VARIANTS = {
     ),
     "odds": Variant(
         name="odds",
-        description="+4 betting-odds fixture features. The old verdict here "
-                    "(-32, a split) was measured before Variant.context "
-                    "existed and tested constant columns — see the module "
-                    "docstring. Being re-run.",
+        description="REJECTED: +4 betting-odds fixture features -32 points "
+                    "(split: +20 in 2025-26, -52 in 2024-25). Re-run after "
+                    "Variant.context was added and reproduced exactly, so the "
+                    "original verdict stands.",
         fit=_odds_fit,
         predict=_odds_predict,
         context=lambda: _with_features(ODDS_FEATURE_COLUMNS),
@@ -259,8 +259,7 @@ VARIANTS = {
     ),
     "odds_recency": Variant(
         name="odds_recency",
-        description="odds + recency combined. Same void verdict as `odds` — "
-                    "its odds half was never actually joined.",
+        description="REJECTED: odds + recency combined, -80 points (worst)",
         fit=_odds_recency_fit,
         predict=_odds_predict,
         context=lambda: _with_features(ODDS_FEATURE_COLUMNS),
