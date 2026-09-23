@@ -242,11 +242,13 @@ VARIANTS = {
     ),
     "odds": Variant(
         name="odds",
-        description="REJECTED: +4 betting-odds fixture features -32 points "
-                    "(split: +20 in 2025-26, -52 in 2024-25); redundant with "
-                    "existing rolling xG + strength features",
+        description="+4 betting-odds fixture features. The old verdict here "
+                    "(-32, a split) was measured before Variant.context "
+                    "existed and tested constant columns — see the module "
+                    "docstring. Being re-run.",
         fit=_odds_fit,
         predict=_odds_predict,
+        context=lambda: _with_features(ODDS_FEATURE_COLUMNS),
     ),
     "recency": Variant(
         name="recency",
@@ -257,9 +259,11 @@ VARIANTS = {
     ),
     "odds_recency": Variant(
         name="odds_recency",
-        description="REJECTED: odds + recency combined, -80 points (worst)",
+        description="odds + recency combined. Same void verdict as `odds` — "
+                    "its odds half was never actually joined.",
         fit=_odds_recency_fit,
         predict=_odds_predict,
+        context=lambda: _with_features(ODDS_FEATURE_COLUMNS),
     ),
     "captain_ceiling": Variant(
         name="captain_ceiling",
