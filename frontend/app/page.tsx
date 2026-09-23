@@ -9,6 +9,7 @@ import BenchStrip from "@/components/BenchStrip";
 import SquadStats from "@/components/SquadStats";
 import TransfersPanel from "@/components/TransfersPanel";
 import ChipAdvice from "@/components/ChipAdvice";
+import LeagueView from "@/components/LeagueView";
 import PipelineExplainer from "@/components/PipelineExplainer";
 import Glossary from "@/components/Glossary";
 import { Section } from "@/components/ui";
@@ -61,6 +62,18 @@ export default function Home() {
             horizonGws={team.horizon_gws}
           />
         </Section>
+
+        {/* Who you're actually racing, and what they own */}
+        {team.league && (
+          <Section
+            id="league"
+            eyebrow="Your league"
+            title="What the managers ahead of you own"
+            lede="Points you and a rival both score cancel out. What moves you past them is the players they don't have — and what quietly costs you is the ones they all have and you don't."
+          >
+            <LeagueView league={team.league} />
+          </Section>
+        )}
 
         {/* The squad it produces */}
         <Section

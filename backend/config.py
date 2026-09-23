@@ -427,6 +427,12 @@ ATTACH_SETPIECE = False
 # margin by the same factor, or it will go hit-happy again.
 DIFFERENTIAL_WEIGHT = 0.0
 
+# Which mini-league the rival view analyses (rivals.py). None auto-picks the
+# smallest classic league you're in, which is almost always the one you were
+# actually invited to rather than the huge auto-joined ones (overall, your
+# country, your club). Set an id to pin it.
+RIVAL_LEAGUE_ID = None
+
 # Betting-odds fixture features (odds_data.py) were joined onto training
 # rows and tested: 4585 vs 4617, a split (helped 2025-26 +20, hurt
 # 2024-25 -52). Rejected — the model's existing rolling xG/xGC and

@@ -76,6 +76,40 @@ export interface TeamInfo {
   chips_available: string[];
 }
 
+/** One player, and how many rivals ahead of you hold him. */
+export interface RivalOwnership {
+  player_id: number;
+  name: string;
+  cost_m: number;
+  owned_by: number;
+  /** 0-1, as a share of the rivals ahead of you. */
+  share: number;
+}
+
+export interface LeagueRival {
+  entry: number;
+  name: string;
+  rank: number;
+  total: number;
+  is_you: boolean;
+  chips: { chip: string; gameweek: number }[];
+  hits_cost: number;
+}
+
+/** Ownership inside your actual mini-league — the number that decides whether
+ *  a transfer gains you a PLACE, rather than just points. */
+export interface LeagueView {
+  league_id: number;
+  league_name: string;
+  league_size: number;
+  your_rank: number | null;
+  rivals_ahead: number;
+  gameweek_read: number;
+  differentials: RivalOwnership[];
+  template_gaps: RivalOwnership[];
+  chips_spent: LeagueRival[];
+}
+
 export interface OptimizedTeam {
   generated_at: string;
   gameweek: number | null;
@@ -97,4 +131,6 @@ export interface OptimizedTeam {
   chip_advice?: ChipSuggestion[];
   /** Whole-season DGW/BGW scan, so "nothing suggested" reads as watched, not silent. */
   chip_watch?: ChipWatch;
+  /** Your mini-league: who owns what, and who has spent which chips. */
+  league?: LeagueView;
 }
