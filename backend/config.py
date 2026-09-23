@@ -345,6 +345,20 @@ CAPTAIN_QUANTILE = 0.80
 # both seasons. Kept as backtest.py's `recency` variant. 1.0 = disabled.
 RECENCY_SEASON_DECAY = 1.0
 
+# Set-piece duty features (setpiece_data.py): who takes the penalties, free
+# kicks and corners, encoded as 1/order with 0 for everyone else. Penalty
+# takers in this season's data average 5.28 pts/90 against 4.32 for
+# non-takers, and the model has never been shown any of it.
+#
+# Left out originally because the vaastav training archive has no set-piece
+# columns, which would have meant a feature that exists at prediction time
+# and not at training time. olbauday/FPL-Core-Insights publishes the same
+# fields per gameweek for 2024-25 and 2025-26, which removes that objection.
+# 2023-24 is not covered and gets zeros.
+#
+# Off until backtest.py's `setpiece` variant says otherwise.
+ATTACH_SETPIECE = False
+
 # Betting-odds fixture features (odds_data.py) were joined onto training
 # rows and tested: 4585 vs 4617, a split (helped 2025-26 +20, hurt
 # 2024-25 -52). Rejected — the model's existing rolling xG/xGC and
