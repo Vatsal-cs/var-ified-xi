@@ -381,6 +381,35 @@ RECENCY_SEASON_DECAY = 1.0
 # Kept wired up and off, per the convention for rejected ideas in this file.
 ATTACH_SETPIECE = False
 
+# Tilt the transfer objective toward players the field doesn't own, by
+# multiplying expected points by (1 + w * (1 - ownership)).
+#
+# The theory is sound and is NOT about expected points: your edge over a rival
+# is your score minus theirs, so points you both scored cancel. A haul from a
+# 70%-owned player keeps you level; the same haul from a 5%-owned player gains
+# places. It buys rank variance, which is what you want when behind.
+#
+# Verdict (season_sim.py, both seasons): REJECTED at every weight tried.
+#
+#     weight   NET points   differential points
+#     0.0            4183                  2951
+#     0.2            4003 (-180)           2933 (-18)
+#     0.5            3902 (-281)           3053 (+102)
+#
+# w=0.2 is strictly dominated: it loses 180 real points AND ends up with
+# FEWER differential points than not tilting at all. w=0.5 does buy
+# differential points, at an exchange rate of about 2.75 real points for each
+# one — far too expensive to be worth taking.
+#
+# One caveat on those numbers. The tilt inflates every value in the objective,
+# while the hit margin is a fixed quantity in those same units, so tilting
+# quietly makes hits look cheaper: w=0.5 took 77 hits (-308 points) against
+# baseline's 32 (-128). Some of the measured loss is that mispricing rather
+# than the differential idea itself. A fair re-test needs the hit cost scaled
+# by the same factor, or hits banned on both sides. Given w=0.2 is dominated
+# even though it barely moves the hit count, this looks unlikely to rescue it.
+DIFFERENTIAL_WEIGHT = 0.0
+
 # Betting-odds fixture features (odds_data.py) were joined onto training
 # rows and tested: 4585 vs 4617, a split (helped 2025-26 +20, hurt
 # 2024-25 -52). Rejected — the model's existing rolling xG/xGC and

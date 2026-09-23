@@ -196,6 +196,15 @@ POLICIES = {
         description="strong tilt toward players the field doesn't own",
         differential_weight=0.5,
     ),
+    # Hits banned on both sides, to separate the differential idea from the
+    # fact that tilting inflates objective values and so makes the fixed hit
+    # margin relatively cheaper.
+    "diff_0.5_nohits": Policy(
+        name="diff_0.5_nohits",
+        description="strong differential tilt, hits banned (isolates the tilt from hit mispricing)",
+        differential_weight=0.5,
+        max_total_hits=0,
+    ),
     "captain_ceiling": Policy(
         name="captain_ceiling",
         description="baseline, but the armband goes to the highest CEILING not the highest mean",
