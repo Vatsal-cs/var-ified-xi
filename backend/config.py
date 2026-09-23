@@ -356,7 +356,29 @@ RECENCY_SEASON_DECAY = 1.0
 # fields per gameweek for 2024-25 and 2025-26, which removes that objection.
 # 2023-24 is not covered and gets zeros.
 #
-# Off until backtest.py's `setpiece` variant says otherwise.
+# Verdict (backtest.py, GW2-38, both seasons, --augment): REJECTED.
+#
+#     variant     2024-25   2025-26   pooled      MAE          rank-r
+#     production     2337      2280     4617   1.087/0.992   .653/.716
+#     setpiece       2309      2246     4555   1.084/0.991   .654/.716
+#
+# Lost both seasons. The important column is MAE, not points: it is identical
+# to three decimals, and so is rank correlation. The model is not using these
+# features at all, so the -62 is tree-structure noise rather than active harm.
+#
+# Why the raw +22% didn't survive: it was confounded by quality. Penalty
+# takers are good players, and the model already knows they are good — their
+# penalty income is sitting in their own xG, threat, bps and points averages,
+# which are already features. "He is the designated taker" adds almost no
+# information once you have seen what he actually scores.
+#
+# The case this does NOT test is the one worth wanting: a player who has just
+# INHERITED the job, whose history cannot show it yet. That is a handful of
+# players a season, and isolating it needs a change-detection feature (duty
+# this week that he did not have last week) rather than the duty itself.
+# Worth trying if someone wants to; the data and the join are already here.
+#
+# Kept wired up and off, per the convention for rejected ideas in this file.
 ATTACH_SETPIECE = False
 
 # Betting-odds fixture features (odds_data.py) were joined onto training
