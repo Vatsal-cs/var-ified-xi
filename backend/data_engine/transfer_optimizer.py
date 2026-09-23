@@ -81,6 +81,7 @@ def plan_transfers(
     max_total_hits: int = None,
     free_transfer_margin: float = None,
     hit_margin: float = None,
+    captain_xp_by_gw: dict = None,
 ) -> dict:
     """Solves the multi-gameweek transfer problem.
 
@@ -97,6 +98,12 @@ def plan_transfers(
                 is worth making. Defaults to config.FREE_TRANSFER_MARGIN.
                 Read through the module rather than bound at import so the
                 simulation harness can sweep it.
+    captain_xp_by_gw: same shape as xp_by_gw, used ONLY to value the armband.
+                Pass upside figures here to captain on the ceiling rather than
+                the mean. Note this couples the two decisions: a player worth
+                captaining also becomes slightly more worth owning, which is
+                arguably correct but means the squad shifts too, not just the
+                armband. Omit for the mean projection.
 
     Returns the full plan: transfers per gameweek, the resulting squad, and
     the starting XI and captain for the immediate gameweek.
@@ -123,6 +130,15 @@ def plan_transfers(
 
     def xp(pid, gw):
         return float(xp_by_gw.get(pid, {}).get(gw, 0.0))
+
+    # The armband doubles one player, so the second copy of his score can be
+    # valued differently from the first: what you want from a captain is the
+    # biggest realistic haul, not the safest average. Defaults to the mean,
+    # which makes captain_xp a no-op unless a caller supplies upside figures.
+    def captain_xp(pid, gw):
+        if captain_xp_by_gw is None:
+            return xp(pid, gw)
+        return float(captain_xp_by_gw.get(pid, {}).get(gw, 0.0))
 
     # You sell at your own selling price; you buy at the market price.
     sell_price = {pid: team_state.sell_prices.get(pid, buy_price.get(pid, 0)) for pid in ids}
@@ -223,7 +239,7 @@ def plan_transfers(
         for i in ids:
             points = xp(i, t)
             objective.append(weight * points * start[i, t])
-            objective.append(weight * points * cap[i, t])
+            objective.append(weight * captain_xp(i, t) * cap[i, t])
             objective.append(weight * BENCH_WEIGHT * points * (squad[i, t] - start[i, t]))
         objective.append(-weight * (TRANSFER_HIT_COST + hit_margin) * hits[t])
         # Transfers not paid for with points still aren't free: banking one is
