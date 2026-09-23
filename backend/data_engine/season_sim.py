@@ -389,6 +389,12 @@ def _plan_week(state: ManagerState, players: pd.DataFrame, per_gw: pd.DataFrame,
         pid: dict(zip(grp["target_gw"], grp["predicted_points"]))
         for pid, grp in per_gw.groupby("player_id")
     }
+    captain_xp_by_gw = None
+    if policy.captain_col != "predicted_points":
+        captain_xp_by_gw = {
+            pid: dict(zip(grp["target_gw"], grp[policy.captain_col]))
+            for pid, grp in per_gw.groupby("player_id")
+        }
 
     sell = state.sell_prices(prices)
     team_state = entry_data.TeamState(
@@ -407,6 +413,7 @@ def _plan_week(state: ManagerState, players: pd.DataFrame, per_gw: pd.DataFrame,
         max_total_hits=policy.max_total_hits,
         free_transfer_margin=policy.free_transfer_margin,
         hit_margin=policy.hit_margin,
+        captain_xp_by_gw=captain_xp_by_gw,
     )
     return plan["immediate"]
 
