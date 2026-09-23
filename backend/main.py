@@ -31,6 +31,7 @@ from datetime import datetime, timezone
 import config
 from data_engine import (
     chips,
+    rivals,
     entry_data,
     fetch_data,
     feature_engineering,
@@ -69,7 +70,8 @@ def order_bench(bench_ids: list, pred_lookup: dict) -> list:
 
 def build_output_json(bootstrap: dict, predictions_df, result: dict,
                       plan: dict = None, team_state=None,
-                      chip_advice: list = None, chip_watch: dict = None) -> dict:
+                      chip_advice: list = None, chip_watch: dict = None,
+                      league_view: dict = None) -> dict:
     """Assembles the final clean JSON contract the frontend will consume."""
     teams_lookup = {t["id"]: t["name"] for t in bootstrap["teams"]}
     pos_lookup = config.POSITIONS
@@ -120,6 +122,8 @@ def build_output_json(bootstrap: dict, predictions_df, result: dict,
         output["chip_advice"] = chip_advice
     if chip_watch:
         output["chip_watch"] = chip_watch
+    if league_view:
+        output["league"] = league_view
     if plan:
         output["transfer_plan"] = _plan_payload(plan, pred_lookup, pos_lookup, teams_lookup)
     if team_state:
@@ -269,9 +273,17 @@ def run_pipeline(team_id: int = None) -> None:
         "next_blank_gw": min((b["gameweek"] for b in season_scan["blanks"]), default=None),
     }
 
+    # 6b. What the people you're actually playing against own. Decision
+    # support only — see rivals.py on why this deliberately doesn't feed the
+    # optimizer. Never fatal: a league that can't be read just isn't shown.
+    league_view = None
+    if team_id:
+        league_view = rivals.build_league_view(team_id, bootstrap, upcoming_gw)
+
     # 7. Write output
     output = build_output_json(bootstrap, predictions_df, result, plan=plan,
                                team_state=team_state, chip_advice=chip_advice,
+                               league_view=league_view,
                                chip_watch=chip_watch)
 
     config.OUTPUT_JSON_PATH.write_text(json.dumps(output, indent=2))
