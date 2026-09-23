@@ -148,6 +148,13 @@ def fetch_season(season: str, season_index: int):
         # them after lineups are known. Kept only so the finding stays
         # checkable — see backtest.py's module docstring.
         "fpl_xp": _numeric(gw_df, "xP"),
+        # Share of managers owning this player that gameweek. Not a model
+        # feature — it's the field's position, used to work out how much of a
+        # score is rank-GAINING rather than merely large. Normalised by the
+        # implied manager count (total selections / 15 squad slots), which
+        # tracks the real figure closely: it puts Haaland at 69% in 2025-26
+        # GW10, matching what FPL published.
+        "ownership": _ownership_share(gw_df),
         # Defensive-contribution scoring, introduced in 2025-26. Older
         # seasons return 0.0 rather than failing.
         "defensive_contribution": _numeric(gw_df, "defensive_contribution"),
@@ -200,6 +207,20 @@ def _attach_odds_features(out: pd.DataFrame, gw_df: pd.DataFrame, season: str) -
         out[col] = vals
     matched = sum(1 for d, t in zip(match_date, team_canon) if (d, t) in lut)
     logger.info("Odds join %s: %d / %d player-rows matched", season, matched, len(out))
+
+
+def _ownership_share(gw_df: pd.DataFrame) -> pd.Series:
+    """Fraction of managers owning each player, per gameweek.
+
+    The archive records `selected` as a raw manager count, and the total
+    entrant count isn't published alongside it — but every manager holds
+    exactly 15 players, so the selections in a gameweek sum to 15x the field.
+    """
+    if "selected" not in gw_df.columns:
+        return pd.Series(0.0, index=gw_df.index)
+    selected = pd.to_numeric(gw_df["selected"], errors="coerce").fillna(0.0)
+    managers = selected.groupby(gw_df["GW"]).transform("sum") / 15.0
+    return (selected / managers.replace(0, pd.NA)).fillna(0.0).clip(0, 1)
 
 
 def _attach_setpiece_features(out: pd.DataFrame, gw_df: pd.DataFrame, season: str) -> None:

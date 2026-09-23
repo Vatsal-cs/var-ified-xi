@@ -115,6 +115,9 @@ class Policy:
     horizon: int = HORIZON_GWS
     # A hit is charged TRANSFER_HIT_COST + this. None keeps config.HIT_MARGIN.
     hit_margin: float = None
+    # Tilts the objective toward players the field doesn't own. Buys rank
+    # variance at the cost of expected points; 0.0 disables.
+    differential_weight: float = 0.0
     # Never transfers at all. The floor: how far does the opening squad get
     # you on its own? Any policy that can't beat this is doing harm.
     frozen_squad: bool = False
@@ -183,6 +186,16 @@ POLICIES = {
         free_transfer_margin=1.5,
         hit_margin=6.0,
     ),
+    "differential_0.2": Policy(
+        name="differential_0.2",
+        description="mild tilt toward players the field doesn't own",
+        differential_weight=0.2,
+    ),
+    "differential_0.5": Policy(
+        name="differential_0.5",
+        description="strong tilt toward players the field doesn't own",
+        differential_weight=0.5,
+    ),
     "captain_ceiling": Policy(
         name="captain_ceiling",
         description="baseline, but the armband goes to the highest CEILING not the highest mean",
@@ -210,6 +223,12 @@ class ManagerState:
     captain_points: int = 0
     hits_taken: int = 0
     transfers_made: int = 0
+    # Points scored by players the field mostly didn't own, weighted by how
+    # unowned they were. The rank-relevant half of a score: a haul from a
+    # 70%-owned player keeps you level with everyone, a haul from a 5%-owned
+    # one gains you places. Reported alongside raw points so the cost and the
+    # benefit of a differential tilt are both visible.
+    differential_points: float = 0.0
     per_gw: list = field(default_factory=list)
 
     def sell_prices(self, current_prices: dict) -> dict:
@@ -315,6 +334,7 @@ def _with_owned(players: pd.DataFrame, squad: list, season_df: pd.DataFrame,
         "predicted_points": 0.0,
         "ceiling_points": 0.0,
         "horizon_points": 0.0,
+        "ownership": 0.0,
     })
     return pd.concat([players, stubs], ignore_index=True)
 
@@ -414,8 +434,31 @@ def _plan_week(state: ManagerState, players: pd.DataFrame, per_gw: pd.DataFrame,
         free_transfer_margin=policy.free_transfer_margin,
         hit_margin=policy.hit_margin,
         captain_xp_by_gw=captain_xp_by_gw,
+        differential_weight=policy.differential_weight,
     )
     return plan["immediate"]
+
+
+def _differential_points(starting_ids: list, captain_id, gw_rows: pd.DataFrame) -> float:
+    """How much of this gameweek's score the field didn't also get.
+
+    Each player's actual points weighted by (1 - ownership): a haul from
+    someone 70% of managers own moves you barely at all, the same haul from a
+    5%-owned player moves you a long way. The captain counts twice, as he
+    scores twice.
+    """
+    if "ownership" not in gw_rows.columns:
+        return 0.0
+    actual = gw_rows.set_index("player_id")[config.TARGET_COL].to_dict()
+    owned = gw_rows.set_index("player_id")["ownership"].to_dict()
+
+    total = 0.0
+    for pid in starting_ids:
+        edge = 1.0 - float(owned.get(pid, 0.0))
+        total += float(actual.get(pid, 0)) * edge
+    if captain_id is not None:
+        total += float(actual.get(captain_id, 0)) * (1.0 - float(owned.get(captain_id, 0.0)))
+    return total
 
 
 def _pad_for_squad(gw_rows: pd.DataFrame, squad: list,
@@ -497,7 +540,10 @@ def simulate(season_df: pd.DataFrame, policies: list, prior_seasons_df=None,
         if per_gw.empty:
             continue
 
-        meta = gw_rows[["player_id", "web_name", "element_type", "team", "now_cost"]].copy()
+        meta_cols = ["player_id", "web_name", "element_type", "team", "now_cost"]
+        if "ownership" in gw_rows.columns:
+            meta_cols.append("ownership")
+        meta = gw_rows[meta_cols].copy()
         players = _collapse_to_players(per_gw, meta, gw, HORIZON_GWS)
         prices = dict(zip(gw_rows["player_id"], gw_rows["now_cost"]))
 
@@ -535,6 +581,9 @@ def simulate(season_df: pd.DataFrame, policies: list, prior_seasons_df=None,
 
             state.points += scored["points"]
             state.captain_points += scored["captain_points"]
+            state.differential_points += _differential_points(
+                result["starting_ids"], result["captain_id"], gw_rows
+            )
             state.per_gw.append({"gw": gw, "points": net})
             line.append(f"{policy.name}={net:>3d}")
 
@@ -544,6 +593,7 @@ def simulate(season_df: pd.DataFrame, policies: list, prior_seasons_df=None,
         name: {
             "points": s.points,
             "captain_points": s.captain_points,
+            "differential_points": s.differential_points,
             "transfers": s.transfers_made,
             "hits": s.hits_taken,
             "hit_cost": s.hits_taken * TRANSFER_HIT_COST,
@@ -569,6 +619,7 @@ def _report(results: dict, policies: list,
             "hit_cost": -r["hit_cost"],
             "transfers": r["transfers"],
             "captain": r["captain_points"],
+            "diff": round(r["differential_points"]),
             "per_gw": round(net / r["gameweeks"], 1),
             "gws": r["gameweeks"],
         })
@@ -583,24 +634,24 @@ def _report(results: dict, policies: list,
     df["vs_base"] = (df["net"] - baseline.iloc[0]["net"]) if len(baseline) else 0
 
     print()
-    print("=" * 84)
+    print("=" * 91)
     print(title)
-    print("=" * 84)
+    print("=" * 91)
     print(f"{'policy':<18}{'NET':>7}{'raw':>7}{'hits':>6}{'cost':>7}"
-          f"{'trans':>7}{'capt':>7}{'pts/gw':>8}{'vs base':>9}")
-    print("-" * 84)
+          f"{'trans':>7}{'capt':>7}{'diff':>7}{'pts/gw':>8}{'vs base':>9}")
+    print("-" * 91)
     for _, r in df.iterrows():
         print(f"{r['policy']:<18}{r['net']:>7}{r['raw']:>7}{r['hits']:>6}"
               f"{r['hit_cost']:>7}{r['transfers']:>7}{r['captain']:>7}"
-              f"{r['per_gw']:>8}{r['vs_base']:>+9}")
-    print("-" * 84)
+              f"{r['diff']:>7}{r['per_gw']:>8}{r['vs_base']:>+9}")
+    print("-" * 91)
     print(f"Winner: {best['policy']} — {POLICIES[best['policy']].description}")
     print()
     print("NET is what a manager would actually have scored: points with hit")
     print("costs already deducted. Chips are not played by any policy, so all")
     print("totals sit below a real chip-using season. Compare the columns, not")
     print("the absolute number.")
-    print("=" * 84)
+    print("=" * 91)
 
 
 def main():
@@ -631,7 +682,8 @@ def main():
     policies = [POLICIES[p] for p in args.policies]
 
     totals = {p.name: {"points": 0, "captain_points": 0, "transfers": 0,
-                       "hits": 0, "hit_cost": 0, "gameweeks": 0} for p in policies}
+                       "hits": 0, "hit_cost": 0, "gameweeks": 0,
+                       "differential_points": 0.0} for p in policies}
 
     for idx, season in enumerate(args.seasons):
         logger.info("\n=== %s ===", season)

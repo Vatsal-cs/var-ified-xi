@@ -82,6 +82,7 @@ def plan_transfers(
     free_transfer_margin: float = None,
     hit_margin: float = None,
     captain_xp_by_gw: dict = None,
+    differential_weight: float = 0.0,
 ) -> dict:
     """Solves the multi-gameweek transfer problem.
 
@@ -128,8 +129,30 @@ def plan_transfers(
         club.setdefault(pid, 0)
         buy_price.setdefault(pid, team_state.sell_prices.get(pid, 0))
 
+    # Tilt toward players the field doesn't own. This does NOT raise expected
+    # points and isn't meant to: deviating from the highest-xP squad costs
+    # points by definition. What it buys is rank variance — a differential
+    # haul gains you places, a template haul only keeps you level. Worth
+    # something when you're behind and need to catch someone, worth nothing
+    # when you're ahead. 0.0 disables it.
+    ownership = {}
+    if differential_weight:
+        ownership = df.set_index("player_id")["ownership"].to_dict() \
+            if "ownership" in df.columns else {}
+
+    def tilt(pid):
+        if not differential_weight:
+            return 1.0
+        return 1.0 + differential_weight * (1.0 - float(ownership.get(pid, 0.0)))
+
     def xp(pid, gw):
         return float(xp_by_gw.get(pid, {}).get(gw, 0.0))
+
+    # What the solver optimises. Kept separate from xp() so the plan still
+    # REPORTS honest expected points — a tilted projection shown to the user
+    # would be a number that doesn't mean anything.
+    def obj_xp(pid, gw):
+        return xp(pid, gw) * tilt(pid)
 
     # The armband doubles one player, so the second copy of his score can be
     # valued differently from the first: what you want from a captain is the
@@ -237,9 +260,9 @@ def plan_transfers(
     for idx, t in enumerate(gameweeks):
         weight = HORIZON_DECAY ** idx
         for i in ids:
-            points = xp(i, t)
+            points = obj_xp(i, t)
             objective.append(weight * points * start[i, t])
-            objective.append(weight * captain_xp(i, t) * cap[i, t])
+            objective.append(weight * captain_xp(i, t) * tilt(i) * cap[i, t])
             objective.append(weight * BENCH_WEIGHT * points * (squad[i, t] - start[i, t]))
         objective.append(-weight * (TRANSFER_HIT_COST + hit_margin) * hits[t])
         # Transfers not paid for with points still aren't free: banking one is
