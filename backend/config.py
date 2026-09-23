@@ -401,13 +401,30 @@ ATTACH_SETPIECE = False
 # differential points, at an exchange rate of about 2.75 real points for each
 # one — far too expensive to be worth taking.
 #
-# One caveat on those numbers. The tilt inflates every value in the objective,
-# while the hit margin is a fixed quantity in those same units, so tilting
-# quietly makes hits look cheaper: w=0.5 took 77 hits (-308 points) against
-# baseline's 32 (-128). Some of the measured loss is that mispricing rather
-# than the differential idea itself. A fair re-test needs the hit cost scaled
-# by the same factor, or hits banned on both sides. Given w=0.2 is dominated
-# even though it barely moves the hit count, this looks unlikely to rescue it.
+# Those numbers were CONFOUNDED, and the confound turned out to be most of
+# the effect. The tilt scales every value in the objective while the hit
+# margin is a fixed quantity in those same units, so tilting quietly makes
+# hits look cheaper: w=0.5 took 77 hits (-308 points) against baseline's 32
+# (-128). Re-run with hits banned on both sides, which prices them equally:
+#
+#     policy              2025-26   2024-25   pooled   differential pts
+#     no_hits                1927      2023     3950               2746
+#     w=0.5, no hits         1858      2150     4008 (+58)         2917 (+171)
+#
+# So cleanly measured the tilt is roughly points-NEUTRAL — a split, losing
+# 2025-26 by 69 and winning 2024-25 by 127 — while reliably buying 171
+# differential points. Not the -281 disaster the first run showed; that was
+# mostly the mispriced hits.
+#
+# Still 0.0 by default, because a split is a rejection by this project's
+# standard and because points-neutral is not a reason to add complexity.
+#
+# But this is the one rejected idea here worth reconsidering BY SITUATION
+# rather than for good. Roughly zero expected cost in exchange for rank
+# variance is exactly the trade you want when you are behind and need to
+# catch someone, and exactly the trade you do not want when you are ahead and
+# protecting a lead. If it is ever turned on, it should also scale the hit
+# margin by the same factor, or it will go hit-happy again.
 DIFFERENTIAL_WEIGHT = 0.0
 
 # Betting-odds fixture features (odds_data.py) were joined onto training
