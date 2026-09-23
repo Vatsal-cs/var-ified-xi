@@ -263,8 +263,21 @@ SOLVER_TIME_LIMIT = 120
 # than 4 — breaking even on paper isn't worth the certainty of losing 4,
 # since the projection might be wrong. The planner treats a hit as costing
 # TRANSFER_HIT_COST + HIT_MARGIN when deciding whether to take one, so a hit
-# only shows up when the decay-weighted gain over the horizon clears ~6.
-HIT_MARGIN = 2.0
+# only shows up when the decay-weighted gain over the horizon clears ~8.
+#
+# Verdict (season_sim.py, transfer-constrained, GW2-38, both seasons):
+#
+#     margin  2025-26   2024-25   pooled      hits taken
+#     2.0        base      base     base      57   (-228 pts)
+#     4.0        +154      +145     +299      32   (-128 pts)   <- shipped
+#     6.0         +48        -6      +42      13    (-52 pts)   split
+#
+# At 2.0 the planner spent 228 points on hits across two seasons and finished
+# BEHIND a policy that took none at all: it was buying hits that didn't pay
+# for themselves. At 6.0 it becomes too timid and loses 2024-25. 4.0 wins both
+# seasons by a similar margin, which is the bar, and is worth about four
+# points a gameweek — the largest single improvement measured in this project.
+HIT_MARGIN = 4.0
 
 # The same idea for transfers that cost no points. A free transfer looks free,
 # so with no margin the solver makes one every single week: there is always
@@ -274,10 +287,21 @@ HIT_MARGIN = 2.0
 # team news you don't have yet, and the fact that the projected gain carries
 # an error bar of about 1.3 points per player per week.
 #
-# So a free transfer is charged this many expected points. Set it to 0.0 to
-# get the old always-transfer behaviour. season_sim.py is the harness that
-# decides the value — it is the first thing in this project able to measure a
-# transfer-planner setting at all.
+# So a free transfer is charged this many expected points. season_sim.py is
+# the harness that decides the value — the first thing in this project able to
+# measure a transfer-planner setting at all.
+#
+# Verdict: 0.0. A margin of 1.5 looked like a clear +96 when both seasons were
+# pooled, and turned out to be a SPLIT once they were reported separately
+# (-10 in 2025-26, +106 in 2024-25) — exactly the case the every-season rule
+# exists to catch. And once HIT_MARGIN was corrected to 4.0 the knob stopped
+# binding at all: free transfers at 0.0 and at 1.5 produce identical seasons,
+# because a planner that isn't buying bad hits wasn't making marginal free
+# transfers either. The churn this was written to fix was a symptom of
+# underpriced hits, not of underpriced free transfers.
+#
+# Kept, with the objective term wired up, because it costs nothing and the
+# finding is worth being able to re-run. Raise it only with new evidence.
 FREE_TRANSFER_MARGIN = 0.0
 
 # The captain's points are doubled, so the pick that matters is the one
