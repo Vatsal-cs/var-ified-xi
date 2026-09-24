@@ -35,7 +35,12 @@ body {
 /* Reusable surfaces — keeps every card visually consistent. */
 @layer components {
   .card {
-    @apply rounded-xl border border-pitch-line bg-pitch-panel shadow-card;
+    @apply rounded-xl border border-pitch-line bg-pitch-panel shadow-card transition-colors duration-200;
+  }
+  /* Cards that hold a number worth looking at lift slightly on hover, so the
+     page feels responsive without anything moving on its own. */
+  .card-interactive {
+    @apply card hover:border-var-green/30 hover:bg-pitch-panel2/70;
   }
   .card-hi {
     @apply rounded-xl border border-var-green/40 bg-var-greensoft shadow-glow;

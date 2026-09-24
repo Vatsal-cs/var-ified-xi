@@ -21,14 +21,17 @@ export default function SquadStats({
   const pct = Math.min(100, (used / total) * 100);
   return (
     <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-      <div className="card p-4">
+      <div className="card-interactive p-4">
         <p className="label">{valueLabel}</p>
         <p className="mt-1.5 stat">
           &pound;{used.toFixed(1)}
           <span className="text-sm text-ink-500">m</span>
         </p>
         <div className="mt-2 h-1 w-full overflow-hidden rounded-full bg-pitch-line">
-          <div className="h-full rounded-full bg-var-green" style={{ width: `${pct}%` }} />
+          <div
+            className="h-full rounded-full bg-var-green transition-[width] duration-700 ease-out"
+            style={{ width: `${pct}%` }}
+          />
         </div>
       </div>
 
