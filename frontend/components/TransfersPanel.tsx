@@ -12,7 +12,7 @@ export default function TransfersPanel({ weeks }: { weeks: PlannedWeek[] }) {
   if (rest.length === 0) return null;
 
   return (
-    <div className="glass overflow-hidden">
+    <div className="panel overflow-hidden">
       <ul className="divide-y divide-line">
         {rest.map((week) => {
           const moves = week.transfers_out.map((o, i) => ({

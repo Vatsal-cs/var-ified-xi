@@ -51,7 +51,7 @@ function SwapCard({
   const isOut = tone === "out";
   return (
     <div
-      className={`relative flex-1 overflow-hidden rounded-xl border p-3.5 ${
+      className={`relative flex-1 overflow-hidden rounded-[3px] border p-3.5 ${
         isOut
           ? "border-risk/25 bg-risk/[0.06]"
           : "border-pts/30 bg-pts/[0.07]"
@@ -66,7 +66,7 @@ function SwapCard({
         {isOut ? "Out" : "In"}
       </p>
       <p
-        className={`mt-1 font-display text-lg font-bold leading-tight ${
+        className={`mt-1.5 font-display text-[26px] leading-[1.05] ${
           isOut ? "text-ink-300 line-through decoration-risk/50" : "text-ink-100"
         }`}
       >
@@ -136,9 +136,9 @@ export default function ThisWeek({ team }: { team: OptimizedTeam }) {
       : `Make these ${week.transfers_out.length} transfers`;
 
   return (
-    <div id="week" className="glass-brand scroll-mt-32 p-6 sm:p-7">
+    <div id="week" className="panel-lead scroll-mt-32 p-6 sm:p-9">
       <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
-        <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-pts">
+        <p className="font-mono text-[10px] uppercase tracking-[0.28em] text-gold">
           Gameweek {team.gameweek} &middot; before the deadline
         </p>
         {team.team && (
@@ -150,7 +150,7 @@ export default function ThisWeek({ team }: { team: OptimizedTeam }) {
         )}
       </div>
 
-      <h1 className="mt-2 font-display text-3xl font-bold tracking-tight text-ink-100 sm:text-4xl">
+      <h1 className="mt-3 font-display text-[44px] leading-[1] tracking-[-0.02em] text-ink-100 sm:text-[60px]">
         {headline}
       </h1>
 
@@ -161,7 +161,7 @@ export default function ThisWeek({ team }: { team: OptimizedTeam }) {
 
             {/* Is a points hit worth it this week? */}
             <div
-              className={`rounded-lg border p-3.5 ${
+              className={`rounded-[2px] border p-3.5 ${
                 hit?.worth_it
                   ? "border-warn/40 bg-warn/[0.06]"
                   : "border-line bg-surface-raised/50"

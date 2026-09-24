@@ -42,7 +42,7 @@ export default function Glossary() {
   return (
     <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
       {QA.map((item) => (
-        <div key={item.q} className="glass p-4">
+        <div key={item.q} className="panel p-4">
           <p className="font-body text-sm font-semibold text-ink-100">{item.q}</p>
           <p className="mt-1.5 font-body text-[14px] leading-relaxed text-ink-300">{item.a}</p>
         </div>

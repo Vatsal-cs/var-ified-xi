@@ -92,8 +92,8 @@ function PlayerChip({
       {/* Shirt */}
       <span className="relative block">
         <span
-          className={`flex h-12 w-12 items-center justify-center rounded-full font-display text-[11px] font-bold tracking-wide shadow-lg transition-all duration-200 group-hover:-translate-y-1 group-hover:shadow-xl sm:h-[52px] sm:w-[52px] ${
-            isActive ? "ring-2 ring-pts ring-offset-2 ring-offset-[#0d1a13]" : ""
+          className={`flex h-12 w-12 items-center justify-center rounded-full font-display text-[11px] tracking-wide shadow-lg transition-all duration-200 group-hover:-translate-y-1 group-hover:shadow-xl sm:h-[52px] sm:w-[52px] ${
+            isActive ? "ring-2 ring-gold ring-offset-2 ring-offset-[#16221A]" : ""
           }`}
           style={{
             background: kit.shirt,
@@ -108,10 +108,10 @@ function PlayerChip({
 
         {armband && (
           <span
-            className={`absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full border-2 border-[#0d1a13] font-mono text-[9px] font-bold ${
+            className={`absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full border-2 border-[#16221A] font-mono text-[9px] font-bold ${
               player.is_captain
-                ? "bg-pts text-base"
-                : "bg-warn text-base"
+                ? "bg-gold text-base"
+                : "bg-ink-200 text-base"
             }`}
           >
             {armband}
@@ -120,11 +120,11 @@ function PlayerChip({
       </span>
 
       {/* Name + points tag */}
-      <span className="mt-1.5 block w-full rounded bg-[#08120d]/85 px-0.5 py-0.5 backdrop-blur-sm">
+      <span className="mt-1.5 block w-full rounded bg-base/80 px-0.5 py-0.5 backdrop-blur-sm">
         <span className="block truncate text-center font-body text-[10px] font-medium leading-tight text-ink-100">
           {player.name}
         </span>
-        <span className="block text-center font-mono text-[9px] leading-tight text-pts">
+        <span className="block text-center font-mono text-[9px] leading-tight text-gold">
           {player.predicted_points.toFixed(1)}
         </span>
       </span>
@@ -147,18 +147,18 @@ export default function PitchView({ startingXi }: { startingXi: Player[] }) {
 
   return (
     <div>
-      <div className="relative mx-auto aspect-[3/4] w-full max-w-md overflow-hidden rounded-2xl border border-line shadow-glass">
+      <div className="relative mx-auto aspect-[3/4] w-full max-w-md overflow-hidden rounded-[3px] border border-line shadow-panel">
         {/* Turf: a deep green base with mown stripes */}
-        <div className="absolute inset-0 bg-[linear-gradient(175deg,#123d27_0%,#0f2f1f_45%,#0a2016_100%)]" />
+        <div className="absolute inset-0 bg-[linear-gradient(175deg,#1B2A1E_0%,#16221A_50%,#101A14_100%)]" />
         <div
           className="absolute inset-0 opacity-[0.55]"
           style={{
             backgroundImage:
-              "repeating-linear-gradient(180deg, rgba(255,255,255,0.035) 0 8.33%, transparent 8.33% 16.66%)",
+              "repeating-linear-gradient(180deg, rgba(240,235,226,0.028) 0 8.33%, transparent 8.33% 16.66%)",
           }}
         />
         {/* Floodlight falloff from the top */}
-        <div className="absolute inset-0 bg-[radial-gradient(120%_70%_at_50%_-5%,rgba(120,255,190,0.10),transparent_60%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(120%_70%_at_50%_-5%,rgba(240,235,226,0.07),transparent_60%)]" />
 
         {/* Markings */}
         <svg
@@ -196,11 +196,11 @@ export default function PitchView({ startingXi }: { startingXi: Player[] }) {
       </div>
 
       {active ? (
-        <div className="mx-auto mt-4 max-w-md animate-rise rounded-xl border border-line bg-surface p-4 shadow-glass">
+        <div className="mx-auto mt-4 max-w-md animate-rise rounded-[3px] border border-line bg-surface p-4 shadow-panel">
           <div className="flex items-start justify-between gap-3">
             <div className="flex items-center gap-3">
               <span
-                className="flex h-9 w-9 flex-none items-center justify-center rounded-full font-display text-[10px] font-bold"
+                className="flex h-9 w-9 flex-none items-center justify-center rounded-full font-display text-[10px]"
                 style={{
                   background: kitFor(active.team).shirt,
                   color: kitFor(active.team).trim,
@@ -209,7 +209,7 @@ export default function PitchView({ startingXi }: { startingXi: Player[] }) {
                 {kitFor(active.team).abbr}
               </span>
               <div>
-                <p className="font-display text-lg font-semibold tracking-tight text-ink-100">
+                <p className="font-display text-lg tracking-tight text-ink-100">
                   {active.name}
                 </p>
                 <p className="font-mono text-[11px] text-ink-400">
@@ -232,19 +232,19 @@ export default function PitchView({ startingXi }: { startingXi: Player[] }) {
           </div>
 
           <div className="mt-4 grid grid-cols-3 gap-3">
-            <div className="rounded-lg bg-surface-raised p-2.5">
+            <div className="rounded-[2px] bg-surface-raised p-2.5">
               <p className="label">Proj. pts</p>
               <p className="mt-0.5 font-mono text-lg tabular-nums text-pts">
                 {active.predicted_points.toFixed(1)}
               </p>
             </div>
-            <div className="rounded-lg bg-surface-raised p-2.5">
+            <div className="rounded-[2px] bg-surface-raised p-2.5">
               <p className="label">Price</p>
               <p className="mt-0.5 font-mono text-lg tabular-nums text-ink-100">
                 &pound;{active.now_cost_m.toFixed(1)}
               </p>
             </div>
-            <div className="rounded-lg bg-surface-raised p-2.5">
+            <div className="rounded-[2px] bg-surface-raised p-2.5">
               <p className="label">Starts</p>
               <p className="mt-0.5 font-mono text-lg tabular-nums text-ink-100">
                 {Math.round(active.start_probability * 100)}%

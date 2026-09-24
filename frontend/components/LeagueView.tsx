@@ -44,7 +44,7 @@ export default function LeagueView({ league }: { league: LeagueViewData }) {
       ) : (
         <div className="grid gap-4 md:grid-cols-2">
           {/* What can gain you places */}
-          <div className="glass p-5">
+          <div className="panel p-5">
             <h3 className="label mb-3">Your differentials</h3>
             {differentials.length === 0 ? (
               <p className="prose-note">
@@ -68,9 +68,9 @@ export default function LeagueView({ league }: { league: LeagueViewData }) {
                     </div>
                     {/* Filled portion = rivals who ALSO have him, so a short
                         bar is the good case. */}
-                    <div className="mt-1.5 h-1 w-full overflow-hidden rounded-full bg-white/[0.06]">
+                    <div className="mt-2 h-[3px] w-full overflow-hidden bg-line">
                       <div
-                        className="h-full rounded-full bg-brand-gradient transition-[width] duration-700 ease-out"
+                        className="h-full bg-gold transition-[width] duration-700 ease-out"
                         style={{ width: `${Math.max(3, d.share * 100)}%` }}
                       />
                     </div>
@@ -85,7 +85,7 @@ export default function LeagueView({ league }: { league: LeagueViewData }) {
           </div>
 
           {/* What can cost you places */}
-          <div className="glass p-5">
+          <div className="panel p-5">
             <h3 className="label mb-3">Template you&apos;re missing</h3>
             {template_gaps.length === 0 ? (
               <p className="prose-note">
@@ -104,9 +104,9 @@ export default function LeagueView({ league }: { league: LeagueViewData }) {
                         £{t.cost_m?.toFixed(1)}m &middot; {pct(t.share)}
                       </span>
                     </div>
-                    <div className="mt-1.5 h-1 w-full overflow-hidden rounded-full bg-white/[0.06]">
+                    <div className="mt-2 h-[3px] w-full overflow-hidden bg-line">
                       <div
-                        className="h-full rounded-full bg-warn transition-[width] duration-700 ease-out"
+                        className="h-full bg-risk transition-[width] duration-700 ease-out"
                         style={{ width: `${Math.max(3, t.share * 100)}%` }}
                       />
                     </div>
@@ -129,7 +129,7 @@ export default function LeagueView({ league }: { league: LeagueViewData }) {
             Chips spent
           </Term>
         </h3>
-        <div className="glass overflow-x-auto p-5">
+        <div className="panel overflow-x-auto p-5">
           <table className="w-full min-w-[420px] text-left">
             <thead>
               <tr className="border-b border-line">
@@ -144,7 +144,7 @@ export default function LeagueView({ league }: { league: LeagueViewData }) {
                 <tr
                   key={r.entry}
                   className={`border-b border-line/50 ${
-                    r.is_you ? "bg-brand-soft" : "hover:bg-white/[0.02]"
+                    r.is_you ? "bg-gold-wash" : ""
                   }`}
                 >
                   <td className="py-2 pr-3 font-mono text-[11px] text-ink-500">{r.rank}</td>

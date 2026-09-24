@@ -26,7 +26,7 @@ export default function ReviewHeader({ team }: { team: OptimizedTeam }) {
           </span>
         </div>
 
-        <h1 className="order-first w-full font-display text-3xl font-semibold uppercase tracking-tight text-ink-100 sm:order-none sm:w-auto sm:text-2xl">
+        <h1 className="order-first w-full font-display text-3xl uppercase tracking-tight text-ink-100 sm:order-none sm:w-auto sm:text-2xl">
           VAR-ified <span className="text-pts">XI</span>
         </h1>
 

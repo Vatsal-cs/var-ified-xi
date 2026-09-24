@@ -24,21 +24,20 @@ export function Section({
   return (
     <section id={id} aria-labelledby={id ? `${id}-h` : undefined} className="scroll-mt-32">
       {eyebrow && (
-        <p className="mb-2.5 flex items-center gap-2.5">
-          <span className="h-px w-7 bg-brand-gradient" aria-hidden />
-          <span className="text-gradient font-mono text-[11px] font-medium uppercase tracking-[0.22em]">
+        <p className="eyebrow-rule mb-4">
+          <span className="font-mono text-[10px] font-medium uppercase tracking-[0.28em] text-gold">
             {eyebrow}
           </span>
         </p>
       )}
       <h2
         id={id ? `${id}-h` : undefined}
-        className="font-display text-[30px] font-extrabold leading-[1.1] tracking-tight text-ink-100 sm:text-[38px]"
+        className="max-w-3xl font-display text-[38px] leading-[1.05] tracking-[-0.015em] text-ink-100 sm:text-[52px]"
       >
         {title}
       </h2>
-      {lede && <p className="mt-2 max-w-2xl prose-note">{lede}</p>}
-      <div className="mt-6">{children}</div>
+      {lede && <p className="mt-3 max-w-[58ch] prose-note">{lede}</p>}
+      <div className="mt-8">{children}</div>
     </section>
   );
 }
@@ -55,7 +54,7 @@ export function Term({ children, explain }: { children: ReactNode; explain: stri
 /** A boxed aside for a concept worth spelling out where it's first used. */
 export function InfoNote({ title, children }: { title?: string; children: ReactNode }) {
   return (
-    <div className="rounded-lg border border-line bg-surface-raised/60 p-4">
+    <div className="rounded-[2px] border border-line bg-surface-raised/60 p-4">
       {title && (
         <p className="mb-1 font-mono text-[11px] uppercase tracking-[0.16em] text-ink-400">
           {title}
@@ -79,7 +78,7 @@ export function Stat({
   tone?: "default" | "accent";
 }) {
   return (
-    <div className="glass transition-colors duration-200 hover:border-line-strong hover:bg-surface-raised/80 p-4">
+    <div className="panel transition-colors duration-200 hover:border-line-strong p-4">
       <p className="label">{label}</p>
       <p className={`mt-1.5 stat ${tone === "accent" ? "text-pts" : ""}`}>{value}</p>
       {sub && <p className="mt-1.5 font-body text-xs text-ink-400">{sub}</p>}

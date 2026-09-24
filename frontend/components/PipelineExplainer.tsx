@@ -54,7 +54,7 @@ const STAGES = [
 
 export default function PipelineExplainer() {
   return (
-    <div className="glass divide-y divide-line overflow-hidden">
+    <div className="panel divide-y divide-line overflow-hidden">
       {STAGES.map((s) => (
         <details key={s.n} className="group">
           <summary className="flex cursor-pointer list-none items-center gap-4 px-5 py-4 marker:content-none hover:bg-surface-raised/40">
@@ -62,7 +62,7 @@ export default function PipelineExplainer() {
               {s.n}
             </span>
             <span className="flex-1">
-              <span className="block font-display text-base font-semibold tracking-tight text-ink-100">
+              <span className="block font-display text-base tracking-tight text-ink-100">
                 {s.title}
               </span>
               <span className="block font-body text-[13px] text-ink-400">{s.summary}</span>

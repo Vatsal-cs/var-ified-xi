@@ -21,7 +21,7 @@ export default function SquadStats({
   const pct = Math.min(100, (used / total) * 100);
   return (
     <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-      <div className="glass transition-colors duration-200 hover:border-line-strong hover:bg-surface-raised/80 p-4">
+      <div className="panel transition-colors duration-200 hover:border-line-strong p-4">
         <p className="label">{valueLabel}</p>
         <p className="mt-1.5 stat">
           &pound;{used.toFixed(1)}

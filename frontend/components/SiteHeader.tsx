@@ -61,16 +61,12 @@ export default function SiteHeader({ team }: { team: OptimizedTeam }) {
     <header className="sticky top-0 z-50">
       {/* Opaque base under a blur layer. The old bar was bg/90 with no solid
           underneath, which let headings read straight through it. */}
-      <div className="absolute inset-0 -z-10 bg-base/95 backdrop-blur-xl" />
-      <div className="absolute inset-x-0 bottom-0 -z-10 h-px bg-brand-gradient opacity-30" />
+      <div className="absolute inset-0 -z-10 border-b border-line bg-base" />
 
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-5 py-3">
-        <a href="#top" className="group flex items-center gap-2.5">
-          <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-brand-gradient font-display text-[13px] font-extrabold text-base shadow-brand">
-            V
-          </span>
-          <span className="font-display text-[17px] font-extrabold tracking-tight text-ink-100">
-            VAR<span className="text-gradient">ified</span> XI
+        <a href="#top" className="flex items-baseline gap-2.5">
+          <span className="font-display text-[19px] leading-none tracking-[-0.01em] text-ink-100">
+            VAR<span className="italic text-gold">ified</span> XI
           </span>
         </a>
 
@@ -78,7 +74,7 @@ export default function SiteHeader({ team }: { team: OptimizedTeam }) {
           <span className="pill hidden border-line-strong text-ink-300 sm:inline-flex">
             {team.mode === "transfer_plan" ? "Transfer plan" : "Fresh squad"}
           </span>
-          <span className="pill border-brand-violet/40 bg-brand-soft text-ink-100">
+          <span className="pill border-gold/35 text-gold">
             GW {team.gameweek ?? "—"}
           </span>
           <span className="hidden items-center gap-1.5 text-ink-400 md:inline-flex">
@@ -99,15 +95,15 @@ export default function SiteHeader({ team }: { team: OptimizedTeam }) {
                     <a
                       href={`#${l.id}`}
                       aria-current={isActive ? "true" : undefined}
-                      className={`relative block whitespace-nowrap rounded-lg px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.16em] transition-all duration-200 ${
+                      className={`relative block whitespace-nowrap rounded-[2px] px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.16em] transition-all duration-200 ${
                         isActive
-                          ? "bg-brand-soft text-ink-100"
+                          ? "text-gold"
                           : "text-ink-400 hover:bg-white/[0.04] hover:text-ink-200"
                       }`}
                     >
                       {l.label}
                       {isActive && (
-                        <span className="absolute inset-x-3 -bottom-[7px] h-[2px] rounded-full bg-brand-gradient" />
+                        <span className="absolute inset-x-3 -bottom-[7px] h-[2px] bg-gold" />
                       )}
                     </a>
                   </li>
