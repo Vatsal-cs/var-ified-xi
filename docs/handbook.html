@@ -1,0 +1,922 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="VAR-ified XI project handbook — architecture, model, optimizers, test harnesses and the full evidence ledger.">
+<style>
+  html{-webkit-text-size-adjust:100%}
+  body{margin:0}
+  img{max-width:100%}
+  [hidden]{display:none!important}
+</style>
+<title>VAR-ified XI Handbook</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter+Tight:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap">
+<style>
+  :root{
+    --paper:#FBF8F2;
+    --panel:#FFFFFF;
+    --panel-2:#F4EFE5;
+    --ink:#171310;
+    --ink-2:#3D362E;
+    --ink-3:#6B6156;
+    --ink-4:#928778;
+    --rule:rgba(23,19,16,.13);
+    --rule-soft:rgba(23,19,16,.07);
+    --gold:#9A6B12;
+    --gold-wash:rgba(224,166,74,.15);
+    --good:#3F6B32;
+    --good-wash:rgba(63,107,50,.10);
+    --bad:#9E3B2C;
+    --bad-wash:rgba(158,59,44,.09);
+    --code-bg:#F1ECE1;
+    --display:'Instrument Serif',Georgia,serif;
+    --body:'Inter Tight',system-ui,sans-serif;
+    --mono:'JetBrains Mono',ui-monospace,monospace;
+  }
+  @media (prefers-color-scheme:dark){
+    :root:not([data-theme="light"]){
+      --paper:#0B0A09;
+      --panel:#131110;
+      --panel-2:#1B1816;
+      --ink:#F2EDE4;
+      --ink-2:#D9D2C6;
+      --ink-3:#A8A093;
+      --ink-4:#7D766B;
+      --rule:rgba(242,237,228,.13);
+      --rule-soft:rgba(242,237,228,.07);
+      --gold:#E0A64A;
+      --gold-wash:rgba(224,166,74,.10);
+      --good:#8FBF7A;
+      --good-wash:rgba(143,191,122,.10);
+      --bad:#C96A5C;
+      --bad-wash:rgba(201,106,92,.10);
+      --code-bg:#1B1816;
+    }
+  }
+  :root[data-theme="dark"]{
+    --paper:#0B0A09;
+    --panel:#131110;
+    --panel-2:#1B1816;
+    --ink:#F2EDE4;
+    --ink-2:#D9D2C6;
+    --ink-3:#A8A093;
+    --ink-4:#7D766B;
+    --rule:rgba(242,237,228,.13);
+    --rule-soft:rgba(242,237,228,.07);
+    --gold:#E0A64A;
+    --gold-wash:rgba(224,166,74,.10);
+    --good:#8FBF7A;
+    --good-wash:rgba(143,191,122,.10);
+    --bad:#C96A5C;
+    --bad-wash:rgba(201,106,92,.10);
+    --code-bg:#1B1816;
+  }
+
+  *{box-sizing:border-box}
+  body{background:var(--paper);color:var(--ink-2);font-family:var(--body);font-size:16.5px;line-height:1.7;-webkit-font-smoothing:antialiased}
+
+  .shell{max-width:1180px;margin:0 auto;padding:0 28px 120px;display:grid;grid-template-columns:1fr;gap:0}
+  @media(min-width:1040px){
+    .shell{grid-template-columns:230px minmax(0,1fr);gap:56px;padding-right:40px}
+  }
+
+  /* ---------- masthead ---------- */
+  .masthead{grid-column:1/-1;border-bottom:1.5px solid var(--ink);padding:60px 0 22px;margin-bottom:44px}
+  .kicker{font-family:var(--mono);font-size:10px;letter-spacing:.28em;text-transform:uppercase;color:var(--gold);margin:0 0 18px}
+  h1{font-family:var(--display);font-weight:400;font-size:clamp(46px,8vw,78px);line-height:.98;letter-spacing:-.02em;margin:0 0 18px;color:var(--ink);text-wrap:balance}
+  h1 em{font-style:italic;color:var(--gold)}
+  .standfirst{font-size:19px;line-height:1.6;color:var(--ink-3);max-width:60ch;margin:0 0 26px}
+  .meta{display:flex;flex-wrap:wrap;gap:6px 26px;font-family:var(--mono);font-size:11px;color:var(--ink-4);letter-spacing:.03em}
+  .meta b{color:var(--ink-2);font-weight:500}
+
+  /* ---------- toc ---------- */
+  nav.toc{display:none}
+  @media(min-width:1040px){
+    nav.toc{display:block;position:sticky;top:0;align-self:start;max-height:100vh;overflow-y:auto;padding:8px 0 40px}
+    nav.toc p{font-family:var(--mono);font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--ink-4);margin:0 0 14px}
+    nav.toc a{display:block;padding:5px 0 5px 12px;border-left:2px solid var(--rule-soft);font-size:13.5px;color:var(--ink-3);text-decoration:none;line-height:1.4}
+    nav.toc a:hover{color:var(--ink);border-left-color:var(--gold)}
+    nav.toc .sub{padding-left:24px;font-size:12.5px;color:var(--ink-4)}
+  }
+
+  main{min-width:0}
+  section{margin:0 0 72px;scroll-margin-top:24px}
+  h2{font-family:var(--display);font-weight:400;font-size:clamp(30px,4.2vw,42px);line-height:1.08;letter-spacing:-.015em;color:var(--ink);margin:0 0 6px;text-wrap:balance}
+  .sect-no{font-family:var(--mono);font-size:10px;letter-spacing:.26em;text-transform:uppercase;color:var(--gold);display:block;margin-bottom:12px}
+  h3{font-family:var(--body);font-weight:600;font-size:18px;color:var(--ink);margin:36px 0 10px;letter-spacing:-.005em}
+  h4{font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-4);margin:26px 0 8px}
+  p{margin:0 0 15px;max-width:72ch}
+  ul,ol{margin:0 0 15px;padding-left:22px;max-width:72ch}
+  li{margin-bottom:7px}
+  strong{color:var(--ink);font-weight:600}
+  em.lead{font-style:italic;color:var(--ink-3)}
+  a{color:var(--gold);text-decoration:underline;text-underline-offset:2px;text-decoration-thickness:1px}
+  hr{border:0;border-top:1px solid var(--rule);margin:40px 0}
+
+  code{font-family:var(--mono);font-size:.84em;background:var(--code-bg);padding:2px 5px;border-radius:2px;color:var(--ink);word-break:break-word}
+  pre{font-family:var(--mono);font-size:12.5px;line-height:1.72;background:var(--code-bg);border:1px solid var(--rule-soft);border-left:2px solid var(--gold);padding:14px 16px;overflow-x:auto;margin:0 0 18px;white-space:pre;color:var(--ink-2)}
+  pre code{background:none;padding:0;font-size:inherit}
+
+  /* ---------- callouts ---------- */
+  .note{border:1px solid var(--rule);background:var(--panel);padding:18px 20px;margin:0 0 20px;border-radius:3px}
+  .note.key{border-left:3px solid var(--gold);background:var(--gold-wash)}
+  .note.good{border-left:3px solid var(--good);background:var(--good-wash)}
+  .note.bad{border-left:3px solid var(--bad);background:var(--bad-wash)}
+  .note p:last-child{margin-bottom:0}
+  .note .tag{font-family:var(--mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;display:block;margin-bottom:7px;font-weight:700}
+  .note.key .tag{color:var(--gold)}
+  .note.good .tag{color:var(--good)}
+  .note.bad .tag{color:var(--bad)}
+
+  /* ---------- tables ---------- */
+  .tw{overflow-x:auto;margin:0 0 20px;border:1px solid var(--rule);border-radius:3px;background:var(--panel)}
+  table{border-collapse:collapse;width:100%;font-size:14px;min-width:520px}
+  th{font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-4);text-align:left;padding:11px 14px;border-bottom:1px solid var(--rule);white-space:nowrap}
+  td{padding:10px 14px;border-bottom:1px solid var(--rule-soft);color:var(--ink-2);vertical-align:top}
+  tr:last-child td{border-bottom:0}
+  td.num,th.num{text-align:right;font-family:var(--mono);font-variant-numeric:tabular-nums;white-space:nowrap}
+  td.mono{font-family:var(--mono);font-size:12.5px;white-space:nowrap}
+  .ok{color:var(--good);font-weight:600}
+  .no{color:var(--bad);font-weight:600}
+
+  /* ---------- pipeline diagram ---------- */
+  .flow{border:1px solid var(--rule);border-radius:3px;background:var(--panel);padding:26px 22px;margin:0 0 22px}
+  .flow-row{display:grid;grid-template-columns:34px 1fr;gap:16px;padding-bottom:22px;position:relative}
+  .flow-row:last-child{padding-bottom:0}
+  .flow-row::before{content:"";position:absolute;left:16px;top:32px;bottom:0;width:1px;background:var(--rule)}
+  .flow-row:last-child::before{display:none}
+  .flow-n{width:32px;height:32px;border:1px solid var(--gold);border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:12px;color:var(--gold);background:var(--paper);z-index:1}
+  .flow-b h4{margin:6px 0 4px;font-family:var(--body);font-size:15.5px;font-weight:600;color:var(--ink);letter-spacing:0;text-transform:none}
+  .flow-b p{font-size:14.5px;color:var(--ink-3);margin:0 0 6px}
+  .flow-b .file{font-family:var(--mono);font-size:11px;color:var(--ink-4)}
+
+  footer{grid-column:1/-1;border-top:1px solid var(--rule);margin-top:40px;padding-top:24px;font-family:var(--mono);font-size:11px;color:var(--ink-4);line-height:1.9}
+  @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="shell">
+
+  <header class="masthead">
+    <p class="kicker">Project handbook &middot; September 2026</p>
+    <h1>VAR-<em>ified</em> XI</h1>
+    <p class="standfirst">
+      Everything the system does, why each piece is built the way it is, and what
+      the evidence actually says — including the parts where the evidence said no.
+    </p>
+    <div class="meta">
+      <span><b>Stack</b> Python · XGBoost · PuLP · Next.js</span>
+      <span><b>Cost</b> £0 — free tiers only</span>
+      <span><b>Two harnesses</b> prediction + decision</span>
+    </div>
+  </header>
+
+  <nav class="toc">
+    <p>Contents</p>
+    <a href="#idea">1 · The core idea</a>
+    <a href="#pipeline">2 · The pipeline</a>
+    <a href="#data">3 · Data layer</a>
+    <a href="#features">4 · Feature engineering</a>
+    <a href="#model">5 · The model</a>
+    <a href="#optimizer">6 · The optimizers</a>
+    <a href="#testing">7 · How things get tested</a>
+    <a href="#ledger">8 · The evidence ledger</a>
+    <a href="#running">9 · Running it</a>
+    <a href="#config">10 · Every knob</a>
+    <a href="#frontend">11 · The dashboard</a>
+    <a href="#automation">12 · Automation</a>
+    <a href="#limits">13 · Limits &amp; open questions</a>
+  </nav>
+
+  <main>
+
+    <!-- ============ 1 ============ -->
+    <section id="idea">
+      <span class="sect-no">Section 01</span>
+      <h2>The core idea</h2>
+      <p>
+        Fantasy Premier League is two problems wearing one coat, and almost every
+        tool conflates them.
+      </p>
+      <p>
+        The first is <strong>prediction</strong>: how many points will this player
+        score next week? The second is <strong>decision</strong>: given what I
+        already own, my bank, my free transfers and the rules, what should I
+        actually do? A perfect predictor paired with a bad decision rule loses to
+        a mediocre predictor paired with a good one, because the decision rule is
+        what touches your team.
+      </p>
+      <p>
+        This project treats them as separate systems with separate evidence. There
+        is a model, and there is a solver, and each has its own test harness that
+        the other cannot flatter.
+      </p>
+
+      <div class="note key">
+        <span class="tag">The one rule that governs everything</span>
+        <p>
+          No change ships on intuition. A change ships when it scores more
+          <em>realized</em> points across <strong>every</strong> season tested. Not
+          better accuracy, not a nicer-sounding rationale — points, in every
+          season, or it stays off. Ideas that lose are kept in the codebase as
+          named, re-runnable variants with their exact numbers, so a rejected idea
+          can never quietly return as a fresh insight.
+        </p>
+      </div>
+
+      <h3>Why "realized points" and not accuracy</h3>
+      <p>
+        Mean absolute error measures how close predictions land on average across
+        ~600 players. But you only field 15, and the armband doubles one of them.
+        A model can shave its MAE by getting the vast irrelevant middle of the
+        player pool slightly righter while getting your captain wrong. The only
+        number that reflects what you'd have scored is the one the harness
+        computes: build the squad, then score it against what actually happened,
+        autosubs and captain fallback included.
+      </p>
+    </section>
+
+    <!-- ============ 2 ============ -->
+    <section id="pipeline">
+      <span class="sect-no">Section 02</span>
+      <h2>The pipeline, end to end</h2>
+      <p>
+        One command runs all of this. <code>backend/main.py</code> is the
+        orchestrator and reads top to bottom as the list below.
+      </p>
+
+      <div class="flow">
+        <div class="flow-row">
+          <span class="flow-n">1</span>
+          <div class="flow-b">
+            <h4>Fetch</h4>
+            <p>Bootstrap (all players, teams, fixtures), the fixture list, and every player's match history — roughly 660 separate API calls, politely spaced. Cached to disk per day.</p>
+            <span class="file">data_engine/fetch_data.py</span>
+          </div>
+        </div>
+        <div class="flow-row">
+          <span class="flow-n">2</span>
+          <div class="flow-b">
+            <h4>Build features</h4>
+            <p>Flatten histories into one row per player per gameweek, then attach rolling-form averages over 3 and 5 game windows, fixture context and player context. 36 columns reach the model.</p>
+            <span class="file">data_engine/feature_engineering.py</span>
+          </div>
+        </div>
+        <div class="flow-row">
+          <span class="flow-n">3</span>
+          <div class="flow-b">
+            <h4>Augment with history</h4>
+            <p>Three past seasons from the open vaastav archive — about 87,000 extra training rows, built through the identical feature code so the distributions match.</p>
+            <span class="file">data_engine/historical_data.py</span>
+          </div>
+        </div>
+        <div class="flow-row">
+          <span class="flow-n">4</span>
+          <div class="flow-b">
+            <h4>Train &amp; predict</h4>
+            <p>Two XGBoost models: will he play, and what does he score if he does. Validated on held-out recent gameweeks, then refit on everything. Predicts each player against each of the next six fixtures.</p>
+            <span class="file">data_engine/train_model.py</span>
+          </div>
+        </div>
+        <div class="flow-row">
+          <span class="flow-n">5</span>
+          <div class="flow-b">
+            <h4>Solve</h4>
+            <p>Either a fresh 15-man squad under the budget, or — if you passed a team id — a transfer plan starting from the squad you actually own, across six gameweeks with real transfer accounting.</p>
+            <span class="file">optimizer.py · transfer_optimizer.py</span>
+          </div>
+        </div>
+        <div class="flow-row">
+          <span class="flow-n">6</span>
+          <div class="flow-b">
+            <h4>Enrich</h4>
+            <p>Scan the fixture calendar for double/blank gameweeks worth a chip; pull your mini-league's real ownership and chip ledger.</p>
+            <span class="file">chips.py · rivals.py</span>
+          </div>
+        </div>
+        <div class="flow-row">
+          <span class="flow-n">7</span>
+          <div class="flow-b">
+            <h4>Write JSON</h4>
+            <p>One file, written to both <code>backend/data/output/</code> and <code>frontend/public/</code>. That file is the entire contract between backend and frontend.</p>
+            <span class="file">optimized_team.json</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="note">
+        <p>
+          <strong>There is no server.</strong> The frontend is a static Next.js site
+          that reads a JSON file committed to the repo. No database, no API layer,
+          no hosting bill. Refreshing the squad is a file write plus a git push.
+        </p>
+      </div>
+    </section>
+
+    <!-- ============ 3 ============ -->
+    <section id="data">
+      <span class="sect-no">Section 03</span>
+      <h2>Data layer</h2>
+
+      <h3>Where everything comes from</h3>
+      <div class="tw">
+        <table>
+          <thead><tr><th>Source</th><th>Gives</th><th>Auth</th></tr></thead>
+          <tbody>
+            <tr><td class="mono">fantasy.premierleague.com/api</td><td>Live players, prices, fixtures, per-player match history, your team, your leagues</td><td class="ok">None</td></tr>
+            <tr><td class="mono">vaastav/Fantasy-Premier-League</td><td>Three completed seasons of per-gameweek results, for training and backtesting</td><td class="ok">None</td></tr>
+            <tr><td class="mono">olbauday/FPL-Core-Insights</td><td>Per-gameweek set-piece order, ClubElo. Wired up, currently off — see the ledger</td><td class="ok">None</td></tr>
+            <tr><td class="mono">football-data.co.uk</td><td>Historical closing odds. Wired up, tested, rejected</td><td class="ok">None</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>The endpoints your team comes from</h3>
+      <p>
+        Transfer-plan mode reads your real squad without ever logging in. Everything
+        below is public:
+      </p>
+      <pre><code>entry/{id}/                      name, bank, squad value, leagues
+entry/{id}/history/              gameweek scores, transfers used, chips played
+entry/{id}/transfers/            every transfer, with the price paid
+entry/{id}/event/{gw}/picks/     the 15 you fielded, and who was captain
+leagues-classic/{id}/standings/  your mini-league table</code></pre>
+      <p>
+        From these the system reconstructs three things FPL does <em>not</em>
+        publish directly: how many free transfers you have, what each player would
+        sell for, and which chips every rival has burned.
+      </p>
+
+      <h4>Sell price, exactly as FPL computes it</h4>
+      <p>
+        You keep only half of any price rise, rounded down to the nearest £0.1m.
+        Since prices are stored in tenths, that is integer division:
+      </p>
+      <pre><code>if current &lt;= purchase:  sell = current
+else:                    sell = purchase + (current - purchase) // 2</code></pre>
+
+      <h4>Free transfers, reconstructed</h4>
+      <p>
+        You earn one per gameweek and may hold <strong>at most two</strong>.
+        Wildcard and Free Hit weeks don't consume them. The count is rebuilt by
+        replaying your history forward. This cap was wrong for a while — set to 5,
+        a rule from an earlier season — and produced plans spending transfers you
+        didn't have.
+      </p>
+
+      <div class="note bad">
+        <span class="tag">A real bug worth knowing about</span>
+        <p>
+          Once a gameweek kicks off, FPL's API <strong>pre-creates zero-filled
+          history rows</strong> for matches that haven't been played yet. Run the
+          pipeline mid-gameweek without filtering and every player with a later
+          kickoff looks like he was just benched for a duck — which halves his
+          play probability and throws every premium out of the squad. The fix:
+          keep only rows whose fixture is actually finished.
+        </p>
+      </div>
+    </section>
+
+    <!-- ============ 4 ============ -->
+    <section id="features">
+      <span class="sect-no">Section 04</span>
+      <h2>Feature engineering</h2>
+      <p>
+        36 columns reach the model, in five families. Every one is produced
+        identically for live data and for the historical archive — that symmetry is
+        what lets three past seasons be used as training data at all.
+      </p>
+
+      <div class="tw">
+        <table>
+          <thead><tr><th>Family</th><th>Columns</th><th>What it captures</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Form</strong></td><td class="mono">minutes, points, ict, influence, creativity, threat (3 &amp; 5 game)</td><td>Recent output</td></tr>
+            <tr><td><strong>Underlying</strong></td><td class="mono">xg, xa, xgi, xgc</td><td>Chance quality — more forward-looking than points, which are partly luck</td></tr>
+            <tr><td><strong>Bonus</strong></td><td class="mono">bps_avg, bonus_avg</td><td>Bonus is ~10% of all scoring and highly persistent</td></tr>
+            <tr><td><strong>Rotation</strong></td><td class="mono">starts_avg_3, starts_avg_5</td><td>Started-or-not is sharper than minutes: 45' off the bench and 45' before a red card look identical otherwise</td></tr>
+            <tr><td><strong>Defensive</strong></td><td class="mono">dc_avg, saves_avg, cs_avg, gc_avg</td><td>Defensive Contribution points, clean sheets, saves</td></tr>
+            <tr><td><strong>Context</strong></td><td class="mono">was_home, team/opp strength, difficulty, cost, ownership, position, rest days, age</td><td>The fixture and the player's standing</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="note key">
+        <span class="tag">The most important idea in this file</span>
+        <p>
+          <strong>Training windows are shifted by one gameweek. Prediction windows
+          are not.</strong> It looks like a bug. It is the opposite.
+        </p>
+        <p>
+          A <em>training</em> row for gameweek <em>t</em> must average matches
+          <em>t-3…t-1</em>. If it included <em>t</em> itself, the model would be
+          shown the answer inside the question and would learn nothing useful.
+        </p>
+        <p>
+          A <em>prediction</em> row is the opposite case: the match hasn't been
+          played yet, so the most recent completed match is legitimate input, not
+          leakage. Shifting it away would mean every prediction is made on week-old
+          form — and in the opening weeks of a season, shifting away the only
+          gameweek played leaves every feature at zero.
+        </p>
+        <p>
+          Both paths produce the same semantics: <em>the w matches immediately
+          before the fixture being predicted</em>.
+        </p>
+      </div>
+
+      <h3>Deliberately absent</h3>
+      <p>
+        Two things that sound like obvious features are not features, on purpose:
+      </p>
+      <ul>
+        <li><strong>Injury-flag history</strong> — we don't have it retroactively for past gameweeks, so training on it would create a train/predict mismatch. It's applied as a prediction-time multiplier instead.</li>
+        <li><strong>FPL's own expected points</strong> (<code>ep_next</code>) — the archived values are recorded <em>after</em> lineups are known. A squad built from them scores ~99 points a gameweek against ~148 for perfect hindsight, which no pre-deadline forecast achieves. It is contaminated and must not be reinstated.</li>
+      </ul>
+    </section>
+
+    <!-- ============ 5 ============ -->
+    <section id="model">
+      <span class="sect-no">Section 05</span>
+      <h2>The model</h2>
+      <p>
+        Rotation risk is the single biggest source of error in fantasy football,
+        and a flat points regressor smears it together with quality. A player
+        projected at 2.0 might be a certain starter who is mediocre, or a brilliant
+        player who might not play. Those demand opposite decisions.
+      </p>
+
+      <h3>Two stages</h3>
+      <pre><code>Stage 1 — MINUTES CLASSIFIER  (XGBoost, 3-class)
+          P(didn't play) · P(cameo, 1-59') · P(full, 60'+)
+
+Stage 2 — CONDITIONAL POINTS  (XGBoost regressor)
+          E[points | played 60+ minutes]
+
+          xP = P(full) × E[pts|full] + P(cameo) × cameo_average[position]</code></pre>
+
+      <h3>The split that mattered most</h3>
+      <p>
+        The two stages train on <strong>different populations</strong>, and getting
+        this right was the largest single accuracy gain in the project:
+      </p>
+      <ul>
+        <li>The <strong>classifier</strong> trains on <em>every</em> row. It has to see non-players to learn what a non-player looks like.</li>
+        <li>The <strong>regressor</strong> trains only on <em>established starters</em>. It's learning pure quality, and feeding it rows from players who barely feature teaches it to under-predict everyone.</li>
+      </ul>
+      <p>
+        Training both on the filtered set — the original design — cost 7 points and
+        pushed MAE from 1.05 to 1.16.
+      </p>
+
+      <h3>Refit after validating</h3>
+      <p>
+        Accuracy is measured on a time-based holdout: the most recent 5 gameweeks,
+        never seen during training. Then the model is <strong>retrained on
+        everything, holdout included</strong>, before going into the weekend. This
+        is worth <strong>+127 points</strong> — the most recent gameweeks are the
+        most informative ones, and throwing them away to preserve a clean test set
+        is a mistake you pay for every single week.
+      </p>
+
+      <h3>Prediction-time adjustments</h3>
+      <p>These are applied after the model, never learned by it:</p>
+      <div class="tw">
+        <table>
+          <thead><tr><th>Adjustment</th><th>Effect</th></tr></thead>
+          <tbody>
+            <tr><td>FPL's <code>chance_of_playing</code></td><td>Scales the play probability — the correct place for it in a decomposed model</td></tr>
+            <tr><td>Hard status (injured/suspended)</td><td>Floors the projection to 10%</td></tr>
+            <tr><td>Repeat fitness flags (3+ this season)</td><td>×0.85 caution multiplier, from a log that persists across runs</td></tr>
+            <tr><td>No fixture that gameweek</td><td>Zero — a genuine blank</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ============ 6 ============ -->
+    <section id="optimizer">
+      <span class="sect-no">Section 06</span>
+      <h2>The optimizers</h2>
+      <p>
+        Both are Mixed-Integer Linear Programs solved with PuLP/CBC. A MILP gives
+        you something a "sort by points-per-million" heuristic never can: the answer
+        is <em>provably optimal</em> given the predictions, under every constraint
+        simultaneously.
+      </p>
+
+      <h3>The hard rules, encoded</h3>
+      <div class="tw">
+        <table>
+          <thead><tr><th>Rule</th><th class="num">Value</th></tr></thead>
+          <tbody>
+            <tr><td>Budget</td><td class="num">£100.0m</td></tr>
+            <tr><td>Squad</td><td class="num">15 — exactly 2 GK / 5 DEF / 5 MID / 3 FWD</td></tr>
+            <tr><td>Starting XI</td><td class="num">1 GK, 3–5 DEF, 2–5 MID, 1–3 FWD</td></tr>
+            <tr><td>Max per club</td><td class="num">3</td></tr>
+            <tr><td>Free transfers</td><td class="num">1 per week, hold at most 2</td></tr>
+            <tr><td>Extra transfer</td><td class="num">−4 points</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>Why six gameweeks, not one</h3>
+      <p>
+        A one-week solver will happily sell a player to chase a single good fixture,
+        then have to buy him straight back. Planning six weeks at once sees that and
+        declines — and it can deliberately bank a transfer this week to afford two
+        next week, a move no greedy weekly optimizer can find.
+      </p>
+      <p>
+        Future weeks are discounted at <strong>0.85 per gameweek</strong>: a
+        projection five weeks out is a weaker claim than one for Saturday, and
+        you'll get to revise it before then anyway.
+      </p>
+
+      <h3>The objective function</h3>
+      <pre><code>maximise   Σ over gameweeks t, discounted by 0.85^t of:
+
+             xP(starters)                    the XI
+           + xP(captain)                     doubled, so counted twice
+           + 0.12 × xP(bench)                autosub insurance
+           − (4 + HIT_MARGIN) × hits         see below</code></pre>
+
+      <div class="note good">
+        <span class="tag">The single biggest win in the project</span>
+        <p>
+          A hit costs 4 points. So the naive rule is "take it if the gain beats 4".
+          That's wrong, because the gain is a <em>projection</em> and the loss is a
+          <em>certainty</em>. <code>HIT_MARGIN</code> is the extra the move must
+          clear before it's worth that asymmetry.
+        </p>
+        <p>
+          At the old margin of 2 (hits needing to gain 6), the planner spent
+          <strong>228 points on 57 hits across two seasons and still finished
+          behind a version banned from taking any</strong>. At a margin of 4 (hits
+          needing to gain 8) it wins both seasons by +154 and +145 —
+          <strong>+299 pooled, about 4 points a gameweek</strong>.
+        </p>
+      </div>
+
+      <h3>The candidate pool</h3>
+      <p>
+        Six gameweeks × 660 players × five binary decisions each is a problem CBC
+        will chew on for a very long time to tell you the 400th-best midfielder
+        isn't going in your squad. The pool is trimmed to the best 20 GK / 55 DEF /
+        60 MID / 35 FWD by horizon value, <em>plus everyone you already own</em>
+        (so they can always be sold). This turns a multi-hour solve into seconds and
+        costs nothing real.
+      </p>
+
+      <h3>The hit recommendation, and a bug worth understanding</h3>
+      <p>
+        The dashboard answers "is a hit worth it this week?" The first
+        implementation solved two independent plans — one banned from hits, one
+        unconstrained — and <em>diffed</em> their transfers. That's wrong: two
+        independently optimal solutions can land on entirely unrelated squads, so
+        the "difference" was meaningless and reported nonsense like an −8 hit when
+        only −4 was possible.
+      </p>
+      <p>
+        It now solves <strong>sequentially</strong>: solve the free plan, build a
+        synthetic team state representing "you, having just made those moves"
+        (resulting squad, resulting bank, sell prices updated so newly bought
+        players sell for exactly what you paid), then re-solve from there. The
+        second solve's transfers <em>are</em> the extra moves a hit buys. No diffing.
+      </p>
+    </section>
+
+    <!-- ============ 7 ============ -->
+    <section id="testing">
+      <span class="sect-no">Section 07</span>
+      <h2>How things get tested</h2>
+      <p>
+        There are two harnesses because there are two problems. Using one to judge
+        the other is how you end up confidently shipping something harmful.
+      </p>
+
+      <div class="tw">
+        <table>
+          <thead><tr><th></th><th>backtest.py</th><th>season_sim.py</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Answers</strong></td><td>Are the predictions good?</td><td>Are the decisions good?</td></tr>
+            <tr><td><strong>Squad</strong></td><td>Rebuilt from scratch every week, unlimited transfers</td><td>One squad carried forward all season</td></tr>
+            <tr><td><strong>Transfers</strong></td><td>Free and unlimited</td><td>1/week, hold 2, −4 per extra</td></tr>
+            <tr><td><strong>Prices</strong></td><td>As they were</td><td>Move, with half-the-rise selling</td></tr>
+            <tr><td><strong>Use for</strong></td><td>Model and feature changes</td><td>Anything in the transfer planner</td></tr>
+            <tr><td><strong>Score</strong></td><td class="num">~4600 / 2 seasons</td><td class="num">~4200 / 2 seasons</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p>
+        Both replay seasons gameweek by gameweek, training <em>only</em> on data
+        strictly before the week being predicted, then score the chosen team against
+        what actually happened — including autosubs and the captain-to-vice fallback
+        exactly as FPL applies them.
+      </p>
+
+      <h3>Two reference points that make the numbers mean something</h3>
+      <div class="tw">
+        <table>
+          <thead><tr><th>Benchmark</th><th class="num">Points per gameweek</th></tr></thead>
+          <tbody>
+            <tr><td><code>naive_form</code> — no model, just each player's last-5 average</td><td class="num">53.4 / 50.8</td></tr>
+            <tr><td><strong>This model</strong></td><td class="num"><strong>64.1 / 57.2</strong></td></tr>
+            <tr><td><code>hindsight</code> — optimise on what actually happened</td><td class="num">148.3 / 155.6</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>
+        So the model is worth roughly <strong>+16% over having no model at all</strong>.
+        The hindsight ceiling exists to stop anyone mistaking a good score for a
+        great one.
+      </p>
+
+      <div class="note key">
+        <span class="tag">How season_sim keeps the comparison honest</span>
+        <p>
+          <strong>One model, many policies.</strong> The model trains once per
+          gameweek and every policy is handed the identical predictions. So any
+          difference in final score is caused by the decision rule and nothing else
+          — and it runs far faster than racing whole pipelines.
+        </p>
+        <p>
+          <strong>Form is frozen at the deadline; fixtures are not.</strong> Rolling
+          form comes only from matches played before the gameweek being planned. But
+          fixture context — home or away, opponent, rest days — is taken from the
+          real calendar, because in life the fixture list is published months ahead.
+          That distinction is where most season simulators quietly leak.
+        </p>
+      </div>
+
+      <h3>The trap that voided three tests</h3>
+      <div class="note bad">
+        <span class="tag">Read this before adding a variant</span>
+        <p>
+          A variant that changes how rows are <em>built</em> — an optional feature
+          join — must have its flag active <strong>while the data loads</strong>,
+          not just around fit and predict. <code>backtest.py</code> used to load
+          every season once up front and only afterwards enter the variant's
+          context, so such variants trained on neutral constant columns and reported
+          a verdict on nothing.
+        </p>
+        <p>
+          <code>Variant.context</code> now stays open across data loading, and frames
+          are rebuilt per variant. The same class of bug hit a captain flag that
+          never reached the solver, producing byte-identical results that were
+          reported as "no difference" when the truth was "never ran".
+        </p>
+        <p>
+          <strong>Always verify a knob binds before trusting its verdict.</strong>
+          For set-pieces that meant checking 0 of 29,757 rows carried a duty with the
+          flag off, and 1,664 with it on.
+        </p>
+      </div>
+    </section>
+
+    <!-- ============ 8 ============ -->
+    <section id="ledger">
+      <span class="sect-no">Section 08</span>
+      <h2>The evidence ledger</h2>
+      <p>
+        Every idea ever tested, with its number. This table is the project's memory —
+        it exists so nobody, including future you, re-proposes something already
+        disproved.
+      </p>
+
+      <h3>Accepted</h3>
+      <div class="tw">
+        <table>
+          <thead><tr><th>Change</th><th class="num">Effect</th><th>Why</th></tr></thead>
+          <tbody>
+            <tr><td>Hit must gain 8, not 6</td><td class="num ok">+299</td><td>Won both seasons. Old setting spent 228 points on hits and lost to taking none</td></tr>
+            <tr><td>Refit on all data after validating</td><td class="num ok">+127</td><td>Recent gameweeks are the most informative</td></tr>
+            <tr><td>Split training populations</td><td class="num ok">+7, MAE 1.16→1.05</td><td>Classifier needs non-players; regressor doesn't</td></tr>
+            <tr><td>Backtest from GW2, not GW8</td><td class="num ok">—</td><td>The early-season regime was never being tested</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>Rejected</h3>
+      <div class="tw">
+        <table>
+          <thead><tr><th>Idea</th><th class="num">Effect</th><th>Why it failed</th></tr></thead>
+          <tbody>
+            <tr><td>Per-position regressors</td><td class="num no">−104</td><td>Splits the feature set too thin</td></tr>
+            <tr><td>Captain on ceiling, not mean</td><td class="num no">−75</td><td>Chasing upside drags high-variance players into the whole squad; the squad lost more than the armband gained</td></tr>
+            <tr><td>Set-piece / penalty features</td><td class="num no">−62</td><td>Takers are just good players — their penalty income is already in their xG and points history. MAE identical to 3 decimals</td></tr>
+            <tr><td>Recency weighting by season</td><td class="num no">−58</td><td>Lost both seasons</td></tr>
+            <tr><td>Single flat regressor</td><td class="num no">−53</td><td>Smears rotation risk into quality</td></tr>
+            <tr><td>Betting-odds features</td><td class="num no">−32</td><td>Model <em>does</em> use them (~11% of gain) and still scores worse — the signal is already in rolling xG and team strength</td></tr>
+            <tr><td>Early-season shrinkage</td><td class="num no">−64</td><td>Multi-season training already covers the thin-history weeks</td></tr>
+            <tr><td>Free-transfer margin</td><td class="num no">split</td><td>Looked like +96 pooled; was −10 / +106 by season. Also stops binding once hits are priced right</td></tr>
+            <tr><td>Differential tilt</td><td class="num no">≈0</td><td>Roughly points-neutral once measured fairly. Buys rank variance — the right trade only when behind</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="note">
+        <p>
+          <strong>Nine of thirteen ideas failed.</strong> That ratio is the point,
+          not an embarrassment: every one of them sounded right beforehand, and
+          without the harness most would have shipped.
+        </p>
+      </div>
+    </section>
+
+    <!-- ============ 9 ============ -->
+    <section id="running">
+      <span class="sect-no">Section 09</span>
+      <h2>Running it</h2>
+
+      <h4>First time</h4>
+      <pre><code>cd backend
+python3 -m venv venv
+source venv/bin/activate          # Windows: venv\Scripts\activate
+pip install -r requirements.txt</code></pre>
+
+      <h4>Generate a squad</h4>
+      <pre><code># "What is the best possible squad?" — GW1, or a wildcard
+python main.py
+
+# "Given the team I own, what should I change?" — every other week
+python main.py --team-id 9927826</code></pre>
+      <p>
+        Takes 5–15 minutes, most of it fetching ~660 player histories one at a time.
+        Writes <code>optimized_team.json</code> to two places.
+      </p>
+
+      <h4>View the dashboard</h4>
+      <pre><code>cd frontend
+npm install
+npm run dev      # localhost:3000</code></pre>
+
+      <h4>Test a model change</h4>
+      <pre><code>python -m data_engine.backtest --seasons 2024-25 2025-26 \
+       --variants production your_new_variant --augment
+
+# faster while iterating — every 3rd gameweek
+python -m data_engine.backtest --seasons 2025-26 --stride 3</code></pre>
+
+      <h4>Test a transfer-planner change</h4>
+      <pre><code>python -m data_engine.season_sim --seasons 2025-26 2024-25 \
+       --policies baseline hit_margin_4 no_hits</code></pre>
+      <p>
+        Prints a table per season and then the pooled total. <strong>A change has to
+        win every season</strong> — the per-season split exists precisely because one
+        strong season can carry a harmful change into looking like an improvement.
+      </p>
+
+      <div class="note key">
+        <span class="tag">Long runs</span>
+        <p>
+          A full two-season, six-policy race takes hours. Push it to GitHub Actions
+          rather than tying up your laptop: the <strong>Season simulation</strong>
+          workflow runs it in the cloud and writes the result table straight into the
+          run summary, readable from a phone.
+        </p>
+      </div>
+    </section>
+
+    <!-- ============ 10 ============ -->
+    <section id="config">
+      <span class="sect-no">Section 10</span>
+      <h2>Every knob in config.py</h2>
+      <p>
+        Each carries an inline comment with its verdict and the exact numbers behind
+        it. Changing any of them without re-running a harness undoes evidence.
+      </p>
+
+      <div class="tw">
+        <table>
+          <thead><tr><th>Setting</th><th class="num">Value</th><th>Meaning</th></tr></thead>
+          <tbody>
+            <tr><td class="mono">HORIZON_GWS</td><td class="num">6</td><td>Gameweeks planned at once</td></tr>
+            <tr><td class="mono">HORIZON_DECAY</td><td class="num">0.85</td><td>Discount per week into the future</td></tr>
+            <tr><td class="mono">HIT_MARGIN</td><td class="num">4.0</td><td>A hit must gain 4+4=8. <span class="ok">The big win</span></td></tr>
+            <tr><td class="mono">FREE_TRANSFER_MARGIN</td><td class="num">0.0</td><td>Free transfers cost nothing. Tested at 1.5 — a split</td></tr>
+            <tr><td class="mono">DIFFERENTIAL_WEIGHT</td><td class="num">0.0</td><td>Tilt toward unowned players. Points-neutral; situational</td></tr>
+            <tr><td class="mono">MAX_FREE_TRANSFERS</td><td class="num">2</td><td>Real cap. Was wrongly 5</td></tr>
+            <tr><td class="mono">BENCH_WEIGHT</td><td class="num">0.12</td><td>Autosub insurance value</td></tr>
+            <tr><td class="mono">CAPTAIN_QUANTILE</td><td class="num">0.80</td><td>Ceiling model's quantile. Built, rejected twice, kept off</td></tr>
+            <tr><td class="mono">VALIDATION_HOLDOUT_GAMEWEEKS</td><td class="num">5</td><td>Time-based holdout size</td></tr>
+            <tr><td class="mono">SOLVER_TIME_LIMIT</td><td class="num">120s</td><td>Near-optimal before the deadline beats perfect after it</td></tr>
+            <tr><td class="mono">ATTACH_ODDS</td><td class="num">False</td><td>Rejected −32</td></tr>
+            <tr><td class="mono">ATTACH_SETPIECE</td><td class="num">False</td><td>Rejected −62</td></tr>
+            <tr><td class="mono">RECENCY_SEASON_DECAY</td><td class="num">1.0</td><td>Disabled — rejected −58</td></tr>
+            <tr><td class="mono">FORM_SHRINKAGE_GAMES</td><td class="num">0.0</td><td>Disabled — rejected −64</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ============ 11 ============ -->
+    <section id="frontend">
+      <span class="sect-no">Section 11</span>
+      <h2>The dashboard</h2>
+      <p>
+        A static Next.js 16 site whose entire data source is one JSON file. Its job
+        is to make a decision legible, not to look like a dashboard — so it leads
+        with the single move that's due and puts the reasoning underneath.
+      </p>
+
+      <div class="tw">
+        <table>
+          <thead><tr><th>Section</th><th>Answers</th></tr></thead>
+          <tbody>
+            <tr><td><strong>This week</strong></td><td>The transfer to make, whether a hit is worth it, who to captain</td></tr>
+            <tr><td><strong>Chip watch</strong></td><td>When to play a chip — and explicitly says "watching, nothing yet" so silence never reads as broken</td></tr>
+            <tr><td><strong>Your league</strong></td><td>What the managers ahead of you own, what you're missing, who's burned which chips</td></tr>
+            <tr><td><strong>The squad</strong></td><td>The pitch, in club colours. Tap anyone for their projection and fixture run</td></tr>
+            <tr><td><strong>The plan</strong></td><td>All six gameweeks of moves this week's decision belongs to</td></tr>
+            <tr><td><strong>How / FAQ</strong></td><td>The five pipeline stages, in plain language</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>Why the league view is not an optimizer input</h3>
+      <p>
+        It would be easy to make the solver chase players your rivals don't own. It
+        was built and tested, and it's roughly points-neutral: it buys rank variance
+        at the cost of expected points. That's the right trade when you're behind and
+        need to catch someone, and the wrong one when you're ahead protecting a lead.
+        That's a judgement about <em>your situation</em>, not something a solver
+        should make quietly on your behalf. So the numbers go on the page and the
+        call stays yours.
+      </p>
+    </section>
+
+    <!-- ============ 12 ============ -->
+    <section id="automation">
+      <span class="sect-no">Section 12</span>
+      <h2>Automation</h2>
+      <div class="tw">
+        <table>
+          <thead><tr><th>Workflow</th><th>When</th><th>Does</th></tr></thead>
+          <tbody>
+            <tr><td class="mono">weekly.yml</td><td>Twice daily (cron)</td><td>Checks the next deadline and exits in seconds unless one is within ~30h. Otherwise refreshes, retrains, re-solves, commits — which triggers a Vercel redeploy</td></tr>
+            <tr><td class="mono">simulate.yml</td><td>Manual</td><td>Runs a policy race in the cloud and writes the result table into the run summary</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>
+        Set <code>FPL_TEAM_ID</code> as a repository variable to get transfer plans
+        rather than fresh squads. Public repo means unlimited free Actions minutes.
+      </p>
+
+      <div class="note">
+        <span class="tag">If a deploy fails</span>
+        <p>
+          Check whether the commit touched <code>frontend/</code> at all. If it
+          didn't, suspect Vercel's build cache: redeploy with <em>Use existing Build
+          Cache</em> unticked. A stale Turbopack cache produced font-resolution
+          errors on a commit that changed only Python files.
+        </p>
+      </div>
+    </section>
+
+    <!-- ============ 13 ============ -->
+    <section id="limits">
+      <span class="sect-no">Section 13</span>
+      <h2>Limits &amp; open questions</h2>
+
+      <h3>What this genuinely cannot do</h3>
+      <ul>
+        <li><strong>It can't manufacture an 80-point week.</strong> Only 2.1% of player-weeks score 10+; 0.3% score 15+. An 80-point week needs a captain haul plus two or three others landing at once. What's achievable is moving the <em>expectation</em> from roughly 52 to roughly 60.</li>
+        <li><strong>It can't see team news.</strong> The simulation reacts to a player having stopped playing, not to the press conference saying he will.</li>
+        <li><strong>Neither harness plays chips.</strong> Both totals sit below a real chip-using season. They're comparative yardsticks, not season predictions.</li>
+        <li><strong>Predictions are conditional means on a violently skewed distribution.</strong> Among players who start, real scores spread 3.16 points; predictions spread 1.28. That compression is mathematically correct and is why expected points alone will never identify who's about to haul.</li>
+      </ul>
+
+      <h3>Genuinely open</h3>
+      <ul>
+        <li><strong>Newly appointed set-piece takers.</strong> The duty itself adds nothing — but a player who just <em>inherited</em> penalties has a history that can't show it yet. That needs a change-detection feature (duty this week he didn't have last week), not the duty. Data and join are already in place.</li>
+        <li><strong>The odds re-test reproduced the old numbers exactly</strong> despite the data demonstrably differing. The verdict is settled; the coincidence isn't explained.</li>
+        <li><strong>A decoupled captain test</strong> — pick the squad on the mean, then the captain on ceiling — was never run. It would separate the two effects the rejected test conflated.</li>
+      </ul>
+
+      <div class="note key">
+        <span class="tag">If you change one thing, change this</span>
+        <p>
+          Keep the rule. Every knob in <code>config.py</code> carries its verdict
+          because the alternative is folklore — a codebase full of settings nobody
+          remembers the reason for. When you test something new, write the number
+          down next to the setting, whichever way it goes.
+        </p>
+      </div>
+    </section>
+
+  </main>
+
+  <footer>
+    VAR-ified XI handbook &middot; compiled September 2026<br>
+    Evidence: walk-forward backtests over 2024-25 and 2025-26, transfer-constrained season simulation, live FPL API.<br>
+    Not affiliated with the Premier League or Fantasy Premier League.
+  </footer>
+
+</div>
+
+</body>
+</html>

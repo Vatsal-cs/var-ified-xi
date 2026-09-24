@@ -223,7 +223,11 @@ Set `FPL_TEAM_ID` as a repository variable for transfer plans instead of fresh s
 
 ## Full documentation
 
-The [project handbook](https://claude.ai/artifact/4iwTzghZtXbNvQSWJFyabU) covers everything in depth: the data layer, the train/predict window asymmetry, the two-stage model, both optimizers, the harness trap that voided three tests, the complete evidence ledger, every config knob, and the honest limits.
+**[📘 Read the project handbook →](docs/HANDBOOK.md)**
+
+Thirteen sections covering the data layer, the train/predict window asymmetry, the two-stage model, both optimizers, the harness trap that voided three tests, the complete evidence ledger, every config knob, and the honest limits.
+
+Also available as a styled standalone page — [`docs/handbook.html`](docs/handbook.html), open it in any browser, no server needed.
 
 ---
 
