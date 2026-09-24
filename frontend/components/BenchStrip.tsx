@@ -7,7 +7,7 @@ import { Term } from "./ui";
 
 export default function BenchStrip({ bench }: { bench: Player[] }) {
   return (
-    <div className="glass p-4">
+    <div className="panel p-4">
       <p className="label mb-3">
         <Term explain="If a starter doesn't play, FPL automatically subs in the first bench player who did — in this order. The reserve keeper can only ever replace the keeper.">
           Bench &mdash; substitution order
@@ -19,7 +19,7 @@ export default function BenchStrip({ bench }: { bench: Player[] }) {
           return (
             <li
               key={p.player_id}
-              className="group relative flex items-center gap-2.5 overflow-hidden rounded-lg border border-line bg-surface-raised/60 p-2.5 transition-colors hover:border-pts/40"
+              className="group relative flex items-center gap-2.5 overflow-hidden rounded-[2px] border border-line bg-surface-raised/60 p-2.5 transition-colors hover:border-pts/40"
             >
               {/* Club colour as a spine, so the bench reads at a glance too */}
               <span

@@ -31,7 +31,7 @@ export default function ChipAdvice({
         {advice.map((a) => (
           <div
             key={`${a.chip}-${a.gameweek}`}
-            className="rounded-lg border border-warn/40 bg-warn/[0.06] p-4"
+            className="rounded-[2px] border border-warn/40 bg-warn/[0.06] p-4"
           >
             <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-warn">
               GW{a.gameweek} &middot; {CHIP_LABEL[a.chip]}
@@ -47,7 +47,7 @@ export default function ChipAdvice({
   // reads as "this feature doesn't work."
   const next = watch?.next_double_gw ?? watch?.next_blank_gw;
   return (
-    <div className="glass p-4">
+    <div className="panel p-4">
       <p className="font-body text-sm text-ink-300">
         {next ? (
           <>

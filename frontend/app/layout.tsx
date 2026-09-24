@@ -2,26 +2,28 @@
 // Path: var-ified-xi/frontend/app/layout.tsx
 
 import type { Metadata } from "next";
-import { Bricolage_Grotesque, JetBrains_Mono, Inter } from "next/font/google";
+import { Instrument_Serif, Inter_Tight, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 
-// Bricolage carries the personality: a contemporary grotesque with real
-// character in its wider weights, so headings feel designed rather than set.
-const display = Bricolage_Grotesque({
+// A high-contrast editorial serif. Football's best print — matchday
+// programmes, Wisden, Rothmans — was always set in serif, and it is the
+// single thing that stops a stats site looking like a dashboard template.
+const display = Instrument_Serif({
   subsets: ["latin"],
-  weight: ["600", "700", "800"],
+  weight: ["400"],
+  style: ["normal", "italic"],
   variable: "--font-display",
 });
 
-// Inter does the reading. It is deliberately neutral — the display face is
-// doing the talking, and body copy here is often dense explanation.
-const body = Inter({
+// Tighter and more drawn than plain Inter, which keeps captions and running
+// copy from reading as default-UI.
+const body = Inter_Tight({
   subsets: ["latin"],
   weight: ["400", "500", "600"],
   variable: "--font-body",
 });
 
-// Every number on this site is a measurement, and measurements line up.
+// Every number here is a measurement, and measurements line up.
 const mono = JetBrains_Mono({
   subsets: ["latin"],
   weight: ["400", "500", "700"],
