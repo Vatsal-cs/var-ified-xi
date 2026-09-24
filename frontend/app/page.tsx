@@ -3,7 +3,6 @@
 
 import { getTeamData, deriveFormation } from "@/lib/getTeamData";
 import SiteHeader from "@/components/SiteHeader";
-import SiteNav from "@/components/SiteNav";
 import ThisWeek from "@/components/ThisWeek";
 import PitchView from "@/components/PitchView";
 import BenchStrip from "@/components/BenchStrip";
@@ -21,17 +20,17 @@ export default function Home() {
   if (!team) {
     return (
       <main className="mx-auto flex min-h-screen max-w-lg flex-col items-center justify-center gap-3 px-6 text-center">
-        <p className="font-mono text-[11px] uppercase tracking-[0.24em] text-var-amber">
+        <p className="font-mono text-[11px] uppercase tracking-[0.24em] text-warn">
           No data yet
         </p>
         <h1 className="font-display text-2xl font-bold tracking-tight text-ink-100">
           Run the engine to generate a plan
         </h1>
         <p className="prose-note">
-          From <code className="rounded bg-pitch-panel px-1.5 py-0.5 font-mono text-var-green">backend/</code>,
-          run <code className="rounded bg-pitch-panel px-1.5 py-0.5 font-mono text-var-green">python main.py --team-id YOUR_ID</code>.
-          It writes <code className="rounded bg-pitch-panel px-1.5 py-0.5 font-mono text-var-green">optimized_team.json</code> straight
-          into this app&apos;s <code className="rounded bg-pitch-panel px-1.5 py-0.5 font-mono text-var-green">public/</code> folder.
+          From <code className="rounded bg-surface px-1.5 py-0.5 font-mono text-pts">backend/</code>,
+          run <code className="rounded bg-surface px-1.5 py-0.5 font-mono text-pts">python main.py --team-id YOUR_ID</code>.
+          It writes <code className="rounded bg-surface px-1.5 py-0.5 font-mono text-pts">optimized_team.json</code> straight
+          into this app&apos;s <code className="rounded bg-surface px-1.5 py-0.5 font-mono text-pts">public/</code> folder.
         </p>
       </main>
     );
@@ -43,9 +42,8 @@ export default function Home() {
   return (
     <div id="top">
       <SiteHeader team={team} />
-      <SiteNav />
 
-      <main className="mx-auto max-w-5xl space-y-14 px-5 py-10 pb-28 sm:space-y-16">
+      <main className="mx-auto max-w-6xl space-y-16 px-5 py-12 pb-28 sm:space-y-20">
         {/* The decision that's due */}
         <ThisWeek team={team} />
 
@@ -136,7 +134,7 @@ export default function Home() {
           <Glossary />
         </Section>
 
-        <footer className="border-t border-pitch-line pt-8 text-center font-mono text-[11px] text-ink-500">
+        <footer className="border-t border-line pt-8 text-center font-mono text-[11px] text-ink-500">
           VAR-ified XI — built on the free FPL API. Not affiliated with the Premier
           League or Fantasy Premier League. Projections are estimates, not
           guarantees.

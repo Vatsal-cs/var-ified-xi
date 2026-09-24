@@ -22,7 +22,7 @@ const QA: { q: string; a: string }[] = [
   },
   {
     q: "How is the captain chosen?",
-    a: "The armband doubles points, so the pick that matters is the highest realistic ceiling, not the steadiest average. A separate model estimates each player's good-day score and the captain is taken from that.",
+    a: "The player with the highest projected points in your XI. Picking on a 'good day ceiling' instead was tested over two full seasons and lost both, so it isn't used: chasing upside also drags high-variance players into the rest of the squad, and the squad lost more than the armband gained.",
   },
   {
     q: "How good is the model, honestly?",
@@ -30,7 +30,7 @@ const QA: { q: string; a: string }[] = [
   },
   {
     q: "What are the hard FPL rules it respects?",
-    a: "£100m budget, exactly 2 goalkeepers / 5 defenders / 5 midfielders / 3 forwards, a legal starting formation, no more than 3 players from one club, one free transfer per week (bankable to five), and −4 points per extra transfer.",
+    a: "£100m budget, exactly 2 goalkeepers / 5 defenders / 5 midfielders / 3 forwards, a legal starting formation, no more than 3 players from one club, one free transfer per week (you can hold at most two at once), and −4 points per extra transfer.",
   },
   {
     q: "Does it need my FPL login?",
@@ -42,7 +42,7 @@ export default function Glossary() {
   return (
     <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
       {QA.map((item) => (
-        <div key={item.q} className="card p-4">
+        <div key={item.q} className="glass p-4">
           <p className="font-body text-sm font-semibold text-ink-100">{item.q}</p>
           <p className="mt-1.5 font-body text-[14px] leading-relaxed text-ink-300">{item.a}</p>
         </div>

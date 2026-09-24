@@ -5,6 +5,7 @@
 // deadline. Everything below it on the page is supporting detail.
 
 import type { OptimizedTeam, Player, PlannedWeek } from "@/lib/types";
+import { kitFor } from "@/lib/teams";
 import { Term } from "./ui";
 
 function named(team: OptimizedTeam, id: number | null): Player | undefined {
@@ -33,6 +34,51 @@ function CaptainLine({ team }: { team: OptimizedTeam }) {
   );
 }
 
+/** One side of a swap, wearing the club's colour so the move reads at a
+ *  glance rather than as two names in a row. */
+function SwapCard({
+  name,
+  team,
+  sub,
+  tone,
+}: {
+  name: string;
+  team?: string;
+  sub: string;
+  tone: "out" | "in";
+}) {
+  const kit = kitFor(team);
+  const isOut = tone === "out";
+  return (
+    <div
+      className={`relative flex-1 overflow-hidden rounded-xl border p-3.5 ${
+        isOut
+          ? "border-risk/25 bg-risk/[0.06]"
+          : "border-pts/30 bg-pts/[0.07]"
+      }`}
+    >
+      <span
+        className="absolute inset-y-0 left-0 w-1"
+        style={{ background: kit.shirt }}
+        aria-hidden
+      />
+      <p className={`label ${isOut ? "text-risk/80" : "text-pts/80"}`}>
+        {isOut ? "Out" : "In"}
+      </p>
+      <p
+        className={`mt-1 font-display text-lg font-bold leading-tight ${
+          isOut ? "text-ink-300 line-through decoration-risk/50" : "text-ink-100"
+        }`}
+      >
+        {name}
+      </p>
+      <p className="mt-0.5 font-mono text-[11px] text-ink-400">
+        {kit.abbr} &middot; {sub}
+      </p>
+    </div>
+  );
+}
+
 function TransferRows({ week }: { week: PlannedWeek }) {
   if (week.transfers_out.length === 0) {
     return (
@@ -42,26 +88,31 @@ function TransferRows({ week }: { week: PlannedWeek }) {
     );
   }
   return (
-    <ul className="space-y-2.5">
+    <ul className="space-y-3">
       {week.transfers_out.map((out, i) => {
         const inn = week.transfers_in[i];
         return (
-          <li
-            key={out.player_id}
-            className="flex flex-wrap items-center gap-x-3 gap-y-1 font-mono text-sm"
-          >
-            <span className="text-var-crimson line-through decoration-var-crimson/40">
-              {out.name}
-            </span>
-            <span aria-hidden className="text-ink-500">
+          <li key={out.player_id} className="flex items-stretch gap-2.5">
+            <SwapCard
+              name={out.name}
+              team={out.team}
+              sub={`£${out.sell_price_m?.toFixed(1) ?? "—"}m`}
+              tone="out"
+            />
+            <span
+              aria-hidden
+              className="flex w-7 flex-none items-center justify-center font-display text-xl text-ink-500"
+            >
               &rarr;
             </span>
-            <span className="font-medium text-var-green">{inn?.name ?? "—"}</span>
-            {inn && (
-              <span className="text-ink-400">
-                &pound;{inn.cost_m?.toFixed(1)}m &middot; {inn.predicted_points.toFixed(1)} pts proj.
-              </span>
-            )}
+            <SwapCard
+              name={inn?.name ?? "—"}
+              team={inn?.team}
+              sub={`£${inn?.cost_m?.toFixed(1) ?? "—"}m · ${
+                inn?.predicted_points.toFixed(1) ?? "—"
+              } pts proj.`}
+              tone="in"
+            />
           </li>
         );
       })}
@@ -85,9 +136,9 @@ export default function ThisWeek({ team }: { team: OptimizedTeam }) {
       : `Make these ${week.transfers_out.length} transfers`;
 
   return (
-    <div id="week" className="card-hi scroll-mt-32 p-6 sm:p-7">
+    <div id="week" className="glass-brand scroll-mt-32 p-6 sm:p-7">
       <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
-        <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-var-green">
+        <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-pts">
           Gameweek {team.gameweek} &middot; before the deadline
         </p>
         {team.team && (
@@ -112,8 +163,8 @@ export default function ThisWeek({ team }: { team: OptimizedTeam }) {
             <div
               className={`rounded-lg border p-3.5 ${
                 hit?.worth_it
-                  ? "border-var-amber/40 bg-var-amber/[0.06]"
-                  : "border-pitch-line bg-pitch-panel2/50"
+                  ? "border-warn/40 bg-warn/[0.06]"
+                  : "border-line bg-surface-raised/50"
               }`}
             >
               <p className="label">
@@ -124,7 +175,7 @@ export default function ThisWeek({ team }: { team: OptimizedTeam }) {
               </p>
               {hit?.worth_it ? (
                 <>
-                  <p className="mt-1.5 font-body text-sm text-var-amber">
+                  <p className="mt-1.5 font-body text-sm text-warn">
                     Yes — on top of the free transfer(s) above, also take the &minus;
                     {hit.hit_cost}:
                   </p>
@@ -136,13 +187,13 @@ export default function ThisWeek({ team }: { team: OptimizedTeam }) {
                           key={out.player_id}
                           className="flex flex-wrap items-center gap-x-2 gap-y-0.5 font-mono text-sm"
                         >
-                          <span className="text-var-crimson line-through decoration-var-crimson/40">
+                          <span className="text-risk line-through decoration-risk/40">
                             {out.name}
                           </span>
                           <span aria-hidden className="text-ink-500">
                             &rarr;
                           </span>
-                          <span className="font-medium text-var-green">{inn?.name ?? "—"}</span>
+                          <span className="font-medium text-pts">{inn?.name ?? "—"}</span>
                         </li>
                       );
                     })}
@@ -159,9 +210,9 @@ export default function ThisWeek({ team }: { team: OptimizedTeam }) {
 
             <CaptainLine team={team} />
 
-            <p className="border-t border-pitch-line pt-3 font-mono text-xs text-ink-400">
+            <p className="border-t border-line pt-3 font-mono text-xs text-ink-400">
               Projected GW{team.gameweek} score after transfer costs:{" "}
-              <span className="text-var-green">
+              <span className="text-pts">
                 {week.predicted_points.toFixed(1)} pts
               </span>
             </p>
@@ -174,10 +225,10 @@ export default function ThisWeek({ team }: { team: OptimizedTeam }) {
               fresh start.
             </p>
             <CaptainLine team={team} />
-            <div className="grid grid-cols-3 gap-3 border-t border-pitch-line pt-4">
+            <div className="grid grid-cols-3 gap-3 border-t border-line pt-4">
               <div>
                 <p className="label">Proj. points</p>
-                <p className="mt-1 font-mono text-xl text-var-green">
+                <p className="mt-1 font-mono text-xl text-pts">
                   {team.predicted_total_points.toFixed(1)}
                 </p>
               </div>

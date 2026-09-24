@@ -14,49 +14,77 @@ html {
 }
 
 body {
-  /* Very faint vignette instead of the old hard grid — texture without noise. */
+  /* Two soft colour fields sitting far apart, so the ground has depth without
+     any element having to carry a gradient of its own. Fixed, so they read as
+     lighting rather than as content that scrolls. */
   background:
-    radial-gradient(1200px 600px at 50% -10%, rgba(34, 227, 138, 0.06), transparent 70%),
-    #0a0e0c;
+    radial-gradient(900px 520px at 12% -8%, rgba(139, 92, 246, 0.16), transparent 62%),
+    radial-gradient(760px 480px at 92% 6%, rgba(34, 211, 238, 0.10), transparent 60%),
+    #08080f;
   background-attachment: fixed;
 }
 
 ::selection {
-  background: #22e38a;
-  color: #0a0e0c;
+  background: #8b5cf6;
+  color: #f5f6fa;
 }
 
 :focus-visible {
-  outline: 2px solid #22e38a;
+  outline: 2px solid #22d3ee;
   outline-offset: 2px;
-  border-radius: 4px;
+  border-radius: 6px;
 }
 
-/* Reusable surfaces — keeps every card visually consistent. */
 @layer components {
-  .card {
-    @apply rounded-xl border border-pitch-line bg-pitch-panel shadow-card transition-colors duration-200;
+  /* The one surface everything else is built from: a translucent pane that
+     lets the background lighting through instead of covering it. */
+  .glass {
+    @apply rounded-2xl border border-line bg-surface/70 shadow-glass backdrop-blur-xl;
   }
-  /* Cards that hold a number worth looking at lift slightly on hover, so the
-     page feels responsive without anything moving on its own. */
-  .card-interactive {
-    @apply card hover:border-var-green/30 hover:bg-pitch-panel2/70;
+  .glass-raised {
+    @apply rounded-2xl border border-line-strong bg-surface-raised/80 shadow-lift backdrop-blur-xl;
   }
-  .card-hi {
-    @apply rounded-xl border border-var-green/40 bg-var-greensoft shadow-glow;
+  /* For the one card on a screen that matters most. The gradient ring is drawn
+     with a mask so it stays a hairline at any radius. */
+  .glass-brand {
+    @apply relative rounded-2xl border border-transparent bg-surface/70 shadow-brand backdrop-blur-xl;
   }
+  .glass-brand::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(110deg, #8b5cf6, #6366f1 45%, #22d3ee);
+    -webkit-mask:
+      linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+  }
+
   .label {
-    @apply font-mono text-[10px] font-medium uppercase tracking-[0.18em] text-ink-500;
+    @apply font-mono text-[10px] font-medium uppercase tracking-[0.2em] text-ink-500;
   }
   .stat {
-    @apply font-mono text-2xl tabular-nums text-ink-100;
+    @apply font-display text-[28px] font-bold leading-none tabular-nums text-ink-100;
   }
   .prose-note {
     @apply font-body text-[15px] leading-relaxed text-ink-300;
   }
-  /* Dotted-underline term with a native tooltip. */
   .term {
     @apply cursor-help border-b border-dotted border-ink-400 text-ink-200;
+  }
+
+  /* Text that carries the brand gradient. Used sparingly — one or two per page. */
+  .text-gradient {
+    @apply bg-brand-gradient bg-clip-text text-transparent;
+  }
+
+  /* Pills used for status and counts throughout. */
+  .pill {
+    @apply inline-flex items-center gap-1.5 rounded-full border border-line px-2.5 py-1 font-mono text-[10px] uppercase tracking-[0.14em];
   }
 }
 
@@ -74,12 +102,15 @@ body {
 }
 
 *::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 9px;
+  height: 9px;
 }
 *::-webkit-scrollbar-thumb {
-  background: #283430;
-  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 9px;
+}
+*::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.2);
 }
 *::-webkit-scrollbar-track {
   background: transparent;

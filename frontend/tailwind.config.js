@@ -1,57 +1,81 @@
 /** @type {import('tailwindcss').Config} */
+//
+// "Matchday" — a night-match palette. Deep blue-black ground so the accents
+// can be genuinely saturated without the page turning into a light show, glass
+// surfaces that sit ON the ground rather than replacing it, and a violet-to-cyan
+// gradient doing the work a single flat accent used to.
+//
+// Semantic colour is kept separate from the brand accent on purpose: points are
+// always emerald, risk is always rose, caution is always amber, whatever the
+// surrounding chrome is doing.
 module.exports = {
   content: ["./app/**/*.{js,ts,jsx,tsx}", "./components/**/*.{js,ts,jsx,tsx}"],
   theme: {
     extend: {
       colors: {
-        pitch: {
-          night: "#0A0E0C", // page background
-          panel: "#131917", // card surface
-          panel2: "#1A211E", // nested surface
-          line: "#283430", // borders / dividers
+        // Ground. Blue-biased rather than neutral grey, which is what stops
+        // the whole page reading as "default dark mode".
+        base: "#08080F",
+        surface: {
+          DEFAULT: "#101018",
+          raised: "#16161F",
+          sunk: "#0C0C13",
         },
-        var: {
-          green: "#22E38A", // primary accent (slightly softened from #00FF87)
-          greendim: "#0F7F4E",
-          greensoft: "#0E1E17", // green-tinted fill for highlighted cards
-          crimson: "#FF5C7A",
-          amber: "#FFC24B",
+        line: {
+          DEFAULT: "rgba(255,255,255,0.09)",
+          strong: "rgba(255,255,255,0.16)",
         },
+        // Brand accent, used as a gradient far more often than flat.
+        brand: {
+          violet: "#8B5CF6",
+          indigo: "#6366F1",
+          cyan: "#22D3EE",
+        },
+        // Semantics. These never change meaning.
+        pts: "#34D399", // points, gains, good
+        warn: "#FBBF24", // caution, chips, watch this
+        risk: "#FB7185", // exposure, losses, sold
         ink: {
-          100: "#F2F4F0", // headings / strong emphasis
-          200: "#D3DBD6", // body copy
-          300: "#A7B2AC", // secondary text
-          400: "#7E8A83", // muted / captions
-          500: "#5D6862", // faint labels
+          100: "#F5F6FA",
+          200: "#D5D8E3",
+          300: "#A2A7B8",
+          400: "#767C90",
+          500: "#575D70",
         },
       },
       fontFamily: {
-        display: ["var(--font-oswald)", "sans-serif"],
-        mono: ["var(--font-jbmono)", "ui-monospace", "monospace"],
-        body: ["var(--font-inter)", "system-ui", "sans-serif"],
+        display: ["var(--font-display)", "system-ui", "sans-serif"],
+        body: ["var(--font-body)", "system-ui", "sans-serif"],
+        mono: ["var(--font-mono)", "ui-monospace", "monospace"],
+      },
+      backgroundImage: {
+        "brand-gradient": "linear-gradient(110deg, #8B5CF6 0%, #6366F1 45%, #22D3EE 100%)",
+        "brand-soft":
+          "linear-gradient(110deg, rgba(139,92,246,0.16) 0%, rgba(34,211,238,0.10) 100%)",
       },
       boxShadow: {
-        card: "0 1px 0 rgba(255,255,255,0.02) inset, 0 8px 24px -16px rgba(0,0,0,0.6)",
-        glow: "0 0 0 1px rgba(34,227,138,0.25), 0 8px 30px -12px rgba(34,227,138,0.25)",
+        glass: "inset 0 1px 0 rgba(255,255,255,0.06), 0 12px 32px -20px rgba(0,0,0,0.9)",
+        lift: "inset 0 1px 0 rgba(255,255,255,0.08), 0 20px 46px -24px rgba(0,0,0,0.95)",
+        brand: "0 0 0 1px rgba(139,92,246,0.35), 0 18px 50px -24px rgba(139,92,246,0.55)",
       },
       keyframes: {
-        sweep: {
-          "0%": { transform: "translateX(-100%)" },
-          "100%": { transform: "translateX(100%)" },
-        },
         rise: {
-          "0%": { transform: "translateY(6px)", opacity: "0" },
+          "0%": { transform: "translateY(8px)", opacity: "0" },
           "100%": { transform: "translateY(0)", opacity: "1" },
         },
         pulseDot: {
           "0%, 100%": { opacity: "1" },
-          "50%": { opacity: "0.3" },
+          "50%": { opacity: "0.25" },
+        },
+        drift: {
+          "0%, 100%": { transform: "translate3d(0,0,0) scale(1)" },
+          "50%": { transform: "translate3d(2%, -3%, 0) scale(1.08)" },
         },
       },
       animation: {
-        sweep: "sweep 2s ease-in-out 1",
-        rise: "rise 0.4s ease-out forwards",
-        pulseDot: "pulseDot 2s ease-in-out infinite",
+        rise: "rise 0.45s cubic-bezier(0.22,1,0.36,1) forwards",
+        pulseDot: "pulseDot 2.4s ease-in-out infinite",
+        drift: "drift 18s ease-in-out infinite",
       },
     },
   },
