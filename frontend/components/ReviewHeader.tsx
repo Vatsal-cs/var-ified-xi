@@ -15,19 +15,19 @@ function formatTimestamp(iso: string) {
 
 export default function ReviewHeader({ team }: { team: OptimizedTeam }) {
   return (
-    <header className="sticky top-0 z-30 border-b border-pitch-line bg-pitch-night/90 backdrop-blur">
+    <header className="sticky top-0 z-30 border-b border-line bg-base/90 backdrop-blur">
       <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-3 px-6 py-4">
         <div className="flex items-center gap-3">
           <span className="relative flex h-2.5 w-2.5">
-            <span className="absolute inline-flex h-full w-full animate-pulseDot rounded-full bg-var-green" />
+            <span className="absolute inline-flex h-full w-full animate-pulseDot rounded-full bg-pts" />
           </span>
-          <span className="font-mono text-xs uppercase tracking-[0.2em] text-var-green">
+          <span className="font-mono text-xs uppercase tracking-[0.2em] text-pts">
             Decision Confirmed
           </span>
         </div>
 
         <h1 className="order-first w-full font-display text-3xl font-semibold uppercase tracking-tight text-ink-100 sm:order-none sm:w-auto sm:text-2xl">
-          VAR-ified <span className="text-var-green">XI</span>
+          VAR-ified <span className="text-pts">XI</span>
         </h1>
 
         <div className="flex items-center gap-5 font-mono text-xs text-ink-300">

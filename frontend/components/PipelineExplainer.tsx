@@ -29,7 +29,7 @@ const STAGES = [
     summary: "\"Will he play?\" and \"how well?\" are different questions.",
     body: [
       "Rotation risk is the biggest single source of error in fantasy football, so it gets its own model: a classifier estimates the odds a player doesn't play, comes off the bench, or starts properly. A second model estimates points given a proper start, trained only on players who actually played 60+ minutes — so it learns quality, not availability. Multiplying the two gives expected points.",
-      "A third model estimates each player's ceiling — a good-day score rather than an average one — which is what the captain pick uses, since the armband doubles points. Accuracy is measured on gameweeks the model never saw, then it's retrained on everything so it goes into the weekend current.",
+      "Accuracy is measured on gameweeks the model never saw, then it is retrained on everything so it goes into the weekend current. A third model estimating each player's ceiling was built for the captain pick and switched off after it lost both backtested seasons — the code and the numbers are kept so the decision stays checkable.",
     ],
   },
   {
@@ -38,7 +38,7 @@ const STAGES = [
     summary: "A real optimizer, planning six gameweeks at once.",
     body: [
       "A Mixed-Integer Linear Program (PuLP/CBC) decides everything together: which 15 players, which 11 start, who captains, and — when it knows your real team — which transfers to make in each of the next six gameweeks.",
-      "It obeys every FPL rule: £100m budget, 2/5/5/3 squad, a legal formation, max 3 per club, one free transfer a week banked up to five, and −4 for each extra. It only takes a hit when the extra points clearly beat the 4 it costs. Planning six weeks at once is what stops it chasing one fixture into a wall.",
+      "It obeys every FPL rule: £100m budget, 2/5/5/3 squad, a legal formation, max 3 per club, one free transfer a week held up to two at a time, and −4 for each extra. A hit has to gain 8 projected points before it is taken — at the old threshold of 6 the planner spent 228 points on hits across two seasons and still finished behind a version banned from taking any. Planning six weeks at once is what stops it chasing one fixture into a wall.",
     ],
   },
   {
@@ -54,11 +54,11 @@ const STAGES = [
 
 export default function PipelineExplainer() {
   return (
-    <div className="card divide-y divide-pitch-line overflow-hidden">
+    <div className="glass divide-y divide-line overflow-hidden">
       {STAGES.map((s) => (
         <details key={s.n} className="group">
-          <summary className="flex cursor-pointer list-none items-center gap-4 px-5 py-4 marker:content-none hover:bg-pitch-panel2/40">
-            <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-pitch-line font-mono text-xs text-ink-400">
+          <summary className="flex cursor-pointer list-none items-center gap-4 px-5 py-4 marker:content-none hover:bg-surface-raised/40">
+            <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-line font-mono text-xs text-ink-400">
               {s.n}
             </span>
             <span className="flex-1">

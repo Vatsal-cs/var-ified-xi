@@ -42,9 +42,9 @@ export default function LeagueView({ league }: { league: LeagueViewData }) {
           what the chasers need, not you.
         </p>
       ) : (
-        <div className="grid gap-6 md:grid-cols-2">
+        <div className="grid gap-4 md:grid-cols-2">
           {/* What can gain you places */}
-          <div>
+          <div className="glass p-5">
             <h3 className="label mb-3">Your differentials</h3>
             {differentials.length === 0 ? (
               <p className="prose-note">
@@ -52,19 +52,28 @@ export default function LeagueView({ league }: { league: LeagueViewData }) {
                 the managers ahead. You&apos;ll track them rather than catch them.
               </p>
             ) : (
-              <ul className="space-y-1.5">
+              <ul className="space-y-3">
                 {differentials.map((d) => (
-                  <li
-                    key={d.player_id}
-                    className="flex items-baseline justify-between gap-3 border-b border-pitch-line/60 pb-1.5"
-                  >
-                    <span className="font-body text-sm text-ink-100">{d.name}</span>
-                    <span className="font-mono text-[11px] text-ink-500">
-                      £{d.cost_m?.toFixed(1)}m &middot;{" "}
-                      <span className={d.owned_by === 0 ? "text-var-green" : ""}>
-                        {d.owned_by}/{rivals_ahead} ahead
+                  <li key={d.player_id} className="group">
+                    <div className="flex items-baseline justify-between gap-3">
+                      <span className="font-body text-sm font-medium text-ink-100">
+                        {d.name}
                       </span>
-                    </span>
+                      <span className="font-mono text-[11px] tabular-nums text-ink-400">
+                        £{d.cost_m?.toFixed(1)}m &middot;{" "}
+                        <span className={d.owned_by === 0 ? "text-pts" : "text-ink-300"}>
+                          {d.owned_by}/{rivals_ahead}
+                        </span>
+                      </span>
+                    </div>
+                    {/* Filled portion = rivals who ALSO have him, so a short
+                        bar is the good case. */}
+                    <div className="mt-1.5 h-1 w-full overflow-hidden rounded-full bg-white/[0.06]">
+                      <div
+                        className="h-full rounded-full bg-brand-gradient transition-[width] duration-700 ease-out"
+                        style={{ width: `${Math.max(3, d.share * 100)}%` }}
+                      />
+                    </div>
                   </li>
                 ))}
               </ul>
@@ -76,7 +85,7 @@ export default function LeagueView({ league }: { league: LeagueViewData }) {
           </div>
 
           {/* What can cost you places */}
-          <div>
+          <div className="glass p-5">
             <h3 className="label mb-3">Template you&apos;re missing</h3>
             {template_gaps.length === 0 ? (
               <p className="prose-note">
@@ -84,16 +93,23 @@ export default function LeagueView({ league }: { league: LeagueViewData }) {
                 you hold. No standing exposure.
               </p>
             ) : (
-              <ul className="space-y-1.5">
+              <ul className="space-y-3">
                 {template_gaps.map((t) => (
-                  <li
-                    key={t.player_id}
-                    className="flex items-baseline justify-between gap-3 border-b border-pitch-line/60 pb-1.5"
-                  >
-                    <span className="font-body text-sm text-ink-100">{t.name}</span>
-                    <span className="font-mono text-[11px] text-var-amber">
-                      £{t.cost_m?.toFixed(1)}m &middot; {pct(t.share)} of them own
-                    </span>
+                  <li key={t.player_id}>
+                    <div className="flex items-baseline justify-between gap-3">
+                      <span className="font-body text-sm font-medium text-ink-100">
+                        {t.name}
+                      </span>
+                      <span className="font-mono text-[11px] tabular-nums text-warn">
+                        £{t.cost_m?.toFixed(1)}m &middot; {pct(t.share)}
+                      </span>
+                    </div>
+                    <div className="mt-1.5 h-1 w-full overflow-hidden rounded-full bg-white/[0.06]">
+                      <div
+                        className="h-full rounded-full bg-warn transition-[width] duration-700 ease-out"
+                        style={{ width: `${Math.max(3, t.share * 100)}%` }}
+                      />
+                    </div>
                   </li>
                 ))}
               </ul>
@@ -113,10 +129,10 @@ export default function LeagueView({ league }: { league: LeagueViewData }) {
             Chips spent
           </Term>
         </h3>
-        <div className="overflow-x-auto">
+        <div className="glass overflow-x-auto p-5">
           <table className="w-full min-w-[420px] text-left">
             <thead>
-              <tr className="border-b border-pitch-line">
+              <tr className="border-b border-line">
                 <th className="label pb-2 pr-3 font-normal">#</th>
                 <th className="label pb-2 pr-3 font-normal">Manager</th>
                 <th className="label pb-2 pr-3 text-right font-normal">Pts</th>
@@ -127,8 +143,8 @@ export default function LeagueView({ league }: { league: LeagueViewData }) {
               {chips_spent.map((r) => (
                 <tr
                   key={r.entry}
-                  className={`border-b border-pitch-line/50 ${
-                    r.is_you ? "bg-var-green/[0.07]" : ""
+                  className={`border-b border-line/50 ${
+                    r.is_you ? "bg-brand-soft" : "hover:bg-white/[0.02]"
                   }`}
                 >
                   <td className="py-2 pr-3 font-mono text-[11px] text-ink-500">{r.rank}</td>
@@ -140,9 +156,9 @@ export default function LeagueView({ league }: { league: LeagueViewData }) {
                   </td>
                   <td className="py-2 font-mono text-[11px]">
                     {r.chips.length === 0 ? (
-                      <span className="text-var-green">all four intact</span>
+                      <span className="text-pts">all four intact</span>
                     ) : (
-                      <span className="text-var-amber">
+                      <span className="text-warn">
                         {r.chips
                           .map((c) => `${CHIP_LABEL[c.chip] ?? c.chip} (GW${c.gameweek})`)
                           .join(", ")}

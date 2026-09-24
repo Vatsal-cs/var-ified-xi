@@ -12,8 +12,8 @@ export default function TransfersPanel({ weeks }: { weeks: PlannedWeek[] }) {
   if (rest.length === 0) return null;
 
   return (
-    <div className="card overflow-hidden">
-      <ul className="divide-y divide-pitch-line">
+    <div className="glass overflow-hidden">
+      <ul className="divide-y divide-line">
         {rest.map((week) => {
           const moves = week.transfers_out.map((o, i) => ({
             out: o,
@@ -34,19 +34,19 @@ export default function TransfersPanel({ weeks }: { weeks: PlannedWeek[] }) {
                   moves.map(({ out, in: inn }, i) => (
                     <span key={out.player_id} className="mr-3 inline-block">
                       {i > 0 && <span className="mr-3 text-ink-600">·</span>}
-                      <span className="text-var-crimson line-through decoration-var-crimson/40">
+                      <span className="text-risk line-through decoration-risk/40">
                         {out.name}
                       </span>{" "}
                       <span aria-hidden className="text-ink-500">
                         &rarr;
                       </span>{" "}
-                      <span className="text-var-green">{inn?.name ?? "—"}</span>
+                      <span className="text-pts">{inn?.name ?? "—"}</span>
                     </span>
                   ))
                 )}
               </div>
               {week.hits > 0 && (
-                <span className="font-mono text-xs text-var-crimson">
+                <span className="font-mono text-xs text-risk">
                   &minus;{week.hit_cost}
                 </span>
               )}
@@ -57,7 +57,7 @@ export default function TransfersPanel({ weeks }: { weeks: PlannedWeek[] }) {
           );
         })}
       </ul>
-      <p className="border-t border-pitch-line px-4 py-2.5 font-body text-xs text-ink-500">
+      <p className="border-t border-line px-4 py-2.5 font-body text-xs text-ink-500">
         Provisional. These weeks assume today&apos;s form and prices, and are
         re-solved from scratch every run — act only on the gameweek that&apos;s due.
       </p>

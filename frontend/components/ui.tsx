@@ -24,13 +24,16 @@ export function Section({
   return (
     <section id={id} aria-labelledby={id ? `${id}-h` : undefined} className="scroll-mt-32">
       {eyebrow && (
-        <p className="mb-2 font-mono text-[11px] uppercase tracking-[0.22em] text-var-green">
-          {eyebrow}
+        <p className="mb-2.5 flex items-center gap-2.5">
+          <span className="h-px w-7 bg-brand-gradient" aria-hidden />
+          <span className="text-gradient font-mono text-[11px] font-medium uppercase tracking-[0.22em]">
+            {eyebrow}
+          </span>
         </p>
       )}
       <h2
         id={id ? `${id}-h` : undefined}
-        className="font-display text-2xl font-semibold tracking-tight text-ink-100 sm:text-[28px]"
+        className="font-display text-[30px] font-extrabold leading-[1.1] tracking-tight text-ink-100 sm:text-[38px]"
       >
         {title}
       </h2>
@@ -52,7 +55,7 @@ export function Term({ children, explain }: { children: ReactNode; explain: stri
 /** A boxed aside for a concept worth spelling out where it's first used. */
 export function InfoNote({ title, children }: { title?: string; children: ReactNode }) {
   return (
-    <div className="rounded-lg border border-pitch-line bg-pitch-panel2/60 p-4">
+    <div className="rounded-lg border border-line bg-surface-raised/60 p-4">
       {title && (
         <p className="mb-1 font-mono text-[11px] uppercase tracking-[0.16em] text-ink-400">
           {title}
@@ -76,9 +79,9 @@ export function Stat({
   tone?: "default" | "accent";
 }) {
   return (
-    <div className="card-interactive p-4">
+    <div className="glass transition-colors duration-200 hover:border-line-strong hover:bg-surface-raised/80 p-4">
       <p className="label">{label}</p>
-      <p className={`mt-1.5 stat ${tone === "accent" ? "text-var-green" : ""}`}>{value}</p>
+      <p className={`mt-1.5 stat ${tone === "accent" ? "text-pts" : ""}`}>{value}</p>
       {sub && <p className="mt-1.5 font-body text-xs text-ink-400">{sub}</p>}
     </div>
   );
@@ -87,15 +90,15 @@ export function Stat({
 /** Position pill (GK / DEF / MID / FWD). */
 export function PosPill({ pos }: { pos: string }) {
   const tone: Record<string, string> = {
-    GK: "text-amber-300/90 border-var-amber/30",
+    GK: "text-amber-300/90 border-warn/30",
     DEF: "text-sky-300/90 border-sky-400/30",
-    MID: "text-var-green border-var-green/30",
-    FWD: "text-var-crimson border-var-crimson/30",
+    MID: "text-pts border-pts/30",
+    FWD: "text-risk border-risk/30",
   };
   return (
     <span
       className={`inline-flex h-5 min-w-[2.4rem] items-center justify-center rounded border px-1 font-mono text-[10px] font-medium ${
-        tone[pos] ?? "text-ink-300 border-pitch-line"
+        tone[pos] ?? "text-ink-300 border-line"
       }`}
     >
       {pos}

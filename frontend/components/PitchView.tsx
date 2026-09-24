@@ -26,7 +26,7 @@ function FixtureRun({ xpByGw }: { xpByGw: Record<string, number> }) {
   const best = weeks.reduce((a, b) => (b.xp > a.xp ? b : a));
 
   return (
-    <div className="mt-4 border-t border-pitch-line pt-3">
+    <div className="mt-4 border-t border-line pt-3">
       <p className="label mb-2.5">Next {weeks.length} gameweeks &middot; projected points</p>
       <div className="flex items-end gap-1.5">
         {weeks.map((w, i) => {
@@ -35,7 +35,7 @@ function FixtureRun({ xpByGw }: { xpByGw: Record<string, number> }) {
             <div key={w.gw} className="group/bar flex flex-1 flex-col items-center gap-1">
               <span
                 className={`font-mono text-[9px] tabular-nums ${
-                  isBest ? "text-var-green" : "text-ink-400"
+                  isBest ? "text-pts" : "text-ink-400"
                 }`}
               >
                 {w.xp.toFixed(1)}
@@ -43,8 +43,8 @@ function FixtureRun({ xpByGw }: { xpByGw: Record<string, number> }) {
               <div className="flex h-10 w-full items-end">
                 <div
                   className={`w-full rounded-t-sm transition-all duration-500 ease-out ${
-                    isBest ? "bg-var-green" : "bg-var-green/35"
-                  } group-hover/bar:bg-var-green`}
+                    isBest ? "bg-pts" : "bg-pts/35"
+                  } group-hover/bar:bg-pts`}
                   style={{
                     height: `${Math.max(6, (w.xp / peak) * 100)}%`,
                     transitionDelay: `${i * 40}ms`,
@@ -93,7 +93,7 @@ function PlayerChip({
       <span className="relative block">
         <span
           className={`flex h-12 w-12 items-center justify-center rounded-full font-display text-[11px] font-bold tracking-wide shadow-lg transition-all duration-200 group-hover:-translate-y-1 group-hover:shadow-xl sm:h-[52px] sm:w-[52px] ${
-            isActive ? "ring-2 ring-var-green ring-offset-2 ring-offset-[#0d1a13]" : ""
+            isActive ? "ring-2 ring-pts ring-offset-2 ring-offset-[#0d1a13]" : ""
           }`}
           style={{
             background: kit.shirt,
@@ -110,8 +110,8 @@ function PlayerChip({
           <span
             className={`absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full border-2 border-[#0d1a13] font-mono text-[9px] font-bold ${
               player.is_captain
-                ? "bg-var-green text-pitch-night"
-                : "bg-var-amber text-pitch-night"
+                ? "bg-pts text-base"
+                : "bg-warn text-base"
             }`}
           >
             {armband}
@@ -124,7 +124,7 @@ function PlayerChip({
         <span className="block truncate text-center font-body text-[10px] font-medium leading-tight text-ink-100">
           {player.name}
         </span>
-        <span className="block text-center font-mono text-[9px] leading-tight text-var-green">
+        <span className="block text-center font-mono text-[9px] leading-tight text-pts">
           {player.predicted_points.toFixed(1)}
         </span>
       </span>
@@ -147,7 +147,7 @@ export default function PitchView({ startingXi }: { startingXi: Player[] }) {
 
   return (
     <div>
-      <div className="relative mx-auto aspect-[3/4] w-full max-w-md overflow-hidden rounded-2xl border border-pitch-line shadow-card">
+      <div className="relative mx-auto aspect-[3/4] w-full max-w-md overflow-hidden rounded-2xl border border-line shadow-glass">
         {/* Turf: a deep green base with mown stripes */}
         <div className="absolute inset-0 bg-[linear-gradient(175deg,#123d27_0%,#0f2f1f_45%,#0a2016_100%)]" />
         <div
@@ -196,7 +196,7 @@ export default function PitchView({ startingXi }: { startingXi: Player[] }) {
       </div>
 
       {active ? (
-        <div className="mx-auto mt-4 max-w-md animate-rise rounded-xl border border-pitch-line bg-pitch-panel p-4 shadow-card">
+        <div className="mx-auto mt-4 max-w-md animate-rise rounded-xl border border-line bg-surface p-4 shadow-glass">
           <div className="flex items-start justify-between gap-3">
             <div className="flex items-center gap-3">
               <span
@@ -215,36 +215,36 @@ export default function PitchView({ startingXi }: { startingXi: Player[] }) {
                 <p className="font-mono text-[11px] text-ink-400">
                   {active.team} &middot; {active.position}
                   {active.is_captain && (
-                    <span className="text-var-green"> &middot; captain (2&times;)</span>
+                    <span className="text-pts"> &middot; captain (2&times;)</span>
                   )}
                   {active.is_vice_captain && (
-                    <span className="text-var-amber"> &middot; vice</span>
+                    <span className="text-warn"> &middot; vice</span>
                   )}
                 </p>
               </div>
             </div>
             <button
               onClick={() => setActive(null)}
-              className="rounded px-1.5 py-0.5 font-mono text-xs text-ink-400 transition-colors hover:bg-pitch-panel2 hover:text-ink-100"
+              className="rounded px-1.5 py-0.5 font-mono text-xs text-ink-400 transition-colors hover:bg-surface-raised hover:text-ink-100"
             >
               close
             </button>
           </div>
 
           <div className="mt-4 grid grid-cols-3 gap-3">
-            <div className="rounded-lg bg-pitch-panel2 p-2.5">
+            <div className="rounded-lg bg-surface-raised p-2.5">
               <p className="label">Proj. pts</p>
-              <p className="mt-0.5 font-mono text-lg tabular-nums text-var-green">
+              <p className="mt-0.5 font-mono text-lg tabular-nums text-pts">
                 {active.predicted_points.toFixed(1)}
               </p>
             </div>
-            <div className="rounded-lg bg-pitch-panel2 p-2.5">
+            <div className="rounded-lg bg-surface-raised p-2.5">
               <p className="label">Price</p>
               <p className="mt-0.5 font-mono text-lg tabular-nums text-ink-100">
                 &pound;{active.now_cost_m.toFixed(1)}
               </p>
             </div>
-            <div className="rounded-lg bg-pitch-panel2 p-2.5">
+            <div className="rounded-lg bg-surface-raised p-2.5">
               <p className="label">Starts</p>
               <p className="mt-0.5 font-mono text-lg tabular-nums text-ink-100">
                 {Math.round(active.start_probability * 100)}%
