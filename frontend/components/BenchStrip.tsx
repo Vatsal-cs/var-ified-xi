@@ -2,30 +2,46 @@
 // Path: var-ified-xi/frontend/components/BenchStrip.tsx
 
 import type { Player } from "@/lib/types";
-import { PosPill } from "./ui";
+import { kitFor } from "@/lib/teams";
+import { Term } from "./ui";
 
 export default function BenchStrip({ bench }: { bench: Player[] }) {
   return (
     <div className="card p-4">
-      <p className="label mb-3">Bench — substitution order</p>
+      <p className="label mb-3">
+        <Term explain="If a starter doesn't play, FPL automatically subs in the first bench player who did — in this order. The reserve keeper can only ever replace the keeper.">
+          Bench &mdash; substitution order
+        </Term>
+      </p>
       <ol className="grid grid-cols-2 gap-2.5 sm:grid-cols-4">
-        {bench.map((p, i) => (
-          <li
-            key={p.player_id}
-            className="flex items-center gap-2.5 rounded-lg border border-pitch-line bg-pitch-panel2/60 p-2.5"
-          >
-            <span className="font-mono text-[10px] text-ink-500">{i + 1}</span>
-            <div className="min-w-0">
-              <p className="flex items-center gap-1.5">
-                <PosPill pos={p.position} />
-              </p>
-              <p className="mt-1 truncate font-mono text-xs text-ink-100">{p.name}</p>
-              <p className="font-mono text-[10px] text-ink-400">
-                {p.predicted_points.toFixed(1)} pts
-              </p>
-            </div>
-          </li>
-        ))}
+        {bench.map((p, i) => {
+          const kit = kitFor(p.team);
+          return (
+            <li
+              key={p.player_id}
+              className="group relative flex items-center gap-2.5 overflow-hidden rounded-lg border border-pitch-line bg-pitch-panel2/60 p-2.5 transition-colors hover:border-var-green/40"
+            >
+              {/* Club colour as a spine, so the bench reads at a glance too */}
+              <span
+                className="absolute inset-y-0 left-0 w-[3px]"
+                style={{ background: kit.shirt }}
+                aria-hidden
+              />
+              <span className="ml-0.5 font-mono text-[10px] text-ink-500">{i + 1}</span>
+              <div className="min-w-0 flex-1">
+                <p className="truncate font-body text-[13px] font-medium text-ink-100">
+                  {p.name}
+                </p>
+                <p className="font-mono text-[10px] text-ink-400">
+                  {p.position} &middot; {kit.abbr}
+                </p>
+                <p className="mt-0.5 font-mono text-[11px] tabular-nums text-var-green">
+                  {p.predicted_points.toFixed(1)} pts
+                </p>
+              </div>
+            </li>
+          );
+        })}
       </ol>
     </div>
   );

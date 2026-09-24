@@ -22,7 +22,7 @@ export function Section({
   children: ReactNode;
 }) {
   return (
-    <section id={id} aria-labelledby={id ? `${id}-h` : undefined} className="scroll-mt-20">
+    <section id={id} aria-labelledby={id ? `${id}-h` : undefined} className="scroll-mt-32">
       {eyebrow && (
         <p className="mb-2 font-mono text-[11px] uppercase tracking-[0.22em] text-var-green">
           {eyebrow}
@@ -76,7 +76,7 @@ export function Stat({
   tone?: "default" | "accent";
 }) {
   return (
-    <div className="card p-4">
+    <div className="card-interactive p-4">
       <p className="label">{label}</p>
       <p className={`mt-1.5 stat ${tone === "accent" ? "text-var-green" : ""}`}>{value}</p>
       {sub && <p className="mt-1.5 font-body text-xs text-ink-400">{sub}</p>}

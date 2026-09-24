@@ -3,6 +3,7 @@
 
 import { getTeamData, deriveFormation } from "@/lib/getTeamData";
 import SiteHeader from "@/components/SiteHeader";
+import SiteNav from "@/components/SiteNav";
 import ThisWeek from "@/components/ThisWeek";
 import PitchView from "@/components/PitchView";
 import BenchStrip from "@/components/BenchStrip";
@@ -42,6 +43,7 @@ export default function Home() {
   return (
     <div id="top">
       <SiteHeader team={team} />
+      <SiteNav />
 
       <main className="mx-auto max-w-5xl space-y-14 px-5 py-10 pb-28 sm:space-y-16">
         {/* The decision that's due */}

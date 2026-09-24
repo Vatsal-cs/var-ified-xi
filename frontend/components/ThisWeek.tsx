@@ -85,7 +85,7 @@ export default function ThisWeek({ team }: { team: OptimizedTeam }) {
       : `Make these ${week.transfers_out.length} transfers`;
 
   return (
-    <div className="card-hi p-6 sm:p-7">
+    <div id="week" className="card-hi scroll-mt-32 p-6 sm:p-7">
       <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
         <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-var-green">
           Gameweek {team.gameweek} &middot; before the deadline
