@@ -30,7 +30,7 @@ const QA: { q: string; a: string }[] = [
   },
   {
     q: "What are the hard FPL rules it respects?",
-    a: "£100m budget, exactly 2 goalkeepers / 5 defenders / 5 midfielders / 3 forwards, a legal starting formation, no more than 3 players from one club, one free transfer per week (you can hold at most two at once), and −4 points per extra transfer.",
+    a: "£100m budget, exactly 2 goalkeepers / 5 defenders / 5 midfielders / 3 forwards, a legal starting formation, no more than 3 players from one club, one free transfer per week (unused ones bank, up to five at once), and −4 points per extra transfer.",
   },
   {
     q: "Does it need my FPL login?",

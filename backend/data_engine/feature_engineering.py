@@ -627,6 +627,19 @@ def build_prediction_set(
                 previous_kickoff = kickoff
 
     out = pd.DataFrame(rows)
+
+    # FPL's chance_of_playing_next_round is, by name and by definition, about
+    # the NEXT round. Copying it onto every horizon week (which is what the
+    # snapshot copy above does) priced a 75%-doubtful player at 75% for six
+    # weeks, cutting his horizon value by ~20% and biasing the planner toward
+    # selling anyone with a knock. Later weeks fall back to the model's own
+    # availability. Hard statuses (injured, suspended, unavailable) stay on
+    # every week: without a return date there's no better assumption yet.
+    if "gw" in out.columns and first_gw is not None:
+        later = out["gw"] > first_gw
+        out.loc[later, "chance_of_playing"] = None
+        out.loc[later & (out["status"] == "d"), "status"] = "a"
+
     logger.info(
         "Prediction set: %d rows over GW%s-%s (%d players)",
         len(out), first_gw, (first_gw or 0) + horizon - 1, len(latest),

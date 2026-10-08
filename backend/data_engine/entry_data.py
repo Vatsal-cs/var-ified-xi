@@ -10,9 +10,9 @@ anyone who has your team id, which is the number in your team's public URL:
                                             ^^^^^^^
 
 Why this matters: an optimizer that rebuilds a £100m squad from scratch every
-week is answering a question nobody can act on. After gameweek 1 you don't get
-15 free picks — you get one free transfer a week (bankable to five), and a -4
-point hit for each extra. The only useful advice is "given the team you
+week is answering a question nobody can act on. After your first gameweek you
+don't get 15 free picks — you get one free transfer a week (bankable to five),
+and a -4 point hit for each extra. The only useful advice is "given the team you
 actually own, what should change", and that starts here.
 
 Endpoints used (all public):
@@ -50,6 +50,9 @@ class TeamState:
     sell_prices: dict = field(default_factory=dict)   # player_id -> tenths
     chips_used: list = field(default_factory=list)
     chips_available: list = field(default_factory=list)
+    # {chip name: last gameweek it can be played}. Chips come in two
+    # half-season sets, and an unused first-half chip is simply lost.
+    chip_deadlines: dict = field(default_factory=dict)
 
     @property
     def budget(self) -> int:
@@ -130,13 +133,35 @@ def _purchase_prices(entry_id: int, squad: list, player_histories: dict,
     return prices
 
 
-def _free_transfers(entry_id: int, upcoming_gw: int) -> int:
-    """Reconstructs how many free transfers you'll have.
+def replay_free_transfers(events: list, chip_weeks: set, upcoming_gw: int,
+                          cap: int = MAX_FREE_TRANSFERS) -> int:
+    """Free transfers available for `upcoming_gw`, rebuilt from history.
 
-    FPL doesn't publish this directly, so it's rebuilt from the rule: you gain
-    one per gameweek, you can bank up to MAX_FREE_TRANSFERS, and each transfer
-    you make spends one. Wildcard and free-hit weeks don't consume them.
+    FPL doesn't publish this, so it's replayed from the rules:
+
+      * A team's first gameweek is a free squad pick. It banks nothing, so
+        the week after it starts with exactly one free transfer — whether the
+        team was created before GW1 or joined later in the season.
+      * Every later gameweek adds one, up to `cap`.
+      * Transfers spend them; Wildcard and Free Hit weeks don't.
+
+    events: entry history rows ({"event", "event_transfers"}), any order.
     """
+    played = sorted((e for e in events if e["event"] < upcoming_gw),
+                    key=lambda e: e["event"])
+    if not played:
+        return 1
+
+    free = 0                      # the creation week banks nothing
+    for e in played:
+        if e["event"] not in chip_weeks:
+            free = max(free - e.get("event_transfers", 0), 0)
+        free = min(free + 1, cap)
+    return max(1, free)
+
+
+def _free_transfers(entry_id: int, upcoming_gw: int, cap: int = MAX_FREE_TRANSFERS) -> int:
+    """Free transfers for the coming gameweek, from your public history."""
     try:
         history = fetch_entry_history(entry_id)
     except requests.RequestException as e:
@@ -148,21 +173,58 @@ def _free_transfers(entry_id: int, upcoming_gw: int) -> int:
         c["event"] for c in history.get("chips", [])
         if c.get("name") in ("wildcard", "freehit")
     }
+    return replay_free_transfers(history.get("current", []), chip_weeks, upcoming_gw, cap)
 
-    free = 1
-    for event in sorted(history.get("current", []), key=lambda e: e["event"]):
-        gw = event["event"]
-        if gw >= upcoming_gw:
-            break
-        if gw not in chip_weeks:
-            free -= event.get("event_transfers", 0)
-            free = max(free, 0)
-        free = min(free + 1, MAX_FREE_TRANSFERS)
 
-    return max(1, min(free, MAX_FREE_TRANSFERS))
+def free_transfer_cap(bootstrap: dict) -> int:
+    """The banking cap FPL is actually running, cross-checked against config.
+
+    The live API states it as max_extra_free_transfers (banked on top of the
+    weekly one). The config value is what the optimizer is built against, so a
+    mismatch is logged loudly rather than silently followed.
+    """
+    extra = (bootstrap.get("game_settings") or {}).get("max_extra_free_transfers")
+    if extra is None:
+        return MAX_FREE_TRANSFERS
+    live = 1 + int(extra)
+    if live != MAX_FREE_TRANSFERS:
+        logger.warning(
+            "FPL now allows %d free transfers but config.MAX_FREE_TRANSFERS is "
+            "%d. Update config — the planner is using the wrong transfer economy.",
+            live, MAX_FREE_TRANSFERS)
+    return live
 
 
 ALL_CHIPS = ["wildcard", "bboost", "3xc", "freehit"]
+
+
+def available_chips(bootstrap: dict, chips_used: list, gameweek: int) -> dict:
+    """Chips you can still play in `gameweek`, with the last week each can be.
+
+    FPL issues chips per window — since 2025/26, one full set for GW1-19 and a
+    second for GW20-38 — and bootstrap-static lists every window's
+    start_event and stop_event. A chip is available if its window contains this
+    gameweek and you haven't played that chip inside that window. A first-half
+    chip left unplayed at the GW19 deadline is gone; it does not roll over.
+
+    chips_used: entry history chip rows ({"name", "event"}).
+    Returns {chip name: stop_event}.
+    """
+    windows = bootstrap.get("chips") or []
+    if not windows:
+        # Older payloads without chip windows: one set for the whole season.
+        spent = {c["name"] for c in chips_used}
+        return {name: 38 for name in ALL_CHIPS if name not in spent}
+
+    out = {}
+    for w in windows:
+        if not (w["start_event"] <= gameweek <= w["stop_event"]):
+            continue
+        spent = any(c["name"] == w["name"] and w["start_event"] <= c["event"] <= w["stop_event"]
+                    for c in chips_used)
+        if not spent:
+            out[w["name"]] = w["stop_event"]
+    return out
 
 
 def build_team_state(entry_id: int, bootstrap: dict, player_histories: dict,
@@ -196,9 +258,10 @@ def build_team_state(entry_id: int, bootstrap: dict, player_histories: dict,
     }
 
     try:
-        used = [c["name"] for c in fetch_entry_history(entry_id).get("chips", [])]
+        chip_rows = fetch_entry_history(entry_id).get("chips", [])
     except requests.RequestException:
-        used = []
+        chip_rows = []
+    deadlines = available_chips(bootstrap, chip_rows, upcoming_gw)
 
     state = TeamState(
         entry_id=entry_id,
@@ -207,18 +270,17 @@ def build_team_state(entry_id: int, bootstrap: dict, player_histories: dict,
         squad=squad,
         bank=bank,
         squad_value=value,
-        free_transfers=_free_transfers(entry_id, upcoming_gw),
+        free_transfers=_free_transfers(entry_id, upcoming_gw, free_transfer_cap(bootstrap)),
         sell_prices=sell_prices,
-        chips_used=used,
-        # Each chip is available once per season. (FPL's second-half chip
-        # reset isn't modelled — the planner only ever looks a few weeks out.)
-        chips_available=[c for c in ALL_CHIPS if c not in used],
+        chips_used=[c["name"] for c in chip_rows],
+        chips_available=[c for c in ALL_CHIPS if c in deadlines],
+        chip_deadlines=deadlines,
     )
 
     logger.info(
         "Team '%s' (id %d): %d players, £%.1fm in the bank, %d free transfer(s), "
         "chips left: %s",
         state.name, entry_id, len(squad), bank / 10, state.free_transfers,
-        ", ".join(state.chips_available) or "none",
+        ", ".join(f"{c} (by GW{deadlines[c]})" for c in state.chips_available) or "none",
     )
     return state

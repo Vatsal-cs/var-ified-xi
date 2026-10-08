@@ -54,11 +54,12 @@ export default function Home() {
           id="chips"
           eyebrow="Chip watch"
           title="When to play a chip"
-          lede="Double and blank gameweeks are the biggest single-week point swings in the game. This checks the full fixture calendar every run."
+          lede="Chips come in two half-season sets, and an unplayed chip is lost at its deadline. This tracks the deadline, values the best week in sight, and watches the fixture calendar for doubles and blanks."
         >
           <ChipAdvice
             advice={team.chip_advice}
             watch={team.chip_watch}
+            expiry={team.chip_expiry}
             horizonGws={team.horizon_gws}
           />
         </Section>

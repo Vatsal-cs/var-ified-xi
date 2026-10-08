@@ -122,12 +122,14 @@ else:                    sell = purchase + (current - purchase) // 2
 
 ### Free transfers, reconstructed
 
-You earn one per gameweek and may hold **at most two**. Wildcard and Free Hit
+You earn one per gameweek and may bank **up to five**; a team's first gameweek is a free squad pick and banks nothing. Wildcard and Free Hit
 weeks don't consume them. The count is rebuilt by replaying your history
 forward.
 
-> This cap was wrong for a while — set to 5, a rule from an earlier season — and
-> produced plans spending transfers you didn't have.
+> This cap was wrongly set to 2 for a while. A real team showing two free
+> transfers at GW5 was taken as proof — but that team was created at GW2, and
+> the creation week banks nothing, so a cap of five produces the same count.
+> The official rules (and the live API's `max_extra_free_transfers = 4`) say five.
 
 ### ⚠ A real bug worth knowing about
 
@@ -258,7 +260,7 @@ something a "sort by points-per-million" heuristic never can: the answer is
 | Squad | 15 — exactly 2 GK / 5 DEF / 5 MID / 3 FWD |
 | Starting XI | 1 GK, 3–5 DEF, 2–5 MID, 1–3 FWD |
 | Max per club | 3 |
-| Free transfers | 1 per week, hold at most 2 |
+| Free transfers | 1 per week, bank up to 5 |
 | Extra transfer | −4 points |
 
 ### Why six gameweeks, not one
@@ -329,7 +331,7 @@ other is how you end up confidently shipping something harmful.
 |---|---|---|
 | **Answers** | Are the predictions good? | Are the decisions good? |
 | **Squad** | Rebuilt from scratch every week, unlimited transfers | One squad carried forward all season |
-| **Transfers** | Free and unlimited | 1/week, hold 2, −4 per extra |
+| **Transfers** | Free and unlimited | 1/week, bank up to 5, −4 per extra |
 | **Prices** | As they were | Move, with half-the-rise selling |
 | **Use for** | Model and feature changes | Anything in the transfer planner |
 | **Score** | ~4600 / 2 seasons | ~4200 / 2 seasons |
@@ -488,7 +490,7 @@ Each carries an inline comment with its verdict and the exact numbers behind it.
 | `HIT_MARGIN` | 4.0 | A hit must gain 4+4=8. **The big win** |
 | `FREE_TRANSFER_MARGIN` | 0.0 | Free transfers cost nothing. Tested at 1.5 — a split |
 | `DIFFERENTIAL_WEIGHT` | 0.0 | Tilt toward unowned players. Points-neutral; situational |
-| `MAX_FREE_TRANSFERS` | 2 | Real cap. Was wrongly 5 |
+| `MAX_FREE_TRANSFERS` | 5 | Real cap (official rules + live API). Was wrongly 2 |
 | `BENCH_WEIGHT` | 0.12 | Autosub insurance value |
 | `CAPTAIN_QUANTILE` | 0.80 | Ceiling model's quantile. Built, rejected twice, kept off |
 | `VALIDATION_HOLDOUT_GAMEWEEKS` | 5 | Time-based holdout size |

@@ -181,8 +181,14 @@ def plan_transfers(
     # Transfer bookkeeping, per gameweek.
     transfers = {t: pulp.LpVariable(f"transfers_{t}", lowBound=0, cat="Integer") for t in gameweeks}
     hits = {t: pulp.LpVariable(f"hits_{t}", lowBound=0, cat="Integer") for t in gameweeks}
-    free = {t: pulp.LpVariable(f"free_{t}", lowBound=1, upBound=MAX_FREE_TRANSFERS,
-                               cat="Integer") for t in gameweeks}
+    # A real team always starts a gameweek with at least one free transfer,
+    # but the hit check plans from a synthetic "after this week's free moves"
+    # state, which can genuinely have none left. Forcing week 0 to >= 1 gave
+    # that check a free transfer that doesn't exist, so a one-move hit read as
+    # no hit at all and a two-move hit as -4 instead of -8.
+    free = {t: pulp.LpVariable(f"free_{t}", lowBound=0 if idx == 0 else 1,
+                               upBound=MAX_FREE_TRANSFERS, cat="Integer")
+            for idx, t in enumerate(gameweeks)}
     bank = {t: pulp.LpVariable(f"bank_{t}", lowBound=0, cat="Continuous") for t in gameweeks}
 
     previous_squad = {i: (1 if i in owned else 0) for i in ids}

@@ -75,12 +75,17 @@ STARTING_XI_LIMITS = {
 
 MAX_PLAYERS_PER_CLUB = 3
 
-# Transfer economy. One free transfer is earned per gameweek; unused ones
-# bank up to a maximum of 2 available at once (this week's plus one rolled
-# over) — NOT 5. Verified against a real entry's history (GW2 0 used -> GW3
-# had 2 available; GW3 1 used, GW4 0 used -> GW5 had 2 available, not 3 as
-# the old cap of 5 would predict). Anything beyond what's banked costs points.
-MAX_FREE_TRANSFERS = 2
+# Transfer economy. One free transfer is earned per gameweek and unused ones
+# bank up to FIVE at once (rule since 2024/25, confirmed for 2026/27 by the
+# Premier League and by the live API: game_settings.max_extra_free_transfers
+# is 4, i.e. one plus four banked). entry_data warns if the API ever disagrees.
+#
+# This was 2 for a while. The evidence for 2 was a real entry holding two
+# free transfers at GW5 — but that entry was created at GW2, and a team's
+# first gameweek is a free squad pick that banks nothing. With that accrual
+# rule, a cap of 5 reproduces the observed counts too (GW5 = 2, GW6 = 1), so
+# the observation never distinguished the caps; the official rules do.
+MAX_FREE_TRANSFERS = 5
 TRANSFER_HIT_COST = 4  # points deducted per extra transfer
 
 # ---------------------------------------------------------------------------

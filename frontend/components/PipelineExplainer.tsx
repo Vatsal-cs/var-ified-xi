@@ -38,7 +38,7 @@ const STAGES = [
     summary: "A real optimizer, planning six gameweeks at once.",
     body: [
       "A Mixed-Integer Linear Program (PuLP/CBC) decides everything together: which 15 players, which 11 start, who captains, and — when it knows your real team — which transfers to make in each of the next six gameweeks.",
-      "It obeys every FPL rule: £100m budget, 2/5/5/3 squad, a legal formation, max 3 per club, one free transfer a week held up to two at a time, and −4 for each extra. A hit has to gain 8 projected points before it is taken — at the old threshold of 6 the planner spent 228 points on hits across two seasons and still finished behind a version banned from taking any. Planning six weeks at once is what stops it chasing one fixture into a wall.",
+      "It obeys every FPL rule: £100m budget, 2/5/5/3 squad, a legal formation, max 3 per club, one free transfer a week, banking up to five, and −4 for each extra. A hit has to gain 8 projected points before it is taken — at the old threshold of 6 the planner spent 228 points on hits across two seasons and still finished behind a version banned from taking any. Planning six weeks at once is what stops it chasing one fixture into a wall.",
     ],
   },
   {

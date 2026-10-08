@@ -166,10 +166,25 @@ def build_league_view(entry_id: int, bootstrap: dict, gameweek: int) -> dict:
             "differentials": differentials,
             "template_gaps": template_gaps,
             "chips_spent": _chip_ledger(rows, entry_id),
+            # The chip set currently in play. FPL issues chips per half
+            # season, so "who has used what" only means something within the
+            # window it applies to — a rival's GW3 Triple Captain is spent,
+            # but they get another from GW20 like everyone else.
+            "chip_window": _current_chip_window(bootstrap, gameweek),
         }
     except requests.RequestException as e:
         logger.warning("Rival view unavailable (%s) — continuing without it.", e)
         return None
+
+
+def _current_chip_window(bootstrap: dict, gameweek: int) -> dict:
+    """{start, end} of the chip set in play for `gameweek`, from bootstrap."""
+    windows = [w for w in (bootstrap.get("chips") or [])
+               if w["start_event"] <= gameweek <= w["stop_event"]]
+    if not windows:
+        return {"start": 1, "end": 38}
+    return {"start": min(w["start_event"] for w in windows),
+            "end": max(w["stop_event"] for w in windows)}
 
 
 def _chip_ledger(rows: list, entry_id: int) -> list:

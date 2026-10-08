@@ -71,7 +71,7 @@ def order_bench(bench_ids: list, pred_lookup: dict) -> list:
 def build_output_json(bootstrap: dict, predictions_df, result: dict,
                       plan: dict = None, team_state=None,
                       chip_advice: list = None, chip_watch: dict = None,
-                      league_view: dict = None) -> dict:
+                      league_view: dict = None, chip_expiry: dict = None) -> dict:
     """Assembles the final clean JSON contract the frontend will consume."""
     teams_lookup = {t["id"]: t["name"] for t in bootstrap["teams"]}
     pos_lookup = config.POSITIONS
@@ -124,6 +124,8 @@ def build_output_json(bootstrap: dict, predictions_df, result: dict,
         output["chip_watch"] = chip_watch
     if league_view:
         output["league"] = league_view
+    if chip_expiry:
+        output["chip_expiry"] = chip_expiry
     if plan:
         output["transfer_plan"] = _plan_payload(plan, pred_lookup, pos_lookup, teams_lookup)
     if team_state:
@@ -272,6 +274,13 @@ def run_pipeline(team_id: int = None) -> None:
         "next_double_gw": min((d["gameweek"] for d in season_scan["doubles"]), default=None),
         "next_blank_gw": min((b["gameweek"] for b in season_scan["blanks"]), default=None),
     }
+    # Chips come in half-season sets and an unplayed one is lost at its
+    # window's deadline, so the dashboard needs to say when — and what the
+    # best week in sight is worth — not just wait for a double gameweek.
+    chip_expiry = None
+    if team_state:
+        chip_expiry = chips.expiry_plan(team_state.chip_deadlines, upcoming_gw,
+                                        plan, predictions_df)
 
     # 6b. What the people you're actually playing against own. Decision
     # support only — see rivals.py on why this deliberately doesn't feed the
@@ -284,6 +293,7 @@ def run_pipeline(team_id: int = None) -> None:
     output = build_output_json(bootstrap, predictions_df, result, plan=plan,
                                team_state=team_state, chip_advice=chip_advice,
                                league_view=league_view,
+                               chip_expiry=chip_expiry,
                                chip_watch=chip_watch)
 
     config.OUTPUT_JSON_PATH.write_text(json.dumps(output, indent=2))
@@ -327,11 +337,14 @@ def _team_state_after(team_state, free_week: dict, predictions_df) -> "entry_dat
         bank=round(free_week["bank_m"] * 10),
         squad_value=sum(costs.get(p, sell_prices.get(p, 0)) for p in free_week["squad_ids"]),
         # Free transfers the free plan chose to bank stay available here —
-        # only transfers beyond those genuinely cost a hit.
-        free_transfers=max(1, remaining_free),
+        # only transfers beyond those genuinely cost a hit. This can be zero,
+        # and must be allowed to be: rounding it up to one handed the hit check
+        # a free transfer that doesn't exist.
+        free_transfers=remaining_free,
         sell_prices=sell_prices,
         chips_used=team_state.chips_used,
         chips_available=team_state.chips_available,
+        chip_deadlines=team_state.chip_deadlines,
     )
 
 

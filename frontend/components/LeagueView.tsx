@@ -24,7 +24,11 @@ function pct(share: number) {
 export default function LeagueView({ league }: { league: LeagueViewData }) {
   const { differentials, template_gaps, chips_spent, rivals_ahead } = league;
   const you = chips_spent.find((r) => r.is_you);
-  const chipsLeft = 4 - (you?.chips.length ?? 0);
+  // Chips are issued per half season, so only chips played inside the set
+  // currently in play count against it.
+  const win = league.chip_window ?? { start: 1, end: 38 };
+  const inWindow = (gw: number) => gw >= win.start && gw <= win.end;
+  const yourLeft = 4 - (you?.chips.filter((c) => inWindow(c.gameweek)).length ?? 0);
 
   return (
     <div className="space-y-6">
@@ -125,8 +129,8 @@ export default function LeagueView({ league }: { league: LeagueViewData }) {
       {/* Chips are a standing, invisible edge */}
       <div>
         <h3 className="label mb-3">
-          <Term explain="Each chip can be played once per season. A chip spent on an ordinary gameweek is worth far less than one saved for a double or blank — and once it's gone, it's gone.">
-            Chips spent
+          <Term explain="FPL issues chips in two half-season sets. Each set must be played inside its window — the first by the GW19 deadline — and an unplayed chip is lost rather than carried over. Everyone gets a fresh set at GW20.">
+            Chips played this half (GW{win.start}–{win.end})
           </Term>
         </h3>
         <div className="panel overflow-x-auto p-5">
@@ -136,7 +140,7 @@ export default function LeagueView({ league }: { league: LeagueViewData }) {
                 <th className="label pb-2 pr-3 font-normal">#</th>
                 <th className="label pb-2 pr-3 font-normal">Manager</th>
                 <th className="label pb-2 pr-3 text-right font-normal">Pts</th>
-                <th className="label pb-2 font-normal">Chips gone</th>
+                <th className="label pb-2 font-normal">Played</th>
               </tr>
             </thead>
             <tbody>
@@ -155,11 +159,12 @@ export default function LeagueView({ league }: { league: LeagueViewData }) {
                     {r.total}
                   </td>
                   <td className="py-2 font-mono text-[11px]">
-                    {r.chips.length === 0 ? (
-                      <span className="text-pts">all four intact</span>
+                    {r.chips.filter((c) => inWindow(c.gameweek)).length === 0 ? (
+                      <span className="text-ink-500">none yet</span>
                     ) : (
-                      <span className="text-warn">
+                      <span className="text-ink-200">
                         {r.chips
+                          .filter((c) => inWindow(c.gameweek))
                           .map((c) => `${CHIP_LABEL[c.chip] ?? c.chip} (GW${c.gameweek})`)
                           .join(", ")}
                       </span>
@@ -170,12 +175,13 @@ export default function LeagueView({ league }: { league: LeagueViewData }) {
             </tbody>
           </table>
         </div>
-        {chipsLeft === 4 && (
+        {yourLeft > 0 && (
           <p className="prose-note mt-3">
-            You still hold all four. Every chip a rival has already spent on an
-            ordinary gameweek is points they can no longer score on a double —
-            an edge that doesn&apos;t show up in the table above, and one you
-            only collect by saving yours for the right week.
+            You have {yourLeft}{" "}of this half&apos;s chips left. Rivals who played theirs
+            early haven&apos;t lost anything for good — everyone gets a new set at GW
+            {win.end + 1}. Yours are only an edge if you play them by the GW{win.end}{" "}
+            deadline; unplayed, they&apos;re worth nothing. See Chip watch above for the
+            best week in sight for each.
           </p>
         )}
       </div>

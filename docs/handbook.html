@@ -358,7 +358,7 @@ else:                    sell = purchase + (current - purchase) // 2</code></pre
 
       <h4>Free transfers, reconstructed</h4>
       <p>
-        You earn one per gameweek and may hold <strong>at most two</strong>.
+        You earn one per gameweek and may bank <strong>up to five</strong>; a team&rsquo;s first gameweek is a free squad pick and banks nothing.
         Wildcard and Free Hit weeks don't consume them. The count is rebuilt by
         replaying your history forward. This cap was wrong for a while — set to 5,
         a rule from an earlier season — and produced plans spending transfers you
@@ -515,7 +515,7 @@ Stage 2 — CONDITIONAL POINTS  (XGBoost regressor)
             <tr><td>Squad</td><td class="num">15 — exactly 2 GK / 5 DEF / 5 MID / 3 FWD</td></tr>
             <tr><td>Starting XI</td><td class="num">1 GK, 3–5 DEF, 2–5 MID, 1–3 FWD</td></tr>
             <tr><td>Max per club</td><td class="num">3</td></tr>
-            <tr><td>Free transfers</td><td class="num">1 per week, hold at most 2</td></tr>
+            <tr><td>Free transfers</td><td class="num">1 per week, bank up to 5</td></tr>
             <tr><td>Extra transfer</td><td class="num">−4 points</td></tr>
           </tbody>
         </table>
@@ -602,7 +602,7 @@ Stage 2 — CONDITIONAL POINTS  (XGBoost regressor)
           <tbody>
             <tr><td><strong>Answers</strong></td><td>Are the predictions good?</td><td>Are the decisions good?</td></tr>
             <tr><td><strong>Squad</strong></td><td>Rebuilt from scratch every week, unlimited transfers</td><td>One squad carried forward all season</td></tr>
-            <tr><td><strong>Transfers</strong></td><td>Free and unlimited</td><td>1/week, hold 2, −4 per extra</td></tr>
+            <tr><td><strong>Transfers</strong></td><td>Free and unlimited</td><td>1/week, bank up to 5, −4 per extra</td></tr>
             <tr><td><strong>Prices</strong></td><td>As they were</td><td>Move, with half-the-rise selling</td></tr>
             <tr><td><strong>Use for</strong></td><td>Model and feature changes</td><td>Anything in the transfer planner</td></tr>
             <tr><td><strong>Score</strong></td><td class="num">~4600 / 2 seasons</td><td class="num">~4200 / 2 seasons</td></tr>
@@ -798,7 +798,7 @@ python -m data_engine.backtest --seasons 2025-26 --stride 3</code></pre>
             <tr><td class="mono">HIT_MARGIN</td><td class="num">4.0</td><td>A hit must gain 4+4=8. <span class="ok">The big win</span></td></tr>
             <tr><td class="mono">FREE_TRANSFER_MARGIN</td><td class="num">0.0</td><td>Free transfers cost nothing. Tested at 1.5 — a split</td></tr>
             <tr><td class="mono">DIFFERENTIAL_WEIGHT</td><td class="num">0.0</td><td>Tilt toward unowned players. Points-neutral; situational</td></tr>
-            <tr><td class="mono">MAX_FREE_TRANSFERS</td><td class="num">2</td><td>Real cap. Was wrongly 5</td></tr>
+            <tr><td class="mono">MAX_FREE_TRANSFERS</td><td class="num">5</td><td>Real cap (official rules + live API). Was wrongly 2</td></tr>
             <tr><td class="mono">BENCH_WEIGHT</td><td class="num">0.12</td><td>Autosub insurance value</td></tr>
             <tr><td class="mono">CAPTAIN_QUANTILE</td><td class="num">0.80</td><td>Ceiling model's quantile. Built, rejected twice, kept off</td></tr>
             <tr><td class="mono">VALIDATION_HOLDOUT_GAMEWEEKS</td><td class="num">5</td><td>Time-based holdout size</td></tr>

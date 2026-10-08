@@ -42,7 +42,7 @@ Trained on this season plus three past ones — about 87,000 real gameweek resul
 
 ### 2 · Decision — a solver, not a heuristic
 
-A PuLP/CBC Mixed-Integer Linear Program solves the 15-man squad, the starting XI, the captain and the transfers across **six gameweeks at once**, under every real constraint: £100.0m budget, 2/5/5/3 quota, legal formation, max 3 per club, one free transfer a week (hold at most two), −4 per extra.
+A PuLP/CBC Mixed-Integer Linear Program solves the 15-man squad, the starting XI, the captain and the transfers across **six gameweeks at once**, under every real constraint: £100.0m budget, 2/5/5/3 quota, legal formation, max 3 per club, one free transfer a week (bank up to five), −4 per extra.
 
 The answer is *provably optimal given the predictions*. Not a top-N sort.
 
@@ -102,7 +102,7 @@ Roughly **+19% over having no model at all**.
 |---|---|---|
 | **Answers** | Are the *predictions* good? | Are the *decisions* good? |
 | **Squad** | Rebuilt from scratch weekly, unlimited transfers | One squad carried forward all season |
-| **Transfers** | Free and unlimited | 1/week, hold 2, −4 per extra |
+| **Transfers** | Free and unlimited | 1/week, bank up to 5, −4 per extra |
 | **Prices** | As they were | Move, with half-the-rise selling |
 | **Use for** | Model and feature changes | Anything in the transfer planner |
 

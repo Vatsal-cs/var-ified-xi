@@ -67,6 +67,26 @@ export interface ChipWatch {
   next_blank_gw: number | null;
 }
 
+/** The best week inside the planning horizon to play an expiring chip. */
+export interface ChipBestWeek {
+  chip: ChipSuggestion["chip"];
+  gameweek: number;
+  /** Expected points the chip adds that week (captain again, or the bench). */
+  value: number;
+  player: string | null;
+}
+
+/** Chips come in half-season sets; an unplayed chip is lost at its deadline. */
+export interface ChipExpiry {
+  deadline_gw: number;
+  gameweeks_left: number;
+  chips_left: ChipSuggestion["chip"][];
+  /** One chip per gameweek, so true once weeks left <= chips left. */
+  urgent: boolean;
+  best_weeks: ChipBestWeek[];
+  visible_through_gw: number | null;
+}
+
 export interface TeamInfo {
   name: string;
   entry_id: number;
@@ -108,6 +128,8 @@ export interface LeagueView {
   differentials: RivalOwnership[];
   template_gaps: RivalOwnership[];
   chips_spent: LeagueRival[];
+  /** The half-season chip set currently in play. */
+  chip_window?: { start: number; end: number };
 }
 
 export interface OptimizedTeam {
@@ -131,6 +153,8 @@ export interface OptimizedTeam {
   chip_advice?: ChipSuggestion[];
   /** Whole-season DGW/BGW scan, so "nothing suggested" reads as watched, not silent. */
   chip_watch?: ChipWatch;
+  /** When the chips you hold expire, and the best week in sight for each. */
+  chip_expiry?: ChipExpiry;
   /** Your mini-league: who owns what, and who has spent which chips. */
   league?: LeagueView;
 }

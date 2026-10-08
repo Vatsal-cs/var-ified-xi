@@ -173,6 +173,86 @@ def advise(fixtures: list, teams: list, horizon_start: int,
     return advice
 
 
+CHIP_ORDER = ["wildcard", "freehit", "bboost", "3xc"]
+
+
+def expiry_plan(chip_deadlines: dict, upcoming_gw: int, plan: dict = None,
+                predictions_df=None) -> dict:
+    """When the chips you hold run out, and the best week in sight for each.
+
+    FPL issues chips in half-season sets, and an unplayed chip is lost at its
+    window's deadline (GW19 for the first set). "Save it for a double
+    gameweek" is only good advice if a double arrives in time; if none does,
+    the chip is worth its ordinary-week value or nothing. This turns that into
+    something concrete:
+
+      * which chips expire next and how many gameweeks are left to play them,
+      * for Triple Captain and Bench Boost, the best week inside the planning
+        horizon (from the planner's own week-by-week squads) and what it is
+        worth: TC adds one more copy of the captain's projection, BB adds the
+        bench's projection,
+      * whether it's urgent — one chip per gameweek, so once the gameweeks
+        left are no more than the chips left, every week from here needs one.
+
+    Wildcard and Free Hit aren't valued: their worth depends on how many
+    transfers you'd want and on blanks, not on a single projection.
+    """
+    if not chip_deadlines:
+        return None
+
+    deadline = min(chip_deadlines.values())
+    chips_left = [c for c in CHIP_ORDER if chip_deadlines.get(c) == deadline]
+    gameweeks_left = max(0, deadline - upcoming_gw + 1)
+
+    out = {
+        "deadline_gw": deadline,
+        "gameweeks_left": gameweeks_left,
+        "chips_left": chips_left,
+        "urgent": gameweeks_left <= len(chips_left),
+        "best_weeks": [],
+        "visible_through_gw": None,
+    }
+    if not plan or predictions_df is None or "xp_by_gw" not in predictions_df.columns:
+        return out
+
+    xp = dict(zip(predictions_df["player_id"], predictions_df["xp_by_gw"]))
+    names = dict(zip(predictions_df["player_id"], predictions_df.get("web_name", predictions_df["player_id"])))
+
+    def val(pid, gw):
+        return float((xp.get(pid) or {}).get(gw, 0.0) or 0.0)
+
+    weeks = [w for w in plan.get("weeks", []) if w["gameweek"] <= deadline]
+    if not weeks:
+        return out
+    out["visible_through_gw"] = max(w["gameweek"] for w in weeks)
+
+    candidates = {}
+    if "3xc" in chips_left:
+        candidates["3xc"] = sorted(
+            ({"gameweek": w["gameweek"], "value": round(val(w["captain_id"], w["gameweek"]), 1),
+              "player": names.get(w["captain_id"])}
+             for w in weeks if w.get("captain_id") is not None),
+            key=lambda c: -c["value"])
+    if "bboost" in chips_left:
+        candidates["bboost"] = sorted(
+            ({"gameweek": w["gameweek"],
+              "value": round(sum(val(p, w["gameweek"]) for p in w["squad_ids"]
+                                 if p not in w["starting_ids"]), 1),
+              "player": None}
+             for w in weeks),
+            key=lambda c: -c["value"])
+
+    # One chip per gameweek: give the more valuable chip first pick of weeks.
+    taken = set()
+    for chip in sorted(candidates, key=lambda c: -(candidates[c][0]["value"] if candidates[c] else 0)):
+        pick = next((c for c in candidates[chip] if c["gameweek"] not in taken), None)
+        if pick:
+            taken.add(pick["gameweek"])
+            out["best_weeks"].append({"chip": chip, **pick})
+
+    return out
+
+
 def scan_full_season(fixtures: list, teams: list, last_finished_gw: int = 0) -> dict:
     """A season-wide, non-actionable check: is there ANY double or blank
     gameweek anywhere on the currently published calendar, regardless of
