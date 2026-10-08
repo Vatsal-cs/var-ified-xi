@@ -343,11 +343,11 @@ applies them.
 
 | Benchmark | Points per gameweek (2024-25 / 2025-26) |
 |---|---|
-| `naive_form` — no model, just each player's last-5 average | 53.4 / 50.8 |
-| **This model** | **64.1 / 57.2** |
-| `hindsight` — optimise on what actually happened | 148.3 / 155.6 |
+| `naive_form` — no model, just each player's last-5 average | 53.6 / 51.6 |
+| **This model** | **63.2 / 61.6** |
+| `hindsight` — optimise on what actually happened | 149.0 / 155.1 |
 
-So the model is worth roughly **+16% over having no model at all**. The hindsight
+So the model is worth roughly **+19% over having no model at all**. The hindsight
 ceiling exists to stop anyone mistaking a good score for a great one.
 
 ### 🔑 How season_sim keeps the comparison honest

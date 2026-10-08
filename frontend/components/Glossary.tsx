@@ -26,7 +26,7 @@ const QA: { q: string; a: string }[] = [
   },
   {
     q: "How good is the model, honestly?",
-    a: "Backtested over two full past seasons, it scores about 16% more points than having no model at all (just using each player's recent average). One gameweek tells you very little either way — judge it over 6–10.",
+    a: "Backtested over two full past seasons, it scores about 19% more points than having no model at all (just using each player's recent average). One gameweek tells you very little either way — judge it over 6–10.",
   },
   {
     q: "What are the hard FPL rules it respects?",
