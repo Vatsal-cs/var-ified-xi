@@ -69,7 +69,14 @@ import pandas as pd
 import xgboost as xgb
 
 import config
-from data_engine import feature_engineering, historical_data, optimizer, train_model
+from data_engine import (
+    availability_data,
+    evaluation,
+    feature_engineering,
+    historical_data,
+    optimizer,
+    train_model,
+)
 from data_engine.odds_data import ODDS_FEATURE_COLUMNS
 from data_engine.setpiece_data import SETPIECE_FEATURE_COLUMNS
 
@@ -211,7 +218,7 @@ def _flat_fit(train_df: pd.DataFrame):
     reg = xgb.XGBRegressor(
         n_estimators=400, max_depth=4, learning_rate=0.03,
         subsample=0.8, colsample_bytree=0.8, reg_lambda=1.5,
-        objective="reg:squarederror", random_state=42, n_jobs=-1,
+        objective="reg:squarederror", random_state=config.MODEL_SEED, n_jobs=-1,
     )
     reg.fit(train_model._prep_X(train_df), train_df[config.TARGET_COL].astype(float))
     return reg
@@ -321,13 +328,19 @@ VARIANTS = {
 # ---------------------------------------------------------------------------
 # Data loading
 # ---------------------------------------------------------------------------
-def load_season_frame(season: str, season_index: int) -> pd.DataFrame:
+def load_season_frame(season: str, season_index: int,
+                      availability: bool = True) -> pd.DataFrame:
     """Fetches one completed season and attaches rolling-form features.
 
     Rolling features are computed over the WHOLE season here, which is safe
     precisely because add_rolling_features() shifts every window by one
     gameweek — a row's features only ever see strictly-earlier gameweeks.
     Slicing by round afterwards therefore leaks nothing.
+
+    availability: attach the injury flags FPL showed before each deadline
+    (availability_data), so the harness scores the model production actually
+    runs — one that knows who is injured. Seasons without snapshots run
+    flagless and say so.
     """
     raw = historical_data.fetch_season(season, season_index=season_index)
     if raw is None or raw.empty:
@@ -335,6 +348,14 @@ def load_season_frame(season: str, season_index: int) -> pd.DataFrame:
 
     df = feature_engineering.add_rolling_features(raw)
     df["season"] = season
+    if availability:
+        coverage = availability_data.attach(df, season)
+        if coverage:
+            logger.info("Availability %s: %.1f%% of rows matched a pre-deadline "
+                        "snapshot", season, coverage * 100)
+        else:
+            logger.warning("Availability %s: no snapshots, so this season runs "
+                           "without injury flags", season)
     return df
 
 
@@ -423,12 +444,18 @@ def simulate_season(
     prior_seasons_df: pd.DataFrame = None,
     start_gw: int = DEFAULT_START_GW,
     stride: int = 1,
+    legacy_doubles: bool = False,
 ) -> dict:
-    """Walks a season gameweek by gameweek, training only on the past."""
+    """Walks a season gameweek by gameweek, training only on the past.
+
+    legacy_doubles: the old handling, which collapsed a double-gameweek
+    player to ONE row before predicting — so he was projected for one match
+    and scored for two. Kept only to measure what fixing it changed.
+    """
     rounds = sorted(r for r in season_df["round"].unique() if r >= start_gw)
     rounds = rounds[::stride]
 
-    per_gw, preds = [], []
+    per_gw, preds, p60s = [], [], []
 
     for gw in rounds:
         history = season_df[season_df["round"] < gw]
@@ -440,17 +467,32 @@ def simulate_season(
             logger.debug("GW%d: only %d training rows, skipping", gw, len(train_df))
             continue
 
-        gw_rows = season_df[season_df["round"] == gw].copy()
-        # A player with two fixtures in one gameweek appears twice; the
-        # optimizer needs one row per player, so their expected points are
-        # summed the same way their real points would be.
-        gw_rows = _collapse_doubles(gw_rows)
-
+        fixtures = season_df[season_df["round"] == gw].copy()
         model = variant.fit(train_df)
-        gw_rows["predicted_points"] = variant.predict(model, gw_rows).to_numpy()
+
+        if legacy_doubles:
+            gw_rows = _collapse_doubles(fixtures)
+            gw_rows["predicted_points"] = variant.predict(model, gw_rows).to_numpy()
+            if variant.captain_values is not None:
+                gw_rows["ceiling_points"] = variant.captain_values(model, gw_rows).to_numpy()
+            p60 = _p60(model, gw_rows)
+        else:
+            # One prediction per MATCH, then summed per player — a double
+            # gameweek is two chances to score, exactly as in production
+            # (feature_engineering.aggregate_horizon).
+            per_fixture = frozen_form_for_doubles(fixtures)
+            per_fixture["predicted_points"] = variant.predict(model, per_fixture).to_numpy()
+            agg = {"predicted_points": "sum"}
+            if variant.captain_values is not None:
+                per_fixture["ceiling_points"] = variant.captain_values(model, per_fixture).to_numpy()
+                agg["ceiling_points"] = "sum"
+            p60 = _p60(model, per_fixture)
+            summed = per_fixture.groupby("player_id")[list(agg)].sum()
+            gw_rows = _collapse_doubles(fixtures)
+            for col in agg:
+                gw_rows[col] = gw_rows["player_id"].map(summed[col]).to_numpy()
 
         if variant.captain_values is not None:
-            gw_rows["ceiling_points"] = variant.captain_values(model, gw_rows).to_numpy()
             result = optimizer.optimize_squad(gw_rows, captain_col="ceiling_points")
         else:
             result = optimizer.optimize_squad(gw_rows, captain_col="predicted_points")
@@ -462,6 +504,8 @@ def simulate_season(
             "pred": gw_rows["predicted_points"].to_numpy(),
             "actual": gw_rows[config.TARGET_COL].to_numpy(),
         }))
+        if p60 is not None:
+            p60s.append(p60)
 
         logger.info(
             "  GW%-2d | scored %3d pts (predicted %5.1f) | captain %2d | %d autosub(s)",
@@ -469,17 +513,71 @@ def simulate_season(
             scored["captain_points"], scored["autosubs"],
         )
 
-    return _summarize(per_gw, preds)
+    return _summarize(per_gw, preds, p60s)
+
+
+# Columns that describe a MATCH rather than the player's form going into it.
+# Shared with season_sim.
+FIXTURE_CONTEXT_COLUMNS = [
+    "was_home",
+    "team_strength_attack",
+    "team_strength_defence",
+    "opp_strength_attack",
+    "opp_strength_defence",
+    "fixture_difficulty",
+    "days_since_last_match",
+    "kickoff_time",
+] + list(ODDS_FEATURE_COLUMNS)
+
+
+def frozen_form_for_doubles(fixtures: pd.DataFrame) -> pd.DataFrame:
+    """One row per match, with a double-gameweek player's FORM taken from his
+    first match row for both.
+
+    add_rolling_features shifts by one ROW, so a player's second match in a
+    double gameweek carries form that includes his first — a result nobody
+    knew at the deadline. Both matches get the deadline's form here; each
+    keeps its own opponent, venue and rest.
+    """
+    fixtures = fixtures.sort_values(["player_id", "kickoff_time"]).copy()
+    second = fixtures["player_id"].duplicated()
+    if not second.any():
+        return fixtures
+    first = fixtures.drop_duplicates("player_id").set_index("player_id")
+    # Model inputs only. The match's own outcome (minutes, points) has to
+    # stay on its row, or the second match is graded on the first's result.
+    form_cols = [c for c in config.FEATURE_COLUMNS
+                 if c in fixtures.columns and c not in FIXTURE_CONTEXT_COLUMNS]
+    for col in form_cols:
+        fixtures.loc[second, col] = fixtures.loc[second, "player_id"].map(first[col]).to_numpy()
+    return fixtures
+
+
+def _p60(model, rows: pd.DataFrame):
+    """The model's P(plays 60+) per row, after production's availability
+    rule, alongside whether he did. None for a variant without a minutes
+    model."""
+    if not isinstance(model, dict) or "minutes_clf" not in model:
+        return None
+    proba = model["minutes_clf"].predict_proba(train_model._prep_X(rows))[:, train_model.FULL]
+    if "chance_of_playing" in rows.columns:
+        proba = proba * rows["chance_of_playing"].fillna(100).astype(float).to_numpy() / 100.0
+    if "status" in rows.columns:
+        proba = np.where(rows["status"].isin(["i", "s", "u", "n"]).to_numpy(), proba * 0.1, proba)
+    return pd.DataFrame({"p": proba, "y": (rows["minutes"].to_numpy() >= 60).astype(int)})
 
 
 def _collapse_doubles(gw_rows: pd.DataFrame) -> pd.DataFrame:
     """Collapses double-gameweek duplicates to one row per player, summing
     the quantities that accumulate across both matches (points, minutes)
-    and keeping the first row's form features.
+    and keeping the first row's form features. For scoring and for the
+    optimizer's one-row-per-player pool — predictions are made per match
+    first (see simulate_season).
     """
     if not gw_rows["player_id"].duplicated().any():
         return gw_rows
 
+    gw_rows = gw_rows.sort_values(["player_id", "kickoff_time"])
     summed = gw_rows.groupby("player_id", as_index=False).agg(
         {config.TARGET_COL: "sum", "minutes": "sum"}
     )
@@ -489,7 +587,7 @@ def _collapse_doubles(gw_rows: pd.DataFrame) -> pd.DataFrame:
     return first.merge(summed, on="player_id")
 
 
-def _summarize(per_gw, preds) -> dict:
+def _summarize(per_gw, preds, p60s=None) -> dict:
     if not per_gw:
         return {"gameweeks": 0, "total_points": 0}
 
@@ -501,8 +599,15 @@ def _summarize(per_gw, preds) -> dict:
         "points_per_gw": float(np.mean([g["points"] for g in per_gw])),
         "mae": float((df["pred"] - df["actual"]).abs().mean()),
         "spearman": float(df["pred"].corr(df["actual"], method="spearman")),
+        # Brier score of P(plays 60+) per match, with production's injury
+        # rule applied — the cleanest single check that availability data
+        # is doing its job. None for variants without a minutes model.
+        "brier60": None,
         "per_gw": per_gw,
     }
+    if p60s:
+        p = pd.concat(p60s, ignore_index=True)
+        summary["brier60"] = float(((p["p"] - p["y"]) ** 2).mean())
 
     return summary
 
@@ -510,41 +615,42 @@ def _summarize(per_gw, preds) -> dict:
 # ---------------------------------------------------------------------------
 # CLI
 # ---------------------------------------------------------------------------
-def _print_report(results: dict) -> None:
-    print()
-    print("=" * 78)
-    print("BACKTEST RESULTS — unlimited-transfer simulation (comparative yardstick)")
-    print("=" * 78)
+# Reference variants whose result doesn't depend on the model's seed: run
+# once and reused for every seed, so they still pair with seeded variants.
+SEED_FREE = {"naive_form", "hindsight"}
 
-    header = f"{'variant':<14} {'season':<9} {'GWs':>4} {'points':>8} {'pts/GW':>7} {'MAE':>7} {'rank-r':>7}"
-    print(header)
-    print("-" * 78)
 
-    for (variant, season), s in results.items():
-        if not s.get("gameweeks"):
-            continue
-        print(
-            f"{variant:<14} {season:<9} {s['gameweeks']:>4} {s['total_points']:>8} "
-            f"{s['points_per_gw']:>7.1f} {s['mae']:>7.3f} {s['spearman']:>7.3f}"
-        )
+def run_record(variant: str, season: str, seed: int, summary: dict) -> dict:
+    """One (variant, season, seed) result in evaluation.py's JSON shape."""
+    return {
+        "variant": variant,
+        "season": season,
+        "seed": seed,
+        "total": summary["total_points"],
+        "mae": summary.get("mae"),
+        "spearman": summary.get("spearman"),
+        "brier60": summary.get("brier60"),
+        "per_gw": [[int(g["gw"]), int(g["points"])] for g in summary.get("per_gw", [])],
+    }
 
-    print("-" * 78)
-    totals = {}
-    for (variant, _), s in results.items():
-        if s.get("gameweeks"):
-            totals.setdefault(variant, []).append(s["total_points"])
-    for variant, points in totals.items():
-        print(f"{variant:<14} {'ALL':<9} {'':>4} {sum(points):>8}")
 
-    print("=" * 78)
-    print("Lower MAE is better. Higher rank-r and points are better.")
-    print("A change ships only if it raises points across every season tested.")
-    print()
+def write_results(path: str, harness: str, runs: list, settings: dict) -> None:
+    import json
+    import subprocess
+    try:
+        commit = subprocess.run(["git", "rev-parse", "--short", "HEAD"],
+                                capture_output=True, text=True).stdout.strip()
+    except OSError:
+        commit = None
+    with open(path, "w") as fh:
+        json.dump({"harness": harness, "commit": commit, "settings": settings,
+                   "runs": runs}, fh, indent=1)
+    logger.info("Wrote %d run(s) to %s", len(runs), path)
 
 
 def main(argv=None) -> None:
     parser = argparse.ArgumentParser(description="Walk-forward FPL backtest.")
-    parser.add_argument("--seasons", nargs="+", default=["2024-25", "2025-26"],
+    parser.add_argument("--seasons", nargs="+", default=list(config.TUNING_SEASONS),
                         help="Completed seasons to simulate.")
     parser.add_argument("--variants", nargs="+", default=["production"],
                         choices=sorted(VARIANTS), help="Model variants to race.")
@@ -554,6 +660,25 @@ def main(argv=None) -> None:
                         help="Simulate every Nth gameweek (speeds up iteration).")
     parser.add_argument("--augment", action="store_true",
                         help="Also train on seasons earlier in --seasons.")
+    parser.add_argument("--prior-seasons", nargs="*", default=[],
+                        help="Seasons used ONLY as extra training data for every "
+                             "simulated season. Lets one season run on its own "
+                             "(say, in parallel) exactly as it would after "
+                             "--augment: '--seasons 2025-26 --prior-seasons 2024-25'.")
+    parser.add_argument("--seeds", nargs="+", type=int, default=[config.MODEL_SEED],
+                        help="Model seeds to run every variant under. One seed "
+                             "can't tell a change from noise; use 3-5.")
+    parser.add_argument("--out", help="Write per-gameweek results here as JSON, "
+                                      "for data_engine.evaluation to pool.")
+    parser.add_argument("--tag", default="",
+                        help="Suffix for variant names in the output, to tell "
+                             "harness settings apart when pooling files.")
+    parser.add_argument("--no-availability", action="store_true",
+                        help="Old harness: no injury flags.")
+    parser.add_argument("--legacy-doubles", action="store_true",
+                        help="Old harness: predict a double-gameweek player for one match.")
+    parser.add_argument("--block", type=int, default=2,
+                        help="Bootstrap block length for the paired intervals.")
     parser.add_argument("-v", "--verbose", action="store_true")
     args = parser.parse_args(argv)
 
@@ -569,37 +694,67 @@ def main(argv=None) -> None:
         logging.getLogger("data_engine.optimizer").setLevel(logging.WARNING)
         logging.getLogger("data_engine.feature_engineering").setLevel(logging.WARNING)
 
-    results = {}
+    held_back = sorted(set(args.seasons) & set(config.CONFIRMATION_SEASONS))
+    if held_back:
+        logger.warning("CONFIRMATION RUN on %s. These seasons are held back from "
+                       "tuning: run once per accepted change and record the result, "
+                       "whatever it says.", ", ".join(held_back))
+
+    # Fixed ids per season across the whole run, so a season keeps the same
+    # synthetic player ids whether it's simulated or only trained on.
+    all_seasons = list(dict.fromkeys(args.prior_seasons + args.seasons))
+    index = {s: i for i, s in enumerate(all_seasons)}
+    availability = not args.no_availability
+
+    runs = []
     for variant_name in args.variants:
         variant = VARIANTS[variant_name]
+        label = variant_name + args.tag
         # Data is rebuilt per variant, inside that variant's context, because
         # an optional feature join happens while rows are BUILT. Loading once
         # up front and flipping the flag later races the variant against
         # neutral columns — a test that reports a number and measures nothing.
         # The season CSVs are disk-cached, so the cost is a re-parse.
         with (variant.context() if variant.context else contextlib.nullcontext()):
-            frames = {s: load_season_frame(s, i) for i, s in enumerate(args.seasons)}
+            frames = {s: load_season_frame(s, index[s], availability=availability)
+                      for s in all_seasons}
 
             for i, season in enumerate(args.seasons):
+                train_on = list(args.prior_seasons)
+                if args.augment:
+                    train_on += [s for s in args.seasons[:i] if s not in train_on]
                 prior = None
-                if args.augment and i > 0:
+                if train_on:
                     prior = pd.concat(
-                        [feature_engineering.build_training_set(frames[s])
-                         for s in args.seasons[:i]],
+                        [feature_engineering.build_training_set(frames[s]) for s in train_on],
                         ignore_index=True,
                     )
 
-                logger.info("=== %s | season %s ===", variant_name, season)
-                started = time.time()
-                results[(variant_name, season)] = simulate_season(
-                    frames[season], variant,
-                    prior_seasons_df=prior,
-                    start_gw=args.start_gw,
-                    stride=args.stride,
-                )
-                logger.info("    finished in %.0fs", time.time() - started)
+                seeds = args.seeds[:1] if variant_name in SEED_FREE else args.seeds
+                for seed in seeds:
+                    config.MODEL_SEED = seed
+                    logger.info("=== %s | season %s | seed %d ===", label, season, seed)
+                    started = time.time()
+                    summary = simulate_season(
+                        frames[season], variant,
+                        prior_seasons_df=prior,
+                        start_gw=args.start_gw,
+                        stride=args.stride,
+                        legacy_doubles=args.legacy_doubles,
+                    )
+                    logger.info("    %s %s seed %d: %d pts in %.0fs", label, season, seed,
+                                summary["total_points"], time.time() - started)
+                    if variant_name in SEED_FREE:
+                        runs += [run_record(label, season, s, summary) for s in args.seeds]
+                    else:
+                        runs.append(run_record(label, season, seed, summary))
+                    if args.out:
+                        write_results(args.out, "backtest", runs, vars(args))
 
-    _print_report(results)
+    evaluation.print_report(
+        runs, reference="production" + args.tag, block=args.block,
+        title="BACKTEST RESULTS — unlimited-transfer simulation (comparative yardstick)",
+    )
 
 
 if __name__ == "__main__":

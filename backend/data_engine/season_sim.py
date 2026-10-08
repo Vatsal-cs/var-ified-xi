@@ -15,10 +15,20 @@ inside a squad you're actually stuck with. Those were tuned by argument.
 This harness plays a real season instead:
 
     * one squad, carried forward from gameweek to gameweek
-    * one free transfer earned per gameweek, banked up to MAX_FREE_TRANSFERS
+    * free transfers under THAT season's rules (rules.py): the bank cap, the
+      2025-26 GW16 top-up, the 2022-23 unlimited week, and a first gameweek
+      that banks nothing
     * every extra transfer costs TRANSFER_HIT_COST points, deducted
     * prices move with the archive, and selling returns only half the rise
+    * injury flags as FPL showed them before each deadline (availability_data)
     * autosubs and the captain/vice fallback exactly as FPL applies them
+
+The `production` policy runs the shipping decision procedure itself
+(planner.plan_week — free-transfer plan, then a hit only if the hit check
+says it's worth it, armband on the top projections), so what this measures
+is what the dashboard tells you to do. The other policies are older research
+procedures in which the solver plans hits freely and they're taken
+automatically; they're kept for comparison, not because anything ships them.
 
 What comes out is a season score a real manager could actually have posted,
 which makes it directly comparable to your own.
@@ -36,7 +46,7 @@ WHAT THE PREDICTIONS ARE ALLOWED TO KNOW
 Planning several gameweeks ahead needs a projection for each of them, and
 that is where a season simulator usually leaks. The rule here:
 
-    form is frozen at the deadline; fixtures are not.
+    form, prices and injury news are frozen at the deadline; fixtures are not.
 
 Each player's rolling-form features come from matches played strictly BEFORE
 the gameweek being planned (via latest_form_snapshot on the history slice).
@@ -44,6 +54,13 @@ The fixture context for a future gameweek — home or away, who against, how
 much rest — is taken from the calendar, because in real life the fixture list
 is published months ahead. A player with no fixture in a future gameweek
 simply projects zero for it, which is also how blanks really work.
+
+Price is the model's most important feature, and it used to be read from the
+FUTURE gameweek's row — so a projection for five weeks out knew the price
+rises and falls in between. Every horizon week now carries the deadline
+price, as it does in production. Injury flags follow production too: a doubt
+applies to the next gameweek only, a hard status to all of them
+(feature_engineering.limit_flags_to_next_round).
 
 CAVEATS, STATED UP FRONT
 
@@ -54,14 +71,15 @@ CAVEATS, STATED UP FRONT
     * The opening squad is built by the same optimizer for every policy, so
       they all start from an identical team and diverge only through their
       own decisions.
-    * Injuries and suspensions are invisible in the archive beyond the
-      minutes actually recorded, so the simulated manager reacts to a player
-      stopping playing rather than to the news that he will.
+    * Injury flags exist only from 2024-25. Earlier seasons run without
+      them, so the simulated manager reacts to a player stopping playing
+      rather than to the news that he will.
 
 USAGE
 
     python -m data_engine.season_sim --seasons 2024-25 2025-26
-    python -m data_engine.season_sim --policies baseline ft_margin_1.0
+    python -m data_engine.season_sim --policies production production_no_hits
+    python -m data_engine.season_sim --seeds 42 7 13 --out sim.json
     python -m data_engine.season_sim --seasons 2025-26 --stride 2   (quick)
 """
 
@@ -72,12 +90,15 @@ from dataclasses import dataclass, field, replace
 import pandas as pd
 
 import config
-from config import MAX_FREE_TRANSFERS, TRANSFER_HIT_COST, HORIZON_GWS, HORIZON_DECAY
+from config import TRANSFER_HIT_COST, HORIZON_GWS, HORIZON_DECAY
 from data_engine import (
     backtest,
     entry_data,
+    evaluation,
     feature_engineering,
     optimizer,
+    planner,
+    rules as season_rules,
     train_model,
     transfer_optimizer,
 )
@@ -89,16 +110,11 @@ DEFAULT_START_GW = 2
 # Columns that describe the MATCH rather than the player's form. These are
 # taken from the future gameweek's row, because the fixture list is public
 # well in advance; everything else is frozen at the deadline.
-FIXTURE_COLUMNS = [
-    "was_home",
-    "team_strength_attack",
-    "team_strength_defence",
-    "opp_strength_attack",
-    "opp_strength_defence",
-    "fixture_difficulty",
-    "days_since_last_match",
-    "now_cost",
-]
+FIXTURE_COLUMNS = [c for c in backtest.FIXTURE_CONTEXT_COLUMNS if c != "kickoff_time"]
+
+# Known at the deadline and applied to every horizon week, never read from a
+# future row.
+DEADLINE_COLUMNS = ["now_cost", "status", "chance_of_playing"]
 
 
 # ---------------------------------------------------------------------------
@@ -121,12 +137,51 @@ class Policy:
     # Never transfers at all. The floor: how far does the opening squad get
     # you on its own? Any policy that can't beat this is doing harm.
     frozen_squad: bool = False
+    # Run the shipping decision procedure (planner.plan_week) instead of one
+    # unconstrained solve. hit_margin then prices the hit CHECK.
+    production: bool = False
+    # Under the production procedure: take a hit when the check says it's
+    # worth it, as a manager following the dashboard would.
+    follow_hit_advice: bool = True
 
 
 POLICIES = {
+    "production": Policy(
+        name="production",
+        description="what ships: free-transfer plan, a hit only when the hit check "
+                    "says so, armband on the top two projections",
+        production=True,
+    ),
+    "production_no_hits": Policy(
+        name="production_no_hits",
+        description="the shipping procedure, but every hit verdict ignored",
+        production=True,
+        follow_hit_advice=False,
+    ),
+    "production_hm2": Policy(
+        name="production_hm2",
+        description="the shipping procedure with a hit check margin of 2 (a hit must gain 6)",
+        production=True,
+        hit_margin=2.0,
+    ),
+    "production_hm6": Policy(
+        name="production_hm6",
+        description="the shipping procedure with a hit check margin of 6 (a hit must gain 10)",
+        production=True,
+        hit_margin=6.0,
+    ),
+    "production_hm0": Policy(
+        name="production_hm0",
+        description="the shipping procedure, a hit taken whenever it gains more than its 4",
+        production=True,
+        hit_margin=0.0,
+    ),
+    # --- Older research procedures: the solver plans hits in any week and
+    #     they are taken automatically. Not what ships; see the docstring. ---
     "baseline": Policy(
         name="baseline",
-        description="what ships today: free transfers cost nothing, captain on the mean",
+        description="solver plans and takes hits freely (margin config.HIT_MARGIN), "
+                    "captain on the mean",
     ),
     "no_transfers": Policy(
         name="no_transfers",
@@ -227,7 +282,8 @@ class ManagerState:
     squad: list = field(default_factory=list)
     bank: int = 0
     purchase_prices: dict = field(default_factory=dict)
-    free_transfers: int = 1
+    # Banked going into the next gameweek, before that week's top-up rules.
+    free_transfers: int = 0
     points: int = 0
     captain_points: int = 0
     hits_taken: int = 0
@@ -258,15 +314,29 @@ class ManagerState:
 # Predictions for a whole planning horizon, without leaking form
 # ---------------------------------------------------------------------------
 def build_horizon_predictions(bundle, history: pd.DataFrame, season_df: pd.DataFrame,
-                              gw: int, horizon: int) -> pd.DataFrame:
+                              gw: int, horizon: int, legacy_prices: bool = False) -> pd.DataFrame:
     """One row per (player, future gameweek) with an expected-points figure.
 
     Form comes from `history` (strictly before `gw`); the match context comes
-    from the real calendar. See the module docstring on what that is and isn't
-    allowed to know.
+    from the real calendar; price and injury flags are the deadline's. See
+    the module docstring on what that is and isn't allowed to know.
+
+    legacy_prices: the old, leaky behaviour — each future week's price read
+    from that week's row. Kept only to measure what removing the leak did.
     """
     snapshot = feature_engineering.latest_form_snapshot(history)
-    form_cols = [c for c in snapshot.columns if c not in FIXTURE_COLUMNS]
+    deadline_rows = season_df[season_df["round"] == gw].drop_duplicates("player_id")
+    deadline = deadline_rows.set_index("player_id")
+
+    fixture_cols = FIXTURE_COLUMNS + (["now_cost"] if legacy_prices else [])
+    form_cols = [c for c in snapshot.columns
+                 if c not in fixture_cols and c not in DEADLINE_COLUMNS]
+    if not legacy_prices:
+        # The deadline price, for every week; a player with no row this week
+        # (a blank) keeps his last known one.
+        snapshot["now_cost"] = snapshot["player_id"].map(deadline["now_cost"]).fillna(
+            snapshot["now_cost"])
+        form_cols.append("now_cost")
     snapshot = snapshot[form_cols]
 
     frames = []
@@ -274,7 +344,7 @@ def build_horizon_predictions(bundle, history: pd.DataFrame, season_df: pd.DataF
         future = season_df[season_df["round"] == target]
         if future.empty:
             continue
-        keep = ["player_id"] + [c for c in FIXTURE_COLUMNS if c in future.columns]
+        keep = ["player_id"] + [c for c in fixture_cols if c in future.columns]
         fixture_rows = future[keep].copy()
         merged = fixture_rows.merge(snapshot, on="player_id", how="inner")
         if merged.empty:
@@ -286,13 +356,22 @@ def build_horizon_predictions(bundle, history: pd.DataFrame, season_df: pd.DataF
         return pd.DataFrame()
 
     rows = pd.concat(frames, ignore_index=True)
+    # The flags FPL showed at THIS deadline, then trimmed exactly as
+    # production trims them: a doubt covers the next gameweek only.
+    for col, fit in (("status", "a"), ("chance_of_playing", 100.0)):
+        if col in deadline.columns:
+            rows[col] = rows["player_id"].map(deadline[col]).fillna(fit)
+    feature_engineering.limit_flags_to_next_round(rows, gw, gw_col="target_gw")
+
     scored = train_model.predict_points(bundle, rows)
 
     # A double gameweek is two rows for one player; their expected points add
-    # up the same way their real points would.
+    # up the same way their real points would. P(60+) is the first match's,
+    # as in production's aggregate_horizon.
     per_gw = scored.groupby(["player_id", "target_gw"], as_index=False).agg(
         predicted_points=("predicted_points", "sum"),
         ceiling_points=("ceiling_points", "sum"),
+        p_full=("p_full", "first"),
     )
     return per_gw
 
@@ -312,6 +391,7 @@ def _collapse_to_players(per_gw: pd.DataFrame, meta: pd.DataFrame, gw: int,
     out = meta.copy()
     out["predicted_points"] = out["player_id"].map(immediate["predicted_points"]).fillna(0.0)
     out["ceiling_points"] = out["player_id"].map(immediate["ceiling_points"]).fillna(0.0)
+    out["p_full"] = out["player_id"].map(immediate["p_full"]).fillna(0.0)
     out["horizon_points"] = out["player_id"].map(horizon_points).fillna(0.0)
     return out
 
@@ -342,6 +422,7 @@ def _with_owned(players: pd.DataFrame, squad: list, season_df: pd.DataFrame,
         "now_cost": [prices.get(p, last["now_cost"].get(p, 0)) for p in missing],
         "predicted_points": 0.0,
         "ceiling_points": 0.0,
+        "p_full": 0.0,
         "horizon_points": 0.0,
         "ownership": 0.0,
     })
@@ -353,14 +434,18 @@ def _with_owned(players: pd.DataFrame, squad: list, season_df: pd.DataFrame,
 # ---------------------------------------------------------------------------
 def _open_squad(state: ManagerState, players: pd.DataFrame, prices: dict,
                 policy: Policy) -> dict:
-    """The opening squad: a free pick under the budget, like a real GW1 draft."""
+    """The opening squad: a free pick under the budget, like a real GW1 draft.
+
+    The week a team is created banks nothing (rules.py), so the bank stays
+    at zero and the next gameweek starts with one free transfer.
+    """
     result = optimizer.optimize_squad(
         players, objective_col="horizon_points", captain_col=policy.captain_col
     )
     state.squad = list(result["squad_ids"])
     state.purchase_prices = {pid: prices.get(pid, 0) for pid in state.squad}
     state.bank = config.BUDGET - sum(state.purchase_prices.values())
-    state.free_transfers = 1
+    state.free_transfers = 0
     return result
 
 
@@ -396,12 +481,12 @@ def _best_xi(owned: pd.DataFrame, captain_col: str) -> dict:
     if best is None:                      # squad too broken to field — shouldn't happen
         best = list(owned["player_id"])[:11]
 
-    ranked = sorted(best, key=lambda p: cap_pts.get(p, 0), reverse=True)
+    captain_id, vice_id = planner.pick_captains(best, cap_pts)
     return {
         "starting_ids": best,
         "bench_ids": [p for p in owned["player_id"] if p not in best],
-        "captain_id": ranked[0] if ranked else None,
-        "vice_captain_id": ranked[1] if len(ranked) > 1 else None,
+        "captain_id": captain_id,
+        "vice_captain_id": vice_id,
     }
 
 
@@ -410,10 +495,7 @@ def _span(etype: int):
     return lo, hi + 1
 
 
-def _plan_week(state: ManagerState, players: pd.DataFrame, per_gw: pd.DataFrame,
-               gw: int, policy: Policy, prices: dict) -> dict:
-    """Runs the real transfer planner from the squad currently held."""
-    gameweeks = sorted(g for g in per_gw["target_gw"].unique() if g >= gw)[:policy.horizon]
+def _xp_tables(per_gw: pd.DataFrame, policy: Policy):
     xp_by_gw = {
         pid: dict(zip(grp["target_gw"], grp["predicted_points"]))
         for pid, grp in per_gw.groupby("player_id")
@@ -424,6 +506,21 @@ def _plan_week(state: ManagerState, players: pd.DataFrame, per_gw: pd.DataFrame,
             pid: dict(zip(grp["target_gw"], grp[policy.captain_col]))
             for pid, grp in per_gw.groupby("player_id")
         }
+    return xp_by_gw, captain_xp_by_gw
+
+
+def _plan_week(state: ManagerState, players: pd.DataFrame, per_gw: pd.DataFrame,
+               gw: int, policy: Policy, prices: dict, rules,
+               available: int) -> list:
+    """This gameweek's decision from the squad currently held.
+
+    Returns the week(s) to execute, in order: the free-transfer week, then —
+    under the production procedure, when the hit check says so and the
+    policy follows it — the extra hit-funded moves on top. The last one is
+    the team that plays.
+    """
+    gameweeks = sorted(g for g in per_gw["target_gw"].unique() if g >= gw)[:policy.horizon]
+    xp_by_gw, captain_xp_by_gw = _xp_tables(per_gw, policy)
 
     sell = state.sell_prices(prices)
     team_state = entry_data.TeamState(
@@ -433,9 +530,27 @@ def _plan_week(state: ManagerState, players: pd.DataFrame, per_gw: pd.DataFrame,
         squad=list(state.squad),
         bank=state.bank,
         squad_value=sum(sell.values()),
-        free_transfers=state.free_transfers,
+        free_transfers=available,
         sell_prices=sell,
     )
+
+    captains = players.set_index("player_id")[policy.captain_col].to_dict()
+
+    if policy.production:
+        decision = planner.plan_week(
+            players, team_state, xp_by_gw, gameweeks,
+            hit_margin=policy.hit_margin, captain_col=policy.captain_col, rules=rules,
+        )
+        week = dict(decision["plan"]["immediate"])
+        week["captain_id"] = decision["result"]["captain_id"]
+        week["vice_captain_id"] = decision["result"]["vice_captain_id"]
+        weeks = [week]
+        if decision["hit_week"] is not None and policy.follow_hit_advice:
+            hit_week = dict(decision["hit_week"])
+            hit_week["captain_id"], hit_week["vice_captain_id"] = planner.pick_captains(
+                hit_week["starting_ids"], captains)
+            weeks.append(hit_week)
+        return weeks
 
     plan = transfer_optimizer.plan_transfers(
         players, team_state, xp_by_gw, gameweeks,
@@ -444,8 +559,14 @@ def _plan_week(state: ManagerState, players: pd.DataFrame, per_gw: pd.DataFrame,
         hit_margin=policy.hit_margin,
         captain_xp_by_gw=captain_xp_by_gw,
         differential_weight=policy.differential_weight,
+        rules=rules,
     )
-    return plan["immediate"]
+    week = dict(plan["immediate"])
+    # The solver's vice has no weight in its objective, so its choice is
+    # arbitrary; the armband goes where production would put it.
+    week["captain_id"], week["vice_captain_id"] = planner.pick_captains(
+        week["starting_ids"], captains)
+    return [week]
 
 
 def _differential_points(starting_ids: list, captain_id, gw_rows: pd.DataFrame) -> float:
@@ -494,7 +615,8 @@ def _pad_for_squad(gw_rows: pd.DataFrame, squad: list,
 
 
 def _apply(state: ManagerState, week: dict, prices: dict) -> None:
-    """Commits this gameweek's transfers to the carried-forward state."""
+    """Commits one set of transfers to the carried-forward squad and bank.
+    Free-transfer bookkeeping is the caller's, under the season's rules."""
     sold = [p["player_id"] for p in week["transfers_out"]]
     bought = [p["player_id"] for p in week["transfers_in"]]
 
@@ -509,21 +631,18 @@ def _apply(state: ManagerState, week: dict, prices: dict) -> None:
         state.purchase_prices[pid] = prices.get(pid, 0)
 
     state.squad = list(week["squad_ids"])
-
-    used = week["transfer_count"]
-    hits = week["hits"]
-    state.transfers_made += used
-    state.hits_taken += hits
-    # Free transfers spent are the ones not paid for in points.
-    state.free_transfers = max(0, state.free_transfers - (used - hits))
+    state.transfers_made += week["transfer_count"]
+    state.hits_taken += week["hits"]
 
 
 # ---------------------------------------------------------------------------
 # The season loop
 # ---------------------------------------------------------------------------
 def simulate(season_df: pd.DataFrame, policies: list, prior_seasons_df=None,
-             start_gw: int = DEFAULT_START_GW, stride: int = 1) -> dict:
+             start_gw: int = DEFAULT_START_GW, stride: int = 1, rules=None,
+             legacy_prices: bool = False) -> dict:
     """Plays one season through, for every policy, off a shared model."""
+    rules = rules or season_rules.SeasonRules(max_free_transfers=config.MAX_FREE_TRANSFERS)
     rounds = [r for r in sorted(season_df["round"].unique()) if r >= start_gw][::stride]
     states = {p.name: ManagerState() for p in policies}
     # Positions for the whole season, so a player who blanks (or leaves the
@@ -545,7 +664,8 @@ def simulate(season_df: pd.DataFrame, policies: list, prior_seasons_df=None,
         # Trained once, handed to every policy — same information, different
         # decisions, so the difference in score is the decision.
         bundle = train_model.train_models(train_df, save=False)
-        per_gw = build_horizon_predictions(bundle, history, season_df, gw, HORIZON_GWS)
+        per_gw = build_horizon_predictions(bundle, history, season_df, gw, HORIZON_GWS,
+                                           legacy_prices=legacy_prices)
         if per_gw.empty:
             continue
 
@@ -563,28 +683,38 @@ def simulate(season_df: pd.DataFrame, policies: list, prior_seasons_df=None,
             hit_cost = 0
             if not state.squad:
                 result = _open_squad(state, players, prices, policy)
+                available, used_free = 0, 0
             elif policy.frozen_squad:
                 owned = players[players["player_id"].isin(state.squad)]
                 result = _best_xi(owned, policy.captain_col)
+                available, used_free = 0, 0
             else:
+                available = season_rules.free_transfers_for(rules, gw, state.free_transfers)
                 pool = _with_owned(players, state.squad, season_df, prices)
-                week = _plan_week(state, pool, per_gw, gw, policy, prices)
-                _apply(state, week, prices)
-                hit_cost = week["hit_cost"]
+                weeks = _plan_week(state, pool, per_gw, gw, policy, prices, rules, available)
+                used_free = 0
+                for week in weeks:
+                    _apply(state, week, prices)
+                    hit_cost += week["hit_cost"]
+                    used_free += week["transfer_count"] - week["hits"]
+                played = weeks[-1]
                 result = {
-                    "starting_ids": week["starting_ids"],
-                    "bench_ids": [p for p in week["squad_ids"]
-                                  if p not in week["starting_ids"]],
-                    "captain_id": week["captain_id"],
-                    "vice_captain_id": week["vice_captain_id"],
+                    "starting_ids": played["starting_ids"],
+                    "bench_ids": [p for p in played["squad_ids"]
+                                  if p not in played["starting_ids"]],
+                    "captain_id": played["captain_id"],
+                    "vice_captain_id": played["vice_captain_id"],
                 }
 
             # Next week's transfer is earned after this one's are spent.
-            state.free_transfers = min(state.free_transfers + 1, MAX_FREE_TRANSFERS)
+            state.free_transfers = season_rules.bank_after(rules, gw, available, used_free)
 
-            pred_lookup = dict(zip(players["player_id"], players["predicted_points"]))
+            # Bench order as production sets it: projection weighted by the
+            # chance he plays at all (main.order_bench).
+            bench_value = dict(zip(players["player_id"],
+                                   players["predicted_points"] * players["p_full"]))
             scored = backtest.score_gameweek(
-                result, _pad_for_squad(gw_rows, state.squad, positions), pred_lookup
+                result, _pad_for_squad(gw_rows, state.squad, positions), bench_value
             )
             net = scored["points"] - hit_cost
 
@@ -607,6 +737,7 @@ def simulate(season_df: pd.DataFrame, policies: list, prior_seasons_df=None,
             "hits": s.hits_taken,
             "hit_cost": s.hits_taken * TRANSFER_HIT_COST,
             "gameweeks": len(s.per_gw),
+            "per_gw": s.per_gw,
         }
         for name, s in states.items()
     }
@@ -639,22 +770,28 @@ def _report(results: dict, policies: list,
 
     df = pd.DataFrame(rows).sort_values("net", ascending=False)
     best = df.iloc[0]
-    baseline = df[df["policy"] == "baseline"]
-    df["vs_base"] = (df["net"] - baseline.iloc[0]["net"]) if len(baseline) else 0
+    reference = df[df["policy"] == "production"]
+    if reference.empty:
+        reference = df[df["policy"] == "baseline"]
+    ref_name = reference.iloc[0]["policy"] if len(reference) else None
+    df["vs_ref"] = (df["net"] - reference.iloc[0]["net"]) if len(reference) else 0
 
     print()
     print("=" * 91)
     print(title)
     print("=" * 91)
-    print(f"{'policy':<18}{'NET':>7}{'raw':>7}{'hits':>6}{'cost':>7}"
-          f"{'trans':>7}{'capt':>7}{'diff':>7}{'pts/gw':>8}{'vs base':>9}")
+    print(f"{'policy':<20}{'NET':>7}{'raw':>7}{'hits':>6}{'cost':>7}"
+          f"{'trans':>7}{'capt':>7}{'diff':>7}{'pts/gw':>8}{'vs ref':>9}")
     print("-" * 91)
     for _, r in df.iterrows():
-        print(f"{r['policy']:<18}{r['net']:>7}{r['raw']:>7}{r['hits']:>6}"
+        print(f"{r['policy']:<20}{r['net']:>7}{r['raw']:>7}{r['hits']:>6}"
               f"{r['hit_cost']:>7}{r['transfers']:>7}{r['captain']:>7}"
-              f"{r['diff']:>7}{r['per_gw']:>8}{r['vs_base']:>+9}")
+              f"{r['diff']:>7}{r['per_gw']:>8}{r['vs_ref']:>+9}")
     print("-" * 91)
-    print(f"Winner: {best['policy']} — {POLICIES[best['policy']].description}")
+    print(f"Highest: {best['policy']} — {POLICIES[best['policy']].description}")
+    if ref_name:
+        print(f"'vs ref' is against {ref_name}. One seed, one season: read the pooled")
+        print("multi-seed table for a verdict, not this one.")
     print()
     print("NET is what a manager would actually have scored: points with hit")
     print("costs already deducted. Chips are not played by any policy, so all")
@@ -667,20 +804,40 @@ def main():
     parser = argparse.ArgumentParser(
         description="Simulate a real, transfer-constrained FPL season."
     )
-    parser.add_argument("--seasons", nargs="+", default=["2024-25", "2025-26"])
-    parser.add_argument("--policies", nargs="+", default=["baseline", "no_transfers",
-                                                          "ft_margin_1.0", "ft_margin_1.5"],
+    parser.add_argument("--seasons", nargs="+", default=list(config.TUNING_SEASONS))
+    parser.add_argument("--policies", nargs="+",
+                        default=["production", "production_no_hits", "no_transfers"],
                         help=f"any of: {', '.join(POLICIES)}")
     parser.add_argument("--start-gw", type=int, default=DEFAULT_START_GW)
     parser.add_argument("--stride", type=int, default=1,
                         help="simulate every Nth gameweek (2 or 3 for a fast look)")
     parser.add_argument("--augment", action="store_true",
                         help="also train on the seasons before each one")
+    parser.add_argument("--prior-seasons", nargs="*", default=[],
+                        help="seasons used only as extra training data, so one season "
+                             "can run on its own exactly as it would after --augment")
+    parser.add_argument("--seeds", nargs="+", type=int, default=[config.MODEL_SEED],
+                        help="model seeds; every policy runs under each")
+    parser.add_argument("--out", help="write per-gameweek results as JSON for "
+                                      "data_engine.evaluation")
+    parser.add_argument("--tag", default="",
+                        help="suffix for policy names in the output, to tell harness "
+                             "settings apart when pooling files")
+    parser.add_argument("--no-availability", action="store_true",
+                        help="old harness: no injury flags")
+    parser.add_argument("--legacy-prices", action="store_true",
+                        help="old harness: future weeks read future prices (a leak)")
+    parser.add_argument("--legacy-rules", action="store_true",
+                        help="today's transfer rules (bank up to 5, no top-ups) for "
+                             "every season, instead of each season's own")
+    parser.add_argument("--block", type=int, default=4,
+                        help="bootstrap block length in gameweeks")
     args = parser.parse_args()
 
     logging.basicConfig(level=logging.INFO, format="%(message)s")
     logging.getLogger("data_engine.transfer_optimizer").setLevel(logging.WARNING)
     logging.getLogger("data_engine.optimizer").setLevel(logging.WARNING)
+    logging.getLogger("data_engine.planner").setLevel(logging.WARNING)
     # The per-gameweek holdout warning fires on every one of ~37 refits and
     # says nothing about the policies being raced.
     logging.getLogger("data_engine.train_model").setLevel(logging.ERROR)
@@ -690,33 +847,60 @@ def main():
         raise SystemExit(f"Unknown policies: {unknown}. Choose from: {list(POLICIES)}")
     policies = [POLICIES[p] for p in args.policies]
 
-    totals = {p.name: {"points": 0, "captain_points": 0, "transfers": 0,
-                       "hits": 0, "hit_cost": 0, "gameweeks": 0,
-                       "differential_points": 0.0} for p in policies}
+    held_back = sorted(set(args.seasons) & set(config.CONFIRMATION_SEASONS))
+    if held_back:
+        logger.warning("CONFIRMATION RUN on %s. These seasons are held back from "
+                       "tuning: run once per accepted change and record the result, "
+                       "whatever it says.", ", ".join(held_back))
 
-    for idx, season in enumerate(args.seasons):
+    all_seasons = list(dict.fromkeys(args.prior_seasons + args.seasons))
+    index = {s: i for i, s in enumerate(all_seasons)}
+    frames = {s: backtest.load_season_frame(s, index[s],
+                                            availability=not args.no_availability)
+              for s in all_seasons}
+
+    runs = []
+    for i, season in enumerate(args.seasons):
         logger.info("\n=== %s ===", season)
-        season_df = backtest.load_season_frame(season, season_index=idx)
+        season_df = frames[season]
 
+        train_on = list(args.prior_seasons)
+        if args.augment:
+            train_on += [s for s in args.seasons[:i] if s not in train_on]
         prior = None
-        if args.augment and idx > 0:
-            frames = [backtest.load_season_frame(s, season_index=j)
-                      for j, s in enumerate(args.seasons[:idx])]
-            prior = feature_engineering.build_training_set(pd.concat(frames, ignore_index=True))
+        if train_on:
+            prior = feature_engineering.build_training_set(
+                pd.concat([frames[s] for s in train_on], ignore_index=True))
 
-        res = simulate(season_df, policies, prior_seasons_df=prior,
-                       start_gw=args.start_gw, stride=args.stride)
-        for name, r in res.items():
-            for k in totals[name]:
-                totals[name][k] += r[k]
+        if args.legacy_rules:
+            rules = None
+        else:
+            rules = season_rules.for_season(season)
 
-        # Per season as well as pooled: this project's standard is that a
-        # change has to win EVERY season, because one big season can carry a
-        # change that is actually harmful into looking like an improvement.
-        _report(res, policies, title=f"SEASON {season}")
+        for seed in args.seeds:
+            config.MODEL_SEED = seed
+            logger.info("--- seed %d ---", seed)
+            res = simulate(season_df, policies, prior_seasons_df=prior,
+                           start_gw=args.start_gw, stride=args.stride, rules=rules,
+                           legacy_prices=args.legacy_prices)
+            _report(res, policies, title=f"SEASON {season} · seed {seed}")
+            for name, r in res.items():
+                runs.append({
+                    "variant": name + args.tag,
+                    "season": season,
+                    "seed": seed,
+                    "total": r["points"] - r["hit_cost"],
+                    "hits": r["hits"],
+                    "transfers": r["transfers"],
+                    "captain": r["captain_points"],
+                    "per_gw": [[int(g["gw"]), int(g["points"])] for g in r["per_gw"]],
+                })
+            if args.out:
+                backtest.write_results(args.out, "season_sim", runs, vars(args))
 
-    if len(args.seasons) > 1:
-        _report(totals, policies, title="BOTH SEASONS POOLED")
+    reference = "production" if "production" in args.policies else args.policies[0]
+    evaluation.print_report(runs, reference=reference + args.tag, block=args.block,
+                            title="SEASON SIMULATION — pooled over seeds")
 
 
 if __name__ == "__main__":

@@ -191,6 +191,22 @@ SHORT_REST_THRESHOLD_DAYS = 4
 HISTORICAL_SEASONS = ["2023-24", "2024-25", "2025-26"]
 HISTORICAL_DATA_BASE_URL = "https://raw.githubusercontent.com/vaastav/Fantasy-Premier-League/master/data"
 
+# Which completed seasons the research harnesses may tune on, and which are
+# held back. A change is chosen on TUNING_SEASONS; it is accepted only if its
+# effect keeps the same sign when run ONCE on CONFIRMATION_SEASONS, which are
+# never used to pick between variants. Looking at them while choosing turns
+# them into tuning seasons, and then nothing is left to confirm against.
+# Availability history (FPL-Core-Insights) starts in 2024-25, so experiments
+# that depend on it have no back-season confirmation: their holdout is the
+# live 2026-27 season.
+TUNING_SEASONS = ["2024-25", "2025-26"]
+CONFIRMATION_SEASONS = ["2022-23", "2023-24"]
+
+# XGBoost's random seed. Changing ONLY this moves a two-season backtest by up
+# to ~175 points with accuracy unchanged, so the research harnesses run
+# several seeds (--seeds) and report the spread; production keeps 42.
+MODEL_SEED = 42
+
 # ---------------------------------------------------------------------------
 # Validation
 # ---------------------------------------------------------------------------

@@ -113,6 +113,9 @@ def fetch_season(season: str, season_index: int):
 
     out = pd.DataFrame({
         "player_id": gw_df["player_id"],
+        # The official FPL id that season, kept so per-gameweek side data
+        # keyed on it (availability, set pieces) can be joined later.
+        "element": gw_df["element"].astype(int),
         "web_name": gw_df["name"],
         "element_type": gw_df["position"].map(POSITION_TO_ELEMENT_TYPE).fillna(3).astype(int),
         "round": gw_df["GW"],
@@ -228,6 +231,13 @@ def _attach_setpiece_features(out: pd.DataFrame, gw_df: pd.DataFrame, season: st
     gameweek). Rows with no match — a whole season this dataset doesn't cover,
     or simply a player who takes nothing — get zero, which is what "no duty"
     means in this encoding.
+
+    The snapshot labelled t is taken after t is played (see
+    availability_data), so gameweek t reads snapshot t - 1: the duties known
+    at its deadline. Keying on t itself let a row see a penalty order revised
+    after its own match. The set-piece variant was measured (and rejected)
+    under that leaky key; a leak can only flatter a feature, so the verdict
+    stands.
     """
     for col, neutral in setpiece_data.SETPIECE_NEUTRAL.items():
         out[col] = neutral
@@ -240,7 +250,7 @@ def _attach_setpiece_features(out: pd.DataFrame, gw_df: pd.DataFrame, season: st
 
     lut = sp.set_index(["element", "round"])[setpiece_data.SETPIECE_FEATURE_COLUMNS]
     keys = pd.MultiIndex.from_arrays([
-        gw_df["element"].astype(int), gw_df["GW"].astype(int)
+        gw_df["element"].astype(int), gw_df["GW"].astype(int) - 1
     ])
     joined = lut.reindex(keys).fillna(0.0)
     for col in setpiece_data.SETPIECE_FEATURE_COLUMNS:

@@ -12,11 +12,15 @@ on:
       seasons:
         description: "Seasons to simulate, space separated"
         type: string
-        default: "2025-26 2024-25"
+        default: "2024-25 2025-26"
       policies:
         description: "Policies to race, space separated"
         type: string
-        default: "baseline no_transfers ft_margin_1.0 ft_margin_1.5 no_hits captain_ceiling"
+        default: "production production_no_hits production_hm2 production_hm6 no_transfers"
+      seeds:
+        description: "Model seeds, space separated (one seed can't separate a change from noise)"
+        type: string
+        default: "42 7 13"
       stride:
         description: "Simulate every Nth gameweek (1 = every week; higher is faster but distorts the transfer economy)"
         type: string
@@ -54,8 +58,10 @@ jobs:
       - name: Restore historical data cache
         uses: actions/cache@v4
         with:
-          path: backend/data/raw/historical_*
-          key: fpl-historical-v1
+          path: |
+            backend/data/raw/historical_*
+            backend/data/raw/availability_*
+          key: fpl-historical-v2
 
       - name: Run the simulation
         working-directory: backend
@@ -63,9 +69,12 @@ jobs:
           set -o pipefail
           python -u -m data_engine.season_sim \
             --seasons ${{ inputs.seasons }} \
+            --augment \
             --policies ${{ inputs.policies }} \
+            --seeds ${{ inputs.seeds }} \
             --start-gw ${{ inputs.start_gw }} \
             --stride ${{ inputs.stride }} \
+            --out simulation.json \
             2>&1 | tee simulation.log
 
       - name: Publish the result table to the run summary
@@ -75,12 +84,12 @@ jobs:
           {
             echo "## Season simulation"
             echo ""
-            echo "\`seasons: ${{ inputs.seasons }}\` &middot; \`policies: ${{ inputs.policies }}\` &middot; \`stride: ${{ inputs.stride }}\`"
+            echo "\`seasons: ${{ inputs.seasons }}\` &middot; \`policies: ${{ inputs.policies }}\` &middot; \`seeds: ${{ inputs.seeds }}\` &middot; \`stride: ${{ inputs.stride }}\`"
             echo ""
             echo '```'
-            # The verdict table is the tail; the per-gameweek lines above it
-            # are in the uploaded log for anyone who wants them.
-            tail -n 25 simulation.log
+            # The pooled verdict table is the tail; the per-gameweek lines
+            # above it are in the uploaded log for anyone who wants them.
+            tail -n 40 simulation.log
             echo '```'
           } >> "$GITHUB_STEP_SUMMARY"
 
@@ -89,5 +98,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: simulation-log
-          path: backend/simulation.log
+          path: |
+            backend/simulation.log
+            backend/simulation.json
           retention-days: 30

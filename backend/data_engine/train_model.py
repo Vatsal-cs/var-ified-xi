@@ -163,7 +163,7 @@ def _points_regressor() -> "xgb.XGBRegressor":
         colsample_bytree=0.8,
         reg_lambda=1.5,
         objective="reg:squarederror",
-        random_state=42,
+        random_state=config.MODEL_SEED,
         n_jobs=-1,
     )
 
@@ -178,7 +178,7 @@ def _ceiling_regressor() -> "xgb.XGBRegressor":
         n_estimators=400, max_depth=4, learning_rate=0.03,
         subsample=0.8, colsample_bytree=0.8, reg_lambda=1.5,
         objective="reg:quantileerror", quantile_alpha=CAPTAIN_QUANTILE,
-        random_state=42, n_jobs=-1,
+        random_state=config.MODEL_SEED, n_jobs=-1,
     )
 
 
@@ -215,7 +215,7 @@ def _fit_bundle(part: pd.DataFrame, per_position: bool = False,
         objective="multi:softprob",
         num_class=3,
         eval_metric="mlogloss",
-        random_state=42,
+        random_state=config.MODEL_SEED,
         n_jobs=-1,
     )
     minutes_clf.fit(X, y_minutes, sample_weight=w_all, verbose=False)
@@ -329,7 +329,7 @@ def train_models(
     flat_reg = xgb.XGBRegressor(
         n_estimators=400, max_depth=4, learning_rate=0.03,
         subsample=0.8, colsample_bytree=0.8, reg_lambda=1.5,
-        objective="reg:squarederror", random_state=42, n_jobs=-1,
+        objective="reg:squarederror", random_state=config.MODEL_SEED, n_jobs=-1,
     )
     flat_reg.fit(X_train, train_part[TARGET_COL].astype(float), verbose=False)
 

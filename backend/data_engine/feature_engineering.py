@@ -499,6 +499,29 @@ def _horizon_fixtures(summary: dict, first_gw, horizon: int) -> list:
     ]
 
 
+def limit_flags_to_next_round(rows: pd.DataFrame, first_gw, gw_col: str = "gw") -> None:
+    """Keeps a doubt flag on the next round only, in place.
+
+    FPL's chance_of_playing_next_round is, by name and by definition, about
+    the NEXT round. Copying it onto every horizon week priced a 75%-doubtful
+    player at 75% for six weeks, cutting his horizon value by ~20% and
+    biasing the planner toward selling anyone with a knock. Later weeks fall
+    back to the model's own availability. Hard statuses (injured, suspended,
+    unavailable) stay on every week: without a return date there's no better
+    assumption yet.
+
+    Shared with season_sim, so the harness applies flags exactly as
+    production does.
+    """
+    if gw_col not in rows.columns or first_gw is None:
+        return
+    later = rows[gw_col] > first_gw
+    if "chance_of_playing" in rows.columns:
+        rows.loc[later, "chance_of_playing"] = None
+    if "status" in rows.columns:
+        rows.loc[later & (rows["status"] == "d"), "status"] = "a"
+
+
 def build_prediction_set(
     bootstrap: dict,
     df_with_rolling: pd.DataFrame,
@@ -627,18 +650,7 @@ def build_prediction_set(
                 previous_kickoff = kickoff
 
     out = pd.DataFrame(rows)
-
-    # FPL's chance_of_playing_next_round is, by name and by definition, about
-    # the NEXT round. Copying it onto every horizon week (which is what the
-    # snapshot copy above does) priced a 75%-doubtful player at 75% for six
-    # weeks, cutting his horizon value by ~20% and biasing the planner toward
-    # selling anyone with a knock. Later weeks fall back to the model's own
-    # availability. Hard statuses (injured, suspended, unavailable) stay on
-    # every week: without a return date there's no better assumption yet.
-    if "gw" in out.columns and first_gw is not None:
-        later = out["gw"] > first_gw
-        out.loc[later, "chance_of_playing"] = None
-        out.loc[later & (out["status"] == "d"), "status"] = "a"
+    limit_flags_to_next_round(out, first_gw)
 
     logger.info(
         "Prediction set: %d rows over GW%s-%s (%d players)",

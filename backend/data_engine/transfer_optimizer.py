@@ -83,6 +83,7 @@ def plan_transfers(
     hit_margin: float = None,
     captain_xp_by_gw: dict = None,
     differential_weight: float = 0.0,
+    rules=None,
 ) -> dict:
     """Solves the multi-gameweek transfer problem.
 
@@ -105,6 +106,11 @@ def plan_transfers(
                 captaining also becomes slightly more worth owning, which is
                 arguably correct but means the squad shifts too, not just the
                 armband. Omit for the mean projection.
+    rules:      rules.SeasonRules for replaying a past season — its bank cap,
+                and any top-up or unlimited week inside the horizon, which a
+                real manager knew about in advance and could plan around.
+                None means today's rules. Week 0's free transfers always come
+                from team_state, already adjusted by the caller.
 
     Returns the full plan: transfers per gameweek, the resulting squad, and
     the starting XI and captain for the immediate gameweek.
@@ -186,8 +192,19 @@ def plan_transfers(
     # state, which can genuinely have none left. Forcing week 0 to >= 1 gave
     # that check a free transfer that doesn't exist, so a one-move hit read as
     # no hit at all and a two-move hit as -4 instead of -8.
+    bank_cap = rules.max_free_transfers if rules else MAX_FREE_TRANSFERS
+    topups = rules.topups if rules else {}
+    unlimited = rules.unlimited_gws if rules else ()
+
+    def free_ceiling(idx, t):
+        if idx == 0:
+            return max(bank_cap, team_state.free_transfers)
+        if t in unlimited:
+            return SQUAD_SIZE
+        return max(bank_cap, topups.get(t, 0))
+
     free = {t: pulp.LpVariable(f"free_{t}", lowBound=0 if idx == 0 else 1,
-                               upBound=MAX_FREE_TRANSFERS, cat="Integer")
+                               upBound=free_ceiling(idx, t), cat="Integer")
             for idx, t in enumerate(gameweeks)}
     bank = {t: pulp.LpVariable(f"bank_{t}", lowBound=0, cat="Continuous") for t in gameweeks}
 
@@ -241,6 +258,15 @@ def plan_transfers(
 
         if idx == 0:
             prob += free[t] == team_state.free_transfers
+        elif t in unlimited:
+            prob += free[t] == SQUAD_SIZE
+        elif t in topups:
+            # Topped up to the cap whatever was banked (every top-up so far
+            # has been to the cap), so the bank's history doesn't matter.
+            pass
+        elif gameweeks[idx - 1] in unlimited:
+            # An unlimited week banks nothing; the next starts from one.
+            prob += free[t] <= 1
         else:
             prev = gameweeks[idx - 1]
             used = transfers[prev] - hits[prev]
