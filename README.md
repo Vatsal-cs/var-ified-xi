@@ -83,6 +83,7 @@ Every verdict below was first decided on **one seed**. The October 2026 audit re
 | Hit must gain 8, not 6 | +299 | −1 [−92, +97] | no detectable effect |
 | Refit on all data after validating | +127 | +43 [−75, +171] · ahead 8 of 10 seed-seasons | no detectable effect |
 | Betting-odds features | −32 | +15 [−82, +107] | no detectable effect |
+| Injured/suspended players' later weeks by return dates and measured return curves (new) | — | +4.7 [−26, +33] · changed 11 of 222 decisions | no detectable effect — stays off |
 | Split training populations, vs starters-only for both stages | +7 | starters-only **+56** [+11, +103] on the tuning seasons — then +18 and −17 on the held-back seasons | ⚠️ **unconfirmed**: split populations stay |
 
 The one **better** on the tuning seasons was a surprise: training *both* stages on established starters only — the setting this project had rejected — beat production by 56 points, ahead in both seasons. Under the rule written before the run, it then had to keep its sign on the two held-back seasons. It didn't: +18 in 2022-23, −17 in 2023-24. It stays off. That's exactly what the held-back seasons are for — without them, production would have switched models on a result that doesn't generalise.
@@ -180,6 +181,12 @@ python -m data_engine.backtest --augment --variants production your_variant \
 python -m data_engine.season_sim --augment \
        --policies production your_policy --seeds 42 7 13 --out sim.json
 
+# a planner change, paired: each week the candidate decides from production's
+# exact position and both are scored over the next six weeks — weeks where they
+# agree count as exactly zero, which cuts out most of the simulator's noise
+python -m data_engine.season_sim --augment --policies production \
+       --branch production:your_policy --seeds 42 7 13 --out branch.json
+
 # pool any number of result files into one verdict
 python -m data_engine.evaluation bt.json more.json --reference production
 ```
@@ -222,6 +229,7 @@ var-ified-xi/
 │       ├── chips.py                 # chip windows, expiry, double/blank detection
 │       ├── injury_log.py            # repeat fitness flags across runs
 │       ├── availability_data.py     # pre-deadline injury flags for past seasons
+│       ├── horizon_availability.py  # return dates for later weeks (tested, off)
 │       ├── backtest.py              # harness 1 — prediction quality
 │       ├── season_sim.py            # harness 2 — decision quality
 │       └── evaluation.py            # multi-seed verdicts with confidence intervals
@@ -288,7 +296,7 @@ Also available as a styled standalone page — [`docs/handbook.html`](docs/handb
 - **It can't manufacture an 80-point week.** Only 2.1% of player-weeks score 10+. What's achievable is moving the *expectation* from ~52 to ~60.
 - **It can't see team news beyond FPL's own flags.** It reads the injury and suspension flags FPL publishes, not the press conference that hasn't reached them yet.
 - **The season simulator is noisy.** The same policy finishes 100–240 points apart on different model seeds, so it can't resolve planner changes much under ~100 points. Most planner verdicts read "no detectable effect" for that reason.
-- **An injured or suspended flag is treated as lasting the whole six-week horizon.** (A doubt only counts for the next week.) About half of players suspended before a deadline play the following week. Per-week availability with return dates is the next thing to test.
+- **An injured or suspended flag is treated as lasting the whole six-week horizon.** (A doubt only counts for the next week.) That looks wrong — about half of suspended players play the following week — but a version using FPL's return dates and measured return curves was built and tested, and it changed only 11 of 222 weekly decisions with no detectable effect. It's in the code, switched off.
 - **Neither harness plays chips**, so both totals sit below a real season. They're comparative yardsticks, not predictions.
 
 ---

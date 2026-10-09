@@ -459,6 +459,7 @@ backtest, 3 in the simulator — under the verdict rules in section 1.
 | Hit must gain 8, not 6 | +299 | −1 [−92, +97] | no detectable effect |
 | Refit on all data after validating | +127 | +43 [−75, +171] · ahead 8 of 10 seed-seasons | no detectable effect |
 | Betting-odds features | −32 | +15 [−82, +107] | no detectable effect |
+| Injured/suspended later weeks by return dates and curves (new, step 3) | — | +4.7 [−26, +33] paired · 11 of 222 decisions changed | no detectable effect — stays off |
 | Split populations vs starters-only for both stages | +7 | starters-only **+56** [+11, +103] on the tuning seasons — then +18 and −17 on the held-back seasons | ⚠️ **unconfirmed**: split populations stay |
 | Backtest from GW2, not GW8 | — | — | kept: a coverage fix, not a points claim |
 
@@ -555,6 +556,19 @@ python -m data_engine.backtest --seasons 2025-26 --stride 3
 python -m data_engine.season_sim --augment \
        --policies production your_policy --seeds 42 7 13 --out sim.json
 ```
+
+### Test a planner change with less noise
+
+```bash
+python -m data_engine.season_sim --augment --policies production \
+       --branch production:your_policy --seeds 42 7 13 --out branch.json
+```
+
+The **paired branch test**: each week the candidate decides from production's
+exact position, and both decisions are scored on realised points over the next
+six weeks, holding the squad. Weeks where they agree count as exactly zero, so
+it isn't drowned by the simulator's season-long drift (100–240 points between
+seeds). Use `--block 6` when evaluating it — consecutive branches overlap.
 
 ### Turn results into a verdict
 
@@ -677,11 +691,14 @@ fresh squads. Public repo means unlimited free Actions minutes.
 
 ### Genuinely open
 
-- **Hard injury flags last six weeks in the planner.** A suspended or injured
-  player is valued at a tenth of his projection for every week of the horizon.
-  Measured: 43–54% of players suspended before a deadline play the *following*
-  week, and injured players climb from ~9% to ~28% over five weeks. Return dates
-  and per-week availability are the next thing to test.
+- **Hard injury flags last six weeks in the planner — and it barely matters.**
+  A suspended or injured player is valued at a tenth of his projection for every
+  week of the horizon, although suspended regulars play ~82% as often as fit
+  ones the very next week. `horizon_availability.py` fixes the valuation with
+  FPL's return dates and measured return curves. Tested with the paired branch
+  test it changed **11 of 222** weekly decisions: +4.7 [−26, +33], no detectable
+  effect. An injured player you own scores nothing next week either way, so the
+  planner benches or sells him either way. It's in the code, switched off.
 
 - **Newly appointed set-piece takers.** The duty itself adds nothing — but a
   player who just *inherited* penalties has a history that can't show it yet.

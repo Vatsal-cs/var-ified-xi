@@ -224,8 +224,14 @@ def main():
     parser.add_argument("--reference", default="production")
     parser.add_argument("--block", type=int, default=2,
                         help="bootstrap block length in gameweeks (season_sim: use 4)")
+    parser.add_argument("--variants", nargs="*",
+                        help="only these variants (the reference is always kept)")
     args = parser.parse_args()
-    print_report(load(args.files), args.reference, args.block,
+    runs = load(args.files)
+    if args.variants:
+        keep = set(args.variants) | {args.reference}
+        runs = [r for r in runs if r["variant"] in keep]
+    print_report(runs, args.reference, args.block,
                  title=f"POOLED RESULTS ({len(args.files)} file(s))")
 
 

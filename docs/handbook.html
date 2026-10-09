@@ -771,6 +771,7 @@ Stage 2 — CONDITIONAL POINTS  (XGBoost regressor)
             <tr><td>Hit must gain 8, not 6</td><td class="num">+299</td><td class="num">−1 [−92, +97]</td><td>no detectable effect</td></tr>
             <tr><td>Refit on all data after validating</td><td class="num">+127</td><td class="num">+43 [−75, +171] · ahead 8 of 10 seed-seasons</td><td>no detectable effect</td></tr>
             <tr><td>Betting-odds features</td><td class="num">−32</td><td class="num">+15 [−82, +107]</td><td>no detectable effect</td></tr>
+            <tr><td>Injured/suspended later weeks by return dates and curves (new, step 3)</td><td class="num">—</td><td class="num">+4.7 [−26, +33] paired · 11 of 222 decisions changed</td><td>no detectable effect — stays off</td></tr>
             <tr><td>Split populations vs starters-only for both stages</td><td class="num">+7</td><td class="num">starters-only <strong>+56</strong> [+11, +103] on the tuning seasons — then +18 and −17 on the held-back seasons</td><td class="no"><strong>unconfirmed</strong>: split populations stay</td></tr>
             <tr><td>Backtest from GW2, not GW8</td><td class="num">—</td><td class="num">—</td><td>kept: a coverage fix, not a points claim</td></tr>
           </tbody>
@@ -879,6 +880,18 @@ python -m data_engine.backtest --seasons 2025-26 --stride 3</code></pre>
       <h4>Test a transfer-planner change</h4>
       <pre><code>python -m data_engine.season_sim --augment \
        --policies production your_policy --seeds 42 7 13 --out sim.json</code></pre>
+
+      <h4>Test a planner change with less noise</h4>
+      <pre><code>python -m data_engine.season_sim --augment --policies production \
+       --branch production:your_policy --seeds 42 7 13 --out branch.json</code></pre>
+      <p>
+        The <strong>paired branch test</strong>: each week the candidate decides from
+        production's exact position, and both decisions are scored on realised points
+        over the next six weeks, holding the squad. Weeks where they agree count as
+        exactly zero, so it isn't drowned by the simulator's season-long drift
+        (100–240 points between seeds). Use <code>--block 6</code> when evaluating
+        it — consecutive branches overlap.
+      </p>
 
       <h4>Turn results into a verdict</h4>
       <pre><code>python -m data_engine.evaluation bt.json other.json --reference production</code></pre>
@@ -1024,7 +1037,7 @@ python -m data_engine.backtest --seasons 2025-26 --stride 3</code></pre>
 
       <h3>Genuinely open</h3>
       <ul>
-        <li><strong>Hard injury flags last six weeks in the planner.</strong> A suspended or injured player is valued at a tenth of his projection for every week of the horizon. Measured: 43–54% of players suspended before a deadline play the <em>following</em> week, and injured players climb from ~9% to ~28% over five weeks. Return dates and per-week availability are the next thing to test.</li>
+        <li><strong>Hard injury flags last six weeks in the planner — and it barely matters.</strong> A suspended or injured player is valued at a tenth of his projection for every week of the horizon, although suspended regulars play ~82% as often as fit ones the very next week. <code>horizon_availability.py</code> fixes the valuation with FPL's return dates and measured return curves. Tested with the paired branch test it changed <strong>11 of 222</strong> weekly decisions: +4.7 [−26, +33], no detectable effect. An injured player you own scores nothing next week either way, so the planner benches or sells him either way. It's in the code, switched off.</li>
         <li><strong>Newly appointed set-piece takers.</strong> The duty itself adds nothing — but a player who just <em>inherited</em> penalties has a history that can't show it yet. That needs a change-detection feature (duty this week he didn't have last week), not the duty. Data and join are already in place.</li>
         <li><strong>The odds re-test reproduced the old numbers exactly</strong> despite the data demonstrably differing — and on five seeds the variant is no detectable effect (+15 [−82, +107]), so "rejected" was always stronger than the evidence. The coincidence isn't explained.</li>
         <li><strong>A decoupled captain test</strong> — pick the squad on the mean, then the captain on ceiling — was never run. It would separate the two effects the rejected test conflated.</li>

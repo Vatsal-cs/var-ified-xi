@@ -239,8 +239,15 @@ REPEAT_FLAG_DAMPEN_FACTOR = 0.85
 # (data_engine/horizon_availability.py): FPL's return dates where the news
 # gives one, measured return curves where it doesn't. Off means a hard flag
 # keeps a player at a tenth of his projection for the whole horizon — which
-# writes off a one-match suspension for six weeks. Off until it passes its
-# pre-registered test (step 3, October 2026).
+# writes off a one-match suspension for six weeks.
+#
+# TESTED (Oct 2026, research/2026-10-horizon-availability): no detectable
+# effect. Paired branch test +4.7 [-26, +33] (2024-25 +5, 2025-26 0); full
+# season -8 [-69, +41]. It changes 49-61 players' projections a week but only
+# 11 of 222 weekly decisions, each worth -13 to +25: an injured player you own
+# scores nothing next week under either rule, so he's benched or sold either
+# way. Failed its pre-registered bar, so it stays off. The rule is sound and
+# harmless; it just almost never decides anything.
 HORIZON_AVAILABILITY = False
 
 # ---------------------------------------------------------------------------
