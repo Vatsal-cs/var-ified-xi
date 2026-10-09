@@ -257,6 +257,25 @@ October 2026 it is **+43** (95% CI [−75, +171]) — ahead in both seasons and 
 8 of 10 seed-seasons, but inside the noise, so: no detectable effect. It stays;
 it costs nothing and points the right way, but +127 overstated it.
 
+### Five models, averaged
+
+A single model's picks partly depend on its random seed: retraining with only
+the seed changed moves a two-season backtest by up to 175 points, with
+accuracy identical. So production trains **five copies** (seeds 42, 42+7919,
+…) and averages their projections and play probabilities, before the
+availability adjustments are applied.
+
+Pre-registered as "steadier picks at no cost" and tested on all four seasons:
+the starting XI two independently-trained versions share rose from 75–78% to
+86–88%, captain agreement from 70–81% to 81–89%, accuracy improved slightly
+everywhere, and points were not worse (+25 [−37, +92] on the tuning seasons,
++23 [−34, +82] held back). It costs four extra model fits — about a minute.
+
+It does **not** steady the moves planned for later weeks: on the live team,
+independent runs matched on them only about 1 time in 10, single model or
+averaged. Those weeks are near-ties between similar options. This week's move
+was unanimous across 12 independent models.
+
 ### Prediction-time adjustments
 
 Applied after the model, never learned by it:
@@ -459,6 +478,7 @@ backtest, 3 in the simulator — under the verdict rules in section 1.
 | Hit must gain 8, not 6 | +299 | −1 [−92, +97] | no detectable effect |
 | Refit on all data after validating | +127 | +43 [−75, +171] · ahead 8 of 10 seed-seasons | no detectable effect |
 | Betting-odds features | −32 | +15 [−82, +107] | no detectable effect |
+| Average five seed-different models (new) | — | starting XIs agreed between seeds 75–78% → 86–88%, all four seasons; points +25 [−37, +92] · held back +23 [−34, +82] | ✅ **shipped** — steadier picks, no cost |
 | Injured/suspended later weeks by return dates and curves (new, step 3) | — | +4.7 [−26, +33] paired · 11 of 222 decisions changed | no detectable effect — stays off |
 | Split populations vs starters-only for both stages | +7 | starters-only **+56** [+11, +103] on the tuning seasons — then +18 and −17 on the held-back seasons | ⚠️ **unconfirmed**: split populations stay |
 | Backtest from GW2, not GW8 | — | — | kept: a coverage fix, not a points claim |
@@ -614,6 +634,7 @@ Each carries an inline comment with its verdict and the exact numbers behind it.
 | `ATTACH_ODDS` | False | Rejected −32 |
 | `ATTACH_SETPIECE` | False | Rejected −62 |
 | `MODEL_SEED` | 42 | XGBoost's seed. The harnesses override it per `--seeds` run |
+| `MODEL_BAG_SIZE` | 5 | Models averaged, each with its own seed. Shipped Oct 2026: steadier picks, no cost |
 | `TUNING_SEASONS` | 2024-25, 2025-26 | What variants are chosen on |
 | `CONFIRMATION_SEASONS` | 2022-23, 2023-24 | Held back; run once per accepted change |
 | `RECENCY_SEASON_DECAY` | 1.0 | Disabled — rejected −58 |

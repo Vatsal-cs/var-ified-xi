@@ -514,6 +514,29 @@ Stage 2 — CONDITIONAL POINTS  (XGBoost regressor)
         but +127 overstated it.
       </p>
 
+      <h3>Five models, averaged</h3>
+      <p>
+        A single model's picks partly depend on its random seed: retraining with
+        only the seed changed moves a two-season backtest by up to 175 points, with
+        accuracy identical. So production trains <strong>five copies</strong> (seeds
+        42, 42+7919, …) and averages their projections and play probabilities,
+        before the availability adjustments are applied.
+      </p>
+      <p>
+        Pre-registered as "steadier picks at no cost" and tested on all four
+        seasons: the starting XI two independently-trained versions share rose from
+        75–78% to 86–88%, captain agreement from 70–81% to 81–89%, accuracy improved
+        slightly everywhere, and points were not worse (+25 [−37, +92] on the tuning
+        seasons, +23 [−34, +82] held back). It costs four extra model fits — about a
+        minute.
+      </p>
+      <p>
+        It does <strong>not</strong> steady the moves planned for later weeks: on
+        the live team, independent runs matched on them only about 1 time in 10,
+        single model or averaged. Those weeks are near-ties between similar options.
+        This week's move was unanimous across 12 independent models.
+      </p>
+
       <h3>Prediction-time adjustments</h3>
       <p>These are applied after the model, never learned by it:</p>
       <div class="tw">
@@ -771,6 +794,7 @@ Stage 2 — CONDITIONAL POINTS  (XGBoost regressor)
             <tr><td>Hit must gain 8, not 6</td><td class="num">+299</td><td class="num">−1 [−92, +97]</td><td>no detectable effect</td></tr>
             <tr><td>Refit on all data after validating</td><td class="num">+127</td><td class="num">+43 [−75, +171] · ahead 8 of 10 seed-seasons</td><td>no detectable effect</td></tr>
             <tr><td>Betting-odds features</td><td class="num">−32</td><td class="num">+15 [−82, +107]</td><td>no detectable effect</td></tr>
+            <tr><td>Average five seed-different models (new)</td><td class="num">—</td><td class="num">starting XIs agreed between seeds 75–78% → 86–88%, all four seasons; points +25 [−37, +92] · held back +23 [−34, +82]</td><td class="ok"><strong>shipped</strong> — steadier picks, no cost</td></tr>
             <tr><td>Injured/suspended later weeks by return dates and curves (new, step 3)</td><td class="num">—</td><td class="num">+4.7 [−26, +33] paired · 11 of 222 decisions changed</td><td>no detectable effect — stays off</td></tr>
             <tr><td>Split populations vs starters-only for both stages</td><td class="num">+7</td><td class="num">starters-only <strong>+56</strong> [+11, +103] on the tuning seasons — then +18 and −17 on the held-back seasons</td><td class="no"><strong>unconfirmed</strong>: split populations stay</td></tr>
             <tr><td>Backtest from GW2, not GW8</td><td class="num">—</td><td class="num">—</td><td>kept: a coverage fix, not a points claim</td></tr>
@@ -947,6 +971,7 @@ python -m data_engine.backtest --seasons 2025-26 --stride 3</code></pre>
             <tr><td class="mono">ATTACH_ODDS</td><td class="num">False</td><td>Rejected −32</td></tr>
             <tr><td class="mono">ATTACH_SETPIECE</td><td class="num">False</td><td>Rejected −62</td></tr>
             <tr><td class="mono">MODEL_SEED</td><td class="num">42</td><td>XGBoost's seed. The harnesses override it per <code>--seeds</code> run</td></tr>
+            <tr><td class="mono">MODEL_BAG_SIZE</td><td class="num">5</td><td>Models averaged, each with its own seed. Shipped Oct 2026: steadier picks, no cost</td></tr>
             <tr><td class="mono">TUNING_SEASONS</td><td class="num">2024-25, 2025-26</td><td>What variants are chosen on</td></tr>
             <tr><td class="mono">CONFIRMATION_SEASONS</td><td class="num">2022-23, 2023-24</td><td>Held back; run once per accepted change</td></tr>
             <tr><td class="mono">RECENCY_SEASON_DECAY</td><td class="num">1.0</td><td>Disabled — rejected −58</td></tr>

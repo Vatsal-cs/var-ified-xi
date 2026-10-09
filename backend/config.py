@@ -202,6 +202,8 @@ HISTORICAL_DATA_BASE_URL = "https://raw.githubusercontent.com/vaastav/Fantasy-Pr
 #
 # Uses so far: Oct 2026, backtest variant legacy_filtered (+56 on tuning,
 # then +18 / -17 here) — unconfirmed, not shipped.
+#                Oct 2026, seed averaging (bagged5): points not worse
+#                (+23), steadier picks in both — confirmed, shipped.
 TUNING_SEASONS = ["2024-25", "2025-26"]
 CONFIRMATION_SEASONS = ["2022-23", "2023-24"]
 
@@ -212,8 +214,16 @@ MODEL_SEED = 42
 
 # Seed averaging: train this many copies of the model, each with a different
 # seed (MODEL_SEED, then MODEL_SEED + 7919, ...), and average their
-# projections. 1 is a single model. Under test (October 2026).
-MODEL_BAG_SIZE = 1
+# projections. 1 is a single model.
+#
+# SHIPPED at 5 (Oct 2026, research/2026-10-seed-averaging). Pre-registered
+# as "steadier picks at no cost": across 5 run seeds the starting XI two
+# independently-trained versions share rose from 75-78% to 86-88% in all
+# four seasons, captain agreement from 70-81% to 81-89%, accuracy improved
+# slightly everywhere, and points were not worse — +25 [-37, +92] on the
+# tuning seasons, +23 [-34, +82] on the held-back ones. Costs four extra
+# model fits per run.
+MODEL_BAG_SIZE = 5
 
 # ---------------------------------------------------------------------------
 # Validation
