@@ -30,6 +30,14 @@ Coverage limits, stated plainly:
   * The snapshot time within the gap between gameweeks isn't published. It
     is after the last match of t; it may occasionally be after news that
     broke later in the week, which would flatter the flags slightly.
+  * The 2025-26 snapshots for GW3-11 list 400-535 players a week as status
+    "a" (available) with chance_of_playing 0 — van de Ven, Reece James and
+    Semenyo among them. Those players played as often as any fit player
+    (52% vs 57%), so the 0 is an export artefact, and read literally it
+    zeroed hundreds of fit players' projections. A chance only means
+    something when FPL has actually flagged the player, so it is dropped
+    whenever status is "a". The live API has never shown the combination
+    (checked across every cached bootstrap this season).
 """
 
 import io
@@ -60,7 +68,7 @@ def fetch_season_availability(season: str) -> pd.DataFrame:
     """
     cache = _cache_path(season)
     if cache.exists():
-        return pd.read_csv(cache, keep_default_na=False, na_values=[""])
+        return _clean(pd.read_csv(cache, keep_default_na=False, na_values=[""]))
 
     raw = None
     for url in _candidate_urls(season):
@@ -100,7 +108,14 @@ def from_playerstats(df: pd.DataFrame) -> pd.DataFrame:
                                            errors="coerce"),
         "news": df["news"] if "news" in df.columns else "",
     })
-    return out.drop_duplicates(["element", "round"], keep="last")
+    return _clean(out.drop_duplicates(["element", "round"], keep="last"))
+
+
+def _clean(flags: pd.DataFrame) -> pd.DataFrame:
+    """An unflagged player has no chance figure, whatever the export says."""
+    if not flags.empty:
+        flags.loc[flags["status"] == FIT_STATUS, "chance_of_playing"] = float("nan")
+    return flags
 
 
 def attach(df: pd.DataFrame, season: str) -> float:

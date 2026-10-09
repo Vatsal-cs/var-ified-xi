@@ -145,6 +145,10 @@ def season_table(runs: list) -> list:
         totals = np.array([r["total"] for r in rs], dtype=float)
         row = {
             "variant": variant, "season": season, "seeds": len(rs),
+            # A variant that can't train in a season's first week skips it,
+            # so its total covers fewer gameweeks. The paired comparison only
+            # uses gameweeks both ran; this column says when totals don't.
+            "gws": int(np.median([len(r["per_gw"]) for r in rs])),
             "mean": float(totals.mean()),
             "sd": float(totals.std(ddof=1)) if len(rs) > 1 else 0.0,
             "min": float(totals.min()), "max": float(totals.max()),
@@ -166,14 +170,14 @@ def print_report(runs: list, reference: str, block: int, title: str) -> list:
     print("=" * width)
     print(title)
     print("=" * width)
-    print(f"{'variant':<20}{'season':<9}{'seeds':>6}{'mean':>9}{'sd':>7}"
-          f"{'range':>15}{'MAE':>8}{'rank-r':>8}{'Brier60':>9}")
+    print(f"{'variant':<20}{'season':<9}{'seeds':>6}{'GWs':>5}{'mean':>9}{'sd':>7}"
+          f"{'range':>13}{'MAE':>7}{'rank-r':>8}{'Brier60':>9}")
     print("-" * width)
     for row in season_table(runs):
         rng_txt = f"{row['min']:.0f}-{row['max']:.0f}"
-        print(f"{row['variant']:<20}{row['season']:<9}{row['seeds']:>6}"
-              f"{row['mean']:>9.1f}{row['sd']:>7.1f}{rng_txt:>15}"
-              f"{row.get('mae', float('nan')):>8.3f}"
+        print(f"{row['variant'][:19]:<20}{row['season']:<9}{row['seeds']:>6}{row['gws']:>5}"
+              f"{row['mean']:>9.1f}{row['sd']:>7.1f}{rng_txt:>13}"
+              f"{row.get('mae', float('nan')):>7.3f}"
               f"{row.get('spearman', float('nan')):>8.3f}"
               f"{row.get('brier60', float('nan')):>9.4f}")
 

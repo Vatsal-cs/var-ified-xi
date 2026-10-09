@@ -103,6 +103,13 @@ def fetch_season(season: str, season_index: int):
     if gw_df.empty or teams_df.empty:
         return None
 
+    # A player can't appear twice in one match, but the 2025-26 export lists
+    # ten fringe players twice for the same fixture (identical rows, 27
+    # points between them). Left in, they read as a double gameweek and
+    # their points are counted twice.
+    if "fixture" in gw_df.columns:
+        gw_df = gw_df.drop_duplicates(["element", "fixture"]).reset_index(drop=True)
+
     id_strength, name_strength = _team_strength_lookups(teams_df)
     name_to_id = dict(zip(teams_df["name"], teams_df["id"]))
 

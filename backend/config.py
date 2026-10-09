@@ -199,6 +199,9 @@ HISTORICAL_DATA_BASE_URL = "https://raw.githubusercontent.com/vaastav/Fantasy-Pr
 # Availability history (FPL-Core-Insights) starts in 2024-25, so experiments
 # that depend on it have no back-season confirmation: their holdout is the
 # live 2026-27 season.
+#
+# Uses so far: Oct 2026, backtest variant legacy_filtered (+56 on tuning,
+# then +18 / -17 here) — unconfirmed, not shipped.
 TUNING_SEASONS = ["2024-25", "2025-26"]
 CONFIRMATION_SEASONS = ["2022-23", "2023-24"]
 
@@ -298,6 +301,21 @@ SOLVER_TIME_LIMIT = 120
 # for themselves. At 6.0 it becomes too timid and loses 2024-25. 4.0 wins both
 # seasons by a similar margin, which is the bar, and is worth about four
 # points a gameweek — the largest single improvement measured in this project.
+#
+# RE-MEASURED (Oct 2026) — that table measured a different game: a bank of 2
+# in seasons that allowed 5, a solver that planned and took hits in any week
+# (production only advises one, this week), and future prices leaking into
+# the horizon. With those fixed, running the shipping procedure (planner.py),
+# 3 seeds per season, against 4.0:
+#
+#     margin  2024-25   2025-26   pooled [95% CI]        verdict
+#     0.0       -82       +13      -69 [-186, +48]       no detectable effect
+#     2.0       -43       +44       +1  [-97, +92]       no detectable effect
+#     6.0       +54        -7      +47  [-64, +155]      no detectable effect
+#     no hits   +62       -19      +44  [-95, +196]      no detectable effect
+#
+# Nothing beats 4.0 and nothing is distinguishable from it; the direction
+# flips between seasons. It stays because nothing won, not because it's proven.
 HIT_MARGIN = 4.0
 
 # The same idea for transfers that cost no points. A free transfer looks free,
@@ -474,4 +492,9 @@ RIVAL_LEAGUE_ID = None
 # stronger form of the rejection: bookmaker odds genuinely are informative
 # about matches, and this model already extracts that information from
 # rolling xG, xGC and team strength.
+#
+# RE-MEASURED (Oct 2026), 5 seeds per season on the corrected harness: +15
+# pooled, 95% CI [-82, +107] (-15 in 2024-25, +31 in 2025-26). No detectable
+# effect — so "rejected" was always stronger than one seed could support. It
+# stays off: it adds a data dependency and shows no gain.
 ATTACH_ODDS = False

@@ -42,12 +42,35 @@ cannot flatter.
 ### The one rule that governs everything
 
 > No change ships on intuition. A change ships when it scores more *realized*
-> points across **every** season tested. Not better accuracy, not a
-> nicer-sounding rationale — points, in every season, or it stays off.
+> points than production — by more than the noise — in **every** season tested,
+> and keeps that sign on seasons that were never used to choose it.
 >
 > Ideas that lose are kept in the codebase as named, re-runnable variants with
 > their exact numbers, so a rejected idea can never quietly return as a fresh
 > insight.
+
+#### How the noise is measured, and why it changed the rule
+
+Re-running production with nothing changed but XGBoost's random seed moves the
+two-season backtest by up to **175 points** (4,443 to 4,618), with MAE and rank
+correlation identical to three decimals: the solver turns tiny prediction
+differences into different squads. In half of all seed pairs, one seed "won both
+seasons" — so the original rule (one run, more points in every season) passed a
+change that does nothing about half the time.
+
+Since October 2026 every comparison runs on several seeds (`--seeds`), and
+`evaluation.py` decides it from per-gameweek differences averaged over seeds,
+with a block-bootstrap 95% interval:
+
+| Verdict | Rule, written down before the run |
+|---|---|
+| **better** | pooled interval above zero *and* ahead in every season |
+| **worse** | pooled interval below zero *and* behind in every season |
+| **no detectable effect** | anything else. The harness can't tell — not "rejected" |
+
+Changes are chosen on **2024-25 and 2025-26**. **2022-23 and 2023-24** are held
+back and run *once* per change that comes out "better", with the acceptance
+criterion written down first. The live 2026-27 season is the final holdout.
 
 ### Why "realized points" and not accuracy
 
@@ -91,7 +114,7 @@ Refreshing the squad is a file write plus a git push.
 |---|---|---|
 | `fantasy.premierleague.com/api` | Live players, prices, fixtures, per-player history, your team, your leagues | None |
 | `vaastav/Fantasy-Premier-League` | Three completed seasons of per-gameweek results | None |
-| `olbauday/FPL-Core-Insights` | Per-gameweek set-piece order, ClubElo. Wired up, currently off | None |
+| `olbauday/FPL-Core-Insights` | FPL's player payload snapshotted after every gameweek (2024-25 on): the injury flags a manager saw before each deadline, for the harnesses; set-piece order (wired up, off) | None |
 | `football-data.co.uk` | Historical closing odds. Wired up, tested, rejected | None |
 
 ### The endpoints your team comes from
@@ -229,9 +252,10 @@ Accuracy is measured on a time-based holdout: the most recent 5 gameweeks, never
 seen during training. Then the model is **retrained on everything, holdout
 included**, before going into the weekend.
 
-Worth **+127 points** — the most recent gameweeks are the most informative ones,
-and throwing them away to preserve a clean test set is a mistake you pay for
-every single week.
+Measured at **+127 points** on one seed. Re-measured on five seeds per season in
+October 2026 it is **+43** (95% CI [−75, +171]) — ahead in both seasons and in
+8 of 10 seed-seasons, but inside the noise, so: no detectable effect. It stays;
+it costs nothing and points the right way, but +127 overstated it.
 
 ### Prediction-time adjustments
 
@@ -285,16 +309,31 @@ maximise   Σ over gameweeks t, discounted by 0.85^t of:
            − (4 + HIT_MARGIN) × hits         see below
 ```
 
-### ✅ The single biggest win in the project
+### What happened to "the single biggest win"
 
-A hit costs 4 points. So the naive rule is "take it if the gain beats 4". That's
-wrong, because **the gain is a *projection* and the loss is a *certainty***.
-`HIT_MARGIN` is the extra the move must clear before it's worth that asymmetry.
+A hit costs 4 points, and the gain is a *projection* while the loss is a
+*certainty*. `HIT_MARGIN` is the extra a move must clear on top of the 4.
 
-At the old margin of 2 (hits needing to gain 6), the planner spent **228 points
-on 57 hits across two seasons and still finished behind a version banned from
-taking any**. At a margin of 4 (hits needing to gain 8) it wins both seasons by
-+154 and +145 — **+299 pooled, about 4 points a gameweek**.
+This used to be the project's headline: at a margin of 2 the planner spent 228
+points on 57 hits and finished behind a version that took none, and a margin of
+4 won both seasons by **+299 pooled**. The October 2026 audit found that number
+measured a different game. The simulator banked at most 2 free transfers in
+seasons that allowed 5, let the solver plan and take hits in any week (production
+only ever *advises* a hit this week), and leaked future prices into its
+multi-week projections.
+
+Re-measured with all of that fixed — the shipping procedure, each season's real
+rules, 3 seeds per season:
+
+| Hit check margin (vs 4) | 2024-25 | 2025-26 | Pooled, 95% CI |
+|---|---:|---:|---|
+| 0 — any hit that gains more than 4 | −82 | +13 | −69 [−186, +48] |
+| 2 | −43 | +44 | +1 [−97, +92] |
+| 6 | +54 | −7 | +47 [−64, +155] |
+| never take a hit | +62 | −19 | +44 [−95, +196] |
+
+**No detectable effect, every setting.** The direction flips between seasons.
+The margin stays at 4 because nothing beat it, not because 4 is proven.
 
 ### The candidate pool
 
@@ -320,6 +359,11 @@ bank, sell prices updated so newly bought players sell for exactly what you
 paid), then re-solve from there. The second solve's transfers *are* the extra
 moves a hit buys. No diffing.
 
+The whole weekly decision — free-transfer plan, hit check, then captain and vice
+on the two highest projections in the XI — lives in `planner.py`. `main.py` calls
+it for your recommendation and `season_sim.py` calls the same function to
+measure it, so the harness can't drift from what ships.
+
 ---
 
 ## 7 · How things get tested
@@ -331,10 +375,11 @@ other is how you end up confidently shipping something harmful.
 |---|---|---|
 | **Answers** | Are the predictions good? | Are the decisions good? |
 | **Squad** | Rebuilt from scratch every week, unlimited transfers | One squad carried forward all season |
-| **Transfers** | Free and unlimited | 1/week, bank up to 5, −4 per extra |
+| **Transfers** | Free and unlimited | That season's real rules (`rules.py`), −4 per extra |
 | **Prices** | As they were | Move, with half-the-rise selling |
+| **Injury flags** | As published before each deadline (from 2024-25) | Same, trimmed exactly as production trims them |
 | **Use for** | Model and feature changes | Anything in the transfer planner |
-| **Score** | ~4600 / 2 seasons | ~4200 / 2 seasons |
+| **Score** | ~4,670 / 2 seasons | ~4,160 / 2 seasons |
 
 Both replay seasons gameweek by gameweek, training *only* on data strictly before
 the week being predicted, then score the chosen team against what actually
@@ -345,12 +390,18 @@ applies them.
 
 | Benchmark | Points per gameweek (2024-25 / 2025-26) |
 |---|---|
-| `naive_form` — no model, just each player's last-5 average | 53.6 / 51.6 |
-| **This model** | **63.2 / 61.6** |
-| `hindsight` — optimise on what actually happened | 149.0 / 155.1 |
+| `naive_form` — no model, just each player's last-5 average | 57.7 / 51.9 |
+| **This model** (mean of 5 seeds) | **64.6 / 61.7** |
+| `hindsight` — optimise on what actually happened | 149.0 / 154.6 |
 
-So the model is worth roughly **+19% over having no model at all**. The hindsight
-ceiling exists to stop anyone mistaking a good score for a great one.
+So the model is worth roughly **+15% over having no model at all** (−614 points
+for no model, 95% CI [−876, −361] — the clearest result in the project). The
+hindsight ceiling exists to stop anyone mistaking a good score for a great one.
+
+> These are the October 2026 numbers. Before the audit the table read 53.6 /
+> 51.6 for no model and 63.2 / 61.6 for the model ("+19%"). Both rose because
+> double-gameweek players are now predicted for both matches; the naive
+> forecast gained more from that, so the model's margin narrowed.
 
 ### 🔑 How season_sim keeps the comparison honest
 
@@ -359,11 +410,18 @@ is handed the identical predictions. So any difference in final score is caused
 by the decision rule and nothing else — and it runs far faster than racing whole
 pipelines.
 
-**Form is frozen at the deadline; fixtures are not.** Rolling form comes only from
-matches played before the gameweek being planned. But fixture context — home or
-away, opponent, rest days — is taken from the real calendar, because in life the
-fixture list is published months ahead. That distinction is where most season
-simulators quietly leak.
+**The same decision code.** The simulator calls `planner.plan_week` — the
+function `main.py` calls to make your recommendation — so what it measures is
+what the dashboard tells you to do. Before October 2026 it ran its own
+procedure, which production never did.
+
+**Form, price and injury news are frozen at the deadline; fixtures are not.**
+Rolling form comes only from matches played before the gameweek being planned,
+and every week of the horizon carries the deadline's price and flags. But
+fixture context — home or away, opponent, rest days — is taken from the real
+calendar, because in life the fixture list is published months ahead. Price was
+the leak: it is the model's most important feature, and it used to be read from
+each future week's row.
 
 ### ⚠ The trap that voided three tests
 
@@ -389,32 +447,61 @@ it on.
 Every idea ever tested, with its number. This table is the project's memory — it
 exists so nobody, including future you, re-proposes something already disproved.
 
-### Accepted
+Every verdict here was first decided on **one seed**. In October 2026 the
+biggest claims were re-run on the corrected harness — 5 seeds per season in the
+backtest, 3 in the simulator — under the verdict rules in section 1.
 
-| Change | Effect | Why |
-|---|---:|---|
-| Hit must gain 8, not 6 | **+299** | Won both seasons. Old setting spent 228 points on hits and lost to taking none |
-| Refit on all data after validating | **+127** | Recent gameweeks are the most informative |
-| Split training populations | **+7**, MAE 1.16→1.05 | Classifier needs non-players; regressor doesn't |
-| Backtest from GW2, not GW8 | — | The early-season regime was never being tested |
+### Re-measured
 
-### Rejected
+| Claim | First (1 seed) | Re-measured, pooled 95% CI | Verdict |
+|---|---:|---:|---|
+| A model at all, vs last-5 average | +19% | **+614** [+361, +876] · +15% | ✅ **better** |
+| Hit must gain 8, not 6 | +299 | −1 [−92, +97] | no detectable effect |
+| Refit on all data after validating | +127 | +43 [−75, +171] · ahead 8 of 10 seed-seasons | no detectable effect |
+| Betting-odds features | −32 | +15 [−82, +107] | no detectable effect |
+| Split populations vs starters-only for both stages | +7 | starters-only **+56** [+11, +103] on the tuning seasons — then +18 and −17 on the held-back seasons | ⚠️ **unconfirmed**: split populations stay |
+| Backtest from GW2, not GW8 | — | — | kept: a coverage fix, not a points claim |
 
-| Idea | Effect | Why it failed |
+> **The confirmation step, used once.** Training *both* stages on established
+> starters only — the setting this project had rejected — beat production by
+> +56 [+11, +103] on the tuning seasons, ahead in both. The pre-registered test
+> required it to stay positive in **both** held-back seasons. It scored +18 in
+> 2022-23 and −17 in 2023-24 (pooled +1 [−65, +67]), so it is **unconfirmed** and
+> production is unchanged. Without the held-back seasons it would have shipped.
+
+### Not re-measured — unproven either way
+
+Each of these sits inside the ±146-point band that changing only the seed
+produces. The reasoning may well be right; the number doesn't show it.
+
+| Idea | One-seed result | Reasoning at the time |
 |---|---:|---|
 | Per-position regressors | −104 | Splits the feature set too thin |
-| Captain on ceiling, not mean | −75 | Chasing upside drags high-variance players into the whole squad; the squad lost more than the armband gained |
-| Set-piece / penalty features | −62 | Takers are just good players — their penalty income is already in their xG and points history. MAE identical to 3 decimals |
+| Captain on ceiling, not mean | −75 | Chasing upside drags high-variance players into the whole squad |
+| Early-season shrinkage | −64 | Multi-season training already covers the thin-history weeks |
+| Set-piece / penalty features | −62 | Takers are just good players; MAE identical to 3 decimals. (Measured with a join that read the snapshot taken *after* the match — since fixed; a leak can only have flattered it) |
 | Recency weighting by season | −58 | Lost both seasons |
 | Single flat regressor | −53 | Smears rotation risk into quality |
-| Betting-odds features | −32 | Model *does* use them (~11% of gain) and still scores worse — the signal is already in rolling xG and team strength |
-| Early-season shrinkage | −64 | Multi-season training already covers the thin-history weeks |
-| Free-transfer margin | split | Looked like +96 pooled; was −10 / +106 by season. Also stops binding once hits are priced right |
-| Differential tilt | ≈0 | Roughly points-neutral once measured fairly. Buys rank variance — the right trade only when behind |
+| Free-transfer margin | split | −10 / +106 by season |
+| Differential tilt | ≈0 | Buys rank variance — the right trade only when behind |
 
-> **Nine of thirteen ideas failed.** That ratio is the point, not an
-> embarrassment: every one of them sounded right beforehand, and without the
-> harness most would have shipped.
+### Harness fixes, and how each was checked
+
+A measurement fix is accepted on correctness and on moving totals the way it
+should. One that moves them the wrong way points at a bug in the fix — which is
+exactly how the 2025-26 "available, 0% chance" artefact was caught.
+
+| Fix | Expected | Measured |
+|---|---|---|
+| Predict a double-gameweek player per match | more points in double weeks | +94 and +43 — every point in the 7 double weeks; +137 [+34, +273] |
+| Deadline prices in multi-week projections | the leak flattered simulator totals | higher with the leak in both seasons for both procedures (+101 and +65 pooled; 7 of 8 seed-seasons; inside the noise) |
+| Pre-deadline injury flags | better accuracy | MAE 1.086 → 0.996 and 0.991 → 0.911; Brier P(60+) 0.097 → 0.089 and 0.084 → 0.079; points −9 [−53, +33] |
+| Each season's own transfer rules | correct counts | unit tests; the first-week rule reproduces a real team's history |
+| Simulator runs production's decision code | identical live output | identical recommendation before and after |
+| Old-harness mode | reproduces the pre-audit numbers | exactly, all six seed × season totals (checked before ten duplicated 2025-26 archive rows were removed, which moves that season by a few points) |
+
+> The whole corrected harness scores the same model **+128 points** higher than
+> the old one ([+12, +274]) — almost all of it the double-gameweek fix.
 
 ---
 
@@ -453,28 +540,43 @@ npm run dev      # localhost:3000
 ### Test a model change
 
 ```bash
-python -m data_engine.backtest --seasons 2024-25 2025-26 \
-       --variants production your_new_variant --augment
+# five seeds; per-gameweek results kept as JSON
+python -m data_engine.backtest --augment \
+       --variants production your_new_variant \
+       --seeds 42 7 13 101 2024 --out bt.json
 
-# faster while iterating — every 3rd gameweek
+# faster while iterating — every 3rd gameweek, one seed (screening only)
 python -m data_engine.backtest --seasons 2025-26 --stride 3
 ```
 
 ### Test a transfer-planner change
 
 ```bash
-python -m data_engine.season_sim --seasons 2025-26 2024-25 \
-       --policies baseline hit_margin_4 no_hits
+python -m data_engine.season_sim --augment \
+       --policies production your_policy --seeds 42 7 13 --out sim.json
 ```
 
-Prints a table per season and then the pooled total. **A change has to win every
-season** — the per-season split exists precisely because one strong season can
-carry a harmful change into looking like an improvement.
+### Turn results into a verdict
 
-> **Long runs:** a full two-season, six-policy race takes hours. Push it to
-> GitHub Actions rather than tying up your laptop — the **Season simulation**
-> workflow runs it in the cloud and writes the result table straight into the run
-> summary, readable from a phone.
+```bash
+python -m data_engine.evaluation bt.json other.json --reference production
+```
+
+Prints each variant's mean and spread across seeds per season, then the paired
+difference to production with its 95% interval and the verdict (better / worse
+/ no detectable effect). Files from different machines or days pool freely.
+
+> **Running seasons in parallel:** `--seasons 2025-26 --prior-seasons 2024-25`
+> runs one season exactly as `--augment` would, so each season (or each seed)
+> can be its own process. A backtest season takes ~6 minutes per seed. A
+> simulator season takes 20 minutes to 2 hours — some weeks' solves hit the
+> 120-second limit — so long simulator races belong on the **Season simulation**
+> GitHub Action.
+
+> **The old harness** is still available for one cycle: `--legacy-doubles` and
+> `--no-availability` on the backtest, `--legacy-prices`, `--legacy-rules` and
+> `--no-availability` on the simulator. With them, the backtest reproduces the
+> pre-audit totals exactly.
 
 ---
 
@@ -487,7 +589,7 @@ Each carries an inline comment with its verdict and the exact numbers behind it.
 |---|---:|---|
 | `HORIZON_GWS` | 6 | Gameweeks planned at once |
 | `HORIZON_DECAY` | 0.85 | Discount per week into the future |
-| `HIT_MARGIN` | 4.0 | A hit must gain 4+4=8. **The big win** |
+| `HIT_MARGIN` | 4.0 | A hit must gain 4+4=8. Re-measured: no setting beats it, none is distinguishable |
 | `FREE_TRANSFER_MARGIN` | 0.0 | Free transfers cost nothing. Tested at 1.5 — a split |
 | `DIFFERENTIAL_WEIGHT` | 0.0 | Tilt toward unowned players. Points-neutral; situational |
 | `MAX_FREE_TRANSFERS` | 5 | Real cap (official rules + live API). Was wrongly 2 |
@@ -497,6 +599,9 @@ Each carries an inline comment with its verdict and the exact numbers behind it.
 | `SOLVER_TIME_LIMIT` | 120s | Near-optimal before the deadline beats perfect after it |
 | `ATTACH_ODDS` | False | Rejected −32 |
 | `ATTACH_SETPIECE` | False | Rejected −62 |
+| `MODEL_SEED` | 42 | XGBoost's seed. The harnesses override it per `--seeds` run |
+| `TUNING_SEASONS` | 2024-25, 2025-26 | What variants are chosen on |
+| `CONFIRMATION_SEASONS` | 2022-23, 2023-24 | Held back; run once per accepted change |
 | `RECENCY_SEASON_DECAY` | 1.0 | Disabled — rejected −58 |
 | `FORM_SHRINKAGE_GAMES` | 0.0 | Disabled — rejected −64 |
 
@@ -555,8 +660,14 @@ fresh squads. Public repo means unlimited free Actions minutes.
   0.3% score 15+. An 80-point week needs a captain haul plus two or three others
   landing at once. What's achievable is moving the *expectation* from roughly 52
   to roughly 60.
-- **It can't see team news.** The simulation reacts to a player having stopped
-  playing, not to the press conference saying he will.
+- **It can't see team news beyond FPL's own flags.** From 2024-25 the harnesses
+  see the injury flags FPL published before each deadline; they still can't see
+  a press conference that hasn't reached the flags.
+- **The simulator is noisy.** The same policy can finish 100–240 points apart
+  on different model seeds, because one different early transfer sends the
+  whole season down another path. With three seeds it can't resolve effects
+  much under ~100 points, which is why most planner verdicts read "no
+  detectable effect".
 - **Neither harness plays chips.** Both totals sit below a real chip-using season.
   They're comparative yardsticks, not season predictions.
 - **Predictions are conditional means on a violently skewed distribution.** Among
@@ -566,13 +677,20 @@ fresh squads. Public repo means unlimited free Actions minutes.
 
 ### Genuinely open
 
+- **Hard injury flags last six weeks in the planner.** A suspended or injured
+  player is valued at a tenth of his projection for every week of the horizon.
+  Measured: 43–54% of players suspended before a deadline play the *following*
+  week, and injured players climb from ~9% to ~28% over five weeks. Return dates
+  and per-week availability are the next thing to test.
+
 - **Newly appointed set-piece takers.** The duty itself adds nothing — but a
   player who just *inherited* penalties has a history that can't show it yet.
   That needs a change-detection feature (duty this week he didn't have last
   week), not the duty. Data and join are already in place.
 - **The odds re-test reproduced the old numbers exactly** despite the data
-  demonstrably differing. The verdict is settled; the coincidence isn't
-  explained.
+  demonstrably differing — and on five seeds the variant is no detectable
+  effect (+15 [−82, +107]), so "rejected" was always stronger than the
+  evidence. The coincidence isn't explained.
 - **A decoupled captain test** — pick the squad on the mean, then the captain on
   ceiling — was never run. It would separate the two effects the rejected test
   conflated.
@@ -586,6 +704,7 @@ whichever way it goes.
 
 ---
 
-*Compiled September 2026. Evidence: walk-forward backtests over 2024-25 and
-2025-26, transfer-constrained season simulation, live FPL API. Not affiliated
+*Compiled September 2026, harness and ledger revised after the October 2026
+audit. Evidence: multi-seed walk-forward backtests over 2024-25 and 2025-26,
+transfer-constrained season simulation, live FPL API. Not affiliated
 with the Premier League or Fantasy Premier League.*

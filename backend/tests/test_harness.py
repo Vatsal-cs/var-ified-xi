@@ -162,6 +162,14 @@ class AvailabilityLag(unittest.TestCase):
         self.assertEqual(flags.set_index("round").loc[5, "status"], "i")
         self.assertEqual(flags.set_index("round").loc[6, "status"], "a")
 
+    def test_available_player_with_zero_chance_is_fit(self):
+        # The 2025-26 export's "available, 0% chance" rows are an artefact.
+        raw = pd.DataFrame({"id": [7, 8], "gw": [4, 4], "status": ["a", "i"],
+                            "chance_of_playing_next_round": [0, 0]})
+        flags = availability_data.from_playerstats(raw).set_index("element")
+        self.assertTrue(pd.isna(flags.loc[7, "chance_of_playing"]))
+        self.assertEqual(flags.loc[8, "chance_of_playing"], 0)
+
     def test_attach_fills_fit_and_never_zero(self):
         flags = pd.DataFrame({"element": [7], "round": [5], "status": ["d"],
                               "chance_of_playing": [50.0], "news": [""]})
@@ -249,6 +257,16 @@ class HorizonInputs(unittest.TestCase):
     def test_hard_status_applies_to_every_week(self):
         for gw in (3, 4, 5):
             self.assertEqual(self.per_gw.loc[(2, gw), "p_full"], 0.0)
+
+
+class VariantContexts(unittest.TestCase):
+    def test_nested_feature_contexts_restore_the_outer_one(self):
+        base = list(config.FEATURE_COLUMNS)
+        with backtest._with_features(["odds_team_xg"]):
+            with backtest._with_features(["odds_team_xg"]):
+                pass
+            self.assertIn("odds_team_xg", config.FEATURE_COLUMNS)
+        self.assertEqual(config.FEATURE_COLUMNS, base)
 
 
 class Evaluation(unittest.TestCase):

@@ -57,40 +57,71 @@ The answer is *provably optimal given the predictions*. Not a top-N sort.
 
 ## Nothing ships on intuition
 
-A change ships when it scores more **realized** points across **every** season tested. Not better accuracy — points, in every season, or it stays off.
+A change ships when it scores more **realized** points — and when that gain is bigger than the noise. Ideas that lose stay in the codebase as named, re-runnable variants with their exact numbers, so a rejected idea can never quietly return as a fresh insight.
 
-Ideas that lose stay in the codebase as named, re-runnable variants with their exact numbers, so a rejected idea can never quietly return as a fresh insight.
+### How big is the noise?
 
-**Nine of thirteen ideas failed.** That ratio is the point — every one of them sounded right beforehand.
+Changing *nothing* but XGBoost's random seed moves a two-season backtest by up to **175 points**, with accuracy identical to three decimals. The solver turns tiny prediction differences into different squads. The old rule — "score more in every season, on one run" — passed a change that does nothing **half the time**.
 
-| Change | Verdict | |
+So every comparison now runs on several seeds and reports a paired, block-bootstrapped 95% interval, with the verdict rule written down before the run:
+
+| Verdict | Rule |
+|---|---|
+| **better** | pooled interval above zero *and* ahead in every season |
+| **worse** | pooled interval below zero *and* behind in every season |
+| **no detectable effect** | anything else — the harness can't tell, which is not the same as "rejected" |
+
+Changes are chosen on 2024-25 and 2025-26. 2022-23 and 2023-24 are held back: a change that comes out **better** is run on them **once**, against a criterion written down first, and ships only if it keeps its sign.
+
+### The evidence ledger, re-measured
+
+Every verdict below was first decided on **one seed**. The October 2026 audit re-ran the biggest claims on the corrected harness — 5 seeds per season for the backtest, 3 for the simulator — and most of them didn't survive as stated:
+
+| Claim | First measured (1 seed) | Re-measured, pooled 95% CI | Verdict |
+|---|---:|---:|---|
+| A model at all, vs last-5 average | +19% | **+614** [+361, +876] · +15% | ✅ **better** |
+| Hit must gain 8, not 6 | +299 | −1 [−92, +97] | no detectable effect |
+| Refit on all data after validating | +127 | +43 [−75, +171] · ahead 8 of 10 seed-seasons | no detectable effect |
+| Betting-odds features | −32 | +15 [−82, +107] | no detectable effect |
+| Split training populations, vs starters-only for both stages | +7 | starters-only **+56** [+11, +103] on the tuning seasons — then +18 and −17 on the held-back seasons | ⚠️ **unconfirmed**: split populations stay |
+
+The one **better** on the tuning seasons was a surprise: training *both* stages on established starters only — the setting this project had rejected — beat production by 56 points, ahead in both seasons. Under the rule written before the run, it then had to keep its sign on the two held-back seasons. It didn't: +18 in 2022-23, −17 in 2023-24. It stays off. That's exactly what the held-back seasons are for — without them, production would have switched models on a result that doesn't generalise.
+
+Not re-measured, and every one of them sits inside the ±146-point band that changing only the seed produces — so treat each as **unproven either way**, not as settled:
+
+| Idea | One-seed result | Reasoning at the time |
 |---|---:|---|
-| Hit must gain 8, not 6 | **+299** | ✅ biggest win — ~4 pts/gameweek |
-| Refit on all data after validating | **+127** | ✅ |
-| Split training populations for the two stages | **+7**, MAE 1.16 → 1.05 | ✅ |
-| Per-position regressors | −104 | ❌ splits the feature set too thin |
-| Captain on ceiling instead of mean | −75 | ❌ upside-chasing infects the whole squad |
-| Set-piece / penalty features | −62 | ❌ takers are just good players; already in their xG |
-| Recency weighting by season | −58 | ❌ lost both seasons |
-| Single flat regressor | −53 | ❌ smears rotation risk into quality |
-| Betting-odds features | −32 | ❌ model uses them and still scores worse |
-| Differential tilt toward unowned players | ≈0 | ❌ points-neutral; buys rank variance only |
+| Per-position regressors | −104 | splits the feature set too thin |
+| Captain on ceiling instead of mean | −75 | upside-chasing infects the whole squad |
+| Early-season shrinkage | −64 | multi-season training covers thin early weeks |
+| Set-piece / penalty features | −62 | takers are just good players; already in their xG |
+| Recency weighting by season | −58 | lost both seasons |
+| Single flat regressor | −53 | smears rotation risk into quality |
+| Differential tilt toward unowned players | ≈0 | points-neutral; buys rank variance only |
 
-### The one that mattered most
+### What the audit found was being measured
 
-At the old setting, a points hit only had to gain 6. Across two seasons the planner **spent 228 points on 57 hits and still finished behind a version banned from taking any**. Requiring 8 wins both seasons — +154 and +145, **+299 pooled**.
+The re-measurement only means something because the harnesses were fixed first. Each fix was checked for moving totals in the direction it should — a fix that moves them the wrong way points at a bug in the fix:
 
-The gain is a *projection*; the −4 is a *certainty*. That asymmetry has to be priced.
+| Fix | Expected | Measured |
+|---|---|---|
+| Predict a double-gameweek player per match, not once | more points in double weeks | ✅ +94 and +43, every point of it in the 7 double weeks; +137 [+34, +273] overall |
+| Freeze prices at the deadline in multi-week projections | lower simulator totals (the leak flattered them) | ✅ higher with the leak in both seasons for both procedures (+101 and +65 pooled; 7 of 8 seed-seasons) — inside the simulator's noise, so direction only |
+| Pre-deadline injury flags | better accuracy | ✅ MAE 1.086 → 0.996 and 0.991 → 0.911; Brier P(60+) 0.097 → 0.089 and 0.084 → 0.079. Points: no detectable effect (−9 [−53, +33]) |
+| Each season's own transfer rules | correct counts | unit tests; first-week accrual reproduces a real team |
+| Simulator runs production's own decision code | identical live output | identical recommendation before and after |
+
+The injury-flag check caught a real bug on its way through: the 2025-26 snapshots list hundreds of fit players as "available, 0% chance", which zeroed their projections until it was cleaned out.
 
 ### Bracketed so the numbers mean something
 
 | | points per gameweek (2024-25 / 2025-26) |
 |---|---|
-| `naive_form` — no model, just each player's last-5 average | 53.6 / 51.6 |
-| **This model** | **63.2 / 61.6** |
-| `hindsight` — optimise on what actually happened, unreachable | 149.0 / 155.1 |
+| `naive_form` — no model, just each player's last-5 average | 57.7 / 51.9 |
+| **This model** (mean of 5 seeds) | **64.6 / 61.7** |
+| `hindsight` — optimise on what actually happened, unreachable | 149.0 / 154.6 |
 
-Roughly **+19% over having no model at all**.
+Roughly **+15% over having no model at all** — the clearest result in the project.
 
 > FPL's own published xP looked like an obvious third yardstick, but a squad built from the archived values scores ~99/GW — two thirds of perfect hindsight, which no pre-deadline forecast achieves. Those values are recorded after lineups are known. The comparison was dropped rather than left in looking authoritative.
 
@@ -102,13 +133,15 @@ Roughly **+19% over having no model at all**.
 |---|---|---|
 | **Answers** | Are the *predictions* good? | Are the *decisions* good? |
 | **Squad** | Rebuilt from scratch weekly, unlimited transfers | One squad carried forward all season |
-| **Transfers** | Free and unlimited | 1/week, bank up to 5, −4 per extra |
+| **Transfers** | Free and unlimited | That season's real rules — bank cap, top-ups, −4 per extra |
 | **Prices** | As they were | Move, with half-the-rise selling |
 | **Use for** | Model and feature changes | Anything in the transfer planner |
 
-Both replay seasons gameweek by gameweek, training only on data strictly before the week being predicted, then score the chosen team against what actually happened — autosubs and captain-to-vice fallback included.
+Both replay seasons gameweek by gameweek, training only on data strictly before the week being predicted, then score the chosen team against what actually happened — autosubs and captain-to-vice fallback included. Both see the injury flags FPL published **before** each deadline (from 2024-25, when snapshots begin), and both predict a double-gameweek player **per match**.
 
-`season_sim.py` trains **one model per gameweek and hands the identical predictions to every policy**, so any difference in score is caused by the decision rule and nothing else. Form is frozen at the deadline; fixture context is not, because the fixture list really is published months ahead.
+`season_sim.py` runs **the exact decision code the dashboard runs** (`planner.py`) and trains **one model per gameweek, handed identically to every policy**, so any difference in score is the decision rule and nothing else. Form, price and injury news are frozen at the deadline; fixture context is not, because the fixture list really is published months ahead.
+
+> **Audited October 2026.** The harnesses used to play a different game from production: a 2-transfer bank in seasons that allowed 5, a decision procedure production never ran, future prices leaking into multi-week projections, double-gameweek players projected for one match and scored for two, and no injury data. All fixed, each behind a test, with the old behaviour kept as `--legacy-*` flags for one cycle. The old-harness mode reproduces the earlier numbers exactly, so the before/after is like for like.
 
 ---
 
@@ -139,16 +172,19 @@ npm run dev                       # localhost:3000
 ### Testing a change
 
 ```bash
-# model / feature changes
-python -m data_engine.backtest --seasons 2024-25 2025-26 \
-       --variants production your_variant --augment
+# model / feature changes — five seeds, results kept as JSON
+python -m data_engine.backtest --augment --variants production your_variant \
+       --seeds 42 7 13 101 2024 --out bt.json
 
 # transfer-planner changes
-python -m data_engine.season_sim --seasons 2025-26 2024-25 \
-       --policies baseline hit_margin_4 no_hits
+python -m data_engine.season_sim --augment \
+       --policies production your_policy --seeds 42 7 13 --out sim.json
+
+# pool any number of result files into one verdict
+python -m data_engine.evaluation bt.json more.json --reference production
 ```
 
-A full race takes hours — the **Season simulation** GitHub Action runs it in the cloud and writes the result table into the run summary.
+Seasons can run as separate processes and be pooled afterwards (`--seasons 2025-26 --prior-seasons 2024-25` is one season exactly as `--augment` would run it). A backtest season takes ~6 minutes per seed; a simulator season 20 minutes to 2 hours, because some weeks' solves hit the solver's time limit. The **Season simulation** GitHub Action runs the simulator in the cloud.
 
 ---
 
@@ -179,12 +215,16 @@ var-ified-xi/
 │       ├── train_model.py           # the two-stage model
 │       ├── optimizer.py             # fresh-squad MILP
 │       ├── transfer_optimizer.py    # multi-gameweek transfer MILP
+│       ├── planner.py               # the weekly decision — shared by main.py and season_sim
+│       ├── rules.py                 # each season's transfer rules (caps, top-ups)
 │       ├── entry_data.py            # your real team, from public endpoints
 │       ├── rivals.py                # mini-league ownership + chip ledger
-│       ├── chips.py                 # double/blank gameweek detection
+│       ├── chips.py                 # chip windows, expiry, double/blank detection
 │       ├── injury_log.py            # repeat fitness flags across runs
+│       ├── availability_data.py     # pre-deadline injury flags for past seasons
 │       ├── backtest.py              # harness 1 — prediction quality
-│       └── season_sim.py            # harness 2 — decision quality
+│       ├── season_sim.py            # harness 2 — decision quality
+│       └── evaluation.py            # multi-seed verdicts with confidence intervals
 │
 └── frontend/
     ├── app/                         # pages + layout
@@ -246,7 +286,9 @@ Also available as a styled standalone page — [`docs/handbook.html`](docs/handb
 ## Honest limits
 
 - **It can't manufacture an 80-point week.** Only 2.1% of player-weeks score 10+. What's achievable is moving the *expectation* from ~52 to ~60.
-- **It can't see team news.** It reacts to a player having stopped playing, not to the press conference saying he will.
+- **It can't see team news beyond FPL's own flags.** It reads the injury and suspension flags FPL publishes, not the press conference that hasn't reached them yet.
+- **The season simulator is noisy.** The same policy finishes 100–240 points apart on different model seeds, so it can't resolve planner changes much under ~100 points. Most planner verdicts read "no detectable effect" for that reason.
+- **An injured or suspended flag is treated as lasting the whole six-week horizon.** (A doubt only counts for the next week.) About half of players suspended before a deadline play the following week. Per-week availability with return dates is the next thing to test.
 - **Neither harness plays chips**, so both totals sit below a real season. They're comparative yardsticks, not predictions.
 
 ---

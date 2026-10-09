@@ -127,14 +127,21 @@ _BASE_FEATURES = list(config.FEATURE_COLUMNS)
 
 
 class _with_features:
-    """Temporarily extends config.FEATURE_COLUMNS and turns on the odds join."""
+    """Temporarily extends config.FEATURE_COLUMNS and turns on the odds join.
+
+    Restores whatever was there before rather than the base list: these
+    nest (the variant's context is held open while its fit and predict
+    enter their own), and resetting to the base on the inner exit silently
+    dropped the outer one's features for everything after it.
+    """
     def __init__(self, extra): self.extra = extra
     def __enter__(self):
+        self._old_features = config.FEATURE_COLUMNS
         config.FEATURE_COLUMNS = _BASE_FEATURES + [c for c in self.extra if c not in _BASE_FEATURES]
         self._old_odds = config.ATTACH_ODDS
         config.ATTACH_ODDS = True
     def __exit__(self, *a):
-        config.FEATURE_COLUMNS = list(_BASE_FEATURES)
+        config.FEATURE_COLUMNS = self._old_features
         config.ATTACH_ODDS = self._old_odds
 
 
@@ -146,6 +153,7 @@ class _setpiece_ctx:
     on columns that were never populated.
     """
     def __enter__(self):
+        self._old_features = config.FEATURE_COLUMNS
         config.FEATURE_COLUMNS = _BASE_FEATURES + [
             c for c in SETPIECE_FEATURE_COLUMNS if c not in _BASE_FEATURES
         ]
@@ -153,7 +161,7 @@ class _setpiece_ctx:
         config.ATTACH_SETPIECE = True
 
     def __exit__(self, *a):
-        config.FEATURE_COLUMNS = list(_BASE_FEATURES)
+        config.FEATURE_COLUMNS = self._old_features
         config.ATTACH_SETPIECE = self._old
 
 
@@ -249,7 +257,8 @@ VARIANTS = {
     ),
     "odds": Variant(
         name="odds",
-        description="REJECTED: +4 betting-odds fixture features -32 points "
+        description="NO DETECTABLE EFFECT (Oct 2026, 5 seeds): +15 [-82, +107]. "
+                    "First measured on one seed as REJECTED: +4 betting-odds fixture features -32 points "
                     "(split: +20 in 2025-26, -52 in 2024-25). Re-run after "
                     "Variant.context was added and reproduced exactly, so the "
                     "original verdict stands.",
@@ -281,15 +290,21 @@ VARIANTS = {
     # --- Rejected alternatives, kept so the evidence stays reproducible ---
     "legacy_filtered": Variant(
         name="legacy_filtered",
-        description="REJECTED: both stages trained on established starters only "
-                    "(over-predicts; MAE 1.16 vs 1.05)",
+        description="UNCONFIRMED (Oct 2026): both stages trained on established "
+                    "starters only. +56 [+11, +103] vs production on the tuning "
+                    "seasons (5 seeds), then +18 (2022-23) and -17 (2023-24) on the "
+                    "held-back seasons, failing its pre-registered confirmation. "
+                    "First recorded on one seed as REJECTED (MAE 1.16 vs 1.05)",
         fit=lambda df: train_model.train_models(df, save=False, quality_filter=False),
         predict=_bundle_predict,
         prepare=_legacy_training_set,
     ),
     "no_refit": Variant(
         name="no_refit",
-        description="REJECTED: holdout withheld from the final fit (-127 points)",
+        description="NO DETECTABLE EFFECT (Oct 2026, 5 seeds): refit is worth +43 "
+                    "[-75, +171] (legacy_filtered minus this, the only difference "
+                    "between them). First measured on one seed as -127: holdout "
+                    "withheld from the final fit",
         fit=lambda df: train_model.train_models(df, save=False, refit_full=False),
         predict=_bundle_predict,
         prepare=_legacy_training_set,
