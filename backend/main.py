@@ -71,7 +71,8 @@ def order_bench(bench_ids: list, pred_lookup: dict) -> list:
 def build_output_json(bootstrap: dict, predictions_df, result: dict,
                       plan: dict = None, team_state=None,
                       chip_advice: list = None, chip_watch: dict = None,
-                      league_view: dict = None, chip_expiry: dict = None) -> dict:
+                      league_view: dict = None, chip_expiry: dict = None,
+                      captain_override: dict = None) -> dict:
     """Assembles the final clean JSON contract the frontend will consume."""
     teams_lookup = {t["id"]: t["name"] for t in bootstrap["teams"]}
     pos_lookup = config.POSITIONS
@@ -126,6 +127,8 @@ def build_output_json(bootstrap: dict, predictions_df, result: dict,
         output["league"] = league_view
     if chip_expiry:
         output["chip_expiry"] = chip_expiry
+    if captain_override:
+        output["captain_override"] = captain_override
     if plan:
         output["transfer_plan"] = _plan_payload(plan, pred_lookup, pos_lookup, teams_lookup)
     if team_state:
@@ -244,13 +247,14 @@ def run_pipeline(team_id: int = None) -> None:
 
     # 5. Optimize — either a fresh squad, or transfers from the team you own
     upcoming_gw = feature_engineering.next_gameweek(bootstrap)
-    plan, team_state = None, None
+    plan, team_state, captain_override = None, None, None
 
     if team_id:
         team_state = entry_data.build_team_state(
             team_id, bootstrap, histories, upcoming_gw
         )
         result, plan = _plan_from_team(predictions_df, team_state, upcoming_gw)
+        captain_override = _apply_armband_override(result, plan, predictions_df, upcoming_gw)
     else:
         logger.info("Solving MILP squad optimizer over %d available players (horizon: %d GWs)...",
                     len(predictions_df), config.HORIZON_GWS)
@@ -294,7 +298,8 @@ def run_pipeline(team_id: int = None) -> None:
                                team_state=team_state, chip_advice=chip_advice,
                                league_view=league_view,
                                chip_expiry=chip_expiry,
-                               chip_watch=chip_watch)
+                               chip_watch=chip_watch,
+                               captain_override=captain_override)
 
     config.OUTPUT_JSON_PATH.write_text(json.dumps(output, indent=2))
     config.FRONTEND_JSON_PATH.write_text(json.dumps(output, indent=2))
@@ -303,6 +308,48 @@ def run_pipeline(team_id: int = None) -> None:
     logger.info("Wrote %s", config.FRONTEND_JSON_PATH)
     _log_summary(output)
     logger.info("=== VAR-ified XI: decision confirmed, no VAR check needed ===")
+
+
+def _apply_armband_override(result: dict, plan: dict, predictions_df, gameweek) -> dict | None:
+    """Your own captain and vice for this gameweek (config.OVERRIDES_PATH),
+    in place of the model's. Applied on every refresh so the scheduled runs
+    don't undo it, and ignored once that gameweek has passed or if either
+    player isn't in this week's XI any more — then the model's pick stands
+    and the log says why. Returns the model's own pick, for the dashboard to
+    show alongside yours, or None when nothing was overridden.
+    """
+    path = config.OVERRIDES_PATH
+    if not path.exists():
+        return None
+    try:
+        wanted = json.loads(path.read_text())
+    except (OSError, json.JSONDecodeError) as e:
+        logger.warning("Ignoring %s: %s", path.name, e)
+        return None
+    if wanted.get("gameweek") != gameweek:
+        return None
+
+    cap, vice = wanted.get("captain_id"), wanted.get("vice_captain_id")
+    xi = set(result["starting_ids"])
+    if cap not in xi or (vice is not None and vice not in xi) or cap == vice:
+        logger.warning("Armband override for GW%s ignored: %s/%s aren't both in this "
+                       "week's XI. Using the model's pick.", gameweek,
+                       wanted.get("captain"), wanted.get("vice_captain"))
+        return None
+
+    model_pick = {"model_captain_id": result["captain_id"],
+                  "model_vice_captain_id": result["vice_captain_id"]}
+    if cap != result["captain_id"]:
+        # The armband's second copy of points moves with it.
+        proj = predictions_df.set_index("player_id")["predicted_points"].to_dict()
+        result["total_predicted_points"] = round(
+            result["total_predicted_points"] - proj.get(result["captain_id"], 0) + proj.get(cap, 0), 2)
+    result["captain_id"], result["vice_captain_id"] = cap, vice
+    if plan and plan.get("weeks"):
+        plan["weeks"][0]["captain_id"] = cap
+    logger.info("Armband: your pick %s (C) / %s (VC) for GW%s; the model had "
+                "different ones.", wanted.get("captain"), wanted.get("vice_captain"), gameweek)
+    return model_pick
 
 
 def _plan_from_team(predictions_df, team_state, upcoming_gw):

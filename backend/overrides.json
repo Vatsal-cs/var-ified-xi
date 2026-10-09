@@ -1,0 +1,8 @@
+{
+  "_about": "Your own armband for one gameweek, applied on every refresh (including the scheduled ones) and ignored once that gameweek has passed. Uses FPL player ids, because names collide. Delete the file, or change the gameweek, to go back to the model's pick.",
+  "gameweek": 6,
+  "captain_id": 411,
+  "captain": "Haaland",
+  "vice_captain_id": 124,
+  "vice_captain": "Groß"
+}

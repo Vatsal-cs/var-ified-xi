@@ -157,4 +157,7 @@ export interface OptimizedTeam {
   chip_expiry?: ChipExpiry;
   /** Your mini-league: who owns what, and who has spent which chips. */
   league?: LeagueView;
+  /** Present when captain/vice are your own pick (backend/overrides.json)
+   *  rather than the model's; holds what the model would have chosen. */
+  captain_override?: { model_captain_id: number; model_vice_captain_id: number | null };
 }

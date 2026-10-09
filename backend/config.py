@@ -35,6 +35,9 @@ FRONTEND_JSON_PATH = FRONTEND_PUBLIC_DIR / "optimized_team.json"
 # meaningful instead of resetting to zero on every fresh clone.
 INJURY_LOG_PATH = DATA_DIR / "injury_log.json"
 
+# Your own captain/vice for a gameweek, overriding the model's (main.py).
+OVERRIDES_PATH = BACKEND_ROOT / "overrides.json"
+
 # ---------------------------------------------------------------------------
 # FPL public API (no auth required)
 # ---------------------------------------------------------------------------

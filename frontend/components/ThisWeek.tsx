@@ -17,6 +17,8 @@ function CaptainLine({ team }: { team: OptimizedTeam }) {
   const cap = named(team, team.captain_id);
   const vice = named(team, team.vice_captain_id);
   if (!cap) return null;
+  const override = team.captain_override;
+  const modelCap = override ? named(team, override.model_captain_id) : undefined;
   return (
     <div className="flex flex-wrap items-center gap-x-6 gap-y-1 font-body text-sm text-ink-300">
       <span>
@@ -28,6 +30,12 @@ function CaptainLine({ team }: { team: OptimizedTeam }) {
         <span>
           <span className="label mr-2">Vice&nbsp;</span>
           <span className="font-mono text-ink-200">{vice.name}</span>
+        </span>
+      )}
+      {override && modelCap && modelCap.player_id !== cap.player_id && (
+        <span className="font-mono text-[11px] text-ink-500">
+          your call &middot; the model had {modelCap.name} (
+          {modelCap.predicted_points.toFixed(1)} vs {cap.predicted_points.toFixed(1)} pts)
         </span>
       )}
     </div>
