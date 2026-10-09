@@ -165,6 +165,23 @@ class _setpiece_ctx:
         config.ATTACH_SETPIECE = self._old
 
 
+class _bag_ctx:
+    """Temporarily sets the seed-averaging bag size used while fitting."""
+    def __init__(self, size): self.size = size
+    def __enter__(self):
+        self._old = config.MODEL_BAG_SIZE
+        config.MODEL_BAG_SIZE = self.size
+    def __exit__(self, *a):
+        config.MODEL_BAG_SIZE = self._old
+
+
+def _bagged_fit(size: int):
+    def fit(df):
+        with _bag_ctx(size):
+            return train_model.train_models(df, save=False)
+    return fit
+
+
 def _bundle_predict(bundle, predict_df: pd.DataFrame) -> pd.Series:
     return train_model.predict_points(bundle, predict_df)["predicted_points"]
 
@@ -245,6 +262,13 @@ VARIANTS = {
         description="shipping pipeline: 2-stage, split populations, full refit, "
                     "captain on the mean projection",
         fit=lambda df: train_model.train_models(df, save=False),
+        predict=_bundle_predict,
+    ),
+    "bagged5": Variant(
+        name="bagged5",
+        description="production, but five copies of the model with different seeds, "
+                    "projections averaged (config.MODEL_BAG_SIZE = 5)",
+        fit=_bagged_fit(5),
         predict=_bundle_predict,
     ),
     "setpiece": Variant(
@@ -514,7 +538,9 @@ def simulate_season(
         pred_lookup = gw_rows.set_index("player_id")["predicted_points"].to_dict()
         scored = score_gameweek(result, gw_rows, pred_lookup)
 
-        per_gw.append({"gw": gw, **scored, "predicted": result["total_predicted_points"]})
+        per_gw.append({"gw": gw, **scored, "predicted": result["total_predicted_points"],
+                       "xi": sorted(int(p) for p in result["starting_ids"]),
+                       "captain": int(result["captain_id"]) if result["captain_id"] is not None else None})
         preds.append(pd.DataFrame({
             "pred": gw_rows["predicted_points"].to_numpy(),
             "actual": gw_rows[config.TARGET_COL].to_numpy(),
@@ -572,9 +598,9 @@ def _p60(model, rows: pd.DataFrame):
     """The model's P(plays 60+) per row, after production's availability
     rule, alongside whether he did. None for a variant without a minutes
     model."""
-    if not isinstance(model, dict) or "minutes_clf" not in model:
+    if not isinstance(model, dict) or not ("minutes_clf" in model or "members" in model):
         return None
-    proba = model["minutes_clf"].predict_proba(train_model._prep_X(rows))[:, train_model.FULL]
+    proba = train_model.play_probability(model, train_model._prep_X(rows))[:, train_model.FULL]
     if "chance_of_playing" in rows.columns:
         proba = proba * rows["chance_of_playing"].fillna(100).astype(float).to_numpy() / 100.0
     if "status" in rows.columns:
@@ -646,6 +672,9 @@ def run_record(variant: str, season: str, seed: int, summary: dict) -> dict:
         "spearman": summary.get("spearman"),
         "brier60": summary.get("brier60"),
         "per_gw": [[int(g["gw"]), int(g["points"])] for g in summary.get("per_gw", [])],
+        # The XI and captain chosen each week, so how much the picks move
+        # between seeds can be measured, not just the points.
+        "picks": [[int(g["gw"]), g.get("xi"), g.get("captain")] for g in summary.get("per_gw", [])],
     }
 
 

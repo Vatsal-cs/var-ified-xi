@@ -210,6 +210,11 @@ CONFIRMATION_SEASONS = ["2022-23", "2023-24"]
 # several seeds (--seeds) and report the spread; production keeps 42.
 MODEL_SEED = 42
 
+# Seed averaging: train this many copies of the model, each with a different
+# seed (MODEL_SEED, then MODEL_SEED + 7919, ...), and average their
+# projections. 1 is a single model. Under test (October 2026).
+MODEL_BAG_SIZE = 1
+
 # ---------------------------------------------------------------------------
 # Validation
 # ---------------------------------------------------------------------------

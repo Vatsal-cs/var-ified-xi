@@ -54,6 +54,10 @@ logger = logging.getLogger(__name__)
 # Minutes classes for the stage-1 classifier
 DNP, CAMEO, FULL = 0, 1, 2
 
+# Seeds of a bag's members are MODEL_SEED + this * i. A large prime keeps two
+# bags built from neighbouring base seeds from sharing any members.
+BAG_SEED_STRIDE = 7919
+
 
 def _prep_X(df: pd.DataFrame) -> pd.DataFrame:
     X = df.reindex(columns=config.FEATURE_COLUMNS, fill_value=0).copy()
@@ -366,6 +370,28 @@ def train_models(
             recency_weight=recency_weight,
         )
 
+    # Seed averaging. One model's picks partly depend on its random seed:
+    # changing only the seed moves a two-season backtest by up to ~175
+    # points. Extra members are the same model fit on the same rows with
+    # other seeds; predict_points averages them. Size 1 is a single model,
+    # exactly as before.
+    size = max(1, int(config.MODEL_BAG_SIZE))
+    if size > 1:
+        rows = (pd.concat([train_part, val_part], ignore_index=True)
+                if refit_full and not val_part.empty else train_part)
+        base = config.MODEL_SEED
+        members, seeds = [bundle], [base]
+        try:
+            for i in range(1, size):
+                config.MODEL_SEED = base + BAG_SEED_STRIDE * i
+                seeds.append(config.MODEL_SEED)
+                members.append(_fit_bundle(rows, per_position=per_position,
+                                           quality_filter=quality_filter,
+                                           recency_weight=recency_weight))
+        finally:
+            config.MODEL_SEED = base
+        bundle = {"members": members, "seeds": seeds}
+
     if save:
         joblib.dump(bundle, MODEL_PATH)
         logger.info("Model bundle saved to %s", MODEL_PATH)
@@ -373,10 +399,26 @@ def train_models(
     return bundle
 
 
+def _members(bundle: dict) -> list:
+    """The models in a bundle: one, or a seed-averaged bag of them."""
+    return bundle["members"] if "members" in bundle else [bundle]
+
+
+def _bag_mean(bundle: dict, fn) -> np.ndarray:
+    """fn applied to every member, averaged. A single model passes through
+    unchanged (the mean of one array is that array)."""
+    return np.mean([fn(m) for m in _members(bundle)], axis=0)
+
+
+def play_probability(bundle: dict, X: pd.DataFrame) -> np.ndarray:
+    """P(DNP), P(cameo), P(60+) per row, averaged over a bag's members."""
+    return _bag_mean(bundle, lambda m: m["minutes_clf"].predict_proba(X))
+
+
 def load_models():
     if MODEL_PATH.exists():
         loaded = joblib.load(MODEL_PATH)
-        if isinstance(loaded, dict) and "minutes_clf" in loaded:
+        if isinstance(loaded, dict) and ("minutes_clf" in loaded or "members" in loaded):
             return loaded
         logger.warning("Saved model at %s is an old single-model format — retrain required.", MODEL_PATH)
     return None
@@ -395,7 +437,7 @@ def predict_points(bundle: dict, prediction_df: pd.DataFrame, flag_counts: dict 
     X = _prep_X(prediction_df)
     out = prediction_df.copy()
 
-    proba = bundle["minutes_clf"].predict_proba(X)
+    proba = play_probability(bundle, X)
     out["p_dnp"] = proba[:, DNP].round(3)
     out["p_cameo"] = proba[:, CAMEO].round(3)
     out["p_full"] = proba[:, FULL].round(3)
@@ -435,16 +477,18 @@ def predict_points(bundle: dict, prediction_df: pd.DataFrame, flag_counts: dict 
         v.loc[repeat_mask] *= REPEAT_FLAG_DAMPEN_FACTOR
         return v.round(2).to_numpy()
 
-    out["predicted_points"] = _apply(_decomposed_xp(bundle, X, out["element_type"]))
+    # A bag's members are averaged on the raw projection, before the
+    # availability and blank-week adjustments, so those apply exactly once.
+    out["predicted_points"] = _apply(
+        _bag_mean(bundle, lambda m: _decomposed_xp(m, X, out["element_type"])))
 
     # Upside estimate — same pipeline, high-quantile regressor. Used only to
     # choose the captain (points doubled ⇒ you want the biggest realistic
     # score, not the safest). Falls back to the mean if the bundle predates
     # the ceiling model.
-    if bundle.get("ceiling_reg") is not None:
-        out["ceiling_points"] = _apply(
-            _decomposed_xp(bundle, X, out["element_type"], ceiling=True)
-        )
+    if all(m.get("ceiling_reg") is not None for m in _members(bundle)):
+        out["ceiling_points"] = _apply(_bag_mean(
+            bundle, lambda m: _decomposed_xp(m, X, out["element_type"], ceiling=True)))
     else:
         out["ceiling_points"] = out["predicted_points"]
 
