@@ -40,7 +40,7 @@ from config import (
     FORM_SHRINKAGE_GAMES,
 )
 import config
-from data_engine import setpiece_data
+from data_engine import horizon_availability, setpiece_data
 from data_engine.odds_data import ODDS_NEUTRAL
 from data_engine.setpiece_data import SETPIECE_NEUTRAL
 
@@ -468,6 +468,14 @@ def _get_next_fixture(summary: dict):
     return fixtures[0] if fixtures else None
 
 
+def _deadline(bootstrap: dict, gameweek):
+    """That gameweek's deadline, as a naive UTC timestamp, or None."""
+    for e in bootstrap.get("events", []):
+        if e.get("id") == gameweek and e.get("deadline_time"):
+            return pd.Timestamp(e["deadline_time"]).tz_localize(None)
+    return None
+
+
 def next_gameweek(bootstrap: dict):
     """The gameweek currently being planned for."""
     for e in bootstrap.get("events", []):
@@ -565,6 +573,7 @@ def build_prediction_set(
     latest["chance_of_playing"] = latest["player_id"].map(
         lambda pid: players_meta.get(pid, {}).get("chance_of_playing_next_round")
     )
+    latest["news"] = latest["player_id"].map(lambda pid: players_meta.get(pid, {}).get("news") or "")
     latest["web_name"] = latest["player_id"].map(lambda pid: players_meta.get(pid, {}).get("web_name"))
     latest["team"] = latest["player_id"].map(lambda pid: players_meta.get(pid, {}).get("team"))
     latest["age"] = latest["player_id"].map(
@@ -628,6 +637,7 @@ def build_prediction_set(
                 "fixture_index": idx,
                 "has_fixture": True,
                 "fixtures_published": True,
+                "fixture_kickoff": kickoff,
                 "was_home": int(is_home),
                 "opponent_team": opponent,
                 "opp_strength_attack": opp.get("attack", 1100),
@@ -651,6 +661,8 @@ def build_prediction_set(
 
     out = pd.DataFrame(rows)
     limit_flags_to_next_round(out, first_gw)
+    if config.HORIZON_AVAILABILITY:
+        horizon_availability.apply(out, first_gw, _deadline(bootstrap, first_gw))
 
     logger.info(
         "Prediction set: %d rows over GW%s-%s (%d players)",

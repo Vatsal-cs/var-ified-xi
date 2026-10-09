@@ -235,6 +235,14 @@ MIN_ROWS_PER_POSITION = 400
 REPEAT_FLAG_THRESHOLD = 3
 REPEAT_FLAG_DAMPEN_FACTOR = 0.85
 
+# Availability in the weeks AFTER next for injured and suspended players
+# (data_engine/horizon_availability.py): FPL's return dates where the news
+# gives one, measured return curves where it doesn't. Off means a hard flag
+# keeps a player at a tenth of his projection for the whole horizon — which
+# writes off a one-match suspension for six weeks. Off until it passes its
+# pre-registered test (step 3, October 2026).
+HORIZON_AVAILABILITY = False
+
 # ---------------------------------------------------------------------------
 # Planning horizon
 # ---------------------------------------------------------------------------

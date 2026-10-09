@@ -258,6 +258,19 @@ class HorizonInputs(unittest.TestCase):
         for gw in (3, 4, 5):
             self.assertEqual(self.per_gw.loc[(2, gw), "p_full"], 0.0)
 
+    def test_horizon_rule_changes_only_later_weeks(self):
+        # Player 2 is injured at the GW3 deadline with no return date.
+        df = _season_frame()
+        with mock.patch.object(season_sim.train_model, "predict_points", _echo_predict):
+            e4 = season_sim.build_horizon_predictions(
+                None, df[df["round"] < 3], df, gw=3, horizon=3,
+                horizon_rule=True).set_index(["player_id", "target_gw"])
+        self.assertEqual(e4.loc[(2, 3), "p_full"], 0.0)            # next week: as before
+        self.assertEqual(e4.loc[(2, 4), "ceiling_points"], 25.0)   # then the return curve
+        self.assertEqual(e4.loc[(2, 5), "ceiling_points"], 40.0)
+        self.assertEqual(e4.loc[(1, 3), "ceiling_points"],         # a doubt is untouched
+                         self.per_gw.loc[(1, 3), "ceiling_points"])
+
 
 class VariantContexts(unittest.TestCase):
     def test_nested_feature_contexts_restore_the_outer_one(self):

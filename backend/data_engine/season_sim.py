@@ -97,6 +97,7 @@ from data_engine import (
     evaluation,
     feature_engineering,
     optimizer,
+    horizon_availability,
     planner,
     rules as season_rules,
     train_model,
@@ -114,7 +115,7 @@ FIXTURE_COLUMNS = [c for c in backtest.FIXTURE_CONTEXT_COLUMNS if c != "kickoff_
 
 # Known at the deadline and applied to every horizon week, never read from a
 # future row.
-DEADLINE_COLUMNS = ["now_cost", "status", "chance_of_playing"]
+DEADLINE_COLUMNS = ["now_cost", "status", "chance_of_playing", "news"]
 
 
 # ---------------------------------------------------------------------------
@@ -143,6 +144,9 @@ class Policy:
     # Under the production procedure: take a hit when the check says it's
     # worth it, as a manager following the dashboard would.
     follow_hit_advice: bool = True
+    # Value injured/suspended players' later weeks with horizon_availability
+    # rather than a flat hard flag.
+    horizon_availability: bool = False
 
 
 POLICIES = {
@@ -151,6 +155,13 @@ POLICIES = {
         description="what ships: free-transfer plan, a hit only when the hit check "
                     "says so, armband on the top two projections",
         production=True,
+    ),
+    "production_e4": Policy(
+        name="production_e4",
+        description="the shipping procedure, with return dates and return curves for "
+                    "injured and suspended players' later weeks (horizon_availability)",
+        production=True,
+        horizon_availability=True,
     ),
     "production_no_hits": Policy(
         name="production_no_hits",
@@ -314,7 +325,8 @@ class ManagerState:
 # Predictions for a whole planning horizon, without leaking form
 # ---------------------------------------------------------------------------
 def build_horizon_predictions(bundle, history: pd.DataFrame, season_df: pd.DataFrame,
-                              gw: int, horizon: int, legacy_prices: bool = False) -> pd.DataFrame:
+                              gw: int, horizon: int, legacy_prices: bool = False,
+                              horizon_rule: bool = False) -> pd.DataFrame:
     """One row per (player, future gameweek) with an expected-points figure.
 
     Form comes from `history` (strictly before `gw`); the match context comes
@@ -323,6 +335,10 @@ def build_horizon_predictions(bundle, history: pd.DataFrame, season_df: pd.DataF
 
     legacy_prices: the old, leaky behaviour — each future week's price read
     from that week's row. Kept only to measure what removing the leak did.
+
+    horizon_rule: apply horizon_availability to injured and suspended
+    players' later weeks (return dates, measured return curves) instead of
+    production's flat hard flag.
     """
     snapshot = feature_engineering.latest_form_snapshot(history)
     deadline_rows = season_df[season_df["round"] == gw].drop_duplicates("player_id")
@@ -346,6 +362,7 @@ def build_horizon_predictions(bundle, history: pd.DataFrame, season_df: pd.DataF
             continue
         keep = ["player_id"] + [c for c in fixture_cols if c in future.columns]
         fixture_rows = future[keep].copy()
+        fixture_rows["fixture_kickoff"] = future["kickoff_time"].to_numpy()
         merged = fixture_rows.merge(snapshot, on="player_id", how="inner")
         if merged.empty:
             continue
@@ -358,10 +375,13 @@ def build_horizon_predictions(bundle, history: pd.DataFrame, season_df: pd.DataF
     rows = pd.concat(frames, ignore_index=True)
     # The flags FPL showed at THIS deadline, then trimmed exactly as
     # production trims them: a doubt covers the next gameweek only.
-    for col, fit in (("status", "a"), ("chance_of_playing", 100.0)):
+    for col, fit in (("status", "a"), ("chance_of_playing", 100.0), ("news", "")):
         if col in deadline.columns:
             rows[col] = rows["player_id"].map(deadline[col]).fillna(fit)
     feature_engineering.limit_flags_to_next_round(rows, gw, gw_col="target_gw")
+    if horizon_rule:
+        horizon_availability.apply(rows, gw, deadline_rows["kickoff_time"].min(),
+                                   gw_col="target_gw", kickoff_col="fixture_kickoff")
 
     scored = train_model.predict_points(bundle, rows)
 
@@ -638,16 +658,96 @@ def _apply(state: ManagerState, week: dict, prices: dict) -> None:
 # ---------------------------------------------------------------------------
 # The season loop
 # ---------------------------------------------------------------------------
+def _copy_state(state: ManagerState) -> ManagerState:
+    """The parts of a manager's position a decision depends on."""
+    return ManagerState(squad=list(state.squad), bank=state.bank,
+                        purchase_prices=dict(state.purchase_prices),
+                        free_transfers=state.free_transfers)
+
+
+def _decision_key(policy: Policy, state: ManagerState, available: int):
+    """Everything a weekly decision depends on, besides the shared gameweek
+    data: the policy's settings (not its name) and the manager's position."""
+    return (replace(policy, name="", description=""),
+            tuple(sorted(state.squad)), state.bank, available,
+            tuple(sorted(state.purchase_prices.items())))
+
+
+def _same_decision(a: list, b: list) -> bool:
+    x, y = a[-1], b[-1]
+    return (set(x["squad_ids"]) == set(y["squad_ids"])
+            and set(x["starting_ids"]) == set(y["starting_ids"])
+            and x["captain_id"] == y["captain_id"]
+            and x["vice_captain_id"] == y["vice_captain_id"]
+            and sum(w["hits"] for w in a) == sum(w["hits"] for w in b))
+
+
+def _branch_value(pre: ManagerState, weeks: list, per_gw: pd.DataFrame, gw: int,
+                  season_df: pd.DataFrame, positions: dict, prices: dict,
+                  horizon: int) -> int:
+    """Realised points of one decision over the next `horizon` gameweeks,
+    holding the squad it produces: this week as decided, later weeks with the
+    best XI and armband by the projections made at this deadline. Hits are
+    deducted. Two decisions from the same state, scored this way, differ only
+    by what the decisions changed.
+    """
+    st = _copy_state(pre)
+    hit_cost = 0
+    for week in weeks:
+        _apply(st, week, prices)
+        hit_cost += week["hit_cost"]
+    played = weeks[-1]
+    total = -hit_cost
+    for k, g in enumerate(range(gw, gw + horizon)):
+        realised = season_df[season_df["round"] == g]
+        if realised.empty:
+            continue
+        realised = backtest._collapse_doubles(realised.copy())
+        proj = per_gw[per_gw["target_gw"] == g].set_index("player_id")
+        if k == 0:
+            result = {
+                "starting_ids": played["starting_ids"],
+                "bench_ids": [p for p in played["squad_ids"] if p not in played["starting_ids"]],
+                "captain_id": played["captain_id"],
+                "vice_captain_id": played["vice_captain_id"],
+            }
+        else:
+            owned = pd.DataFrame({
+                "player_id": st.squad,
+                "element_type": [positions.get(p, 3) for p in st.squad],
+                "predicted_points": [float(proj["predicted_points"].get(p, 0.0)) for p in st.squad],
+            })
+            result = _best_xi(owned, "predicted_points")
+        bench_value = {p: float(proj["predicted_points"].get(p, 0.0)) * float(proj["p_full"].get(p, 0.0))
+                       for p in st.squad}
+        scored = backtest.score_gameweek(result, _pad_for_squad(realised, st.squad, positions),
+                                         bench_value)
+        total += scored["points"]
+    return total
+
+
 def simulate(season_df: pd.DataFrame, policies: list, prior_seasons_df=None,
              start_gw: int = DEFAULT_START_GW, stride: int = 1, rules=None,
-             legacy_prices: bool = False) -> dict:
-    """Plays one season through, for every policy, off a shared model."""
+             legacy_prices: bool = False, branches: list = None) -> dict:
+    """Plays one season through, for every policy, off a shared model.
+
+    branches: [(reference policy name, candidate Policy)]. Each gameweek the
+    candidate decides from the reference's exact position, and both decisions
+    are scored over the following horizon (_branch_value). Weeks where they
+    decide the same thing contribute exactly zero, so this sees a decision
+    rule's effect through far less noise than two full seasons that drift
+    apart after their first different transfer.
+    """
     rules = rules or season_rules.SeasonRules(max_free_transfers=config.MAX_FREE_TRANSFERS)
+    branches = branches or []
     rounds = [r for r in sorted(season_df["round"].unique()) if r >= start_gw][::stride]
     states = {p.name: ManagerState() for p in policies}
+    branch_log = {cand.name: [] for _, cand in branches}
     # Positions for the whole season, so a player who blanks (or leaves the
     # league) can still be placed in a formation when scoring.
     positions = dict(zip(season_df["player_id"], season_df["element_type"]))
+    view_rules = sorted({p.horizon_availability for p in policies}
+                        | {c.horizon_availability for _, c in branches})
 
     for gw in rounds:
         history = season_df[season_df["round"] < gw]
@@ -664,21 +764,41 @@ def simulate(season_df: pd.DataFrame, policies: list, prior_seasons_df=None,
         # Trained once, handed to every policy — same information, different
         # decisions, so the difference in score is the decision.
         bundle = train_model.train_models(train_df, save=False)
-        per_gw = build_horizon_predictions(bundle, history, season_df, gw, HORIZON_GWS,
-                                           legacy_prices=legacy_prices)
-        if per_gw.empty:
-            continue
-
         meta_cols = ["player_id", "web_name", "element_type", "team", "now_cost"]
         if "ownership" in gw_rows.columns:
             meta_cols.append("ownership")
         meta = gw_rows[meta_cols].copy()
-        players = _collapse_to_players(per_gw, meta, gw, HORIZON_GWS)
+
+        # One set of predictions per availability rule in play, from the same
+        # model. The rules differ only on flagged players' later weeks.
+        views = {}
+        for rule in view_rules:
+            per_gw = build_horizon_predictions(bundle, history, season_df, gw, HORIZON_GWS,
+                                               legacy_prices=legacy_prices, horizon_rule=rule)
+            if per_gw.empty:
+                break
+            views[rule] = (per_gw, _collapse_to_players(per_gw, meta, gw, HORIZON_GWS))
+        if len(views) != len(view_rules):
+            continue
         prices = dict(zip(gw_rows["player_id"], gw_rows["now_cost"]))
+
+        # Two policies in the same position with the same settings make the
+        # same decision — most usefully a branch candidate deciding from the
+        # reference's position while its own season hasn't diverged from it.
+        decided = {}
+
+        def decide(st, pol, avail):
+            key = _decision_key(pol, st, avail)
+            if key not in decided:
+                v_gw, v_players = views[pol.horizon_availability]
+                pool = _with_owned(v_players, st.squad, season_df, prices)
+                decided[key] = _plan_week(st, pool, v_gw, gw, pol, prices, rules, avail)
+            return decided[key]
 
         line = [f"GW{gw:<2d}"]
         for policy in policies:
             state = states[policy.name]
+            per_gw, players = views[policy.horizon_availability]
 
             hit_cost = 0
             if not state.squad:
@@ -690,8 +810,20 @@ def simulate(season_df: pd.DataFrame, policies: list, prior_seasons_df=None,
                 available, used_free = 0, 0
             else:
                 available = season_rules.free_transfers_for(rules, gw, state.free_transfers)
-                pool = _with_owned(players, state.squad, season_df, prices)
-                weeks = _plan_week(state, pool, per_gw, gw, policy, prices, rules, available)
+                pre = _copy_state(state)
+                weeks = decide(pre, policy, available)
+                for ref_name, cand in branches:
+                    if ref_name != policy.name:
+                        continue
+                    c_gw, _ = views[cand.horizon_availability]
+                    c_weeks = decide(pre, cand, available)
+                    ref_value = _branch_value(pre, weeks, per_gw, gw, season_df, positions,
+                                              prices, HORIZON_GWS)
+                    changed = not _same_decision(weeks, c_weeks)
+                    cand_value = (_branch_value(pre, c_weeks, c_gw, gw, season_df, positions,
+                                                prices, HORIZON_GWS) if changed else ref_value)
+                    branch_log[cand.name].append({"gw": gw, "reference": ref_value,
+                                                  "candidate": cand_value, "changed": changed})
                 used_free = 0
                 for week in weeks:
                     _apply(state, week, prices)
@@ -726,9 +858,12 @@ def simulate(season_df: pd.DataFrame, policies: list, prior_seasons_df=None,
             state.per_gw.append({"gw": gw, "points": net})
             line.append(f"{policy.name}={net:>3d}")
 
+        for cand_name, log in branch_log.items():
+            if log and log[-1]["gw"] == gw and log[-1]["changed"]:
+                line.append(f"branch {cand_name} {log[-1]['candidate'] - log[-1]['reference']:+d}")
         logger.info("  " + "  |  ".join(line))
 
-    return {
+    out = {
         name: {
             "points": s.points,
             "captain_points": s.captain_points,
@@ -741,6 +876,7 @@ def simulate(season_df: pd.DataFrame, policies: list, prior_seasons_df=None,
         }
         for name, s in states.items()
     }
+    return out, branch_log
 
 
 def _report(results: dict, policies: list,
@@ -832,6 +968,9 @@ def main():
                              "every season, instead of each season's own")
     parser.add_argument("--block", type=int, default=4,
                         help="bootstrap block length in gameweeks")
+    parser.add_argument("--branch", nargs="*", default=[],
+                        help="REFERENCE:CANDIDATE policy pairs for the paired branch "
+                             "evaluation, e.g. production:production_e4")
     args = parser.parse_args()
 
     logging.basicConfig(level=logging.INFO, format="%(message)s")
@@ -846,6 +985,13 @@ def main():
     if unknown:
         raise SystemExit(f"Unknown policies: {unknown}. Choose from: {list(POLICIES)}")
     policies = [POLICIES[p] for p in args.policies]
+    branches = []
+    for pair in args.branch:
+        ref_name, cand_name = pair.split(":")
+        if ref_name not in args.policies or cand_name not in POLICIES:
+            raise SystemExit(f"--branch {pair}: the reference must be one of --policies "
+                             "and the candidate a known policy")
+        branches.append((ref_name, POLICIES[cand_name]))
 
     held_back = sorted(set(args.seasons) & set(config.CONFIRMATION_SEASONS))
     if held_back:
@@ -880,9 +1026,10 @@ def main():
         for seed in args.seeds:
             config.MODEL_SEED = seed
             logger.info("--- seed %d ---", seed)
-            res = simulate(season_df, policies, prior_seasons_df=prior,
-                           start_gw=args.start_gw, stride=args.stride, rules=rules,
-                           legacy_prices=args.legacy_prices)
+            res, branch_log = simulate(season_df, policies, prior_seasons_df=prior,
+                                       start_gw=args.start_gw, stride=args.stride,
+                                       rules=rules, legacy_prices=args.legacy_prices,
+                                       branches=branches)
             _report(res, policies, title=f"SEASON {season} · seed {seed}")
             for name, r in res.items():
                 runs.append({
@@ -895,12 +1042,32 @@ def main():
                     "captain": r["captain_points"],
                     "per_gw": [[int(g["gw"]), int(g["points"])] for g in r["per_gw"]],
                 })
+            for (ref_name, cand), log in zip(branches, branch_log.values()):
+                for side, name in (("reference", ref_name), ("candidate", cand.name)):
+                    runs.append({
+                        "variant": f"branch:{name}{args.tag}",
+                        "season": season,
+                        "seed": seed,
+                        "total": int(sum(e[side] for e in log)),
+                        "changed": int(sum(e["changed"] for e in log)),
+                        "per_gw": [[int(e["gw"]), int(e[side])] for e in log],
+                    })
             if args.out:
                 backtest.write_results(args.out, "season_sim", runs, vars(args))
 
     reference = "production" if "production" in args.policies else args.policies[0]
-    evaluation.print_report(runs, reference=reference + args.tag, block=args.block,
+    evaluation.print_report([r for r in runs if not r["variant"].startswith("branch:")],
+                            reference=reference + args.tag, block=args.block,
                             title="SEASON SIMULATION — pooled over seeds")
+    for ref_name, cand in branches:
+        pair = [r for r in runs if r["variant"] in (f"branch:{ref_name}{args.tag}",
+                                                    f"branch:{cand.name}{args.tag}")]
+        changed = sum(r.get("changed", 0) for r in pair
+                      if r["variant"] == f"branch:{cand.name}{args.tag}")
+        evaluation.print_report(
+            pair, reference=f"branch:{ref_name}{args.tag}", block=HORIZON_GWS,
+            title=f"PAIRED BRANCH TEST — {cand.name} deciding from {ref_name}'s position "
+                  f"({changed} gameweek decisions differed)")
 
 
 if __name__ == "__main__":

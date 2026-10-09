@@ -119,7 +119,7 @@ def _clean(flags: pd.DataFrame) -> pd.DataFrame:
 
 
 def attach(df: pd.DataFrame, season: str) -> float:
-    """Adds `status` and `chance_of_playing` to rows carrying `element` and
+    """Adds `status`, `chance_of_playing` and `news` to rows carrying `element` and
     `round`, in place, as they stood before that round's deadline. Returns
     the share of rows that found a snapshot (0.0 for an uncovered season).
 
@@ -129,10 +129,13 @@ def attach(df: pd.DataFrame, season: str) -> float:
     flags = fetch_season_availability(season)
     df["status"] = FIT_STATUS
     df["chance_of_playing"] = FIT_CHANCE
+    df["news"] = ""
     if flags.empty or "element" not in df.columns:
         return 0.0
 
-    lut = flags.set_index(["element", "round"])[["status", "chance_of_playing"]]
+    if "news" not in flags.columns:
+        flags["news"] = ""
+    lut = flags.set_index(["element", "round"])[["status", "chance_of_playing", "news"]]
     keys = pd.MultiIndex.from_arrays([df["element"].astype(int),
                                       df["round"].astype(int)])
     joined = lut.reindex(keys)
@@ -140,4 +143,7 @@ def attach(df: pd.DataFrame, season: str) -> float:
     df["status"] = joined["status"].fillna(FIT_STATUS).to_numpy()
     # FPL leaves chance empty for an unflagged player; that is 100, not 0.
     df["chance_of_playing"] = joined["chance_of_playing"].fillna(FIT_CHANCE).to_numpy()
+    # The news text, for return dates ("Suspended until 02 Nov"). 2024-25's
+    # snapshots don't carry it, so that season only ever has undated flags.
+    df["news"] = joined["news"].fillna("").astype(str).to_numpy()
     return float(matched.mean()) if len(matched) else 0.0
