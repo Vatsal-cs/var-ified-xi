@@ -16,13 +16,13 @@ import logging
 import pulp
 import pandas as pd
 
+import config
 from config import (
     SQUAD_SIZE,
     BUDGET,
     SQUAD_POSITION_LIMITS,
     STARTING_XI_LIMITS,
     MAX_PLAYERS_PER_CLUB,
-    BENCH_WEIGHT,
     HORIZON_SQUAD_WEIGHT,
 )
 
@@ -30,7 +30,8 @@ logger = logging.getLogger(__name__)
 
 
 def optimize_squad(players_df: pd.DataFrame, objective_col: str = "predicted_points",
-                   captain_col: str = "predicted_points") -> dict:
+                   captain_col: str = "predicted_points", bench_weight: float = None,
+                   budget: int = None) -> dict:
     """
     players_df must contain columns:
       player_id, web_name, element_type, team, now_cost, predicted_points
@@ -41,9 +42,18 @@ def optimize_squad(players_df: pd.DataFrame, objective_col: str = "predicted_poi
     totals always describe the NEXT gameweek, so the headline number stays
     comparable regardless of what was optimized.
 
+    bench_weight: share of a bench player's projection counted in the
+    objective. Defaults to config.BENCH_WEIGHT, read at call time so the
+    harnesses can vary it.
+    budget: spending limit in tenths of a million. Defaults to BUDGET.
+
     Returns a dict with squad / starting_xi / bench / captain / vice_captain
     player_ids plus summary totals.
     """
+    if bench_weight is None:
+        bench_weight = config.BENCH_WEIGHT
+    if budget is None:
+        budget = BUDGET
     df = players_df.dropna(subset=["predicted_points", "now_cost", "element_type", "team"]).copy()
     df["player_id"] = df["player_id"].astype(int)
     ids = df["player_id"].tolist()
@@ -84,7 +94,7 @@ def optimize_squad(players_df: pd.DataFrame, objective_col: str = "predicted_poi
     prob += pulp.lpSum(captain[i] for i in ids) == 1
 
     # Budget constraint (now_cost is in tenths of a million, matching BUDGET)
-    prob += pulp.lpSum(cost[i] * squad[i] for i in ids) <= BUDGET
+    prob += pulp.lpSum(cost[i] * squad[i] for i in ids) <= budget
 
     # Exact squad position quotas (2 GK / 5 DEF / 5 MID / 3 FWD)
     for etype, quota in SQUAD_POSITION_LIMITS.items():
@@ -109,7 +119,7 @@ def optimize_squad(players_df: pd.DataFrame, objective_col: str = "predicted_poi
     # the solver happily buys a player for one glamour fixture and strands
     # you with him through the next five.
     objective = pulp.lpSum(points[i] * starts[i] for i in ids)
-    objective += pulp.lpSum(points[i] * BENCH_WEIGHT * (squad[i] - starts[i]) for i in ids)
+    objective += pulp.lpSum(points[i] * bench_weight * (squad[i] - starts[i]) for i in ids)
     objective += pulp.lpSum(points[i] * captain[i] for i in ids)  # captain's 2nd multiplier
 
     if objective_col != "predicted_points":

@@ -484,8 +484,13 @@ def simulate_season(
     start_gw: int = DEFAULT_START_GW,
     stride: int = 1,
     legacy_doubles: bool = False,
+    extra_bench_weights: tuple = (),
 ) -> dict:
     """Walks a season gameweek by gameweek, training only on the past.
+
+    extra_bench_weights: also pick and score a squad with each of these
+    bench weights, from the SAME predictions — an optimizer setting compared
+    with no model noise in between. Results land in summary["extra"].
 
     legacy_doubles: the old handling, which collapsed a double-gameweek
     player to ONE row before predicting — so he was projected for one match
@@ -495,6 +500,7 @@ def simulate_season(
     rounds = rounds[::stride]
 
     per_gw, preds, p60s = [], [], []
+    extra = {w: [] for w in extra_bench_weights}
 
     for gw in rounds:
         history = season_df[season_df["round"] < gw]
@@ -537,6 +543,15 @@ def simulate_season(
             result = optimizer.optimize_squad(gw_rows, captain_col="predicted_points")
         pred_lookup = gw_rows.set_index("player_id")["predicted_points"].to_dict()
         scored = score_gameweek(result, gw_rows, pred_lookup)
+        captain_col = "ceiling_points" if variant.captain_values is not None else "predicted_points"
+        for w in extra_bench_weights:
+            r = optimizer.optimize_squad(gw_rows, captain_col=captain_col, bench_weight=w)
+            extra[w].append({"gw": gw, **score_gameweek(r, gw_rows, pred_lookup),
+                             "predicted": r["total_predicted_points"],
+                             "xi": sorted(int(p) for p in r["starting_ids"]),
+                             "captain": int(r["captain_id"]),
+                             "bench_cost": int(sum(gw_rows.set_index("player_id")["now_cost"].get(p, 0)
+                                                   for p in r["bench_ids"]))})
 
         per_gw.append({"gw": gw, **scored, "predicted": result["total_predicted_points"],
                        "xi": sorted(int(p) for p in result["starting_ids"]),
@@ -554,7 +569,9 @@ def simulate_season(
             scored["captain_points"], scored["autosubs"],
         )
 
-    return _summarize(per_gw, preds, p60s)
+    summary = _summarize(per_gw, preds, p60s)
+    summary["extra"] = {w: _summarize(rows, preds, p60s) for w, rows in extra.items()}
+    return summary
 
 
 # Columns that describe a MATCH rather than the player's form going into it.
@@ -709,6 +726,9 @@ def main(argv=None) -> None:
                              "simulated season. Lets one season run on its own "
                              "(say, in parallel) exactly as it would after "
                              "--augment: '--seasons 2025-26 --prior-seasons 2024-25'.")
+    parser.add_argument("--bag-size", type=int, default=None,
+                        help="models averaged per fit (default config.MODEL_BAG_SIZE); 1 is "
+                             "quicker when only the optimizer is being compared")
     parser.add_argument("--seeds", nargs="+", type=int, default=[config.MODEL_SEED],
                         help="Model seeds to run every variant under. One seed "
                              "can't tell a change from noise; use 3-5.")
@@ -723,8 +743,13 @@ def main(argv=None) -> None:
                         help="Old harness: predict a double-gameweek player for one match.")
     parser.add_argument("--block", type=int, default=2,
                         help="Bootstrap block length for the paired intervals.")
+    parser.add_argument("--bench-weights", nargs="*", type=float, default=[],
+                        help="Also score squads picked with these bench weights, from "
+                             "the same predictions (variant@benchW in the output).")
     parser.add_argument("-v", "--verbose", action="store_true")
     args = parser.parse_args(argv)
+    if args.bag_size is not None:
+        config.MODEL_BAG_SIZE = args.bag_size
 
     logging.basicConfig(
         level=logging.INFO,
@@ -785,6 +810,7 @@ def main(argv=None) -> None:
                         start_gw=args.start_gw,
                         stride=args.stride,
                         legacy_doubles=args.legacy_doubles,
+                        extra_bench_weights=tuple(args.bench_weights),
                     )
                     logger.info("    %s %s seed %d: %d pts in %.0fs", label, season, seed,
                                 summary["total_points"], time.time() - started)
@@ -792,6 +818,8 @@ def main(argv=None) -> None:
                         runs += [run_record(label, season, s, summary) for s in args.seeds]
                     else:
                         runs.append(run_record(label, season, seed, summary))
+                        for w, s in summary.get("extra", {}).items():
+                            runs.append(run_record(f"{label}@bench{w:g}", season, seed, s))
                     if args.out:
                         write_results(args.out, "backtest", runs, vars(args))
 

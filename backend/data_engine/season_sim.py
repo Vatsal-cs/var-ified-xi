@@ -147,6 +147,9 @@ class Policy:
     # Value injured/suspended players' later weeks with horizon_availability
     # rather than a flat hard flag.
     horizon_availability: bool = False
+    # Share of a bench player's projection the planner counts. None keeps
+    # config.BENCH_WEIGHT.
+    bench_weight: float = None
 
 
 POLICIES = {
@@ -162,6 +165,18 @@ POLICIES = {
                     "injured and suspended players' later weeks (horizon_availability)",
         production=True,
         horizon_availability=True,
+    ),
+    "production_bench0.06": Policy(
+        name="production_bench0.06",
+        description="the shipping procedure, bench players counted at 6% instead of 12%",
+        production=True,
+        bench_weight=0.06,
+    ),
+    "production_bench0.03": Policy(
+        name="production_bench0.03",
+        description="the shipping procedure, bench players counted at 3% instead of 12%",
+        production=True,
+        bench_weight=0.03,
     ),
     "production_no_hits": Policy(
         name="production_no_hits",
@@ -560,6 +575,7 @@ def _plan_week(state: ManagerState, players: pd.DataFrame, per_gw: pd.DataFrame,
         decision = planner.plan_week(
             players, team_state, xp_by_gw, gameweeks,
             hit_margin=policy.hit_margin, captain_col=policy.captain_col, rules=rules,
+            bench_weight=policy.bench_weight,
         )
         week = dict(decision["plan"]["immediate"])
         week["captain_id"] = decision["result"]["captain_id"]
@@ -580,6 +596,7 @@ def _plan_week(state: ManagerState, players: pd.DataFrame, per_gw: pd.DataFrame,
         captain_xp_by_gw=captain_xp_by_gw,
         differential_weight=policy.differential_weight,
         rules=rules,
+        bench_weight=policy.bench_weight,
     )
     week = dict(plan["immediate"])
     # The solver's vice has no weight in its objective, so its choice is
@@ -952,6 +969,9 @@ def main():
     parser.add_argument("--prior-seasons", nargs="*", default=[],
                         help="seasons used only as extra training data, so one season "
                              "can run on its own exactly as it would after --augment")
+    parser.add_argument("--bag-size", type=int, default=None,
+                        help="models averaged per fit (default config.MODEL_BAG_SIZE); 1 is "
+                             "quicker when only the optimizer is being compared")
     parser.add_argument("--seeds", nargs="+", type=int, default=[config.MODEL_SEED],
                         help="model seeds; every policy runs under each")
     parser.add_argument("--out", help="write per-gameweek results as JSON for "
@@ -972,6 +992,8 @@ def main():
                         help="REFERENCE:CANDIDATE policy pairs for the paired branch "
                              "evaluation, e.g. production:production_e4")
     args = parser.parse_args()
+    if args.bag_size is not None:
+        config.MODEL_BAG_SIZE = args.bag_size
 
     logging.basicConfig(level=logging.INFO, format="%(message)s")
     logging.getLogger("data_engine.transfer_optimizer").setLevel(logging.WARNING)

@@ -82,7 +82,8 @@ def team_state_after(team_state, free_week: dict, players_df) -> "entry_data.Tea
 
 
 def hit_check(team_state, free_plan: dict, players_df, xp_by_gw: dict,
-              gameweeks: list, hit_margin: float = None, rules=None):
+              gameweeks: list, hit_margin: float = None, rules=None,
+              bench_weight: float = None):
     """Decides whether a points hit this gameweek is actually worth taking —
     ON TOP OF the free plan, not instead of it.
 
@@ -101,7 +102,7 @@ def hit_check(team_state, free_plan: dict, players_df, xp_by_gw: dict,
 
     topup_plan = transfer_optimizer.plan_transfers(
         players_df, topup_state, xp_by_gw, gameweeks,
-        hit_margin=hit_margin, rules=rules,
+        hit_margin=hit_margin, rules=rules, bench_weight=bench_weight,
     )
     topup_week = topup_plan["immediate"]
     if topup_week["hits"] <= 0:
@@ -130,7 +131,7 @@ def hit_check(team_state, free_plan: dict, players_df, xp_by_gw: dict,
 
 def plan_week(players_df, team_state, xp_by_gw: dict, gameweeks: list,
               hit_margin: float = None, captain_col: str = "predicted_points",
-              rules=None) -> dict:
+              rules=None, bench_weight: float = None) -> dict:
     """Production's full weekly decision.
 
     players_df: one row per player with now_cost, predicted_points (next
@@ -147,11 +148,13 @@ def plan_week(players_df, team_state, xp_by_gw: dict, gameweeks: list,
                 gameweeks[0], gameweeks[-1])
     free_plan = transfer_optimizer.plan_transfers(
         players_df, team_state, xp_by_gw, gameweeks, max_total_hits=0, rules=rules,
+        bench_weight=bench_weight,
     )
 
     logger.info("Checking whether a hit ON TOP of that plan is worth it...")
     hit_rec, hit_week = hit_check(team_state, free_plan, players_df, xp_by_gw,
-                                  gameweeks, hit_margin=hit_margin, rules=rules)
+                                  gameweeks, hit_margin=hit_margin, rules=rules,
+                                  bench_weight=bench_weight)
     if hit_rec and hit_rec["worth_it"]:
         logger.info("  A -%d hit IS worth taking this week: %s",
                     hit_rec["hit_cost"], hit_rec["verdict"])

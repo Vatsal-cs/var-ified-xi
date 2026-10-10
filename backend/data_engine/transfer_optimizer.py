@@ -34,7 +34,6 @@ from config import (
     MAX_PLAYERS_PER_CLUB,
     MAX_FREE_TRANSFERS,
     TRANSFER_HIT_COST,
-    BENCH_WEIGHT,
     HORIZON_DECAY,
     SOLVER_TIME_LIMIT,
     CANDIDATE_POOL_PER_POSITION,
@@ -84,6 +83,8 @@ def plan_transfers(
     captain_xp_by_gw: dict = None,
     differential_weight: float = 0.0,
     rules=None,
+    bench_weight: float = None,
+    wildcard: bool = False,
 ) -> dict:
     """Solves the multi-gameweek transfer problem.
 
@@ -111,6 +112,11 @@ def plan_transfers(
                 real manager knew about in advance and could plan around.
                 None means today's rules. Week 0's free transfers always come
                 from team_state, already adjusted by the caller.
+    bench_weight: share of a bench player's projection counted in the
+                objective. Defaults to config.BENCH_WEIGHT, read at call time.
+    wildcard:   play a Wildcard in week 0 — every transfer that week is free,
+                and (rules since 2024/25) the banked free transfers are kept,
+                so the next week starts with them plus one.
 
     Returns the full plan: transfers per gameweek, the resulting squad, and
     the starting XI and captain for the immediate gameweek.
@@ -198,7 +204,7 @@ def plan_transfers(
 
     def free_ceiling(idx, t):
         if idx == 0:
-            return max(bank_cap, team_state.free_transfers)
+            return SQUAD_SIZE if wildcard else max(bank_cap, team_state.free_transfers)
         if t in unlimited:
             return SQUAD_SIZE
         return max(bank_cap, topups.get(t, 0))
@@ -257,7 +263,10 @@ def plan_transfers(
         prob += hits[t] >= transfers[t] - free[t]
 
         if idx == 0:
-            prob += free[t] == team_state.free_transfers
+            prob += free[t] == (SQUAD_SIZE if wildcard else team_state.free_transfers)
+        elif idx == 1 and wildcard:
+            # The Wildcard week's transfers don't touch the bank.
+            prob += free[t] <= min(team_state.free_transfers + 1, bank_cap)
         elif t in unlimited:
             prob += free[t] == SQUAD_SIZE
         elif t in topups:
@@ -285,6 +294,8 @@ def plan_transfers(
     # for Saturday, and you'll get to revise it before then anyway.
     if free_transfer_margin is None:
         free_transfer_margin = config.FREE_TRANSFER_MARGIN
+    if bench_weight is None:
+        bench_weight = config.BENCH_WEIGHT
     if hit_margin is None:
         hit_margin = config.HIT_MARGIN
 
@@ -295,7 +306,7 @@ def plan_transfers(
             points = obj_xp(i, t)
             objective.append(weight * points * start[i, t])
             objective.append(weight * captain_xp(i, t) * tilt(i) * cap[i, t])
-            objective.append(weight * BENCH_WEIGHT * points * (squad[i, t] - start[i, t]))
+            objective.append(weight * bench_weight * points * (squad[i, t] - start[i, t]))
         objective.append(-weight * (TRANSFER_HIT_COST + hit_margin) * hits[t])
         # Transfers not paid for with points still aren't free: banking one is
         # worth something, and a sub-noise projected gain is worth nothing.
