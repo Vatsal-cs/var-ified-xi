@@ -83,6 +83,7 @@ Every verdict below was first decided on **one seed**. The October 2026 audit re
 | Hit must gain 8, not 6 | +299 | −1 [−92, +97] | no detectable effect |
 | Refit on all data after validating | +127 | +43 [−75, +171] · ahead 8 of 10 seed-seasons | no detectable effect |
 | Betting-odds features | −32 | +15 [−82, +107] | no detectable effect |
+| Count bench players for less than 12% (new) | — | backtest +15 to +25, CIs span zero · simulator −36 [−85, +11] | no detectable effect — stays 12% |
 | Average five models trained with different seeds (new) | — | starting XIs agreed between seeds 75–78% → 86–88% in all four seasons; points +25 [−37, +92] · held back +23 [−34, +82] | ✅ **shipped** — steadier picks, no cost |
 | Injured/suspended players' later weeks by return dates and measured return curves (new) | — | +4.7 [−26, +33] · changed 11 of 222 decisions | no detectable effect — stays off |
 | Split training populations, vs starters-only for both stages | +7 | starters-only **+56** [+11, +103] on the tuning seasons — then +18 and −17 on the held-back seasons | ⚠️ **unconfirmed**: split populations stay |
@@ -216,6 +217,7 @@ var-ified-xi/
 │   ├── main.py                      # entrypoint — orchestrates everything
 │   ├── config.py                    # every rule, weight and verdict
 │   ├── check_deadline.py            # lets the scheduled job exit early
+│   ├── wildcard.py                  # is a Wildcard worth it this week, and which squad
 │   └── data_engine/
 │       ├── fetch_data.py            # FPL API client
 │       ├── feature_engineering.py   # rolling form, fixture context

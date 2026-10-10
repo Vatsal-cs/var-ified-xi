@@ -286,7 +286,13 @@ HORIZON_DECAY = 0.85
 # ---------------------------------------------------------------------------
 # Optimizer weights
 # ---------------------------------------------------------------------------
-BENCH_WEIGHT = 0.12   # bench players contribute a small fraction to objective
+# Share of a bench player's projection the optimizers count. TESTED (Oct
+# 2026, research/2026-10-bench-weight): 0.06 / 0.03 / 0.01 were each no
+# detectable effect in the backtest (+15 to +25, CIs spanning zero), and 0.03
+# did slightly worse in the transfer-constrained simulator (-36 [-85, +11]).
+# Stays 0.12. The live team's expensive bench came from the squad builder's
+# HORIZON_SQUAD_WEIGHT at team creation, not from this.
+BENCH_WEIGHT = 0.12
 CAPTAIN_MULTIPLIER = 1.0  # extra points added on top of base (captain scores 2x total)
 
 # How heavily squad membership is rewarded for its whole-horizon value on top
