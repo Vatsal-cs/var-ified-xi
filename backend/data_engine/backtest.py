@@ -176,6 +176,15 @@ class _team_form_ctx:
         config.TEAM_FORM, config.FEATURE_COLUMNS = self._old
 
 
+class _lagged_ratings_ctx:
+    """Past seasons rated with the season-before's FPL ratings, as live."""
+    def __enter__(self):
+        self._old = config.LAGGED_TEAM_RATINGS
+        config.LAGGED_TEAM_RATINGS = True
+    def __exit__(self, *a):
+        config.LAGGED_TEAM_RATINGS = self._old
+
+
 class _bag_ctx:
     """Temporarily sets the seed-averaging bag size used while fitting."""
     def __init__(self, size): self.size = size
@@ -274,6 +283,15 @@ VARIANTS = {
                     "captain on the mean projection",
         fit=lambda df: train_model.train_models(df, save=False),
         predict=_bundle_predict,
+    ),
+    "lagged_ratings": Variant(
+        name="lagged_ratings",
+        description="production, but each past season's teams rated with the PREVIOUS "
+                    "season's FPL ratings — how the live model works in 2026-27, with "
+                    "no hindsight from the season being replayed",
+        fit=lambda df: train_model.train_models(df, save=False),
+        predict=_bundle_predict,
+        context=_lagged_ratings_ctx,
     ),
     "team_form": Variant(
         name="team_form",

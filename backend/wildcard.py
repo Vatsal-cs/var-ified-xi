@@ -16,9 +16,14 @@ what the Wildcard is worth over the planning horizon. It doesn't count what a
 Wildcard kept for later might be worth — weigh that yourself (the first-half
 Wildcard expires at the GW19 deadline either way).
 
+Rival ownership (--league) is shown for information only. It never touches
+the optimizer, which picks purely from the model's own projections: matching a
+rival's pick is fine when the numbers say so, and the differentials — picks
+the managers above you don't have — are where places are gained.
+
 Usage (from backend/):
     python wildcard.py --team-id 9927826
-    python wildcard.py --team-id 9927826 --bench-weight 0.03
+    python wildcard.py --team-id 9927826 --league 928777 --top 4
 """
 
 import argparse
@@ -28,7 +33,7 @@ import pandas as pd
 
 import config
 from data_engine import (entry_data, feature_engineering, fetch_data, historical_data,
-                         injury_log, planner, train_model, transfer_optimizer)
+                         injury_log, planner, rivals, train_model, transfer_optimizer)
 
 logger = logging.getLogger("wildcard")
 
@@ -66,7 +71,23 @@ def compare(team_id: int, bench_weight: float = None) -> dict:
             "gain": planner.horizon_score(wild) - planner.horizon_score(free)}
 
 
-def _describe(plan_week, preds, team, label):
+def rival_ownership(league_id: int, top: int, me: int, gameweek: int) -> tuple:
+    """({player id: how many of the league's top managers own him}, n). Read
+    from their latest published picks; display only."""
+    rows = rivals.fetch_standings(league_id)["standings"]["results"]
+    managers = [r["entry"] for r in rows if r["entry"] != me][:top]
+    counts = {}
+    for entry in managers:
+        try:
+            picks = entry_data.fetch_picks(entry, gameweek - 1)["picks"]
+        except Exception:
+            continue
+        for p in picks:
+            counts[p["element"]] = counts.get(p["element"], 0) + 1
+    return counts, len(managers)
+
+
+def _describe(plan_week, preds, team, label, owned=None, n_rivals=0):
     p = preds.set_index("player_id")
     pos = {1: "GK", 2: "DEF", 3: "MID", 4: "FWD"}
     xi, bench = plan_week["starting_ids"], [i for i in plan_week["squad_ids"]
@@ -81,6 +102,9 @@ def _describe(plan_week, preds, team, label):
         print(f"  {title} (£{cost:.1f}m):")
         for i in rows:
             mark = "" if i in team.squad else "  NEW"
+            if owned is not None:
+                k = owned.get(i, 0)
+                mark += f"  rivals {k}/{n_rivals}" + ("  DIFFERENTIAL" if k == 0 else "")
             print(f"    {pos.get(p['element_type'].get(i), '?'):<4}{p['web_name'].get(i, i):<16}"
                   f"£{p['now_cost'].get(i, 0) / 10:<5} next {proj.get(i, 0):4.1f}  "
                   f"6-wk {p['horizon_points'].get(i, 0):5.1f}{mark}")
@@ -91,6 +115,10 @@ def main():
     parser.add_argument("--team-id", type=int, required=True)
     parser.add_argument("--bench-weight", type=float, default=None,
                         help="defaults to config.BENCH_WEIGHT")
+    parser.add_argument("--league", type=int, default=None,
+                        help="mini-league id: show how many of its top managers own each pick")
+    parser.add_argument("--top", type=int, default=4,
+                        help="how many managers above you to compare with (default 4)")
     args = parser.parse_args()
     logging.basicConfig(level=logging.WARNING, format="%(message)s")
 
@@ -103,8 +131,15 @@ def main():
           f"-> Wildcard worth {r['gain']:+.1f} points over the horizon")
     print(f"Wildcard makes {len(sold)} changes. Out: {', '.join(sold)}. In: {', '.join(bought)}. "
           f"Bank after: £{w0['bank_m']:.1f}m")
-    _describe(r["free"]["weeks"][0], r["preds"], r["team"], "WITHOUT the Wildcard")
-    _describe(w0, r["preds"], r["team"], "WITH the Wildcard")
+    owned, n = (rival_ownership(args.league, args.top, args.team_id, r["gameweek"])
+                if args.league else (None, 0))
+    _describe(r["free"]["weeks"][0], r["preds"], r["team"], "WITHOUT the Wildcard", owned, n)
+    _describe(w0, r["preds"], r["team"], "WITH the Wildcard", owned, n)
+    if owned is not None:
+        names = r["preds"].set_index("player_id")["web_name"]
+        common = [names.get(i, i) for i, k in sorted(owned.items(), key=lambda kv: -kv[1])
+                  if k >= max(2, n // 2 + 1) and i not in w0["squad_ids"]]
+        print(f"\nOwned by most of the top {n} but not in the Wildcard squad: {', '.join(map(str, common)) or 'none'}")
 
 
 if __name__ == "__main__":

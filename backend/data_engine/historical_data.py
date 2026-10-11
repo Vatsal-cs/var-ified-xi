@@ -112,6 +112,8 @@ def fetch_season(season: str, season_index: int):
 
     id_strength, name_strength = _team_strength_lookups(teams_df)
     name_to_id = dict(zip(teams_df["name"], teams_df["id"]))
+    if config.LAGGED_TEAM_RATINGS:
+        id_strength, name_strength = _lagged_strengths(season, teams_df)
 
     # Unique per (season, element) — offset so it never collides with a
     # live FPL player_id or with another season's ids in this same load.
@@ -199,6 +201,21 @@ def fetch_season(season: str, season_index: int):
         team_form.attach(out, start)
 
     return out
+
+
+def _lagged_strengths(season: str, teams_df: pd.DataFrame):
+    """(by id, by name) ratings for `season` taken from the season before —
+    as the live model must do when FPL publishes none. A club that wasn't in
+    the league then is rated like the clubs that went down."""
+    prev = _previous_season(season)
+    prev_df = pd.read_csv(io.StringIO(_fetch_csv_text(
+        f"{HISTORICAL_DATA_BASE_URL}/{prev}/teams.csv", _season_cache_path(prev, "teams"))))
+    _, prev_by_name = _team_strength_lookups(prev_df)
+    gone = [v for n, v in prev_by_name.items() if n not in set(teams_df["name"])] or list(prev_by_name.values())
+    promoted = {k: sum(v[k] for v in gone) / len(gone) for k in ("attack", "defence")}
+    by_name = {n: dict(prev_by_name.get(n, promoted)) for n in teams_df["name"]}
+    by_id = {int(i): by_name[n] for i, n in zip(teams_df["id"], teams_df["name"])}
+    return by_id, by_name
 
 
 def _previous_season(season: str) -> str:

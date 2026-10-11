@@ -181,6 +181,12 @@ FEATURE_COLUMNS = [
 # matches of xG is noisier than a whole season's rating. Stays off; the live
 # fallback (last season's ratings) stays.
 TEAM_FORM = False
+
+# Research only: when replaying a past season, rate its teams with the
+# PREVIOUS season's published ratings — exactly what the live model has to do
+# in 2026-27 — instead of that season's own (which the archive may have saved
+# with hindsight). Never affects live runs.
+LAGGED_TEAM_RATINGS = False
 TEAM_FORM_COLUMNS = ["team_xg_for", "team_xg_against", "opp_xg_for",
                      "opp_xg_against", "match_xg_for", "match_xg_against"]
 TEAM_FORM_REPLACES = ["team_strength_attack", "team_strength_defence",
