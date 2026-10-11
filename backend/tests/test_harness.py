@@ -313,3 +313,29 @@ class Evaluation(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class TeamStrengthFallback(unittest.TestCase):
+    CSV = ("name,strength_attack_home,strength_attack_away,strength_defence_home,strength_defence_away\n"
+           "Arsenal,1300,1400,1250,1350\nBurnley,1000,1000,1000,1000\nLeeds,1100,1100,1100,1100\n")
+
+    def test_zero_ratings_fall_back_to_last_season(self):
+        from data_engine import feature_engineering, historical_data
+        teams = [{"id": 1, "name": "Arsenal"}, {"id": 2, "name": "Coventry City"},
+                 {"id": 3, "name": "Leeds"}]
+        boot = {"teams": [dict(t, strength_attack_home=0, strength_attack_away=0,
+                               strength_defence_home=0, strength_defence_away=0) for t in teams]}
+        with mock.patch.object(historical_data, "_fetch_csv_text", return_value=self.CSV):
+            lk = feature_engineering._team_strength_lookup(boot)
+        self.assertEqual(lk[1], {"attack": 1350, "defence": 1300})
+        self.assertEqual(lk[3], {"attack": 1100, "defence": 1100})
+        # Promoted club: rated like last season's departed one (Burnley).
+        self.assertEqual(lk[2], {"attack": 1000, "defence": 1000})
+
+    def test_published_ratings_are_used_as_is(self):
+        from data_engine import feature_engineering
+        boot = {"teams": [{"id": 1, "name": "Arsenal", "strength_attack_home": 1200,
+                           "strength_attack_away": 1300, "strength_defence_home": 1100,
+                           "strength_defence_away": 1200}]}
+        self.assertEqual(feature_engineering._team_strength_lookup(boot)[1],
+                         {"attack": 1250, "defence": 1150})

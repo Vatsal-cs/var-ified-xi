@@ -268,6 +268,47 @@ def _attach_setpiece_features(out: pd.DataFrame, gw_df: pd.DataFrame, season: st
                 season, duties, len(out))
 
 
+def fallback_team_strengths(teams: list, season: str = None) -> dict:
+    """Team id -> {attack, defence} from the most recent completed season's
+    published ratings, for a season in which FPL publishes none.
+
+    Matched by club name. A club that wasn't in the league last season (just
+    promoted) is rated as the average of last season's clubs that are no
+    longer in it — the relegated sides — which is where promoted clubs
+    usually land. Returns {} if last season's ratings can't be had.
+    """
+    season = season or HISTORICAL_SEASONS[-1]
+    try:
+        text = _fetch_csv_text(f"{HISTORICAL_DATA_BASE_URL}/{season}/teams.csv",
+                               _season_cache_path(season, "teams"))
+    except requests.RequestException as e:
+        logger.warning("No fallback team strengths (%s): %s", season, e)
+        return {}
+    last = pd.read_csv(io.StringIO(text))
+    rating = {
+        row["name"]: {
+            "attack": (row["strength_attack_home"] + row["strength_attack_away"]) / 2,
+            "defence": (row["strength_defence_home"] + row["strength_defence_away"]) / 2,
+        }
+        for _, row in last.iterrows()
+    }
+    current = {t["name"] for t in teams}
+    gone = [v for name, v in rating.items() if name not in current] or list(rating.values())
+    promoted = {k: sum(v[k] for v in gone) / len(gone) for k in ("attack", "defence")}
+
+    out, missing = {}, []
+    for t in teams:
+        if t["name"] in rating:
+            out[t["id"]] = dict(rating[t["name"]])
+        else:
+            out[t["id"]] = dict(promoted)
+            missing.append(t["name"])
+    logger.warning("FPL publishes no team strengths this season; using %s ratings%s.",
+                   season, f" (rated like last season's relegated clubs: {', '.join(missing)})"
+                   if missing else "")
+    return out
+
+
 def build_historical_training_df(seasons=None) -> pd.DataFrame:
     """Fetches every configured historical season and concatenates them into
     one raw history-shaped DataFrame, ready for add_rolling_features().

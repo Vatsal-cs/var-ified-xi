@@ -40,7 +40,7 @@ from config import (
     FORM_SHRINKAGE_GAMES,
 )
 import config
-from data_engine import horizon_availability, setpiece_data
+from data_engine import historical_data, horizon_availability, setpiece_data
 from data_engine.odds_data import ODDS_NEUTRAL
 from data_engine.setpiece_data import SETPIECE_NEUTRAL
 
@@ -89,13 +89,27 @@ ROLLING_FEATURE_SPEC = [
 
 
 def _team_strength_lookup(bootstrap: dict) -> dict:
-    """Map team id -> dict of attack/defence strength ratings from bootstrap-static."""
+    """Map team id -> dict of attack/defence strength ratings from bootstrap-static.
+
+    FPL stopped publishing these for 2026-27: every team comes back 0. The
+    model learned them from past seasons, where they run ~900-1400, so zeros
+    left every live projection blind to team quality and fixture difficulty
+    — an easy home game read the same as a trip to the champions, which
+    mostly hurts defenders and keepers. When the bootstrap's ratings are all
+    empty, last season's published ratings stand in (fallback_team_strengths).
+    """
     lookup = {}
     for t in bootstrap["teams"]:
         lookup[t["id"]] = {
-            "attack": (t["strength_attack_home"] + t["strength_attack_away"]) / 2,
-            "defence": (t["strength_defence_home"] + t["strength_defence_away"]) / 2,
+            "attack": ((t.get("strength_attack_home") or 0) + (t.get("strength_attack_away") or 0)) / 2,
+            "defence": ((t.get("strength_defence_home") or 0) + (t.get("strength_defence_away") or 0)) / 2,
         }
+    if lookup and all(v["attack"] == 0 and v["defence"] == 0 for v in lookup.values()):
+        fallback = historical_data.fallback_team_strengths(bootstrap["teams"])
+        if fallback:
+            return fallback
+        logger.error("FPL publishes no team strengths and no fallback was available — "
+                     "fixture difficulty is invisible to the model this run.")
     return lookup
 
 
