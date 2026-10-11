@@ -99,6 +99,7 @@ from data_engine import (
     optimizer,
     horizon_availability,
     planner,
+    team_form,
     rules as season_rules,
     train_model,
     transfer_optimizer,
@@ -376,6 +377,8 @@ def build_horizon_predictions(bundle, history: pd.DataFrame, season_df: pd.DataF
         if future.empty:
             continue
         keep = ["player_id"] + [c for c in fixture_cols if c in future.columns]
+        if config.TEAM_FORM and "opponent_team" in future.columns:
+            keep.append("opponent_team")
         fixture_rows = future[keep].copy()
         fixture_rows["fixture_kickoff"] = future["kickoff_time"].to_numpy()
         merged = fixture_rows.merge(snapshot, on="player_id", how="inner")
@@ -394,6 +397,14 @@ def build_horizon_predictions(bundle, history: pd.DataFrame, season_df: pd.DataF
         if col in deadline.columns:
             rows[col] = rows["player_id"].map(deadline[col]).fillna(fit)
     feature_engineering.limit_flags_to_next_round(rows, gw, gw_col="target_gw")
+    if config.TEAM_FORM and "opponent_team" in rows.columns:
+        # Team ratings as of this deadline for every horizon week. A future
+        # row's own columns were computed going into THAT match, so they
+        # know results from the weeks in between.
+        season = history["season"].iloc[0] if "season" in history.columns and len(history) else None
+        _, now = team_form.ratings(team_form.team_matches(history),
+                                   team_form.SEASON_START.get(season, {}))
+        team_form.apply_current(rows, now)
     if horizon_rule:
         horizon_availability.apply(rows, gw, deadline_rows["kickoff_time"].min(),
                                    gw_col="target_gw", kickoff_col="fixture_kickoff")

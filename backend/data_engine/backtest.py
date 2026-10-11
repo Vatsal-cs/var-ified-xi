@@ -165,6 +165,17 @@ class _setpiece_ctx:
         config.ATTACH_SETPIECE = self._old
 
 
+class _team_form_ctx:
+    """Team quality from recent expected goals instead of FPL's ratings.
+    Held open across data loading: the columns are built with the rows."""
+    def __enter__(self):
+        self._old = (config.TEAM_FORM, config.FEATURE_COLUMNS)
+        config.TEAM_FORM = True
+        config.FEATURE_COLUMNS = config.team_form_features(_BASE_FEATURES)
+    def __exit__(self, *a):
+        config.TEAM_FORM, config.FEATURE_COLUMNS = self._old
+
+
 class _bag_ctx:
     """Temporarily sets the seed-averaging bag size used while fitting."""
     def __init__(self, size): self.size = size
@@ -263,6 +274,14 @@ VARIANTS = {
                     "captain on the mean projection",
         fit=lambda df: train_model.train_models(df, save=False),
         predict=_bundle_predict,
+    ),
+    "team_form": Variant(
+        name="team_form",
+        description="team quality from each team's recent expected goals for and "
+                    "against (team_form.py), replacing FPL's strength ratings",
+        fit=lambda df: train_model.train_models(df, save=False),
+        predict=_bundle_predict,
+        context=_team_form_ctx,
     ),
     "bagged5": Variant(
         name="bagged5",
@@ -585,7 +604,8 @@ FIXTURE_CONTEXT_COLUMNS = [
     "fixture_difficulty",
     "days_since_last_match",
     "kickoff_time",
-] + list(ODDS_FEATURE_COLUMNS)
+] + list(ODDS_FEATURE_COLUMNS) + ["opp_xg_for", "opp_xg_against",
+                                   "match_xg_for", "match_xg_against"]
 
 
 def frozen_form_for_doubles(fixtures: pd.DataFrame) -> pd.DataFrame:

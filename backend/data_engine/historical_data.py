@@ -31,7 +31,7 @@ import pandas as pd
 
 import config
 from config import HISTORICAL_SEASONS, HISTORICAL_DATA_BASE_URL, RAW_DIR, FALLBACK_AGE
-from data_engine import odds_data, setpiece_data
+from data_engine import odds_data, setpiece_data, team_form
 
 logger = logging.getLogger(__name__)
 
@@ -179,6 +179,10 @@ def fetch_season(season: str, season_index: int):
         + HISTORICAL_TEAM_ID_BASE
         + season_index * 100
     )
+    # Match identity, for team-level form (team_form.py).
+    out["fixture"] = gw_df["fixture"] if "fixture" in gw_df.columns else 0
+    out["opponent_team"] = (pd.to_numeric(gw_df["opponent_team"], errors="coerce").fillna(0).astype(int)
+                            + HISTORICAL_TEAM_ID_BASE + season_index * 100)
 
     out["team_strength_attack"] = gw_df["team"].map(lambda t: name_strength.get(t, {}).get("attack", 1100))
     out["team_strength_defence"] = gw_df["team"].map(lambda t: name_strength.get(t, {}).get("defence", 1100))
@@ -187,8 +191,47 @@ def fetch_season(season: str, season_index: int):
 
     _attach_odds_features(out, gw_df, season)
     _attach_setpiece_features(out, gw_df, season)
+    if config.TEAM_FORM:
+        offset = HISTORICAL_TEAM_ID_BASE + season_index * 100
+        names = {int(r["id"]) + offset: r["name"] for _, r in teams_df.iterrows()}
+        start = team_form.priors(final_team_form(_previous_season(season)), names)
+        team_form.SEASON_START[season] = start
+        team_form.attach(out, start)
 
     return out
+
+
+def _previous_season(season: str) -> str:
+    """'2024-25' -> '2023-24'."""
+    start = int(season[:4]) - 1
+    return f"{start}-{str(start + 1)[2:]}"
+
+
+def final_team_form(season: str) -> dict:
+    """{club name: (attack, defence)} at the end of a completed season, from
+    the archive — the prior for the season after. None if that season isn't
+    available or carries no xG (the archive's xG begins in 2022-23)."""
+    try:
+        gw_df = pd.read_csv(io.StringIO(_fetch_csv_text(
+            f"{HISTORICAL_DATA_BASE_URL}/{season}/gws/merged_gw.csv",
+            _season_cache_path(season, "merged_gw"))), low_memory=False)
+        teams_df = pd.read_csv(io.StringIO(_fetch_csv_text(
+            f"{HISTORICAL_DATA_BASE_URL}/{season}/teams.csv",
+            _season_cache_path(season, "teams"))))
+    except requests.RequestException:
+        return None
+    need = {"team", "opponent_team", "fixture", "kickoff_time", "expected_goals"}
+    if not need <= set(gw_df.columns) or pd.to_numeric(gw_df["expected_goals"], errors="coerce").fillna(0).sum() == 0:
+        return None
+    id_by_name = dict(zip(teams_df["name"], teams_df["id"]))
+    rows = pd.DataFrame({
+        "team": gw_df["team"].map(id_by_name),
+        "opponent_team": pd.to_numeric(gw_df["opponent_team"], errors="coerce"),
+        "fixture": gw_df["fixture"],
+        "kickoff_time": pd.to_datetime(gw_df["kickoff_time"], errors="coerce", utc=True),
+        "expected_goals": pd.to_numeric(gw_df["expected_goals"], errors="coerce").fillna(0),
+    }).dropna(subset=["team", "opponent_team"])
+    return team_form.final_by_name(rows, dict(zip(teams_df["id"], teams_df["name"])))
 
 
 def _attach_odds_features(out: pd.DataFrame, gw_df: pd.DataFrame, season: str) -> None:

@@ -40,7 +40,7 @@ from config import (
     FORM_SHRINKAGE_GAMES,
 )
 import config
-from data_engine import historical_data, horizon_availability, setpiece_data
+from data_engine import historical_data, horizon_availability, setpiece_data, team_form
 from data_engine.odds_data import ODDS_NEUTRAL
 from data_engine.setpiece_data import SETPIECE_NEUTRAL
 
@@ -234,6 +234,7 @@ def build_gameweek_history_df(bootstrap: dict, player_histories: dict,
                 "was_home": int(gw.get("was_home", False)),
                 "now_cost": gw.get("value", meta.get("now_cost", 0)),
                 "opponent_team": opp_id,
+                "fixture": gw.get("fixture"),
                 "kickoff_time": _parse_kickoff(gw.get("kickoff_time")),
                 "team_strength_attack": team_strength.get(meta.get("team"), {}).get("attack", 1100),
                 "team_strength_defence": team_strength.get(meta.get("team"), {}).get("defence", 1100),
@@ -265,7 +266,16 @@ def build_gameweek_history_df(bootstrap: dict, player_histories: dict,
         raise ValueError("No gameweek history rows built — check player_histories input.")
     df.sort_values(["player_id", "round"], inplace=True)
     attach_live_setpieces(df, bootstrap)
+    if config.TEAM_FORM:
+        team_form.attach(df, live_team_form_start(bootstrap))
     return df
+
+
+def live_team_form_start(bootstrap: dict) -> dict:
+    """This season's start-of-season team ratings: last season's final ones,
+    pulled toward the league average; promoted clubs like the relegated."""
+    names = {t["id"]: t["name"] for t in bootstrap["teams"]}
+    return team_form.priors(historical_data.final_team_form(config.HISTORICAL_SEASONS[-1]), names)
 
 
 def attach_live_setpieces(df: pd.DataFrame, bootstrap: dict) -> None:
@@ -674,6 +684,12 @@ def build_prediction_set(
                 previous_kickoff = kickoff
 
     out = pd.DataFrame(rows)
+    if config.TEAM_FORM:
+        # Ratings as of now — every match played so far — for both sides of
+        # each upcoming fixture.
+        _, now = team_form.ratings(team_form.team_matches(df_with_rolling),
+                                   live_team_form_start(bootstrap))
+        team_form.apply_current(out, now)
     limit_flags_to_next_round(out, first_gw)
     if config.HORIZON_AVAILABILITY:
         horizon_availability.apply(out, first_gw, _deadline(bootstrap, first_gw))

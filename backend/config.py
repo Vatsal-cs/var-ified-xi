@@ -171,6 +171,24 @@ FEATURE_COLUMNS = [
     # input.
 ]
 
+# Team quality from each team's own recent expected goals (team_form.py),
+# replacing FPL's published strength ratings — set before the season, and not
+# published at all for 2026-27. Under test.
+TEAM_FORM = False
+TEAM_FORM_COLUMNS = ["team_xg_for", "team_xg_against", "opp_xg_for",
+                     "opp_xg_against", "match_xg_for", "match_xg_against"]
+TEAM_FORM_REPLACES = ["team_strength_attack", "team_strength_defence",
+                      "opp_strength_attack", "opp_strength_defence", "fixture_difficulty"]
+
+
+def team_form_features(base: list) -> list:
+    """The feature list with FPL's strength ratings swapped for team form."""
+    return [c for c in base if c not in TEAM_FORM_REPLACES] + list(TEAM_FORM_COLUMNS)
+
+
+if TEAM_FORM:
+    FEATURE_COLUMNS = team_form_features(FEATURE_COLUMNS)
+
 # Used when a player's birth date isn't available (some new signings, and
 # ALL historical-season rows, since that dataset doesn't include birth
 # dates). A neutral fallback avoids biasing the model toward "age == 0",
