@@ -9,22 +9,57 @@ cron schedule fires regardless. This asks the FPL API when the next deadline
 is and answers yes or no, so a scheduled run outside the window costs a few
 seconds instead of several minutes of CI time.
 
+It also says yes once right after a gameweek finishes, if the dashboard
+hasn't been refreshed since: the new plan (and the Wildcard check) for next
+week should be waiting the morning after the last match, not a day before the
+next deadline.
+
 Writes `should_run` and `gameweek` to $GITHUB_OUTPUT for later workflow steps.
 Run it locally too — it prints the same answer to stderr.
 """
 
+import json
 import os
 import sys
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 
 import requests
 
-from config import BOOTSTRAP_URL, REQUEST_HEADERS, REQUEST_TIMEOUT
+from config import (BOOTSTRAP_URL, FIXTURES_URL, FRONTEND_JSON_PATH, REQUEST_HEADERS,
+                    REQUEST_TIMEOUT)
 
 # How long before a deadline the engine should start refreshing. Wide enough
 # that a late or skipped cron run still lands inside it, and late enough that
 # team news and price changes are mostly in.
 WINDOW_HOURS = 30
+
+# A match is over this long after kickoff (stoppage time, plus a margin).
+MATCH_LENGTH = timedelta(hours=2)
+
+
+def _finished_since_refresh(bootstrap: dict, now: datetime) -> bool:
+    """True if the current gameweek's last match has ended and the dashboard
+    was generated before it did."""
+    current = next((e for e in bootstrap.get("events", []) if e.get("is_current")), None)
+    if current is None:
+        return False
+    try:
+        fixtures = requests.get(f"{FIXTURES_URL}?event={current['id']}", headers=REQUEST_HEADERS,
+                                timeout=REQUEST_TIMEOUT).json()
+    except requests.RequestException:
+        return False
+    kickoffs = [datetime.fromisoformat(f["kickoff_time"].replace("Z", "+00:00"))
+                for f in fixtures if f.get("kickoff_time")]
+    if not kickoffs or not all(f.get("finished_provisional") or f.get("finished") for f in fixtures):
+        return False
+    ended = max(kickoffs) + MATCH_LENGTH
+    if now < ended:
+        return False
+    try:
+        generated = datetime.fromisoformat(json.loads(FRONTEND_JSON_PATH.read_text())["generated_at"])
+    except (OSError, KeyError, ValueError):
+        return True
+    return generated < ended
 
 
 def main() -> int:
@@ -58,10 +93,13 @@ def main() -> int:
     gameweek, deadline = min(upcoming, key=lambda pair: pair[1])
     hours = (deadline - now).total_seconds() / 3600
 
-    should_run = force or hours <= WINDOW_HOURS
+    after_gameweek = (not force and hours > WINDOW_HOURS
+                      and _finished_since_refresh(bootstrap, now))
+    should_run = force or hours <= WINDOW_HOURS or after_gameweek
+    reason = " — a gameweek just finished" if after_gameweek else ""
     print(
         f"GW{gameweek} deadline in {hours:.1f}h "
-        f"({'running' if should_run else 'skipping'}).",
+        f"({'running' if should_run else 'skipping'}{reason}).",
         file=sys.stderr,
     )
     _emit(should_run, gameweek)

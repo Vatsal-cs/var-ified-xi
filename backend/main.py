@@ -40,6 +40,7 @@ from data_engine import (
     optimizer,
     planner,
     train_model,
+    transfer_optimizer,
 )
 
 logging.basicConfig(
@@ -72,7 +73,7 @@ def build_output_json(bootstrap: dict, predictions_df, result: dict,
                       plan: dict = None, team_state=None,
                       chip_advice: list = None, chip_watch: dict = None,
                       league_view: dict = None, chip_expiry: dict = None,
-                      captain_override: dict = None) -> dict:
+                      captain_override: dict = None, wildcard_option: dict = None) -> dict:
     """Assembles the final clean JSON contract the frontend will consume."""
     teams_lookup = {t["id"]: t["name"] for t in bootstrap["teams"]}
     pos_lookup = config.POSITIONS
@@ -129,6 +130,8 @@ def build_output_json(bootstrap: dict, predictions_df, result: dict,
         output["chip_expiry"] = chip_expiry
     if captain_override:
         output["captain_override"] = captain_override
+    if wildcard_option:
+        output["wildcard_option"] = wildcard_option
     if plan:
         output["transfer_plan"] = _plan_payload(plan, pred_lookup, pos_lookup, teams_lookup)
     if team_state:
@@ -293,13 +296,26 @@ def run_pipeline(team_id: int = None) -> None:
     if team_id:
         league_view = rivals.build_league_view(team_id, bootstrap, upcoming_gw)
 
+    # 6c. Is the Wildcard worth playing this week? Computed every refresh
+    # while it's in hand, so the answer is on the dashboard without anyone
+    # having to run anything.
+    wildcard_option = None
+    if team_state and "wildcard" in (team_state.chips_available or []):
+        try:
+            wildcard_option = _wildcard_option(predictions_df, team_state, upcoming_gw,
+                                               plan, league_view,
+                                               {t["id"]: t["name"] for t in bootstrap["teams"]})
+        except Exception as e:                      # never fatal to the refresh
+            logger.warning("Wildcard check skipped: %s", e)
+
     # 7. Write output
     output = build_output_json(bootstrap, predictions_df, result, plan=plan,
                                team_state=team_state, chip_advice=chip_advice,
                                league_view=league_view,
                                chip_expiry=chip_expiry,
                                chip_watch=chip_watch,
-                               captain_override=captain_override)
+                               captain_override=captain_override,
+                               wildcard_option=wildcard_option)
 
     config.OUTPUT_JSON_PATH.write_text(json.dumps(output, indent=2))
     config.FRONTEND_JSON_PATH.write_text(json.dumps(output, indent=2))
@@ -350,6 +366,62 @@ def _apply_armband_override(result: dict, plan: dict, predictions_df, gameweek) 
     logger.info("Armband: your pick %s (C) / %s (VC) for GW%s; the model had "
                 "different ones.", wanted.get("captain"), wanted.get("vice_captain"), gameweek)
     return model_pick
+
+
+def _wildcard_option(predictions_df, team_state, upcoming_gw, free_plan: dict,
+                     league_view: dict = None, team_names: dict = None) -> dict:
+    """The same six-week plan with a Wildcard played this gameweek, against
+    the free-transfer plan the dashboard already recommends."""
+    xp_by_gw = {
+        int(row["player_id"]): {int(k): float(v) for k, v in (row["xp_by_gw"] or {}).items()}
+        for _, row in predictions_df.iterrows()
+    }
+    gameweeks = [upcoming_gw + i for i in range(config.HORIZON_GWS)]
+    logger.info("Checking a Wildcard this gameweek...")
+    wild = transfer_optimizer.plan_transfers(predictions_df, team_state, xp_by_gw, gameweeks,
+                                             max_total_hits=0, wildcard=True)
+    week = wild["weeks"][0]
+    p = predictions_df.set_index("player_id")
+    proj = p["predicted_points"].to_dict()
+    captain, vice = planner.pick_captains(week["starting_ids"], proj)
+    owned = (league_view or {}).get("owned_by_ahead") or {}
+    ahead = (league_view or {}).get("rivals_ahead", 0)
+
+    def player(pid, starting):
+        return {
+            "player_id": int(pid),
+            "name": p["web_name"].get(pid),
+            "position": config.POSITIONS.get(int(p["element_type"].get(pid, 0))),
+            "team": (team_names or {}).get(int(p["team"].get(pid, 0)), "Unknown"),
+            "cost_m": round(float(p["now_cost"].get(pid, 0)) / 10, 1),
+            "predicted_points": round(float(proj.get(pid, 0)), 2),
+            "horizon_points": round(float(p["horizon_points"].get(pid, 0)), 2),
+            "starting": starting,
+            "new": pid not in team_state.squad,
+            "owned_by_ahead": int(owned.get(str(pid), 0)),
+        }
+
+    xi = [player(i, True) for i in week["starting_ids"]]
+    bench = [player(i, False) for i in week["squad_ids"] if i not in week["starting_ids"]]
+    free_week = free_plan["weeks"][0]
+    return {
+        "gameweek": upcoming_gw,
+        "gain_six_weeks": round(planner.horizon_score(wild) - planner.horizon_score(free_plan), 1),
+        "points_with": round(sum(x["predicted_points"] for x in xi) + proj.get(captain, 0), 1),
+        "points_without": round(free_week["predicted_points"], 1),
+        "changes": len(week["transfers_in"]),
+        "xi_m": round(sum(x["cost_m"] for x in xi), 1),
+        "bench_m": round(sum(x["cost_m"] for x in bench), 1),
+        "bank_m": week["bank_m"],
+        "captain_id": captain,
+        "vice_captain_id": vice,
+        "squad": xi + bench,
+        "rivals_ahead": ahead,
+        "free_alternative": {
+            "out": [x["name"] for x in free_week["transfers_out"]],
+            "in": [x["name"] for x in free_week["transfers_in"]],
+        },
+    }
 
 
 def _plan_from_team(predictions_df, team_state, upcoming_gw):

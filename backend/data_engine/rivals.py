@@ -166,6 +166,10 @@ def build_league_view(entry_id: int, bootstrap: dict, gameweek: int) -> dict:
             "differentials": differentials,
             "template_gaps": template_gaps,
             "chips_spent": _chip_ledger(rows, entry_id),
+            # How many of the managers ahead START each player — so any squad
+            # (the Wildcard option, say) can be marked for differentials.
+            # Information only; never an optimizer input.
+            "owned_by_ahead": {str(pid): c for pid, c in counts.items()},
             # The chip set currently in play. FPL issues chips per half
             # season, so "who has used what" only means something within the
             # window it applies to — a rival's GW3 Triple Captain is spent,

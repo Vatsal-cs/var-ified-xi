@@ -9,6 +9,7 @@ import BenchStrip from "@/components/BenchStrip";
 import SquadStats from "@/components/SquadStats";
 import TransfersPanel from "@/components/TransfersPanel";
 import ChipAdvice from "@/components/ChipAdvice";
+import WildcardPanel from "@/components/WildcardPanel";
 import LeagueView from "@/components/LeagueView";
 import PipelineExplainer from "@/components/PipelineExplainer";
 import Glossary from "@/components/Glossary";
@@ -62,6 +63,11 @@ export default function Home() {
             expiry={team.chip_expiry}
             horizonGws={team.horizon_gws}
           />
+          {team.wildcard_option && (
+            <div className="mt-4">
+              <WildcardPanel option={team.wildcard_option} />
+            </div>
+          )}
         </Section>
 
         {/* Who you're actually racing, and what they own */}

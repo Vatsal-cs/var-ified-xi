@@ -132,6 +132,38 @@ export interface LeagueView {
   chip_window?: { start: number; end: number };
 }
 
+export interface WildcardPlayer {
+  player_id: number;
+  name: string;
+  position: Player["position"];
+  team: string;
+  cost_m: number;
+  predicted_points: number;
+  horizon_points: number;
+  starting: boolean;
+  /** Not in your current squad. */
+  new: boolean;
+  /** How many of the managers ahead of you in your league start him. */
+  owned_by_ahead: number;
+}
+
+export interface WildcardOption {
+  gameweek: number;
+  /** Decay-weighted expected points over the six-week horizon, vs the free-transfer plan. */
+  gain_six_weeks: number;
+  points_with: number;
+  points_without: number;
+  changes: number;
+  xi_m: number;
+  bench_m: number;
+  bank_m: number;
+  captain_id: number;
+  vice_captain_id: number | null;
+  squad: WildcardPlayer[];
+  rivals_ahead: number;
+  free_alternative: { out: string[]; in: string[] };
+}
+
 export interface OptimizedTeam {
   generated_at: string;
   gameweek: number | null;
@@ -157,6 +189,8 @@ export interface OptimizedTeam {
   chip_expiry?: ChipExpiry;
   /** Your mini-league: who owns what, and who has spent which chips. */
   league?: LeagueView;
+  /** The plan with a Wildcard played this gameweek, vs the free-transfer plan. */
+  wildcard_option?: WildcardOption;
   /** Present when captain/vice are your own pick (backend/overrides.json)
    *  rather than the model's; holds what the model would have chosen. */
   captain_override?: { model_captain_id: number; model_vice_captain_id: number | null };
