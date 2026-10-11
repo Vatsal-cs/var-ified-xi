@@ -173,7 +173,13 @@ FEATURE_COLUMNS = [
 
 # Team quality from each team's own recent expected goals (team_form.py),
 # replacing FPL's published strength ratings — set before the season, and not
-# published at all for 2026-27. Under test.
+# published at all for 2026-27.
+#
+# TESTED (Oct 2026, research/2026-10-team-form): backtest +34 in 2024-25 but
+# -153 [-276, -24] in 2025-26; on the 2026-27 GW2-5 replay it scored 267 vs
+# 292 for last season's FPL ratings, worse on every seed. A handful of
+# matches of xG is noisier than a whole season's rating. Stays off; the live
+# fallback (last season's ratings) stays.
 TEAM_FORM = False
 TEAM_FORM_COLUMNS = ["team_xg_for", "team_xg_against", "opp_xg_for",
                      "opp_xg_against", "match_xg_for", "match_xg_against"]

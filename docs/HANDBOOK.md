@@ -478,6 +478,7 @@ backtest, 3 in the simulator — under the verdict rules in section 1.
 | Hit must gain 8, not 6 | +299 | −1 [−92, +97] | no detectable effect |
 | Refit on all data after validating | +127 | +43 [−75, +171] · ahead 8 of 10 seed-seasons | no detectable effect |
 | Betting-odds features | −32 | +15 [−82, +107] | no detectable effect |
+| Team strength from recent xG instead of FPL's ratings (new) | — | 2025-26 −153 [−276, −24]; 2026-27 replay 267 vs 292 | worse — last season's FPL ratings stay |
 | Count bench players for less than 12% (new) | — | backtest +15 to +25, CIs span zero · simulator −36 [−85, +11] | no detectable effect — stays 12% |
 | Average five seed-different models (new) | — | starting XIs agreed between seeds 75–78% → 86–88%, all four seasons; points +25 [−37, +92] · held back +23 [−34, +82] | ✅ **shipped** — steadier picks, no cost |
 | Injured/suspended later weeks by return dates and curves (new, step 3) | — | +4.7 [−26, +33] paired · 11 of 222 decisions changed | no detectable effect — stays off |
