@@ -6,3 +6,5 @@ data/output/
 models/*.pkl
 .env
 logs/
+research/*/rows_*.csv
+research/*/log_*.txt

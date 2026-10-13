@@ -482,6 +482,7 @@ backtest, 3 in the simulator — under the verdict rules in section 1.
 | Count bench players for less than 12% (new) | — | backtest +15 to +25, CIs span zero · simulator −36 [−85, +11] | no detectable effect — stays 12% |
 | Average five seed-different models (new) | — | starting XIs agreed between seeds 75–78% → 86–88%, all four seasons; points +25 [−37, +92] · held back +23 [−34, +82] | ✅ **shipped** — steadier picks, no cost |
 | Injured/suspended later weeks by return dates and curves (new, step 3) | — | +4.7 [−26, +33] paired · 11 of 222 decisions changed | no detectable effect — stays off |
+| Projections biased by player type: attackers vs steady defenders, after one missed match, points from one big game (new) | — | +0.02 [−0.43, +0.41] · −0.06 [−0.12, −0.00] · +0.12 [−0.23, +0.51] pts per match | no bias found — nothing to fix |
 | Split populations vs starters-only for both stages | +7 | starters-only **+56** [+11, +103] on the tuning seasons — then +18 and −17 on the held-back seasons | ⚠️ **unconfirmed**: split populations stay |
 | Backtest from GW2, not GW8 | — | — | kept: a coverage fix, not a points claim |
 
@@ -697,6 +698,11 @@ fresh squads. Public repo means unlimited free Actions minutes.
   0.3% score 15+. An 80-point week needs a captain haul plus two or three others
   landing at once. What's achievable is moving the *expectation* from roughly 52
   to roughly 60.
+- **Close start/bench calls are close to coin flips.** When two players'
+  projections differ by under a point, the higher one outscores the other only
+  52–57% of the time in a given week (2024-26, ties left out), and 75% even at a
+  3-point gap. The edge shows over a season, not in every week. Tested for
+  bias by player type in October 2026 (research/2026-10-projection-bias): none.
 - **It can't see team news beyond FPL's own flags.** From 2024-25 the harnesses
   see the injury flags FPL published before each deadline; they still can't see
   a press conference that hasn't reached the flags.

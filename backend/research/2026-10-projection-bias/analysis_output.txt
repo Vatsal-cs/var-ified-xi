@@ -1,0 +1,83 @@
+T1 attackers - steady defenders (2025-26): 0.017 [-0.425, 0.413] n=1638/212 -> no bias found
+     {'group': 'A attackers', 'n': 1638, 'pred': np.float64(3.83), 'actual': np.float64(3.93), 'residual': np.float64(0.1), 'p60_pred': np.float64(0.816), 'p60_actual': np.float64(0.829), 'if60_pred': np.float64(4.44), 'if60_actual': np.float64(4.45)}
+     {'group': 'S steady defenders', 'n': 212, 'pred': np.float64(3.74), 'actual': np.float64(3.83), 'residual': np.float64(0.09), 'p60_pred': np.float64(0.898), 'p60_actual': np.float64(0.915), 'if60_pred': np.float64(4.06), 'if60_actual': np.float64(4.12)}
+T2 -> no bias found
+   pooled   -0.059 [-0.116, -0.003] n=436/None  control 0.007 [-0.004, 0.017]
+         {'group': 'test', 'n': 436, 'pred': np.float64(1.98), 'actual': np.float64(2.1), 'residual': np.float64(0.13), 'p60_pred': np.float64(0.54), 'p60_actual': np.float64(0.482), 'if60_pred': np.float64(3.35), 'if60_actual': np.float64(3.71)}
+         {'group': 'control', 'n': 8899, 'pred': np.float64(3.29), 'actual': np.float64(3.36), 'residual': np.float64(0.07), 'p60_pred': np.float64(0.858), 'p60_actual': np.float64(0.865), 'if60_pred': np.float64(3.66), 'if60_actual': np.float64(3.69)}
+   2024-25  -0.020 [-0.102, 0.062] n=239/None  control 0.004 [-0.014, 0.021]
+         {'group': 'test', 'n': 239, 'pred': np.float64(1.86), 'actual': np.float64(2.12), 'residual': np.float64(0.26), 'p60_pred': np.float64(0.547), 'p60_actual': np.float64(0.527), 'if60_pred': np.float64(3.11), 'if60_actual': np.float64(3.51)}
+         {'group': 'control', 'n': 4385, 'pred': np.float64(3.12), 'actual': np.float64(3.21), 'residual': np.float64(0.09), 'p60_pred': np.float64(0.859), 'p60_actual': np.float64(0.864), 'if60_pred': np.float64(3.44), 'if60_actual': np.float64(3.5)}
+   2025-26  -0.106 [-0.171, -0.037] n=197/None  control 0.01 [-0.003, 0.022]
+         {'group': 'test', 'n': 197, 'pred': np.float64(2.12), 'actual': np.float64(2.08), 'residual': np.float64(-0.04), 'p60_pred': np.float64(0.532), 'p60_actual': np.float64(0.426), 'if60_pred': np.float64(3.71), 'if60_actual': np.float64(4.0)}
+         {'group': 'control', 'n': 4514, 'pred': np.float64(3.46), 'actual': np.float64(3.5), 'residual': np.float64(0.04), 'p60_pred': np.float64(0.856), 'p60_actual': np.float64(0.866), 'if60_pred': np.float64(3.87), 'if60_actual': np.float64(3.87)}
+T3 -> no bias found
+   pooled   +0.123 [-0.231, 0.512] n=769/924
+         {'group': 'test', 'n': 769, 'pred': np.float64(3.73), 'actual': np.float64(3.81), 'residual': np.float64(0.09), 'p60_pred': np.float64(0.825), 'p60_actual': np.float64(0.828), 'if60_pred': np.float64(4.22), 'if60_actual': np.float64(4.25)}
+         {'group': 'control', 'n': 924, 'pred': np.float64(4.02), 'actual': np.float64(3.98), 'residual': np.float64(-0.04), 'p60_pred': np.float64(0.884), 'p60_actual': np.float64(0.889), 'if60_pred': np.float64(4.4), 'if60_actual': np.float64(4.33)}
+   2024-25  +0.127 [-0.572, 0.836] n=350/359
+         {'group': 'test', 'n': 350, 'pred': np.float64(3.84), 'actual': np.float64(4.04), 'residual': np.float64(0.2), 'p60_pred': np.float64(0.828), 'p60_actual': np.float64(0.829), 'if60_pred': np.float64(4.34), 'if60_actual': np.float64(4.46)}
+         {'group': 'control', 'n': 359, 'pred': np.float64(4.1), 'actual': np.float64(4.18), 'residual': np.float64(0.07), 'p60_pred': np.float64(0.894), 'p60_actual': np.float64(0.894), 'if60_pred': np.float64(4.47), 'if60_actual': np.float64(4.52)}
+   2025-26  +0.099 [-0.345, 0.542] n=419/565
+         {'group': 'test', 'n': 419, 'pred': np.float64(3.63), 'actual': np.float64(3.62), 'residual': np.float64(-0.01), 'p60_pred': np.float64(0.823), 'p60_actual': np.float64(0.828), 'if60_pred': np.float64(4.12), 'if60_actual': np.float64(4.08)}
+         {'group': 'control', 'n': 565, 'pred': np.float64(3.96), 'actual': np.float64(3.86), 'residual': np.float64(-0.11), 'p60_pred': np.float64(0.877), 'p60_actual': np.float64(0.885), 'if60_pred': np.float64(4.36), 'if60_actual': np.float64(4.21)}
+
+Close calls (post hoc): higher projection outscores the lower, ties excluded
+  gap  pairs  higher_wins
+0-0.5 231240        0.524
+0.5-1 156025        0.567
+1-1.5  86667        0.604
+1.5-2  42394        0.641
+  2-3  34433        0.681
+ 3-99  30496        0.745
+
+2024-25
+          group    n  pred  actual  residual  p60_pred  p60_actual  if60_pred  if60_actual
+             GK  451  3.43    3.29     -0.14     0.918       0.914       3.68         3.50
+            DEF 1138  3.31    3.26     -0.05     0.856       0.862       3.72         3.61
+            MID 2060  3.67    3.62     -0.05     0.777       0.763       4.38         4.22
+            FWD  670  4.04    4.18      0.14     0.762       0.793       4.93         4.90
+MID/FWD low xGI  909  3.24    3.16     -0.08     0.708       0.696       4.14         3.89
+MID/FWD mid xGI  902  3.62    3.78      0.16     0.769       0.782       4.36         4.39
+MID/FWD top xGI  919  4.41    4.33     -0.09     0.843       0.831       4.97         4.81
+    DEF low xGI  372  3.20    3.09     -0.11     0.835       0.825       3.70         3.51
+    DEF mid xGI  384  3.28    3.41      0.13     0.860       0.883       3.68         3.74
+    DEF top xGI  382  3.44    3.28     -0.16     0.873       0.877       3.77         3.56
+
+2025-26
+          group    n  pred  actual  residual  p60_pred  p60_actual  if60_pred  if60_actual
+             GK  539  3.32    3.35      0.03     0.932       0.950       3.51         3.47
+            DEF 1840  3.43    3.56      0.13     0.846       0.859       3.91         3.97
+            MID 2557  3.56    3.57      0.01     0.770       0.794       4.29         4.16
+            FWD  694  3.66    3.68      0.02     0.726       0.746       4.57         4.34
+MID/FWD low xGI 1068  3.24    3.25      0.01     0.734       0.757       4.04         3.92
+MID/FWD mid xGI 1087  3.49    3.48     -0.01     0.745       0.771       4.28         4.04
+MID/FWD top xGI 1096  4.00    4.04      0.05     0.802       0.822       4.68         4.59
+    DEF low xGI  590  3.28    3.26     -0.02     0.832       0.841       3.81         3.77
+    DEF mid xGI  626  3.48    3.70      0.23     0.854       0.882       3.91         3.95
+    DEF top xGI  624  3.53    3.71      0.17     0.852       0.853       4.01         4.17
+       DEF dc<6  599  3.24    3.37      0.14     0.785       0.808       3.89         3.87
+    DEF dc 6-10  947  3.45    3.61      0.15     0.869       0.873       3.86         3.98
+     DEF dc>=10  294  3.77    3.80      0.03     0.900       0.915       4.10         4.10
+
+live
+                group   n  pred  actual  residual  p60_pred  p60_actual  if60_pred  if60_actual
+                   GK  83  3.25    3.45      0.20     0.922       0.964       3.51         3.58
+                  DEF 288  3.45    3.43     -0.02     0.839       0.819       4.04         4.09
+                  MID 360  3.49    3.62      0.13     0.776       0.833       4.27         4.18
+                  FWD  85  3.77    3.71     -0.06     0.781       0.800       4.60         4.43
+      MID/FWD low xGI 147  3.15    3.06     -0.09     0.760       0.810       3.90         3.54
+      MID/FWD mid xGI 148  3.40    3.77      0.37     0.752       0.824       4.23         4.36
+      MID/FWD top xGI 150  4.08    4.07     -0.01     0.818       0.847       4.82         4.73
+          DEF low xGI  95  3.35    3.05     -0.29     0.839       0.811       3.89         3.71
+          DEF mid xGI  95  3.39    3.59      0.20     0.840       0.811       4.01         4.36
+          DEF top xGI  98  3.60    3.63      0.03     0.838       0.837       4.21         4.20
+             DEF dc<6 104  3.33    3.34      0.01     0.805       0.779       4.00         4.20
+          DEF dc 6-10 121  3.44    3.40     -0.04     0.847       0.818       4.03         4.05
+           DEF dc>=10  63  3.66    3.63     -0.03     0.881       0.889       4.12         4.02
+       T1 A attackers 234  3.90    3.89     -0.01     0.824       0.833       4.61         4.56
+T1 S steady defenders  49  3.66    3.53     -0.13     0.887       0.857       4.09         4.02
+         T2 one blank  30  2.18    1.37     -0.81     0.526       0.267       3.60         4.38
+           T2 control 454  3.36    3.55      0.19     0.838       0.868       3.91         3.98
+        T3 haul-heavy   8  3.88    3.38     -0.50     0.820       0.750       4.52         4.33
+            T3 steady  21  3.81    3.19     -0.62     0.866       0.905       4.39         3.32
