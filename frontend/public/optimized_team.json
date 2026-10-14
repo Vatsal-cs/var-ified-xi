@@ -1,11 +1,11 @@
 {
-  "generated_at": "2026-10-13T01:14:44.600294+00:00",
+  "generated_at": "2026-10-14T16:47:22.691372+00:00",
   "gameweek": 7,
   "horizon_gws": 6,
   "mode": "transfer_plan",
   "budget_used_m": 98.4,
   "budget_total_m": 100.0,
-  "predicted_total_points": 54.4,
+  "predicted_total_points": 56.85,
   "starting_xi": [
     {
       "player_id": 350,
@@ -14,14 +14,14 @@
       "team": "Liverpool",
       "now_cost_m": 5.5,
       "predicted_points": 3.67,
-      "horizon_points": 15.4,
+      "horizon_points": 15.39,
       "xp_by_gw": {
         "7": 3.67,
-        "8": 3.85,
+        "8": 3.84,
         "9": 3.31,
         "10": 3.83,
         "11": 3.76,
-        "12": 3.95
+        "12": 3.94
       },
       "start_probability": 0.96,
       "is_captain": false,
@@ -33,19 +33,19 @@
       "position": "DEF",
       "team": "Man City",
       "now_cost_m": 6.0,
-      "predicted_points": 4.54,
-      "horizon_points": 15.48,
+      "predicted_points": 4.62,
+      "horizon_points": 15.76,
       "xp_by_gw": {
-        "7": 4.54,
-        "8": 3.27,
-        "9": 3.45,
-        "10": 3.69,
-        "11": 3.96,
-        "12": 3.0
+        "7": 4.62,
+        "8": 3.33,
+        "9": 3.51,
+        "10": 3.76,
+        "11": 4.04,
+        "12": 3.05
       },
       "start_probability": 0.9,
       "is_captain": false,
-      "is_vice_captain": true
+      "is_vice_captain": false
     },
     {
       "player_id": 449,
@@ -54,14 +54,14 @@
       "team": "Newcastle",
       "now_cost_m": 5.3,
       "predicted_points": 3.99,
-      "horizon_points": 14.87,
+      "horizon_points": 14.86,
       "xp_by_gw": {
         "7": 3.99,
-        "8": 3.54,
-        "9": 3.89,
-        "10": 3.5,
+        "8": 3.53,
+        "9": 3.9,
+        "10": 3.49,
         "11": 2.81,
-        "12": 3.25
+        "12": 3.24
       },
       "start_probability": 0.91,
       "is_captain": false,
@@ -73,17 +73,17 @@
       "position": "DEF",
       "team": "Brighton",
       "now_cost_m": 5.1,
-      "predicted_points": 3.31,
-      "horizon_points": 12.64,
+      "predicted_points": 3.65,
+      "horizon_points": 13.92,
       "xp_by_gw": {
-        "7": 3.31,
-        "8": 2.54,
-        "9": 2.12,
-        "10": 3.21,
-        "11": 4.26,
-        "12": 3.25
+        "7": 3.65,
+        "8": 2.78,
+        "9": 2.3,
+        "10": 3.56,
+        "11": 4.71,
+        "12": 3.6
       },
-      "start_probability": 0.81,
+      "start_probability": 0.84,
       "is_captain": false,
       "is_vice_captain": false
     },
@@ -93,37 +93,17 @@
       "position": "DEF",
       "team": "Man City",
       "now_cost_m": 5.8,
-      "predicted_points": 3.76,
-      "horizon_points": 12.21,
+      "predicted_points": 4.17,
+      "horizon_points": 13.58,
       "xp_by_gw": {
-        "7": 3.76,
-        "8": 2.52,
-        "9": 2.68,
-        "10": 2.89,
-        "11": 3.05,
-        "12": 2.26
+        "7": 4.17,
+        "8": 2.81,
+        "9": 2.98,
+        "10": 3.24,
+        "11": 3.41,
+        "12": 2.48
       },
-      "start_probability": 0.69,
-      "is_captain": false,
-      "is_vice_captain": false
-    },
-    {
-      "player_id": 124,
-      "name": "Gro\u00df",
-      "position": "MID",
-      "team": "Brighton",
-      "now_cost_m": 6.0,
-      "predicted_points": 4.53,
-      "horizon_points": 18.92,
-      "xp_by_gw": {
-        "7": 4.53,
-        "8": 4.24,
-        "9": 3.34,
-        "10": 4.63,
-        "11": 6.62,
-        "12": 4.67
-      },
-      "start_probability": 0.96,
+      "start_probability": 0.72,
       "is_captain": false,
       "is_vice_captain": false
     },
@@ -133,37 +113,37 @@
       "position": "MID",
       "team": "Chelsea",
       "now_cost_m": 4.9,
-      "predicted_points": 4.36,
-      "horizon_points": 18.53,
+      "predicted_points": 5.07,
+      "horizon_points": 21.61,
       "xp_by_gw": {
-        "7": 4.36,
-        "8": 4.56,
-        "9": 4.48,
-        "10": 4.35,
-        "11": 4.68,
-        "12": 4.37
+        "7": 5.07,
+        "8": 5.37,
+        "9": 5.2,
+        "10": 5.07,
+        "11": 5.44,
+        "12": 5.1
       },
-      "start_probability": 0.62,
+      "start_probability": 0.74,
       "is_captain": false,
-      "is_vice_captain": false
+      "is_vice_captain": true
     },
     {
-      "player_id": 154,
-      "name": "Palmer",
+      "player_id": 124,
+      "name": "Gro\u00df",
       "position": "MID",
-      "team": "Chelsea",
-      "now_cost_m": 9.7,
-      "predicted_points": 3.96,
-      "horizon_points": 17.15,
+      "team": "Brighton",
+      "now_cost_m": 6.0,
+      "predicted_points": 4.93,
+      "horizon_points": 19.75,
       "xp_by_gw": {
-        "7": 3.96,
-        "8": 4.41,
-        "9": 4.11,
-        "10": 4.01,
-        "11": 4.26,
-        "12": 4.03
+        "7": 4.93,
+        "8": 4.35,
+        "9": 3.4,
+        "10": 5.02,
+        "11": 6.41,
+        "12": 5.05
       },
-      "start_probability": 0.88,
+      "start_probability": 0.96,
       "is_captain": false,
       "is_vice_captain": false
     },
@@ -173,17 +153,37 @@
       "position": "MID",
       "team": "Sunderland",
       "now_cost_m": 5.4,
-      "predicted_points": 3.61,
-      "horizon_points": 16.8,
+      "predicted_points": 4.11,
+      "horizon_points": 18.83,
       "xp_by_gw": {
-        "7": 3.61,
-        "8": 4.03,
-        "9": 4.92,
-        "10": 3.75,
-        "11": 3.7,
-        "12": 4.46
+        "7": 4.11,
+        "8": 4.5,
+        "9": 5.45,
+        "10": 4.3,
+        "11": 4.11,
+        "12": 4.9
       },
-      "start_probability": 0.94,
+      "start_probability": 0.95,
+      "is_captain": false,
+      "is_vice_captain": false
+    },
+    {
+      "player_id": 154,
+      "name": "Palmer",
+      "position": "MID",
+      "team": "Chelsea",
+      "now_cost_m": 9.7,
+      "predicted_points": 4.07,
+      "horizon_points": 17.75,
+      "xp_by_gw": {
+        "7": 4.07,
+        "8": 4.63,
+        "9": 4.23,
+        "10": 4.18,
+        "11": 4.38,
+        "12": 4.13
+      },
+      "start_probability": 0.89,
       "is_captain": false,
       "is_vice_captain": false
     },
@@ -193,15 +193,15 @@
       "position": "FWD",
       "team": "Man City",
       "now_cost_m": 15.6,
-      "predicted_points": 7.65,
-      "horizon_points": 25.25,
+      "predicted_points": 7.53,
+      "horizon_points": 24.6,
       "xp_by_gw": {
-        "7": 7.65,
-        "8": 5.16,
-        "9": 5.49,
-        "10": 6.05,
-        "11": 6.79,
-        "12": 4.47
+        "7": 7.53,
+        "8": 4.98,
+        "9": 5.31,
+        "10": 5.88,
+        "11": 6.67,
+        "12": 4.3
       },
       "start_probability": 0.91,
       "is_captain": true,
@@ -213,17 +213,17 @@
       "position": "FWD",
       "team": "Newcastle",
       "now_cost_m": 6.3,
-      "predicted_points": 3.37,
-      "horizon_points": 12.45,
+      "predicted_points": 3.51,
+      "horizon_points": 12.97,
       "xp_by_gw": {
-        "7": 3.37,
-        "8": 2.84,
-        "9": 3.26,
-        "10": 2.87,
-        "11": 2.47,
-        "12": 2.83
+        "7": 3.51,
+        "8": 2.96,
+        "9": 3.39,
+        "10": 2.99,
+        "11": 2.59,
+        "12": 2.95
       },
-      "start_probability": 0.8,
+      "start_probability": 0.81,
       "is_captain": false,
       "is_vice_captain": false
     }
@@ -235,17 +235,17 @@
       "position": "GK",
       "team": "Coventry City",
       "now_cost_m": 4.5,
-      "predicted_points": 2.54,
-      "horizon_points": 10.92,
+      "predicted_points": 2.53,
+      "horizon_points": 10.9,
       "xp_by_gw": {
-        "7": 2.54,
+        "7": 2.53,
         "8": 2.78,
         "9": 2.8,
         "10": 2.56,
-        "11": 2.7,
-        "12": 2.29
+        "11": 2.69,
+        "12": 2.28
       },
-      "start_probability": 0.94,
+      "start_probability": 0.95,
       "is_captain": false,
       "is_vice_captain": false
     },
@@ -255,15 +255,15 @@
       "position": "MID",
       "team": "Brentford",
       "now_cost_m": 5.0,
-      "predicted_points": 3.27,
-      "horizon_points": 14.81,
+      "predicted_points": 3.28,
+      "horizon_points": 14.87,
       "xp_by_gw": {
-        "7": 3.27,
-        "8": 3.92,
-        "9": 3.93,
-        "10": 3.16,
-        "11": 4.07,
-        "12": 2.94
+        "7": 3.28,
+        "8": 3.94,
+        "9": 3.95,
+        "10": 3.18,
+        "11": 4.06,
+        "12": 2.96
       },
       "start_probability": 0.94,
       "is_captain": false,
@@ -275,15 +275,15 @@
       "position": "DEF",
       "team": "Nott'm Forest",
       "now_cost_m": 5.5,
-      "predicted_points": 3.02,
-      "horizon_points": 14.39,
+      "predicted_points": 3.22,
+      "horizon_points": 15.59,
       "xp_by_gw": {
-        "7": 3.02,
-        "8": 4.12,
-        "9": 3.61,
-        "10": 2.94,
-        "11": 3.48,
-        "12": 3.7
+        "7": 3.22,
+        "8": 4.51,
+        "9": 3.9,
+        "10": 3.15,
+        "11": 3.77,
+        "12": 4.1
       },
       "start_probability": 0.91,
       "is_captain": false,
@@ -295,23 +295,23 @@
       "position": "FWD",
       "team": "Chelsea",
       "now_cost_m": 7.8,
-      "predicted_points": 2.49,
-      "horizon_points": 11.27,
+      "predicted_points": 2.66,
+      "horizon_points": 12.1,
       "xp_by_gw": {
-        "7": 2.49,
-        "8": 3.09,
-        "9": 2.68,
-        "10": 2.56,
-        "11": 2.91,
-        "12": 2.53
+        "7": 2.66,
+        "8": 3.38,
+        "9": 2.81,
+        "10": 2.79,
+        "11": 3.1,
+        "12": 2.71
       },
-      "start_probability": 0.6,
+      "start_probability": 0.65,
       "is_captain": false,
       "is_vice_captain": false
     }
   ],
   "captain_id": 411,
-  "vice_captain_id": 388,
+  "vice_captain_id": 101,
   "chip_watch": {
     "checked_through_gw": 38,
     "next_double_gw": null,
@@ -361,13 +361,6 @@
         "share": 0.0
       },
       {
-        "player_id": 124,
-        "name": "Gro\u00df",
-        "cost_m": 6.0,
-        "owned_by": 0,
-        "share": 0.0
-      },
-      {
         "player_id": 350,
         "name": "A.Becker",
         "cost_m": 5.5,
@@ -382,9 +375,9 @@
         "share": 0.167
       },
       {
-        "player_id": 368,
-        "name": "Szoboszlai",
-        "cost_m": 6.9,
+        "player_id": 124,
+        "name": "Gro\u00df",
+        "cost_m": 6.0,
         "owned_by": 1,
         "share": 0.167
       },
@@ -408,13 +401,6 @@
         "player_id": 8,
         "name": "Calafiori",
         "cost_m": 5.9,
-        "owned_by": 3,
-        "share": 0.5
-      },
-      {
-        "player_id": 115,
-        "name": "De Cuyper",
-        "cost_m": 5.1,
         "owned_by": 3,
         "share": 0.5
       },
@@ -463,7 +449,7 @@
         "entry": 5103376,
         "name": "Pat Thakkar",
         "rank": 3,
-        "total": 381,
+        "total": 384,
         "is_you": false,
         "chips": [
           {
@@ -481,7 +467,7 @@
         "entry": 5874404,
         "name": "Sarthak Sharma",
         "rank": 4,
-        "total": 380,
+        "total": 381,
         "is_you": false,
         "chips": [],
         "hits_cost": 8
@@ -490,7 +476,7 @@
         "entry": 4801643,
         "name": "Aamer Quazi",
         "rank": 5,
-        "total": 341,
+        "total": 348,
         "is_you": false,
         "chips": [],
         "hits_cost": 0
@@ -499,7 +485,7 @@
         "entry": 5475730,
         "name": "Kaustav Sikder",
         "rank": 6,
-        "total": 327,
+        "total": 329,
         "is_you": false,
         "chips": [],
         "hits_cost": 8
@@ -508,7 +494,7 @@
         "entry": 9927826,
         "name": "Vatsal Jain",
         "rank": 7,
-        "total": 305,
+        "total": 320,
         "is_you": true,
         "chips": [],
         "hits_cost": 0
@@ -517,7 +503,7 @@
         "entry": 7912130,
         "name": "Akshit Kudyar",
         "rank": 8,
-        "total": 302,
+        "total": 305,
         "is_you": false,
         "chips": [],
         "hits_cost": 52
@@ -526,7 +512,7 @@
         "entry": 9765092,
         "name": "Mr Glass",
         "rank": 9,
-        "total": 259,
+        "total": 262,
         "is_you": false,
         "chips": [],
         "hits_cost": 0
@@ -535,7 +521,7 @@
         "entry": 3168209,
         "name": "Sumit Kumar Sharma",
         "rank": 10,
-        "total": 249,
+        "total": 262,
         "is_you": false,
         "chips": [],
         "hits_cost": 0
@@ -562,31 +548,31 @@
       "427": 2,
       "464": 1,
       "384": 1,
-      "499": 1,
+      "586": 1,
       "88": 1,
       "423": 1,
-      "428": 1,
       "12": 3,
-      "155": 2,
-      "399": 2,
+      "428": 1,
       "452": 1,
+      "399": 2,
+      "155": 2,
       "229": 1,
-      "368": 1,
+      "534": 1,
       "481": 1,
-      "480": 1,
       "486": 1,
+      "480": 1,
       "249": 1,
       "496": 1,
-      "11": 1,
+      "277": 1,
       "4": 1,
       "418": 1,
       "173": 1,
       "542": 1,
-      "491": 1,
+      "124": 1,
       "385": 1,
-      "142": 1,
+      "280": 1,
       "420": 1,
-      "14": 1,
+      "224": 1,
       "379": 1
     },
     "chip_window": {
@@ -607,14 +593,14 @@
     "best_weeks": [
       {
         "chip": "bboost",
-        "gameweek": 10,
-        "value": 11.6,
+        "gameweek": 7,
+        "value": 11.7,
         "player": null
       },
       {
         "chip": "3xc",
-        "gameweek": 7,
-        "value": 7.7,
+        "gameweek": 11,
+        "value": 6.7,
         "player": "Haaland"
       }
     ],
@@ -622,15 +608,15 @@
   },
   "wildcard_option": {
     "gameweek": 7,
-    "gain_six_weeks": 16.1,
-    "points_with": 60.6,
-    "points_without": 54.4,
+    "gain_six_weeks": 13.7,
+    "points_with": 62.5,
+    "points_without": 56.9,
     "changes": 12,
-    "xi_m": 79.6,
-    "bench_m": 21.3,
+    "xi_m": 81.1,
+    "bench_m": 19.8,
     "bank_m": 0.1,
     "captain_id": 411,
-    "vice_captain_id": 397,
+    "vice_captain_id": 399,
     "squad": [
       {
         "player_id": 1,
@@ -638,8 +624,8 @@
         "position": "GK",
         "team": "Arsenal",
         "cost_m": 6.1,
-        "predicted_points": 4.17,
-        "horizon_points": 16.12,
+        "predicted_points": 4.11,
+        "horizon_points": 15.88,
         "starting": true,
         "new": true,
         "owned_by_ahead": 2
@@ -650,23 +636,23 @@
         "position": "DEF",
         "team": "Arsenal",
         "cost_m": 7.9,
-        "predicted_points": 4.65,
-        "horizon_points": 18.56,
+        "predicted_points": 4.67,
+        "horizon_points": 18.63,
         "starting": true,
         "new": true,
         "owned_by_ahead": 1
       },
       {
-        "player_id": 566,
-        "name": "Silva",
+        "player_id": 8,
+        "name": "Calafiori",
         "position": "DEF",
-        "team": "Bournemouth",
-        "cost_m": 5.0,
-        "predicted_points": 4.07,
-        "horizon_points": 15.97,
+        "team": "Arsenal",
+        "cost_m": 5.9,
+        "predicted_points": 4.3,
+        "horizon_points": 17.38,
         "starting": true,
         "new": true,
-        "owned_by_ahead": 0
+        "owned_by_ahead": 3
       },
       {
         "player_id": 447,
@@ -674,46 +660,10 @@
         "position": "DEF",
         "team": "Newcastle",
         "cost_m": 5.0,
-        "predicted_points": 4.23,
-        "horizon_points": 15.92,
+        "predicted_points": 4.27,
+        "horizon_points": 16.08,
         "starting": true,
         "new": true,
-        "owned_by_ahead": 0
-      },
-      {
-        "player_id": 390,
-        "name": "R\u00faben",
-        "position": "DEF",
-        "team": "Man City",
-        "cost_m": 5.5,
-        "predicted_points": 4.7,
-        "horizon_points": 15.57,
-        "starting": true,
-        "new": true,
-        "owned_by_ahead": 0
-      },
-      {
-        "player_id": 12,
-        "name": "Saka",
-        "position": "MID",
-        "team": "Arsenal",
-        "cost_m": 9.6,
-        "predicted_points": 4.93,
-        "horizon_points": 20.79,
-        "starting": true,
-        "new": true,
-        "owned_by_ahead": 3
-      },
-      {
-        "player_id": 124,
-        "name": "Gro\u00df",
-        "position": "MID",
-        "team": "Brighton",
-        "cost_m": 6.0,
-        "predicted_points": 4.53,
-        "horizon_points": 18.92,
-        "starting": true,
-        "new": false,
         "owned_by_ahead": 0
       },
       {
@@ -722,11 +672,35 @@
         "position": "MID",
         "team": "Chelsea",
         "cost_m": 4.9,
-        "predicted_points": 4.36,
-        "horizon_points": 18.53,
+        "predicted_points": 5.07,
+        "horizon_points": 21.61,
         "starting": true,
         "new": true,
         "owned_by_ahead": 0
+      },
+      {
+        "player_id": 124,
+        "name": "Gro\u00df",
+        "position": "MID",
+        "team": "Brighton",
+        "cost_m": 6.0,
+        "predicted_points": 4.93,
+        "horizon_points": 19.75,
+        "starting": true,
+        "new": false,
+        "owned_by_ahead": 1
+      },
+      {
+        "player_id": 399,
+        "name": "Cherki",
+        "position": "MID",
+        "team": "Man City",
+        "cost_m": 7.9,
+        "predicted_points": 5.76,
+        "horizon_points": 18.72,
+        "starting": true,
+        "new": true,
+        "owned_by_ahead": 2
       },
       {
         "player_id": 397,
@@ -734,8 +708,8 @@
         "position": "MID",
         "team": "Man City",
         "cost_m": 8.3,
-        "predicted_points": 5.41,
-        "horizon_points": 17.54,
+        "predicted_points": 5.62,
+        "horizon_points": 17.96,
         "starting": true,
         "new": true,
         "owned_by_ahead": 0
@@ -746,11 +720,23 @@
         "position": "FWD",
         "team": "Man City",
         "cost_m": 15.6,
-        "predicted_points": 7.65,
-        "horizon_points": 25.25,
+        "predicted_points": 7.53,
+        "horizon_points": 24.6,
         "starting": true,
         "new": false,
         "owned_by_ahead": 6
+      },
+      {
+        "player_id": 106,
+        "name": "Thiago",
+        "position": "FWD",
+        "team": "Brentford",
+        "cost_m": 7.8,
+        "predicted_points": 4.44,
+        "horizon_points": 18.26,
+        "starting": true,
+        "new": true,
+        "owned_by_ahead": 0
       },
       {
         "player_id": 249,
@@ -758,8 +744,8 @@
         "position": "FWD",
         "team": "Everton",
         "cost_m": 5.7,
-        "predicted_points": 4.23,
-        "horizon_points": 15.85,
+        "predicted_points": 4.26,
+        "horizon_points": 16.03,
         "starting": true,
         "new": true,
         "owned_by_ahead": 1
@@ -770,8 +756,8 @@
         "position": "GK",
         "team": "Crystal Palace",
         "cost_m": 4.5,
-        "predicted_points": 3.17,
-        "horizon_points": 14.4,
+        "predicted_points": 3.16,
+        "horizon_points": 14.24,
         "starting": false,
         "new": true,
         "owned_by_ahead": 0
@@ -782,8 +768,20 @@
         "position": "DEF",
         "team": "Sunderland",
         "cost_m": 5.4,
-        "predicted_points": 3.63,
-        "horizon_points": 16.94,
+        "predicted_points": 3.68,
+        "horizon_points": 17.18,
+        "starting": false,
+        "new": true,
+        "owned_by_ahead": 0
+      },
+      {
+        "player_id": 87,
+        "name": "Ajer",
+        "position": "DEF",
+        "team": "Brentford",
+        "cost_m": 4.5,
+        "predicted_points": 3.37,
+        "horizon_points": 14.83,
         "starting": false,
         "new": true,
         "owned_by_ahead": 0
@@ -794,22 +792,10 @@
         "position": "MID",
         "team": "Sunderland",
         "cost_m": 5.4,
-        "predicted_points": 3.61,
-        "horizon_points": 16.8,
+        "predicted_points": 4.11,
+        "horizon_points": 18.83,
         "starting": false,
         "new": false,
-        "owned_by_ahead": 0
-      },
-      {
-        "player_id": 79,
-        "name": "Evanilson",
-        "position": "FWD",
-        "team": "Bournemouth",
-        "cost_m": 6.0,
-        "predicted_points": 4.07,
-        "horizon_points": 15.95,
-        "starting": false,
-        "new": true,
         "owned_by_ahead": 0
       }
     ],
@@ -832,7 +818,7 @@
             "player_id": 101,
             "name": "Henderson",
             "cost_m": 4.9,
-            "predicted_points": 4.36,
+            "predicted_points": 5.07,
             "position": "MID",
             "team": "Chelsea"
           }
@@ -852,17 +838,47 @@
         "hits": 0,
         "hit_cost": 0,
         "bank_m": 3.8,
-        "predicted_points": 54.4,
+        "predicted_points": 56.85,
         "captain_id": 411
       },
       {
         "gameweek": 8,
         "transfers_in": [
           {
+            "player_id": 480,
+            "name": "Gibbs-White",
+            "cost_m": 8.0,
+            "predicted_points": 6.51,
+            "position": "MID",
+            "team": "Nott'm Forest"
+          }
+        ],
+        "transfers_out": [
+          {
+            "player_id": 98,
+            "name": "Janelt",
+            "sell_price_m": 5.0,
+            "predicted_points": 3.94,
+            "position": "MID",
+            "team": "Brentford"
+          }
+        ],
+        "transfer_count": 1,
+        "free_transfers": 1,
+        "hits": 0,
+        "hit_cost": 0,
+        "bank_m": 0.8,
+        "predicted_points": 55.44,
+        "captain_id": 480
+      },
+      {
+        "gameweek": 9,
+        "transfers_in": [
+          {
             "player_id": 533,
             "name": "Mukiele",
             "cost_m": 5.4,
-            "predicted_points": 4.18,
+            "predicted_points": 4.82,
             "position": "DEF",
             "team": "Sunderland"
           }
@@ -872,7 +888,7 @@
             "player_id": 391,
             "name": "Gvardiol",
             "sell_price_m": 5.6,
-            "predicted_points": 2.52,
+            "predicted_points": 2.98,
             "position": "DEF",
             "team": "Man City"
           }
@@ -881,39 +897,9 @@
         "free_transfers": 1,
         "hits": 0,
         "hit_cost": 0,
-        "bank_m": 4.0,
-        "predicted_points": 50.44,
-        "captain_id": 411
-      },
-      {
-        "gameweek": 9,
-        "transfers_in": [
-          {
-            "player_id": 249,
-            "name": "Barry",
-            "cost_m": 5.7,
-            "predicted_points": 3.71,
-            "position": "FWD",
-            "team": "Everton"
-          }
-        ],
-        "transfers_out": [
-          {
-            "player_id": 165,
-            "name": "Jo\u00e3o Pedro",
-            "sell_price_m": 7.6,
-            "predicted_points": 2.68,
-            "position": "FWD",
-            "team": "Chelsea"
-          }
-        ],
-        "transfer_count": 1,
-        "free_transfers": 1,
-        "hits": 0,
-        "hit_cost": 0,
-        "bank_m": 5.9,
-        "predicted_points": 51.13,
-        "captain_id": 411
+        "bank_m": 1.0,
+        "predicted_points": 53.88,
+        "captain_id": 544
       },
       {
         "gameweek": 10,
@@ -922,27 +908,27 @@
             "player_id": 12,
             "name": "Saka",
             "cost_m": 9.6,
-            "predicted_points": 6.22,
+            "predicted_points": 6.18,
             "position": "MID",
             "team": "Arsenal"
           }
         ],
         "transfers_out": [
           {
-            "player_id": 98,
-            "name": "Janelt",
-            "sell_price_m": 5.0,
-            "predicted_points": 3.16,
+            "player_id": 154,
+            "name": "Palmer",
+            "sell_price_m": 9.6,
+            "predicted_points": 4.18,
             "position": "MID",
-            "team": "Brentford"
+            "team": "Chelsea"
           }
         ],
         "transfer_count": 1,
         "free_transfers": 1,
         "hits": 0,
         "hit_cost": 0,
-        "bank_m": 1.3,
-        "predicted_points": 54.71,
+        "bank_m": 1.0,
+        "predicted_points": 55.44,
         "captain_id": 12
       },
       {
@@ -952,7 +938,7 @@
             "player_id": 37,
             "name": "Lindel\u00f6f",
             "cost_m": 4.5,
-            "predicted_points": 4.32,
+            "predicted_points": 4.4,
             "position": "DEF",
             "team": "Aston Villa"
           }
@@ -962,7 +948,7 @@
             "player_id": 388,
             "name": "Gu\u00e9hi",
             "sell_price_m": 6.0,
-            "predicted_points": 3.96,
+            "predicted_points": 4.04,
             "position": "DEF",
             "team": "Man City"
           }
@@ -971,8 +957,8 @@
         "free_transfers": 1,
         "hits": 0,
         "hit_cost": 0,
-        "bank_m": 2.8,
-        "predicted_points": 57.53,
+        "bank_m": 2.5,
+        "predicted_points": 59.58,
         "captain_id": 411
       },
       {
@@ -982,27 +968,27 @@
             "player_id": 426,
             "name": "B.Fernandes",
             "cost_m": 11.9,
-            "predicted_points": 5.34,
+            "predicted_points": 5.43,
             "position": "MID",
             "team": "Man Utd"
           }
         ],
         "transfers_out": [
           {
-            "player_id": 154,
-            "name": "Palmer",
-            "sell_price_m": 9.6,
-            "predicted_points": 4.03,
+            "player_id": 12,
+            "name": "Saka",
+            "sell_price_m": 0.0,
+            "predicted_points": 3.8,
             "position": "MID",
-            "team": "Chelsea"
+            "team": "Arsenal"
           }
         ],
         "transfer_count": 1,
         "free_transfers": 1,
         "hits": 0,
         "hit_cost": 0,
-        "bank_m": 0.5,
-        "predicted_points": 53.5,
+        "bank_m": 0.2,
+        "predicted_points": 56.06,
         "captain_id": 426
       }
     ]
