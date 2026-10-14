@@ -10,6 +10,7 @@
 
 import { useEffect, useState } from "react";
 import type { OptimizedTeam } from "@/lib/types";
+import RefreshButton from "@/components/RefreshButton";
 
 const LINKS = [
   { id: "week", label: "This week" },
@@ -81,6 +82,7 @@ export default function SiteHeader({ team }: { team: OptimizedTeam }) {
             <span className="h-1.5 w-1.5 animate-pulseDot rounded-full bg-pts" />
             {timeAgo(team.generated_at)}
           </span>
+          <RefreshButton generatedAt={team.generated_at} />
         </div>
       </div>
 
