@@ -272,7 +272,7 @@ The league view is deliberately **not** an optimizer input. Tilting the solver t
 
 Set `FPL_TEAM_ID` as a repository variable for transfer plans instead of fresh squads.
 
-**Run now.** The dashboard header has a *Run now* button. It starts `weekly.yml` with `force` on — latest FPL data, retrain, re-solve — and reloads the page when the redeployed site has the new numbers, about 6 minutes later. It needs one Vercel environment variable, `GITHUB_TOKEN`: a fine-grained GitHub token with **Actions: Read and write** on this repository only. The token stays on the server (`app/api/refresh`). Because the site is public, clicks are limited to one run at a time, 10 minutes between manual runs, and 6 a day.
+**Run now.** The dashboard header has a *Run now* button. It starts `weekly.yml` with `force` on — latest FPL data, retrain, re-solve — and reloads the page when the redeployed site has the new numbers, about 6 minutes later. With no setup it reads *Run on GitHub*: it opens the workflow's page, where **Run workflow** starts the run, and the dashboard tab reloads itself when the new deploy lands. For one-tap runs, add a Vercel environment variable `GITHUB_TOKEN`: a fine-grained GitHub token with **Actions: Read and write** on this repository only. The token stays on the server (`app/api/refresh`). Because the site is public, clicks are limited to one run at a time, 10 minutes between manual runs, and 6 a day.
 
 ---
 

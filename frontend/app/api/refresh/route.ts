@@ -6,10 +6,13 @@
 // engine, commits the new optimized_team.json, and so redeploys the site.
 //
 // The GitHub token lives only here, on the server (Vercel env GITHUB_TOKEN:
-// a fine-grained token with Actions read/write on this one repo). The site is
-// public, so a click is rate-limited: one run at a time, a cooldown between
-// manual runs, and a daily cap — each run costs ~6 Actions minutes and a
-// deploy.
+// a fine-grained token with Actions read/write on this one repo). Without it
+// the button still works, one step longer: it opens the workflow's page on
+// GitHub to press "Run workflow" there, then watches for the new deploy.
+//
+// The site is public, so a click is rate-limited: one run at a time, a
+// cooldown between manual runs, and a daily cap — each run costs ~6 Actions
+// minutes and a deploy.
 
 import team from "@/public/optimized_team.json";
 
@@ -59,17 +62,22 @@ function summary(run: Run | undefined) {
   };
 }
 
+// Where to start a run by hand when no token is set: GitHub's own page for
+// the workflow, which has a "Run workflow" button for anyone signed in with
+// access to the repo.
+const workflowUrl = `https://github.com/${REPO}/actions/workflows/${WORKFLOW}`;
+
 // The generated_at of the data THIS deployment serves. The button compares it
 // with what the page showed to know when the new deploy is live.
 const deployed = (team as { generated_at?: string }).generated_at ?? null;
 
 export async function GET() {
   if (!process.env.GITHUB_TOKEN) {
-    return Response.json({ configured: false, run: null, deployed });
+    return Response.json({ configured: false, run: null, deployed, workflow_url: workflowUrl });
   }
   try {
     const runs = await recentRuns();
-    return Response.json({ configured: true, run: summary(runs[0]), deployed });
+    return Response.json({ configured: true, run: summary(runs[0]), deployed, workflow_url: workflowUrl });
   } catch {
     return Response.json({ configured: true, run: null, deployed, error: "github" }, { status: 502 });
   }

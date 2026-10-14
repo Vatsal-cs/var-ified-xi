@@ -5,16 +5,21 @@
 // shows the run's progress, and reloads the page once the redeployed site
 // serves the new numbers (~6 minutes end to end). The label doubles as the
 // status line, so it fits the header on a phone.
+//
+// Without a GitHub token on the server it becomes "Run on GitHub": a link to
+// the workflow's page, where "Run workflow" starts the same run. The page then
+// can't see the run itself, only the redeploy, so it waits for that.
 
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
 
-type Phase = "idle" | "starting" | "running" | "publishing";
+type Phase = "idle" | "starting" | "running" | "publishing" | "waiting";
 
 type Status = {
   configured: boolean;
   deployed: string | null;
+  workflow_url?: string;
   run: { status: string; conclusion: string | null; created_at: string } | null;
 };
 
@@ -22,9 +27,11 @@ const ACTIVE = new Set(["queued", "in_progress", "waiting", "requested", "pendin
 const POLL_MS = 10_000;
 // A finished run that changed nothing never redeploys; stop waiting after this.
 const PUBLISH_TIMEOUT_MS = 5 * 60_000;
+// Run started by hand on GitHub: allow for getting to the button, the run
+// (~6 min) and the deploy.
+const WAIT_TIMEOUT_MS = 15 * 60_000;
 
 const ERRORS: Record<string, string> = {
-  not_configured: "Not set up",
   daily_limit: "Daily limit hit",
   github: "Couldn't start",
 };
@@ -34,11 +41,13 @@ export default function RefreshButton({ generatedAt }: { generatedAt: string }) 
   const [note, setNote] = useState("");
   const [since, setSince] = useState(0);
   const [now, setNow] = useState(() => Date.now());
+  const [manualUrl, setManualUrl] = useState<string | null>(null);
   const phaseRef = useRef<Phase>("idle");
   const dispatchedAt = useRef(0);
-  const publishingSince = useRef(0);
+  const phaseSince = useRef(0);
 
   const go = useCallback((p: Phase) => {
+    if (phaseRef.current !== p) phaseSince.current = Date.now();
     phaseRef.current = p;
     setPhase(p);
   }, []);
@@ -59,6 +68,18 @@ export default function RefreshButton({ generatedAt }: { generatedAt: string }) 
       window.location.reload();
       return;
     }
+    setManualUrl(s.configured ? null : s.workflow_url ?? null);
+
+    const current = phaseRef.current;
+    const waited = Date.now() - phaseSince.current;
+    if (current === "waiting") {
+      if (waited > WAIT_TIMEOUT_MS) {
+        go("idle");
+        flash("No new data yet");
+      }
+      return;
+    }
+
     const run = s.run;
     if (!run) return;
     const created = Date.parse(run.created_at);
@@ -67,17 +88,15 @@ export default function RefreshButton({ generatedAt }: { generatedAt: string }) 
       go("running");
       return;
     }
-    const current = phaseRef.current;
     const ours = current === "running" || (current === "starting" && created >= dispatchedAt.current - 60_000);
     if (ours) {
       if (run.conclusion === "success") {
-        publishingSince.current = Date.now();
         go("publishing");
       } else {
         go("idle");
         flash("Run failed");
       }
-    } else if (current === "publishing" && Date.now() - publishingSince.current > PUBLISH_TIMEOUT_MS) {
+    } else if (current === "publishing" && waited > PUBLISH_TIMEOUT_MS) {
       go("idle");
       flash("Up to date");
     }
@@ -123,19 +142,56 @@ export default function RefreshButton({ generatedAt }: { generatedAt: string }) 
       return;
     }
     go("idle");
+    if (body.error === "not_configured") {
+      check(); // switches the button to its GitHub link
+      return;
+    }
     flash(body.error === "cooldown" ? `Wait ${body.wait_min}m` : ERRORS[body.error ?? ""] ?? "Couldn't start");
   }
 
   const mins = Math.max(0, Math.floor((now - since) / 60000));
+  const waitMins = Math.max(0, Math.floor((now - phaseSince.current) / 60000));
   const label =
     note ||
     {
-      idle: "Run now",
+      idle: manualUrl ? "Run on GitHub" : "Run now",
       starting: "Starting…",
       running: `Running · ${mins}m`,
       publishing: "Publishing…",
+      waiting: `Waiting · ${waitMins}m`,
     }[phase];
   const busy = phase !== "idle";
+  const className = `pill transition-colors ${
+    busy
+      ? "cursor-default border-pts/40 text-pts"
+      : "border-line-strong text-ink-200 hover:border-gold/50 hover:text-gold"
+  }`;
+  const icon = busy ? (
+    <span className="h-1.5 w-1.5 animate-pulseDot rounded-full bg-pts" />
+  ) : (
+    <svg aria-hidden viewBox="0 0 16 16" className="h-2.5 w-2.5 fill-none stroke-current" strokeWidth="1.8">
+      <path d="M13.5 8a5.5 5.5 0 1 1-1.6-3.9M13.5 2.5v3h-3" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+
+  // No token: a real link (a popup opened after an await gets blocked), and
+  // this tab waits for the redeploy while the run happens on GitHub.
+  if (manualUrl && !busy) {
+    return (
+      <a
+        href={manualUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        onClick={() => go("waiting")}
+        aria-live="polite"
+        title='Opens the workflow on GitHub: press "Run workflow" there. This page reloads itself when the new data is live, about 7 minutes later.'
+        className={className}
+      >
+        {icon}
+        {label}
+      </a>
+    );
+  }
 
   return (
     <button
@@ -144,19 +200,9 @@ export default function RefreshButton({ generatedAt }: { generatedAt: string }) 
       disabled={busy}
       aria-live="polite"
       title="Run the model on the latest FPL data. Takes about 6 minutes, then the page reloads."
-      className={`pill transition-colors ${
-        busy
-          ? "cursor-default border-pts/40 text-pts"
-          : "border-line-strong text-ink-200 hover:border-gold/50 hover:text-gold"
-      }`}
+      className={className}
     >
-      {busy ? (
-        <span className="h-1.5 w-1.5 animate-pulseDot rounded-full bg-pts" />
-      ) : (
-        <svg aria-hidden viewBox="0 0 16 16" className="h-2.5 w-2.5 fill-none stroke-current" strokeWidth="1.8">
-          <path d="M13.5 8a5.5 5.5 0 1 1-1.6-3.9M13.5 2.5v3h-3" strokeLinecap="round" strokeLinejoin="round" />
-        </svg>
-      )}
+      {icon}
       {label}
     </button>
   );
