@@ -6,12 +6,12 @@
 // Rival ownership is shown so the differentials are visible; it never shapes
 // the picks, which come from the model's own projections.
 
-import type { WildcardOption, WildcardPlayer } from "@/lib/types";
+import type { PickCheck, WildcardOption, WildcardPlayer } from "@/lib/types";
 import { kitFor } from "@/lib/teams";
 
 const ORDER: Record<string, number> = { GK: 0, DEF: 1, MID: 2, FWD: 3 };
 
-function Row({ p, captain, vice, ahead }: { p: WildcardPlayer; captain: boolean; vice: boolean; ahead: number }) {
+function Row({ p, captain, vice, ahead, check }: { p: WildcardPlayer; captain: boolean; vice: boolean; ahead: number; check?: boolean }) {
   const kit = kitFor(p.team);
   const differential = ahead > 0 && p.owned_by_ahead === 0;
   return (
@@ -25,6 +25,7 @@ function Row({ p, captain, vice, ahead }: { p: WildcardPlayer; captain: boolean;
         <span className="ml-2 inline-flex gap-1.5 align-middle">
           {p.new && <span className="rounded-[2px] border border-pts/40 px-1 font-mono text-[9.5px] uppercase tracking-wider text-pts">in</span>}
           {differential && <span className="rounded-[2px] border border-gold/40 px-1 font-mono text-[9.5px] uppercase tracking-wider text-gold">differential</span>}
+          {check && <span className="rounded-[2px] border border-warn/40 px-1 font-mono text-[9.5px] uppercase tracking-wider text-warn">check</span>}
         </span>
       </span>
       <span className="flex-none text-right font-mono text-[11.5px] tabular-nums text-ink-300">
@@ -43,6 +44,8 @@ export default function WildcardPanel({ option }: { option: WildcardOption }) {
   const differentials = option.squad.filter((p) => p.owned_by_ahead === 0).length;
   const worth = option.gain_six_weeks > 0;
   const free = option.free_alternative;
+  const checks = option.checks ?? [];
+  const checked = new Set(checks.map((c) => c.player_id));
 
   return (
     <div className={worth ? "panel-lead p-5" : "panel p-5"}>
@@ -70,7 +73,8 @@ export default function WildcardPanel({ option }: { option: WildcardOption }) {
           <ul className="divide-y divide-line border-y border-line">
             {xi.map((p) => (
               <Row key={p.player_id} p={p} captain={p.player_id === option.captain_id}
-                   vice={p.player_id === option.vice_captain_id} ahead={option.rivals_ahead} />
+                   vice={p.player_id === option.vice_captain_id} ahead={option.rivals_ahead}
+                   check={checked.has(p.player_id)} />
             ))}
           </ul>
         </div>
@@ -78,7 +82,8 @@ export default function WildcardPanel({ option }: { option: WildcardOption }) {
           <p className="label mb-1">Bench</p>
           <ul className="divide-y divide-line border-y border-line">
             {bench.map((p) => (
-              <Row key={p.player_id} p={p} captain={false} vice={false} ahead={option.rivals_ahead} />
+              <Row key={p.player_id} p={p} captain={false} vice={false} ahead={option.rivals_ahead}
+                   check={checked.has(p.player_id)} />
             ))}
           </ul>
           <p className="mt-3 font-mono text-[11px] leading-relaxed text-ink-500">
@@ -91,6 +96,37 @@ export default function WildcardPanel({ option }: { option: WildcardOption }) {
           </p>
         </div>
       </div>
+
+      {checks.length > 0 && <SecondLook checks={checks} />}
+    </div>
+  );
+}
+
+/** Picks the model likes more than their season so far suggests, with the
+ *  cost of leaving each out — the call stays yours. */
+function SecondLook({ checks }: { checks: PickCheck[] }) {
+  return (
+    <div className="mt-5 rounded-[2px] border border-warn/30 bg-warn/[0.04] p-4">
+      <p className="label">Worth a second look</p>
+      <ul className="mt-2 space-y-2.5">
+        {checks.map((c) => (
+          <li key={c.player_id} className="font-body text-sm">
+            <span className="font-medium text-ink-100">{c.name}</span>
+            <span className="text-ink-300"> &mdash; {c.flags.join("; ")}.</span>
+            {c.drop_cost != null && (
+              <span className="block font-mono text-[11px] text-ink-400">
+                leaving him out costs {c.drop_cost.toFixed(1)} pts over six weeks
+                {c.replacement && c.replacement.length > 0 && <> &middot; the squad brings in {c.replacement.join(", ")}</>}
+              </span>
+            )}
+          </li>
+        ))}
+      </ul>
+      <p className="mt-3 font-body text-xs leading-relaxed text-ink-400">
+        These flags are information, not a ruling: across two past seasons, expensive players in a
+        poor run actually scored more than projected, so a flag alone isn&apos;t a reason to sell. A
+        small cost means it&apos;s a coin flip and your read of the player decides it.
+      </p>
     </div>
   );
 }

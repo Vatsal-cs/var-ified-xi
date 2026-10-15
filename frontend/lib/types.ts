@@ -260,6 +260,19 @@ export interface WildcardPlayer {
   owned_by_ahead: number;
 }
 
+/** A second look at a pick the model wants to buy (backend main._pick_checks). */
+export interface PickCheck {
+  player_id: number;
+  name: string;
+  /** Plain reasons: form far below the projection, price-led projection, benching risk. */
+  flags: string[];
+  wildcard: boolean;
+  transfer: boolean;
+  /** Six-week points lost by leaving him out of the Wildcard, and who comes in instead. */
+  drop_cost?: number;
+  replacement?: string[];
+}
+
 export interface WildcardOption {
   gameweek: number;
   /** Decay-weighted expected points over the six-week horizon, vs the free-transfer plan. */
@@ -275,6 +288,8 @@ export interface WildcardOption {
   squad: WildcardPlayer[];
   rivals_ahead: number;
   free_alternative: { out: string[]; in: string[] };
+  /** Picks worth a second look, with the cost of leaving each out. */
+  checks?: PickCheck[];
 }
 
 export interface OptimizedTeam {
@@ -318,4 +333,6 @@ export interface OptimizedTeam {
   team_news?: TeamNewsView;
   /** Cup, European and international games for the same players. */
   other_matches?: OtherMatchesView;
+  /** Picks worth a second look: Wildcard newcomers and this week's buys. */
+  pick_checks?: PickCheck[];
 }

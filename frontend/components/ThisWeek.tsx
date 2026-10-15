@@ -4,7 +4,7 @@
 // The one thing you came here for: the decision to make before this week's
 // deadline. Everything below it on the page is supporting detail.
 
-import type { OptimizedTeam, Player, PlannedWeek } from "@/lib/types";
+import type { OptimizedTeam, PickCheck, Player, PlannedWeek } from "@/lib/types";
 import { kitFor } from "@/lib/teams";
 import { Term } from "./ui";
 import CaptainOdds from "./CaptainOdds";
@@ -89,7 +89,7 @@ function SwapCard({
   );
 }
 
-function TransferRows({ week }: { week: PlannedWeek }) {
+function TransferRows({ week, checks = [] }: { week: PlannedWeek; checks?: PickCheck[] }) {
   if (week.transfers_out.length === 0) {
     return (
       <p className="font-body text-[15px] text-ink-200">
@@ -126,6 +126,14 @@ function TransferRows({ week }: { week: PlannedWeek }) {
           </li>
         );
       })}
+      {week.transfers_in
+        .map((inn) => checks.find((c) => c.player_id === inn.player_id && c.transfer))
+        .filter((c): c is PickCheck => !!c)
+        .map((c) => (
+          <li key={`check-${c.player_id}`} className="font-mono text-[11px] text-warn">
+            Worth a second look: {c.name} &mdash; {c.flags.join("; ")}
+          </li>
+        ))}
     </ul>
   );
 }
@@ -167,7 +175,7 @@ export default function ThisWeek({ team }: { team: OptimizedTeam }) {
       <div className="mt-5 space-y-4">
         {team.mode === "transfer_plan" && week ? (
           <>
-            <TransferRows week={week} />
+            <TransferRows week={week} checks={team.pick_checks} />
 
             {/* Is a points hit worth it this week? */}
             <div
