@@ -1,0 +1,27 @@
+{
+ "gameweek": 7,
+ "fetched_at": "2026-10-15T16:11:41.412623+00:00",
+ "model": "gemini-2.5-flash",
+ "clubs": [
+  "Arsenal",
+  "Bournemouth",
+  "Brentford",
+  "Brighton",
+  "Chelsea",
+  "Coventry City",
+  "Crystal Palace",
+  "Liverpool",
+  "Man City",
+  "Newcastle",
+  "Nott'm Forest",
+  "Spurs",
+  "Sunderland"
+ ],
+ "items": [],
+ "errors": [
+  "Arsenal, Bournemouth, Brentford, Brighton: 404 Client Error: Not Found for url: https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent",
+  "Chelsea, Coventry City, Crystal Palace, Liverpool: 404 Client Error: Not Found for url: https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent",
+  "Man City, Newcastle, Nott'm Forest, Spurs: 404 Client Error: Not Found for url: https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent",
+  "Sunderland: 404 Client Error: Not Found for url: https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent"
+ ]
+}

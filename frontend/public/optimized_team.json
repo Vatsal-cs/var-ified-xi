@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-15T13:20:54.699456+00:00",
+  "generated_at": "2026-10-15T16:11:57.633150+00:00",
   "gameweek": 7,
   "horizon_gws": 6,
   "mode": "transfer_plan",
@@ -1897,12 +1897,15 @@
     "deadline_gw": 19
   },
   "team_news": {
-    "enabled": false,
+    "enabled": true,
+    "fetched_at": "2026-10-15T16:11:41.412623+00:00",
+    "model": "gemini-2.5-flash",
     "items": [],
-    "applied": []
+    "applied": [],
+    "errors": 4
   },
   "other_matches": {
-    "from": "2026-10-15T13:20:54.656228",
+    "from": "2026-10-15T16:11:57.554233",
     "to": "2026-12-02T18:30:00",
     "clubs": [
       {
