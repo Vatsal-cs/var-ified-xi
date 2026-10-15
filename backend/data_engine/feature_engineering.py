@@ -81,6 +81,14 @@ ROLLING_FEATURE_SPEC = [
     ("starts", "starts_avg", [3, 5]),
     # Defensive-contribution scoring, new in 2025-26.
     ("defensive_contribution", "dc_avg", [3, 5]),
+    # Opponent-adjusted output and the strength of recent opponents
+    # (add_rolling_features builds the per-match columns). Under test in
+    # research/2026-10-opponent-form; computed always, used only if it passes.
+    ("xg_adj", "xg_adj_avg", [5]),
+    ("xgi_adj", "xgi_adj_avg", [3]),
+    ("points_adj", "points_adj_avg", [5]),
+    ("opp_strength_defence", "opp_def_avg", [5]),
+    ("opp_strength_attack", "opp_att_avg", [5]),
     # Goalkeeper and defender scoring inputs.
     ("saves", "saves_avg", [3]),
     ("clean_sheets", "cs_avg", [5]),
@@ -310,6 +318,21 @@ def add_rolling_features(df: pd.DataFrame) -> pd.DataFrame:
         if _c not in df.columns:
             df[_c] = _v
     grp = df.groupby("player_id", group_keys=False)
+
+    # The same output counts for more against a strong defence and less
+    # against a weak one: each match's xG, xGI and points scaled by how good
+    # the opponent was relative to the average (attackers by its defence,
+    # keepers and defenders by its attack).
+    if {"opp_strength_defence", "opp_strength_attack"} <= set(df.columns):
+        d = df["opp_strength_defence"].where(df["opp_strength_defence"] > 0)
+        a = df["opp_strength_attack"].where(df["opp_strength_attack"] > 0)
+        rel_d = (d / d.mean()).fillna(1.0)
+        rel_a = (a / a.mean()).fillna(1.0)
+        attacking = df["element_type"].isin([3, 4]).to_numpy()
+        for src, dst in (("expected_goals", "xg_adj"), ("expected_goal_involvements", "xgi_adj")):
+            if src in df.columns:
+                df[dst] = pd.to_numeric(df[src], errors="coerce") * rel_d
+        df["points_adj"] = df["total_points"] * np.where(attacking, rel_d, rel_a)
 
     for source, prefix, windows in ROLLING_FEATURE_SPEC:
         priors = _positional_priors(df, source) if source in df.columns else None

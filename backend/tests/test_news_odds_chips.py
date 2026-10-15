@@ -113,7 +113,8 @@ class OtherMatches(unittest.TestCase):
                              "league": ["uefa.champions", "fifa.worldq.conmebol", "fifa.friendly"],
                              "date": [t("2025-10-01 19:00"), t("2025-10-12 23:00"), t("2025-10-14 19:00")],
                              "goals": [1.0, 0.0, 0.0], "assists": [0.0, 1.0, 0.0],
-                             "shots": [3.0, 1.0, 0.0], "sot": [2.0, 1.0, 0.0]})
+                             "shots": [3.0, 1.0, 0.0], "sot": [2.0, 1.0, 0.0],
+                             "opp_factor": [1.2, 0.25, 1.0]})
         return om.features(rows, club, apps, {1: "A1", 2: "A2"})
 
     def test_club_rest_and_rotation(self):
@@ -132,6 +133,8 @@ class OtherMatches(unittest.TestCase):
         self.assertEqual(f.loc[2, "intl_far_14"], 1)
         self.assertEqual(f.loc[2, "xm_ga_30"], 2)              # CL goal 24 days back + the assist
         self.assertEqual(f.loc[2, "xm_apps_30"], 3)
+        self.assertAlmostEqual(f.loc[2, "xm_ga_adj_30"], 1.2 + 0.25)   # goal v strong side, assist v weak
+        self.assertAlmostEqual(f.loc[2, "xm_opp_30"], (1.2 + 0.25 + 1.0) / 3)
 
 
 class ChipPlanner(unittest.TestCase):

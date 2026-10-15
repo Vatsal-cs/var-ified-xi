@@ -80,6 +80,7 @@ from data_engine import (
 from data_engine.odds_data import ODDS_FEATURE_COLUMNS
 from data_engine.other_matches import FEATURES as OTHER_MATCH_FEATURES
 from data_engine.other_matches import LOAD_FEATURES as OTHER_LOAD_FEATURES
+from data_engine.other_matches import FORM_ADJ_FEATURES as OTHER_FORM_ADJ_FEATURES
 from data_engine.setpiece_data import SETPIECE_FEATURE_COLUMNS
 
 logger = logging.getLogger(__name__)
@@ -236,6 +237,16 @@ class _other_matches_ctx:
             c for c in self.columns if c not in config.FEATURE_COLUMNS]
     def __exit__(self, *a):
         config.OTHER_MATCHES, config.FEATURE_COLUMNS = self._old
+
+
+class _extra_features:
+    """Adds already-built columns to the model's inputs for the variant."""
+    def __init__(self, columns): self.columns = columns
+    def __enter__(self):
+        self._old = config.FEATURE_COLUMNS
+        config.FEATURE_COLUMNS = list(self._old) + [c for c in self.columns if c not in self._old]
+    def __exit__(self, *a):
+        config.FEATURE_COLUMNS = self._old
 
 
 class _bag_ctx:
@@ -396,6 +407,31 @@ VARIANTS = {
         fit=lambda df: train_model.train_models(df, save=False),
         predict=_bundle_predict,
         context=lambda: _other_matches_ctx(OTHER_MATCH_FEATURES),
+    ),
+    "sched": Variant(
+        name="sched",
+        description="production plus the strength of each player's last five opponents "
+                    "(their defence and attack), so the model can weigh form by schedule "
+                    "(research/2026-10-opponent-form)",
+        fit=lambda df: train_model.train_models(df, save=False),
+        predict=_bundle_predict,
+        context=lambda: _extra_features(["opp_def_avg_5", "opp_att_avg_5"]),
+    ),
+    "form_adj": Variant(
+        name="form_adj",
+        description="production plus opponent-adjusted form: xG, xGI and points scaled by "
+                    "how strong each opponent was (research/2026-10-opponent-form)",
+        fit=lambda df: train_model.train_models(df, save=False),
+        predict=_bundle_predict,
+        context=lambda: _extra_features(["xg_adj_avg_5", "xgi_adj_avg_3", "points_adj_avg_5"]),
+    ),
+    "other_form_adj": Variant(
+        name="other_form_adj",
+        description="production plus form in cup/European/international games weighted by "
+                    "opponent strength (Elo) (research/2026-10-opponent-form)",
+        fit=lambda df: train_model.train_models(df, save=False),
+        predict=_bundle_predict,
+        context=lambda: _extra_features(OTHER_FORM_ADJ_FEATURES),
     ),
     "shrink": Variant(
         name="shrink",

@@ -88,13 +88,18 @@ NEUTRAL = {"xm_days_before": 14.0, "xm_days_after": 14.0, "xm_count_14": 0.0,
            "xm_started_before": 0.0, "xm_rested_before": 0.0,
            "intl_apps_14": 0.0, "intl_starts_14": 0.0, "intl_far_14": 0.0,
            "intl_days_before": 21.0,
-           "xm_apps_30": 0.0, "xm_ga_30": 0.0, "xm_shots_30": 0.0, "xm_sot_30": 0.0}
+           "xm_apps_30": 0.0, "xm_ga_30": 0.0, "xm_shots_30": 0.0, "xm_sot_30": 0.0,
+           "xm_ga_adj_30": 0.0, "xm_shots_adj_30": 0.0, "xm_opp_30": 1.0}
 # Rest and load: who is tired or rested. The shipped inputs (config).
 LOAD_FEATURES = list(config.OTHER_MATCH_COLUMNS)
 # Form in those games: appearances, goals + assists, shots, shots on target
 # across cup, European and international matches in the 30 days before.
 FORM_FEATURES = ["xm_apps_30", "xm_ga_30", "xm_shots_30", "xm_sot_30"]
-FEATURES = LOAD_FEATURES + FORM_FEATURES
+# The same, weighted by how strong each opponent was (strength_factor): a
+# goal against San Marino or a League Two side counts for much less than one
+# against Bayern. xm_opp_30 is the average weight of the opponents faced.
+FORM_ADJ_FEATURES = ["xm_apps_30", "xm_ga_adj_30", "xm_shots_adj_30", "xm_opp_30"]
+FEATURES = LOAD_FEATURES + FORM_FEATURES + [c for c in FORM_ADJ_FEATURES if c not in FORM_FEATURES]
 
 _session = requests.Session()
 _session.headers["User-Agent"] = "Mozilla/5.0 (var-ified-xi; cached, low volume)"
@@ -103,7 +108,7 @@ _last_request = [0.0]
 MIN_INTERVAL = 0.35          # seconds between requests, across all threads
 
 
-def _fetch(url: str):
+def _fetch(url: str, text: bool = False):
     """One request, spaced from every other one; ESPN refuses bursts (403),
     so a refusal waits and tries again. Raises if it never gets through —
     a silently missing month would read as "no matches"."""
@@ -119,6 +124,9 @@ def _fetch(url: str):
                 time.sleep(15 * (attempt + 1))
                 continue
             r.raise_for_status()
+            if text:
+                r.encoding = "utf-8"
+                return r.text
             return r.json()
         except requests.RequestException:
             time.sleep(3 * (attempt + 1))
@@ -140,7 +148,7 @@ def _packed(name: str):
     return _packs.get(name)
 
 
-def _cached(name: str, url: str, process, max_age_hours: float = None):
+def _cached(name: str, url: str, process, max_age_hours: float = None, text: bool = False):
     """process(raw JSON) -> the few fields used, cached on disk. A finished
     month or match never changes, so it's cached for good."""
     path = CACHE / f"{name}.json"
@@ -151,7 +159,7 @@ def _cached(name: str, url: str, process, max_age_hours: float = None):
         hit = _packed(name)
         if hit is not None:
             return hit
-    out = process(_fetch(url))
+    out = process(_fetch(url, text))
     CACHE.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(out))
     return out
@@ -325,17 +333,159 @@ def season_tables(season: str, pl_clubs: list) -> tuple:
                   "event_id": e["id"]} for e in club_ev for n, *_ in e["teams"] if n in clubs]
     done = [e for e in club_ev + intl_ev if e["finished"]]
     lineups = _parallel(lineup, [(e["league"], e["id"]) for e in done])
+    ratings = club_ratings(season)
     apps = []
     for e, lu in zip(done, lineups):
         kind = "intl" if e["league"] in INTL_LEAGUES else "club"
         far = kind == "intl" and bool(e["venue_country"]) and e["venue_country"] not in EUROPE
+        names = [t[0] for t in e["teams"]]
+        factor = {}
+        for side in names:
+            opp = next((n for n in names if n != side), None)
+            rating = (nation_rating(opp, e["date"]) if kind == "intl"
+                      else ratings.get(str(e["id"]), {}).get(opp))
+            factor[side] = strength_factor(rating, kind) if opp else 1.0
         for a in lu:
             if kind == "club" and a["team"] not in clubs:
                 continue
             apps.append({"athlete_id": a["athlete_id"], "date": e["date"], "kind": kind,
                          "role": a["role"], "far": far, "league": e["league"],
+                         "opp_factor": factor.get(a["team"], 1.0),
                          **{k: a.get(k, 0.0) for k in STATS.values()}})
     return pd.DataFrame(club_rows), pd.DataFrame(apps)
+
+
+# ---------------------------------------------------------------------------
+# How strong the opponent was
+# ---------------------------------------------------------------------------
+# Goals against San Marino or a League Two side say little about a player;
+# against Bayern they say a lot. Clubs get an Elo rating built from every
+# Champions/Europa/Conference League and English cup result since 2022
+# (ClubElo's feed was down when this was written); national teams get
+# eloratings.net's rating from the end of the previous year. Ratings are
+# always the ones held BEFORE the match.
+ELO_START = {"uefa.champions": 1700.0, "uefa.europa": 1550.0, "uefa.europa.conf": 1400.0}
+ELO_PL, ELO_LOWER = 1650.0, 1350.0          # English clubs first seen in a cup tie
+ELO_K, ELO_HOME = 20.0, 60.0
+CLUB_REF, NATION_REF = 1650.0, 1800.0      # rating that counts as "Premier League standard"
+FIRST_SEASON = "2022-23"
+
+
+def _results_from(data) -> list:
+    out = []
+    for e in (data or {}).get("events", []):
+        c = (e.get("competitions") or [{}])[0]
+        if not e.get("status", {}).get("type", {}).get("completed"):
+            continue
+        teams = {x.get("homeAway"): (x["team"]["displayName"], x.get("score")) for x in c.get("competitors", [])}
+        if "home" in teams and "away" in teams:
+            out.append([e["id"], e["date"], teams["home"][0], teams["away"][0],
+                        teams["home"][1], teams["away"][1], bool(c.get("neutralSite"))])
+    return out
+
+
+def results(league: str, month: str) -> list:
+    return _cached(f"r_{league}_{month}", f"{ESPN}/{league}/scoreboard?dates={month}&limit=500",
+                   _results_from, None if _month_is_past(month) else 6)
+
+
+def _seasons_until(season: str) -> list:
+    first, last = int(FIRST_SEASON[:4]), int(season[:4])
+    return [f"{y}-{str(y + 1)[2:]}" for y in range(first, last + 1)]
+
+
+_club_cache = {}
+
+
+def club_ratings(season: str) -> dict:
+    """{event id: {club: pre-match rating}} for every club match from 2022-23
+    up to the end of `season`."""
+    if season in _club_cache:
+        return _club_cache[season]
+    seasons = _seasons_until(season)
+    pl = {n for s in seasons for n in pl_team_ids(s)}
+    jobs = [(lg, m) for s in seasons for m in season_months(s) for lg in CLUB_LEAGUES]
+    games = []
+    for (lg, _), rows in zip(jobs, _parallel(results, jobs)):
+        games += [(pd.Timestamp(r[1]), lg, *r) for r in rows]
+    games.sort(key=lambda g: g[0])
+    elo, out = {}, {}
+    def start(club, lg):
+        return ELO_START.get(lg) or (ELO_PL if club in pl else ELO_LOWER)
+    for _, lg, eid, _, home, away, hs, as_, neutral in games:
+        try:
+            hs, as_ = float(hs), float(as_)
+        except (TypeError, ValueError):
+            continue
+        rh, ra = elo.get(home, start(home, lg)), elo.get(away, start(away, lg))
+        out[str(eid)] = {home: rh, away: ra}
+        exp = 1 / (1 + 10 ** ((ra - rh - (0 if neutral else ELO_HOME)) / 400))
+        res = 1.0 if hs > as_ else 0.5 if hs == as_ else 0.0
+        n = abs(hs - as_)
+        g = 1 if n <= 1 else 1.5 if n == 2 else (11 + n) / 8
+        delta = ELO_K * g * (res - exp)
+        elo[home], elo[away] = rh + delta, ra - delta
+    _club_cache[season] = out
+    return out
+
+
+_nation_cache = {}
+
+
+def nation_ratings() -> dict:
+    """{(normalised country name, year): rating at the END of that year}."""
+    if _nation_cache:
+        return _nation_cache
+    names = {}
+    for line in (_cached("elo_teams", "https://www.eloratings.net/en.teams.tsv",
+                         lambda d: d, None, text=True) or "").splitlines():
+        parts = line.split("\t")
+        if len(parts) >= 2 and not parts[0].endswith("_loc"):
+            names[parts[0]] = parts[1:]                    # every spelling eloratings uses
+    this_year = datetime.now(timezone.utc).year
+    for year in range(int(FIRST_SEASON[:4]) - 1, this_year):
+        text = _cached(f"elo_{year}", f"https://www.eloratings.net/{year}.tsv", lambda d: d, None,
+                       text=True) or ""
+        for line in text.splitlines():
+            parts = line.split("\t")
+            if len(parts) > 3 and parts[2] in names:
+                try:
+                    rating = float(parts[3])
+                except ValueError:
+                    continue
+                for n in names[parts[2]]:
+                    _nation_cache[(" ".join(_norm(n)), year)] = rating
+    return _nation_cache
+
+
+# ESPN's national-team names -> eloratings'.
+ELO_NAMES = {"USA": "United States", "Türkiye": "Turkey", "Republic of Ireland": "Ireland",
+             "Bosnia-Herzegovina": "Bosnia and Herzegovina", "Congo DR": "DR Congo",
+             "Kyrgyz Republic": "Kyrgyzstan", "St. Kitts and Nevis": "Saint Kitts and Nevis",
+             "St. Lucia": "Saint Lucia", "St. Vincent and the Grenadines": "Saint Vincent and the Grenadines",
+             "Chinese Taipei": "Taiwan", "Timor-Leste": "East Timor", "Brunei Darussalam": "Brunei",
+             "Korea Republic": "South Korea", "China PR": "China", "St. Martin": "Saint Martin"}
+
+
+def nation_rating(name: str, date) -> float | None:
+    """eloratings' rating at the end of the year before the match."""
+    r = nation_ratings()
+    for n in (ELO_NAMES.get(name, name), name):
+        key = " ".join(_norm(n))
+        for y in (date.year - 1, date.year - 2):
+            if (key, y) in r:
+                return r[(key, y)]
+    return None
+
+
+def strength_factor(rating: float | None, kind: str) -> float:
+    """How much an output counts against this opponent, relative to Premier
+    League standard: 1 at the reference rating, ~0.3 against a side 400
+    points weaker, capped to [0.2, 1.5]."""
+    if rating is None:
+        return 1.0
+    ref = NATION_REF if kind == "intl" else CLUB_REF
+    return float(min(1.5, max(0.2, 10 ** ((rating - ref) / 800))))
 
 
 # ---------------------------------------------------------------------------
@@ -397,6 +547,8 @@ def features(rows: pd.DataFrame, club_matches: pd.DataFrame, apps: pd.DataFrame,
 
     if not apps.empty:
         played = apps[apps["role"] != "unused"].copy()
+        if "opp_factor" not in played.columns:
+            played["opp_factor"] = 1.0
         played["ga"] = played["goals"].fillna(0) + played["assists"].fillna(0)
         for a, g in played.groupby("athlete_id"):
             m = aid == a
@@ -407,8 +559,14 @@ def features(rows: pd.DataFrame, club_matches: pd.DataFrame, apps: pd.DataFrame,
             K = kick[m]
             hi = np.searchsorted(D, K - gap, side="left")
             lo = np.searchsorted(D, K - 30 * day, side="right")
-            out.loc[m, "xm_apps_30"] = (hi - lo).clip(0).astype(float)
-            for col, src in (("xm_ga_30", "ga"), ("xm_shots_30", "shots"), ("xm_sot_30", "sot")):
+            n = (hi - lo).clip(0)
+            out.loc[m, "xm_apps_30"] = n.astype(float)
+            g = g.assign(ga_adj=g["ga"] * g["opp_factor"], shots_adj=g["shots"].fillna(0) * g["opp_factor"])
+            fsum = g["opp_factor"].to_numpy(float).cumsum()
+            at_f = lambda i: np.where(i > 0, fsum[np.clip(i - 1, 0, None)], 0.0)
+            out.loc[m, "xm_opp_30"] = np.where(n > 0, (at_f(hi) - at_f(lo)) / np.maximum(n, 1), 1.0)
+            for col, src in (("xm_ga_30", "ga"), ("xm_shots_30", "shots"), ("xm_sot_30", "sot"),
+                             ("xm_ga_adj_30", "ga_adj"), ("xm_shots_adj_30", "shots_adj")):
                 c = g[src].fillna(0).to_numpy(float).cumsum()
                 at = lambda i: np.where(i > 0, c[np.clip(i - 1, 0, None)], 0.0)
                 out.loc[m, col] = (at(hi) - at(lo)).clip(0)
