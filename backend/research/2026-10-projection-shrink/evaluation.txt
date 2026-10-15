@@ -1,0 +1,16 @@
+production          2024-25       5   37   2389.8   25.5    2365-2428  0.996   0.714   0.0889
+production          2025-26       5   37   2282.6   21.3    2265-2318  0.911   0.750   0.0788
+shrink              2024-25       5   37   2409.8   18.5    2384-2428  0.993   0.717   0.0889
+shrink              2025-26       5   37   2261.2   35.8    2228-2313  0.906   0.752   0.0788
+shrink_pos          2024-25       5   37   2394.6   20.8    2370-2416  0.994   0.717   0.0889
+shrink_pos          2025-26       5   37   2256.8   35.7    2214-2311  0.907   0.752   0.0788
+--------------------------------------------------------------------------------------------
+Paired against production, per-gameweek, averaged over seeds (block bootstrap, 2-GW blocks, 95% CI):
+  shrink             pooled    -1.4 [-54, +53]  won 3/10 cells  -> NO DETECTABLE EFFECT
+                     2024-25 +20 [-12,+52]  2025-26 -21 [-63,+24]
+  shrink_pos         pooled   -21.0 [-78, +40]  won 4/10 cells  -> NO DETECTABLE EFFECT
+                     2024-25 +5 [-30,+40]  2025-26 -26 [-72,+25]
+============================================================================================
+better = pooled CI above zero and ahead in every season; worse = the
+mirror image; anything else is no detectable effect, not a rejection.
+

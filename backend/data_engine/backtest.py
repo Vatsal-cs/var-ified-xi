@@ -366,14 +366,16 @@ VARIANTS = {
     ),
     "shrink": Variant(
         name="shrink",
-        description="production, points-if-60+ projections pulled toward the position "
-                    "average by one factor fitted on other seasons (research/2026-10-projection-shrink)",
+        description="NO DETECTABLE EFFECT (Oct 2026, 5 seeds): -1 [-54, +53]. Points-if-60+ "
+                    "projections pulled toward the position average by one factor fitted on "
+                    "other seasons (research/2026-10-projection-shrink)",
         fit=lambda df: train_model.train_models(df, save=False),
         predict=_shrink_predict(per_position=False),
     ),
     "shrink_pos": Variant(
         name="shrink_pos",
-        description="as shrink, with a separate factor per position",
+        description="NO DETECTABLE EFFECT (Oct 2026, 5 seeds): -21 [-78, +40]. As shrink, "
+                    "with a separate factor per position",
         fit=lambda df: train_model.train_models(df, save=False),
         predict=_shrink_predict(per_position=True),
     ),
