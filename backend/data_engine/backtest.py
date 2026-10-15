@@ -200,6 +200,15 @@ class _lagged_ratings_ctx:
         config.LAGGED_TEAM_RATINGS = self._old
 
 
+@contextlib.contextmanager
+def _nested(*contexts):
+    """Several variant contexts entered together, left in reverse order."""
+    with contextlib.ExitStack() as stack:
+        for c in contexts:
+            stack.enter_context(c)
+        yield
+
+
 class _without_features:
     """Takes columns out of config.FEATURE_COLUMNS for the whole variant,
     restoring whatever was there before (these can nest like _with_features)."""
@@ -481,6 +490,15 @@ VARIANTS = {
         fit=lambda df: train_model.train_models(df, save=False),
         predict=_bundle_predict,
         context=_team_form_add_ctx,
+    ),
+    "lagged_team_form_add": Variant(
+        name="lagged_team_form_add",
+        description="team_form_add, with past seasons rated by the PREVIOUS season's FPL "
+                    "ratings as live; compare against lagged_ratings "
+                    "(research/2026-10-lagged-team-form)",
+        fit=lambda df: train_model.train_models(df, save=False),
+        predict=_bundle_predict,
+        context=lambda: _nested(_lagged_ratings_ctx(), _team_form_add_ctx()),
     ),
     "residual": Variant(
         name="residual",
