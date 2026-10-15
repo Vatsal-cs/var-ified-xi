@@ -271,6 +271,23 @@ export interface PickCheck {
   /** Six-week points lost by leaving him out of the Wildcard, and who comes in instead. */
   drop_cost?: number;
   replacement?: string[];
+  /** Best like-for-like swaps: same position, affordable, club limit respected. */
+  alternatives?: PickAlternative[];
+}
+
+export interface PickAlternative {
+  player_id: number;
+  name: string;
+  team: string;
+  cost_m: number;
+  next: number;
+  six_weeks: number;
+  /** Points per game this season. */
+  ppg: number;
+  /** Six-week projection minus the flagged player's. */
+  vs: number;
+  /** The same checks, applied to him. */
+  flags?: string[];
 }
 
 export interface WildcardOption {

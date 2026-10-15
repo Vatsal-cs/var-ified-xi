@@ -119,13 +119,39 @@ function SecondLook({ checks }: { checks: PickCheck[] }) {
                 {c.replacement && c.replacement.length > 0 && <> &middot; the squad brings in {c.replacement.join(", ")}</>}
               </span>
             )}
+            {c.alternatives && c.alternatives.length > 0 && (
+              <div className="mt-1.5">
+                <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-ink-500">Could pick instead</span>
+                <ul className="mt-1 space-y-1">
+                  {c.alternatives.map((a) => (
+                    <li key={a.player_id} className="flex flex-wrap items-baseline gap-x-2 font-mono text-[11.5px]">
+                      <span className="text-ink-100">{a.name}</span>
+                      <span className="text-ink-500">{a.team} &middot; &pound;{a.cost_m.toFixed(1)}m</span>
+                      <span className="text-ink-300">
+                        {a.next.toFixed(1)} next &middot; {a.six_weeks.toFixed(1)} six weeks{" "}
+                        <span className={a.vs >= 0 ? "text-pts" : "text-ink-500"}>
+                          ({a.vs >= 0 ? "+" : ""}{a.vs.toFixed(1)})
+                        </span>{" "}
+                        &middot; {a.ppg.toFixed(1)} a game so far
+                      </span>
+                      {a.flags && a.flags.length > 0 && (
+                        <span className="text-warn">same check: {a.flags.join("; ")}</span>
+                      )}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
           </li>
         ))}
       </ul>
       <p className="mt-3 font-body text-xs leading-relaxed text-ink-400">
         These flags are information, not a ruling: across two past seasons, expensive players in a
         poor run actually scored more than projected, so a flag alone isn&apos;t a reason to sell. A
-        small cost means it&apos;s a coin flip and your read of the player decides it.
+        small cost means it&apos;s a coin flip and your read of the player decides it. The bracket is
+        each swap&apos;s six-week projection against the flagged player&apos;s, if held all six weeks;
+        &ldquo;leaving him out costs&rdquo; is the exact figure, because the plan can also change
+        later transfers.
       </p>
     </div>
   );

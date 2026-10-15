@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-15T16:50:32.811258+00:00",
+  "generated_at": "2026-10-15T17:19:03.694844+00:00",
   "gameweek": 7,
   "horizon_gws": 6,
   "mode": "transfer_plan",
@@ -1432,6 +1432,43 @@
         ],
         "wildcard": true,
         "transfer": false,
+        "alternatives": [
+          {
+            "player_id": 356,
+            "name": "Virgil",
+            "team": "LIV",
+            "cost_m": 6.5,
+            "next": 3.9,
+            "six_weeks": 16.2,
+            "ppg": 4.2,
+            "vs": -2.2,
+            "flags": []
+          },
+          {
+            "player_id": 566,
+            "name": "Silva",
+            "team": "BOU",
+            "cost_m": 5.0,
+            "next": 4.1,
+            "six_weeks": 16.1,
+            "ppg": 2.2,
+            "vs": -2.3,
+            "flags": [
+              "projected 4.1, scoring 2.2 a game this season"
+            ]
+          },
+          {
+            "player_id": 229,
+            "name": "Tarkowski",
+            "team": "EVE",
+            "cost_m": 6.2,
+            "next": 3.9,
+            "six_weeks": 15.5,
+            "ppg": 7.7,
+            "vs": -2.9,
+            "flags": []
+          }
+        ],
         "drop_cost": 0.7,
         "replacement": [
           "Benitez",
@@ -1446,6 +1483,41 @@
         ],
         "wildcard": true,
         "transfer": true,
+        "alternatives": [
+          {
+            "player_id": 455,
+            "name": "Tonali",
+            "team": "TOT",
+            "cost_m": 5.3,
+            "next": 4.3,
+            "six_weeks": 15.7,
+            "ppg": 3.5,
+            "vs": -5.8,
+            "flags": []
+          },
+          {
+            "player_id": 644,
+            "name": "Timber",
+            "team": "CRY",
+            "cost_m": 5.0,
+            "next": 3.3,
+            "six_weeks": 15.4,
+            "ppg": 4.0,
+            "vs": -6.2,
+            "flags": []
+          },
+          {
+            "player_id": 98,
+            "name": "Janelt",
+            "team": "BRE",
+            "cost_m": 5.0,
+            "next": 3.2,
+            "six_weeks": 14.7,
+            "ppg": 5.2,
+            "vs": -6.9,
+            "flags": []
+          }
+        ],
         "drop_cost": 4.1,
         "replacement": [
           "Benitez",
@@ -1462,6 +1534,41 @@
         ],
         "wildcard": true,
         "transfer": false,
+        "alternatives": [
+          {
+            "player_id": 79,
+            "name": "Evanilson",
+            "team": "BOU",
+            "cost_m": 6.0,
+            "next": 4.2,
+            "six_weeks": 16.8,
+            "ppg": 4.2,
+            "vs": -1.7,
+            "flags": []
+          },
+          {
+            "player_id": 222,
+            "name": "Strand Larsen",
+            "team": "CRY",
+            "cost_m": 6.0,
+            "next": 3.2,
+            "six_weeks": 14.6,
+            "ppg": 3.2,
+            "vs": -3.9,
+            "flags": []
+          },
+          {
+            "player_id": 569,
+            "name": "Gonzalo",
+            "team": "FUL",
+            "cost_m": 6.1,
+            "next": 3.9,
+            "six_weeks": 14.4,
+            "ppg": 2.7,
+            "vs": -4.1,
+            "flags": []
+          }
+        ],
         "drop_cost": 0.9,
         "replacement": [
           "Silva",
@@ -1477,6 +1584,47 @@
         ],
         "wildcard": true,
         "transfer": false,
+        "alternatives": [
+          {
+            "player_id": 480,
+            "name": "Gibbs-White",
+            "team": "NFO",
+            "cost_m": 8.0,
+            "next": 4.2,
+            "six_weeks": 20.9,
+            "ppg": 5.0,
+            "vs": 2.8,
+            "flags": [
+              "his price adds +0.8 to his projection"
+            ]
+          },
+          {
+            "player_id": 399,
+            "name": "Cherki",
+            "team": "MCI",
+            "cost_m": 7.9,
+            "next": 5.5,
+            "six_weeks": 18.4,
+            "ppg": 7.3,
+            "vs": 0.3,
+            "flags": [
+              "his price adds +1.0 to his projection"
+            ]
+          },
+          {
+            "player_id": 428,
+            "name": "Cunha",
+            "team": "MUN",
+            "cost_m": 7.9,
+            "next": 4.5,
+            "six_weeks": 18.2,
+            "ppg": 6.0,
+            "vs": 0.1,
+            "flags": [
+              "his price adds +0.9 to his projection"
+            ]
+          }
+        ],
         "drop_cost": 0.1,
         "replacement": [
           "Cherki"
@@ -1490,6 +1638,41 @@
         ],
         "wildcard": true,
         "transfer": false,
+        "alternatives": [
+          {
+            "player_id": 236,
+            "name": "Dewsbury-Hall",
+            "team": "EVE",
+            "cost_m": 6.6,
+            "next": 4.4,
+            "six_weeks": 16.8,
+            "ppg": 5.5,
+            "vs": -2.0,
+            "flags": []
+          },
+          {
+            "player_id": 453,
+            "name": "Barnes",
+            "team": "NEW",
+            "cost_m": 6.1,
+            "next": 4.4,
+            "six_weeks": 16.4,
+            "ppg": 5.0,
+            "vs": -2.4,
+            "flags": []
+          },
+          {
+            "player_id": 542,
+            "name": "E.Le F\u00e9e",
+            "team": "SUN",
+            "cost_m": 5.7,
+            "next": 3.5,
+            "six_weeks": 16.0,
+            "ppg": 3.3,
+            "vs": -2.8,
+            "flags": []
+          }
+        ],
         "drop_cost": 0.1,
         "replacement": [
           "Benitez",
@@ -2263,7 +2446,7 @@
     "errors": 0
   },
   "other_matches": {
-    "from": "2026-10-15T16:50:32.736143",
+    "from": "2026-10-15T17:19:03.655317",
     "to": "2026-12-02T18:30:00",
     "clubs": [
       {
@@ -3066,6 +3249,43 @@
       ],
       "wildcard": true,
       "transfer": false,
+      "alternatives": [
+        {
+          "player_id": 356,
+          "name": "Virgil",
+          "team": "LIV",
+          "cost_m": 6.5,
+          "next": 3.9,
+          "six_weeks": 16.2,
+          "ppg": 4.2,
+          "vs": -2.2,
+          "flags": []
+        },
+        {
+          "player_id": 566,
+          "name": "Silva",
+          "team": "BOU",
+          "cost_m": 5.0,
+          "next": 4.1,
+          "six_weeks": 16.1,
+          "ppg": 2.2,
+          "vs": -2.3,
+          "flags": [
+            "projected 4.1, scoring 2.2 a game this season"
+          ]
+        },
+        {
+          "player_id": 229,
+          "name": "Tarkowski",
+          "team": "EVE",
+          "cost_m": 6.2,
+          "next": 3.9,
+          "six_weeks": 15.5,
+          "ppg": 7.7,
+          "vs": -2.9,
+          "flags": []
+        }
+      ],
       "drop_cost": 0.7,
       "replacement": [
         "Benitez",
@@ -3080,6 +3300,41 @@
       ],
       "wildcard": true,
       "transfer": true,
+      "alternatives": [
+        {
+          "player_id": 455,
+          "name": "Tonali",
+          "team": "TOT",
+          "cost_m": 5.3,
+          "next": 4.3,
+          "six_weeks": 15.7,
+          "ppg": 3.5,
+          "vs": -5.8,
+          "flags": []
+        },
+        {
+          "player_id": 644,
+          "name": "Timber",
+          "team": "CRY",
+          "cost_m": 5.0,
+          "next": 3.3,
+          "six_weeks": 15.4,
+          "ppg": 4.0,
+          "vs": -6.2,
+          "flags": []
+        },
+        {
+          "player_id": 98,
+          "name": "Janelt",
+          "team": "BRE",
+          "cost_m": 5.0,
+          "next": 3.2,
+          "six_weeks": 14.7,
+          "ppg": 5.2,
+          "vs": -6.9,
+          "flags": []
+        }
+      ],
       "drop_cost": 4.1,
       "replacement": [
         "Benitez",
@@ -3096,6 +3351,41 @@
       ],
       "wildcard": true,
       "transfer": false,
+      "alternatives": [
+        {
+          "player_id": 79,
+          "name": "Evanilson",
+          "team": "BOU",
+          "cost_m": 6.0,
+          "next": 4.2,
+          "six_weeks": 16.8,
+          "ppg": 4.2,
+          "vs": -1.7,
+          "flags": []
+        },
+        {
+          "player_id": 222,
+          "name": "Strand Larsen",
+          "team": "CRY",
+          "cost_m": 6.0,
+          "next": 3.2,
+          "six_weeks": 14.6,
+          "ppg": 3.2,
+          "vs": -3.9,
+          "flags": []
+        },
+        {
+          "player_id": 569,
+          "name": "Gonzalo",
+          "team": "FUL",
+          "cost_m": 6.1,
+          "next": 3.9,
+          "six_weeks": 14.4,
+          "ppg": 2.7,
+          "vs": -4.1,
+          "flags": []
+        }
+      ],
       "drop_cost": 0.9,
       "replacement": [
         "Silva",
@@ -3111,6 +3401,47 @@
       ],
       "wildcard": true,
       "transfer": false,
+      "alternatives": [
+        {
+          "player_id": 480,
+          "name": "Gibbs-White",
+          "team": "NFO",
+          "cost_m": 8.0,
+          "next": 4.2,
+          "six_weeks": 20.9,
+          "ppg": 5.0,
+          "vs": 2.8,
+          "flags": [
+            "his price adds +0.8 to his projection"
+          ]
+        },
+        {
+          "player_id": 399,
+          "name": "Cherki",
+          "team": "MCI",
+          "cost_m": 7.9,
+          "next": 5.5,
+          "six_weeks": 18.4,
+          "ppg": 7.3,
+          "vs": 0.3,
+          "flags": [
+            "his price adds +1.0 to his projection"
+          ]
+        },
+        {
+          "player_id": 428,
+          "name": "Cunha",
+          "team": "MUN",
+          "cost_m": 7.9,
+          "next": 4.5,
+          "six_weeks": 18.2,
+          "ppg": 6.0,
+          "vs": 0.1,
+          "flags": [
+            "his price adds +0.9 to his projection"
+          ]
+        }
+      ],
       "drop_cost": 0.1,
       "replacement": [
         "Cherki"
@@ -3124,6 +3455,41 @@
       ],
       "wildcard": true,
       "transfer": false,
+      "alternatives": [
+        {
+          "player_id": 236,
+          "name": "Dewsbury-Hall",
+          "team": "EVE",
+          "cost_m": 6.6,
+          "next": 4.4,
+          "six_weeks": 16.8,
+          "ppg": 5.5,
+          "vs": -2.0,
+          "flags": []
+        },
+        {
+          "player_id": 453,
+          "name": "Barnes",
+          "team": "NEW",
+          "cost_m": 6.1,
+          "next": 4.4,
+          "six_weeks": 16.4,
+          "ppg": 5.0,
+          "vs": -2.4,
+          "flags": []
+        },
+        {
+          "player_id": 542,
+          "name": "E.Le F\u00e9e",
+          "team": "SUN",
+          "cost_m": 5.7,
+          "next": 3.5,
+          "six_weeks": 16.0,
+          "ppg": 3.3,
+          "vs": -2.8,
+          "flags": []
+        }
+      ],
       "drop_cost": 0.1,
       "replacement": [
         "Benitez",

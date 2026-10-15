@@ -567,19 +567,68 @@ def _pick_checks(d: dict, history_df, bundle, team_state, gw: int, bootstrap: di
     start = (rows.assign(sp=rows["p_full"] * rows["avail_factor"]).groupby("player_id")["sp"].mean().to_dict()
              if "avail_factor" in rows.columns else {})
 
-    checks = []
-    for pid in targets:
-        proj = float(preds["predicted_points"].get(pid, 0))
+    def flags_for(pid, proj, push_val, start_val):
         flags = []
         if apps.get(pid, 0) >= 3 and proj >= ppg.get(pid, 0) + PICK_FORM_GAP:
             flags.append(f"projected {proj:.1f}, scoring {ppg.get(pid, 0):.1f} a game this season")
-        if push.get(pid, 0) >= PICK_PRICE_PUSH:
-            flags.append(f"his price adds +{push[pid]:.1f} to his projection")
-        if start.get(pid, 1) < PICK_START:
-            flags.append(f"{start[pid]:.0%} chance of starting")
+        if push_val >= PICK_PRICE_PUSH:
+            flags.append(f"his price adds +{push_val:.1f} to his projection")
+        if start_val < PICK_START:
+            flags.append(f"{start_val:.0%} chance of starting")
+        return flags
+
+    checks = []
+    for pid in targets:
+        flags = flags_for(pid, float(preds["predicted_points"].get(pid, 0)), push.get(pid, 0), start.get(pid, 1))
         if flags:
             checks.append({"player_id": int(pid), "name": names.get(pid), "flags": flags,
                            "wildcard": pid in wild, "transfer": pid in buys})
+
+    # Like-for-like swaps for each flagged pick: same position, affordable
+    # with that squad's money, at most three per club, best over six weeks.
+    teams = {t["id"]: t["short_name"] for t in bootstrap["teams"]}
+    wc_squad = {p["player_id"] for p in (d["wildcard"] or {}).get("squad", [])}
+    wc_bank = float((d["wildcard"] or {}).get("bank_m", 0)) * 10
+    plan_week = (d["plan"] or {}).get("weeks", [{}])[0]
+    plan_squad = set(team_state.squad) - {m["player_id"] for m in plan_week.get("transfers_out", [])} \
+        | {m["player_id"] for m in plan_week.get("transfers_in", [])}
+    plan_bank = float(plan_week.get("bank_m", team_state.bank / 10)) * 10
+    alt_ids = set()
+    for c in checks:
+        squad, bank = (wc_squad, wc_bank) if c["wildcard"] else (plan_squad, plan_bank)
+        me = c["player_id"]
+        clubs = pd.Series([preds["team"].get(i) for i in squad if i != me]).value_counts().to_dict()
+        pool = preds[(preds["element_type"] == preds["element_type"].get(me))
+                     & (preds["now_cost"] <= preds["now_cost"].get(me, 0) + bank)
+                     & (~preds.index.isin(squad))]
+        pool = pool[[clubs.get(t, 0) < 3 for t in pool["team"]]]
+        best = pool.sort_values("horizon_points", ascending=False).head(3)
+        c["alternatives"] = [{"player_id": int(i), "name": r["web_name"], "team": teams.get(int(r["team"]), ""),
+                              "cost_m": round(float(r["now_cost"]) / 10, 1),
+                              "next": round(float(r["predicted_points"]), 1),
+                              "six_weeks": round(float(r["horizon_points"]), 1),
+                              "ppg": round(float(ppg.get(i, 0)), 1),
+                              "vs": round(float(r["horizon_points"] - preds["horizon_points"].get(me, 0)), 1)}
+                             for i, r in best.iterrows()]
+        alt_ids |= {a["player_id"] for a in c["alternatives"]}
+
+    # The swaps get the same check, so a "better" option that has the same
+    # problem says so.
+    arows = fx[fx["player_id"].isin(alt_ids)]
+    if not arows.empty:
+        AX = train_model._prep_X(arows)
+        apush = {}
+        if "now_cost" in AX.columns:
+            k = list(AX.columns).index("now_cost")
+            ac = np.mean([m["points_reg"].get_booster().predict(xgb.DMatrix(AX), pred_contribs=True)[:, k]
+                          for m in train_model._members(bundle)], axis=0)
+            apush = pd.Series(ac, index=arows["player_id"].to_numpy()).groupby(level=0).mean().to_dict()
+        astart = (arows.assign(sp=arows["p_full"] * arows["avail_factor"]).groupby("player_id")["sp"].mean().to_dict()
+                  if "avail_factor" in arows.columns else {})
+        for c in checks:
+            for a in c["alternatives"]:
+                a["flags"] = flags_for(a["player_id"], a["next"], apush.get(a["player_id"], 0),
+                                       astart.get(a["player_id"], 1))
 
     # What leaving each flagged Wildcard pick out would cost over the plan.
     if d["wildcard"] and d["wildcard_plan"]:
