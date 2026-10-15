@@ -249,6 +249,30 @@ class _extra_features:
         config.FEATURE_COLUMNS = self._old
 
 
+# The residual corrector for each simulated season, fitted on OTHER seasons'
+# misses (research/2026-10-residual-model).
+RESIDUAL_BY_SEASON = {"2024-25": "from_2025-26", "2025-26": "from_2024-25",
+                      "2022-23": "from_both", "2023-24": "from_both"}
+RESIDUAL_INPUTS = ["pred", "now_cost", "element_type", "points_avg_5", "xgi_avg_3",
+                   "minutes_avg_3", "starts_avg_3", "dc_avg_5"]
+_residual_models = {}
+
+
+def _residual_predict(bundle, df):
+    base = _bundle_predict(bundle, df)
+    name = RESIDUAL_BY_SEASON.get(str(df["season"].iloc[0])) if "season" in df.columns else None
+    if not name:
+        return base
+    if name not in _residual_models:
+        m = xgb.XGBRegressor()
+        m.load_model(str(config.BACKEND_ROOT / "research" / "2026-10-residual-model" / f"corrector_{name}.json"))
+        _residual_models[name] = m
+    X = df.reindex(columns=RESIDUAL_INPUTS).assign(pred=base.to_numpy()).fillna(0).astype(float)
+    corr = _residual_models[name].predict(X)
+    out = np.where(base.to_numpy() >= 0.5, np.clip(base.to_numpy() + corr, 0, None), base.to_numpy())
+    return pd.Series(out, index=base.index)
+
+
 class _bag_ctx:
     """Temporarily sets the seed-averaging bag size used while fitting."""
     def __init__(self, size): self.size = size
@@ -435,6 +459,14 @@ VARIANTS = {
         fit=lambda df: train_model.train_models(df, save=False),
         predict=_bundle_predict,
         context=lambda: _extra_features(OTHER_FORM_ADJ_FEATURES),
+    ),
+    "residual": Variant(
+        name="residual",
+        description="production plus a second model, trained on other seasons' misses, that "
+                    "corrects each projection from price, form, chances and minutes "
+                    "(research/2026-10-residual-model)",
+        fit=lambda df: train_model.train_models(df, save=False),
+        predict=_residual_predict,
     ),
     "shrink": Variant(
         name="shrink",

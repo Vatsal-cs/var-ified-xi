@@ -199,13 +199,14 @@ class TeamNews(unittest.TestCase):
         return pd.DataFrame({"player_id": [380, 380, 411], "gw": [7, 8, 7],
                              "chance_of_playing": [chance, None, None]})
 
-    def test_out_lowers_this_week_only(self):
-        rows = self._rows()
+    def test_out_counts_for_the_whole_plan_like_an_fpl_flag(self):
+        rows = self._rows().assign(status=["a", "a", "a"])
         news = {"items": team_news.parse(self._reply(), known_ids={380, 411})}
         applied = team_news.apply(rows, news, 7)
         self.assertEqual(applied[0]["chance"], 0)
         self.assertEqual(rows.loc[0, "chance_of_playing"], 0)
-        self.assertTrue(pd.isna(rows.loc[1, "chance_of_playing"]))           # GW8 untouched
+        self.assertTrue(pd.isna(rows.loc[1, "chance_of_playing"]))           # the doubt % is this week's
+        self.assertEqual(list(rows["status"]), ["i", "i", "a"])              # injured all plan, him only
 
     def test_not_applied_when_fpl_already_worse_or_news_stale(self):
         rows = self._rows(chance=0)

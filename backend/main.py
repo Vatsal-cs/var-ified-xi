@@ -25,7 +25,9 @@ import argparse
 import json
 import logging
 import os
+import numpy as np
 import pandas as pd
+import xgboost as xgb
 from datetime import datetime, timezone
 
 import config
@@ -79,7 +81,8 @@ def build_output_json(bootstrap: dict, predictions_df, result: dict,
                       league_view: dict = None, chip_expiry: dict = None,
                       captain_override: dict = None, wildcard_option: dict = None,
                       pmfs: dict = None, captain_odds: list = None, chip_plan: dict = None,
-                      news_view: dict = None, other_view: dict = None) -> dict:
+                      news_view: dict = None, other_view: dict = None,
+                      pick_checks: list = None) -> dict:
     """Assembles the final clean JSON contract the frontend will consume."""
     teams_lookup = {t["id"]: t["name"] for t in bootstrap["teams"]}
     pos_lookup = config.POSITIONS
@@ -152,6 +155,8 @@ def build_output_json(bootstrap: dict, predictions_df, result: dict,
         output["team_news"] = news_view
     if other_view:
         output["other_matches"] = other_view
+    if pick_checks:
+        output["pick_checks"] = pick_checks
     if plan:
         output["transfer_plan"] = _plan_payload(plan, pred_lookup, pos_lookup, teams_lookup)
     if team_state:
@@ -329,6 +334,15 @@ def run_pipeline(team_id: int = None) -> None:
 
     predictions_df, result, plan = d["predictions_df"], d["result"], d["plan"]
 
+    # 5b'. A second look at every pick the model wants to buy: projection far
+    # above his season so far, a projection leaning on his price, or a real
+    # chance he doesn't start — with what leaving him out would cost.
+    if team_state:
+        try:
+            _pick_checks(d, history_df, model_bundle, team_state, upcoming_gw, bootstrap)
+        except Exception as e:                              # never fatal to the refresh
+            logger.warning("Pick checks skipped: %s", e)
+
     # 5c. A full points distribution per player, and the captaincy odds.
     pmfs, captain_odds = {}, None
     tables = distributions.load_tables()
@@ -393,7 +407,8 @@ def run_pipeline(team_id: int = None) -> None:
                                wildcard_option=d["wildcard"],
                                pmfs=pmfs, captain_odds=captain_odds, chip_plan=chip_plan,
                                news_view=_news_payload(news, news_applied, d, team_state),
-                               other_view=other_view)
+                               other_view=other_view,
+                               pick_checks=d.get("pick_checks"))
 
     config.OUTPUT_JSON_PATH.write_text(json.dumps(output, indent=2))
     config.FRONTEND_JSON_PATH.write_text(json.dumps(output, indent=2))
@@ -514,6 +529,76 @@ def _attach_other_matches(df, bootstrap: dict) -> None:
         logger.warning("Other matches unavailable (%s); neutral values used", e)
         for col, v in other_matches.NEUTRAL.items():
             df[col] = v
+
+
+PICK_FORM_GAP = 1.5        # projected this much above his points per game this season
+PICK_PRICE_PUSH = 0.5      # his price alone adds this much to his points-if-he-plays
+PICK_START = 0.70          # below this chance of starting
+
+
+def _pick_checks(d: dict, history_df, bundle, team_state, gw: int, bootstrap: dict) -> None:
+    """Flags on the players the model wants to buy (Wildcard squad newcomers
+    and this week's transfers in), stored on d["wildcard"]["checks"] and
+    d["pick_checks"]. Information for you, not a model change: the tests
+    found no rule like these that wins points across seasons
+    (research/2026-10-price-feature, 2026-10-projection-shrink)."""
+    preds = d["predictions_df"].set_index("player_id")
+    fx = d["fixture_predictions"]
+    fx = fx[fx["gw"] == gw] if "gw" in fx.columns else fx
+    names = preds["web_name"].to_dict()
+    buys = {m["player_id"] for m in (d["plan"] or {}).get("weeks", [{}])[0].get("transfers_in", [])}
+    wild = {p["player_id"] for p in (d["wildcard"] or {}).get("squad", []) if p.get("new")}
+    targets = sorted(buys | wild)
+    if not targets:
+        return
+
+    hist = history_df[history_df["minutes"] > 0]
+    ppg = hist.groupby("player_id")["total_points"].mean()
+    apps = hist.groupby("player_id").size()
+    rows = fx[fx["player_id"].isin(targets)]
+    X = train_model._prep_X(rows)
+    cols = list(X.columns)
+    push = {}
+    if "now_cost" in cols and not rows.empty:
+        k = cols.index("now_cost")
+        contrib = np.mean([m["points_reg"].get_booster().predict(xgb.DMatrix(X), pred_contribs=True)[:, k]
+                           for m in train_model._members(bundle)], axis=0)
+        push = pd.Series(contrib, index=rows["player_id"].to_numpy()).groupby(level=0).mean().to_dict()
+    start = (rows.assign(sp=rows["p_full"] * rows["avail_factor"]).groupby("player_id")["sp"].mean().to_dict()
+             if "avail_factor" in rows.columns else {})
+
+    checks = []
+    for pid in targets:
+        proj = float(preds["predicted_points"].get(pid, 0))
+        flags = []
+        if apps.get(pid, 0) >= 3 and proj >= ppg.get(pid, 0) + PICK_FORM_GAP:
+            flags.append(f"projected {proj:.1f}, scoring {ppg.get(pid, 0):.1f} a game this season")
+        if push.get(pid, 0) >= PICK_PRICE_PUSH:
+            flags.append(f"his price adds +{push[pid]:.1f} to his projection")
+        if start.get(pid, 1) < PICK_START:
+            flags.append(f"{start[pid]:.0%} chance of starting")
+        if flags:
+            checks.append({"player_id": int(pid), "name": names.get(pid), "flags": flags,
+                           "wildcard": pid in wild, "transfer": pid in buys})
+
+    # What leaving each flagged Wildcard pick out would cost over the plan.
+    if d["wildcard"] and d["wildcard_plan"]:
+        xp = {int(r.player_id): {int(k): float(v) for k, v in (r.xp_by_gw or {}).items()}
+              for r in d["predictions_df"].itertuples()}
+        gws = [gw + i for i in range(config.HORIZON_GWS)]
+        base = planner.horizon_score(d["wildcard_plan"])
+        base_squad = set(d["wildcard_plan"]["weeks"][0]["squad_ids"])
+        for c in [c for c in checks if c["wildcard"]][:5]:
+            pool = d["predictions_df"][d["predictions_df"]["player_id"] != c["player_id"]]
+            alt = transfer_optimizer.plan_transfers(pool, team_state, {k: v for k, v in xp.items()
+                                                                       if k != c["player_id"]},
+                                                    gws, max_total_hits=0, wildcard=True)
+            c["drop_cost"] = round(base - planner.horizon_score(alt), 1)
+            c["replacement"] = [names.get(i) for i in alt["weeks"][0]["squad_ids"] if i not in base_squad]
+    d["pick_checks"] = checks
+    if d["wildcard"]:
+        d["wildcard"]["checks"] = [c for c in checks if c["wildcard"]]
+    logger.info("Pick checks: %s", "; ".join(f"{c['name']} ({', '.join(c['flags'])})" for c in checks) or "none")
 
 
 def _deadline(bootstrap: dict, gameweek: int) -> datetime:

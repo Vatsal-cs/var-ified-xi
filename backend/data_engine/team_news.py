@@ -397,7 +397,8 @@ def _log_calls(news: dict) -> None:
 
 def apply(predict_df, news: dict | None, gameweek: int, max_age_days: int = 4) -> list:
     """Out / doubtful calls lower FPL's chance of playing for this gameweek's
-    rows, in place, when they're worse than FPL's own flag and recent.
+    rows, in place, when they're worse than FPL's own flag and recent; "out"
+    also marks him injured for the rest of the plan, as an FPL flag would.
     Returns what was applied, for the dashboard."""
     if not news or not config.TEAM_NEWS_ADJUST or predict_df is None or predict_df.empty:
         return []
@@ -423,6 +424,12 @@ def apply(predict_df, news: dict | None, gameweek: int, max_age_days: int = 4) -
         if chance >= fpl_chance:
             continue
         predict_df.loc[mask, "chance_of_playing"] = chance
+        if status == "out" and "status" in predict_df.columns:
+            # As FPL's own injury flag does: "out" counts for every week of the
+            # plan, not just this one, until a return date says otherwise —
+            # otherwise the plan could buy a player who is out for weeks.
+            mine = predict_df["player_id"] == pid
+            predict_df.loc[mine & predict_df["status"].isin(["a", "d"]), "status"] = "i"
         applied.append({"player_id": pid, "status": status, "chance": chance,
                         "fpl_chance": int(fpl_chance)})
     return applied
