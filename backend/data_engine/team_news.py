@@ -6,8 +6,9 @@ Reads the latest team news before FPL does.
 
 FPL's injury flags are the model's only view of who's fit, and they lag:
 they're updated by hand, often hours after a manager's press conference, and
-they never say "fit but likely to be benched". This asks Claude, with web
-search, to read the news for the clubs that matter to you — your squad, the
+they never say "fit but likely to be benched". This asks an AI model with web
+search — Google's Gemini 2.5 Flash with Google Search, free, or Claude if
+that key is set instead — to read the news for the clubs that matter to you — your squad, the
 players the plan wants to buy, the Wildcard squad — and report each player
 as out, doubtful, rotation risk or expected to start, with a source.
 
@@ -22,17 +23,20 @@ There are no archived press conferences to backtest on, so the reader is
 judged live: every call it makes is saved with the source, for checking
 against who actually played (research/2026-10-team-news).
 
-Needs ANTHROPIC_API_KEY. Without it, nothing runs and the dashboard says so.
-Runs only when a deadline is close (TEAM_NEWS_WINDOW_HOURS) and reuses a
-fresh result for TEAM_NEWS_TTL_HOURS, so repeated refreshes don't repeat the
-cost (about $0.30-1 a run).
+Needs GEMINI_API_KEY (free from aistudio.google.com: Gemini 2.5 Flash with
+Google Search grounding is free up to 500 requests a day; a run uses ~4) or
+ANTHROPIC_API_KEY (paid, ~$0.30-1 a run). Without either, nothing runs and
+the dashboard says so. Runs only when a deadline is close
+(TEAM_NEWS_WINDOW_HOURS) and reuses a fresh result for TEAM_NEWS_TTL_HOURS.
 """
 
 import json
 import logging
 import os
 import re
+import time
 from datetime import datetime, timedelta, timezone
+from urllib.parse import urlparse
 
 import requests
 
@@ -63,8 +67,25 @@ def _now():
     return datetime.now(timezone.utc)
 
 
+GEMINI_URL = "https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent"
+
+
+def provider() -> str | None:
+    """Which model reads the news: Gemini when its (free) key is set, else
+    Claude when its key is, else none."""
+    if os.environ.get("GEMINI_API_KEY"):
+        return "gemini"
+    if os.environ.get("ANTHROPIC_API_KEY"):
+        return "claude"
+    return None
+
+
+def model_name() -> str | None:
+    return {"gemini": config.TEAM_NEWS_GEMINI_MODEL, "claude": config.TEAM_NEWS_MODEL}.get(provider())
+
+
 def enabled() -> bool:
-    return bool(os.environ.get("ANTHROPIC_API_KEY")) and config.TEAM_NEWS_ENABLED
+    return provider() is not None and config.TEAM_NEWS_ENABLED
 
 
 def _prompt(clubs: list, gameweek: int, deadline: str) -> str:
@@ -80,6 +101,53 @@ def _prompt(clubs: list, gameweek: int, deadline: str) -> str:
               '  "start_chance": <0-100, your estimate he starts>, "reason": "<= 120 chars",',
               '  "source_url": "https://...", "source_date": "YYYY-MM-DD"}]}']
     return "\n".join(lines)
+
+
+def _host(url: str) -> str:
+    try:
+        return urlparse(url).netloc.lower().removeprefix("www.")
+    except Exception:
+        return ""
+
+
+def _call_gemini(prompt: str) -> tuple:
+    """One Gemini call grounded in Google Search. Returns (text, sources),
+    sources being the pages Google actually returned: [(title, url)]."""
+    body = {"systemInstruction": {"parts": [{"text": SYSTEM}]},
+            "contents": [{"role": "user", "parts": [{"text": prompt}]}],
+            "tools": [{"google_search": {}}],
+            "generationConfig": {"temperature": 0.2, "maxOutputTokens": 8192}}
+    url = GEMINI_URL.format(model=config.TEAM_NEWS_GEMINI_MODEL)
+    headers = {"x-goog-api-key": os.environ["GEMINI_API_KEY"], "content-type": "application/json"}
+    for attempt in range(3):
+        r = requests.post(url, headers=headers, json=body, timeout=180)
+        if r.status_code == 429:                       # free tier: a few requests a minute
+            time.sleep(30 * (attempt + 1))
+            continue
+        r.raise_for_status()
+        cand = (r.json().get("candidates") or [{}])[0]
+        text = "".join(p.get("text", "") for p in cand.get("content", {}).get("parts", []))
+        chunks = (cand.get("groundingMetadata") or {}).get("groundingChunks", [])
+        sources = [(c["web"].get("title", ""), c["web"].get("uri", "")) for c in chunks if c.get("web")]
+        return text, sources
+    raise RuntimeError("team news: Gemini rate limit")
+
+
+def _keep_sources(items: list, sources: list) -> list:
+    """Only a call backed by a page Google returned can lower a projection:
+    an item's link is kept if its site is among those pages, swapped for the
+    matching (or first) returned page otherwise, and cleared when the model
+    didn't search at all."""
+    if not sources:
+        for it in items:
+            it["source_url"] = None
+        return items
+    for it in items:
+        host = _host(it.get("source_url") or "")
+        if host and any(host in (t or "").lower() or host in _host(u) for t, u in sources):
+            continue
+        it["source_url"] = sources[0][1]
+    return items
 
 
 def _call(prompt: str) -> str:
@@ -139,14 +207,21 @@ def fetch(clubs: list, gameweek: int, deadline: str) -> dict:
     """clubs: [{"club", "fixture", "players": [{player_id, name, position}]}]."""
     known = {p["player_id"] for c in clubs for p in c["players"]}
     items, errors = [], []
+    use = provider()
     for i in range(0, len(clubs), CLUBS_PER_CALL):
         chunk = clubs[i:i + CLUBS_PER_CALL]
         try:
-            items += parse(_call(_prompt(chunk, gameweek, deadline)), known)
+            prompt = _prompt(chunk, gameweek, deadline)
+            if use == "gemini":
+                text, sources = _call_gemini(prompt)
+                items += _keep_sources(parse(text, known), sources)
+                time.sleep(5)                            # stay inside the free per-minute limit
+            else:
+                items += parse(_call(prompt), known)
         except Exception as e:                       # one club group failing isn't fatal
             errors.append(f"{', '.join(c['club'] for c in chunk)}: {e}")
             logger.warning("Team news for %s failed: %s", [c["club"] for c in chunk], e)
-    return {"gameweek": gameweek, "fetched_at": _now().isoformat(), "model": config.TEAM_NEWS_MODEL,
+    return {"gameweek": gameweek, "fetched_at": _now().isoformat(), "model": model_name(),
             "clubs": [c["club"] for c in clubs], "items": items, "errors": errors}
 
 

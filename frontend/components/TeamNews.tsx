@@ -66,7 +66,7 @@ export default function TeamNews({ news }: { news?: TeamNewsView }) {
         Team news reader:{" "}
         {news.enabled
           ? "reads the news within 48 hours of the deadline."
-          : "off. It needs an ANTHROPIC_API_KEY secret in the GitHub repo."}
+          : "off. It needs a free Gemini key (aistudio.google.com) saved as the GEMINI_API_KEY secret in the GitHub repo."}
       </p>
     );
   }
@@ -77,10 +77,11 @@ export default function TeamNews({ news }: { news?: TeamNewsView }) {
   return (
     <div className="rounded-[2px] border border-line bg-surface-raised/50 p-3.5">
       <p className="label">
-        <Term explain="Claude, with web search, reads press conferences and club news for your squad, this week's buys and the Wildcard squad. 'Out' and 'doubt' calls worse than FPL's own flag lower the projection, as an FPL flag would. 'Rotation' is shown only — line-up predictions are guesses.">
+        <Term explain="An AI model with web search (free Gemini 2.5 Flash with Google Search) reads press conferences and club news for your squad, this week's buys and the Wildcard squad. 'Out' and 'doubt' calls worse than FPL's own flag, backed by a page Google returned, lower the projection as an FPL flag would. 'Rotation' is shown only — line-up predictions are guesses.">
           Team news
         </Term>{" "}
         &mdash; read <Ago iso={news.fetched_at} />
+        {news.model && <span className="normal-case tracking-normal text-ink-500"> by {news.model}</span>}
       </p>
       {flagged.length ? (
         <ul className="mt-1 divide-y divide-line">

@@ -221,6 +221,40 @@ class TeamNews(unittest.TestCase):
         with mock.patch.object(config, "TEAM_NEWS_ADJUST", False):
             self.assertEqual(team_news.apply(rows, news, 7), [])
 
+    def test_gemini_is_preferred_and_free(self):
+        with mock.patch.dict("os.environ", {"GEMINI_API_KEY": "g", "ANTHROPIC_API_KEY": "a"}, clear=True):
+            self.assertEqual(team_news.provider(), "gemini")
+            self.assertEqual(team_news.model_name(), config.TEAM_NEWS_GEMINI_MODEL)
+        with mock.patch.dict("os.environ", {"ANTHROPIC_API_KEY": "a"}, clear=True):
+            self.assertEqual(team_news.provider(), "claude")
+
+    def _gemini_response(self, chunks):
+        r = mock.Mock(status_code=200)
+        r.raise_for_status = lambda: None
+        r.json = lambda: {"candidates": [{
+            "content": {"parts": [{"text": self._reply()}]},
+            "groundingMetadata": {"groundingChunks": chunks}}]}
+        return r
+
+    def test_gemini_call_reads_text_and_google_sources(self):
+        chunks = [{"web": {"title": "bbc.co.uk", "uri": "https://vertexaisearch.example/redirect/1"}}]
+        with mock.patch.dict("os.environ", {"GEMINI_API_KEY": "g"}, clear=True), \
+             mock.patch.object(team_news.requests, "post", return_value=self._gemini_response(chunks)) as post:
+            text, sources = team_news._call_gemini("prompt")
+        body = post.call_args.kwargs["json"]
+        self.assertEqual(body["tools"], [{"google_search": {}}])
+        self.assertIn("Szoboszlai", text)
+        self.assertEqual(sources, [("bbc.co.uk", "https://vertexaisearch.example/redirect/1")])
+
+    def test_only_google_backed_sources_survive(self):
+        items = team_news.parse(self._reply(), known_ids={380, 411})
+        kept = team_news._keep_sources([dict(i) for i in items], [("bbc.co.uk", "https://r/1")])
+        self.assertEqual(kept[0]["source_url"], "https://www.bbc.co.uk/sport/x")     # same site: kept
+        none = team_news._keep_sources([dict(i) for i in items], [])
+        self.assertIsNone(none[0]["source_url"])                                     # no search: unusable
+        rows = self._rows()
+        self.assertEqual(team_news.apply(rows, {"items": none}, 7), [])
+
     def test_no_key_means_no_call(self):
         with mock.patch.dict("os.environ", {}, clear=True), \
              mock.patch.object(team_news, "fetch") as fetch, \

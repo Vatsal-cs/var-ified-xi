@@ -30,7 +30,7 @@ const QA: { q: string; a: string }[] = [
   },
   {
     q: "Where does the team news come from?",
-    a: "Claude, with web search, reads press conferences and club news for your players within 48 hours of the deadline, and cites a source for every call. 'Out' and 'doubt' calls that are worse than FPL's own flag lower the projection, as an FPL flag would a few hours later. 'Rotation' is shown, never applied — predicted line-ups are guesses.",
+    a: "An AI model with web search — Google's Gemini 2.5 Flash with Google Search, on its free tier — reads press conferences and club news for your players within 48 hours of the deadline, and cites a source for every call. 'Out' and 'doubt' calls that are worse than FPL's own flag lower the projection, as an FPL flag would a few hours later. 'Rotation' is shown, never applied — predicted line-ups are guesses.",
   },
   {
     q: "How good is the model, honestly?",
