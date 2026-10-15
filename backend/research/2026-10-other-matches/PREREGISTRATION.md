@@ -1,6 +1,6 @@
 # Matches FPL doesn't show — pre-registration
 Written 2026-10-15 05:10 MDT, before any backtest run with these inputs.
-Amended 05:45 MDT, still before any run: added the form inputs and the
+Amended 05:14 MDT (commit 0cde2ab), still before any run: added the form inputs and the
 second variant below, at the user's request.
 
 Why: FPL's data is Premier League only. The model can't see a Champions
