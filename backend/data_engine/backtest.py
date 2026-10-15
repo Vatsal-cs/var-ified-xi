@@ -493,7 +493,8 @@ VARIANTS = {
     ),
     "lagged_team_form_add": Variant(
         name="lagged_team_form_add",
-        description="team_form_add, with past seasons rated by the PREVIOUS season's FPL "
+        description="NO DETECTABLE EFFECT (Oct 2026, 5 seeds): +6 [-118, +123]. "
+                    "team_form_add, with past seasons rated by the PREVIOUS season's FPL "
                     "ratings as live; compare against lagged_ratings "
                     "(research/2026-10-lagged-team-form)",
         fit=lambda df: train_model.train_models(df, save=False),

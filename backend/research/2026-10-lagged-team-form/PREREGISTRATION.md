@@ -1,5 +1,5 @@
 # This season's team form, tested the way the live model runs — pre-registration
-Written 2026-10-15 15:42 MDT, before any run.
+Written 2026-10-15 15:42 MDT, before any run. Commit 5a23856.
 
 Why: Brighton players have beaten their projections by more than any other
 club's this season (GW2-6, rows with 60+ minutes: +2.7 points per player-game
