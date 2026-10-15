@@ -40,7 +40,7 @@ function Row({ item, applied }: { item: NewsItem; applied?: { chance: number; fp
         <p className="mt-1 font-mono text-[10.5px] text-ink-500">
           {item.source_url ? (
             <a href={item.source_url} target="_blank" rel="noopener noreferrer" className="underline decoration-line-strong underline-offset-2 hover:text-ink-300">
-              {host(item.source_url)}
+              {item.source_title ?? host(item.source_url)}
             </a>
           ) : (
             "no source"
@@ -66,7 +66,7 @@ export default function TeamNews({ news }: { news?: TeamNewsView }) {
         Team news reader:{" "}
         {news.enabled
           ? "reads the news within 48 hours of the deadline."
-          : "off. It needs a free Gemini key (aistudio.google.com) saved as the GEMINI_API_KEY secret in the GitHub repo."}
+          : "off. It needs a free Gemini key (aistudio.google.com, a project with no billing) saved as the GEMINI_API_KEY secret in the GitHub repo."}
       </p>
     );
   }
@@ -77,7 +77,7 @@ export default function TeamNews({ news }: { news?: TeamNewsView }) {
   return (
     <div className="rounded-[2px] border border-line bg-surface-raised/50 p-3.5">
       <p className="label">
-        <Term explain="An AI model with web search (free Gemini 2.5 Flash with Google Search) reads press conferences and club news for your squad, this week's buys and the Wildcard squad. 'Out' and 'doubt' calls worse than FPL's own flag, backed by a page Google returned, lower the projection as an FPL flag would. 'Rotation' is shown only — line-up predictions are guesses.">
+        <Term explain="The last six days of headlines for each of your clubs (Google News and BBC Sport) are read by a free AI model (Gemini), for your squad, this week's buys and the Wildcard squad. Every call cites one of those headlines. 'Out' and 'doubt' calls worse than FPL's own flag lower the projection as an FPL flag would. 'Rotation' is shown only — line-up predictions are guesses.">
           Team news
         </Term>{" "}
         &mdash; read <Ago iso={news.fetched_at} />

@@ -51,7 +51,11 @@ OVERRIDES_PATH = BACKEND_ROOT / "overrides.json"
 # TEAM_NEWS_LOG_PATH and judged live against who actually played.
 TEAM_NEWS_ENABLED = True
 TEAM_NEWS_ADJUST = True
-TEAM_NEWS_GEMINI_MODEL = "gemini-2.5-flash"   # free with Google Search (500 requests/day)
+# Free-tier Gemini text models, tried in order. They read headlines we fetch
+# (Google News, BBC Sport) — on the free tier only the 2.5 models can search,
+# and those are closed to new projects. The key's project has no billing, so
+# nothing here can cost money.
+TEAM_NEWS_GEMINI_MODELS = ["gemini-3.8-flash", "gemini-3.5-flash-lite"]
 TEAM_NEWS_MODEL = "claude-sonnet-5-5"         # used instead only if ANTHROPIC_API_KEY is set and Gemini's isn't
 TEAM_NEWS_MAX_SEARCHES = 5          # per call; a call covers up to 4 clubs
 TEAM_NEWS_WINDOW_HOURS = 48         # only read the news this close to a deadline

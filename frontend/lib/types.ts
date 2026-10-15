@@ -102,6 +102,8 @@ export interface NewsItem {
   reason: string;
   source_url: string | null;
   source_date: string | null;
+  /** The headline the call comes from. */
+  source_title?: string | null;
 }
 
 /** What the team-news reader found for the players in this decision. */

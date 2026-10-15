@@ -222,38 +222,54 @@ class TeamNews(unittest.TestCase):
             self.assertEqual(team_news.apply(rows, news, 7), [])
 
     def test_gemini_is_preferred_and_free(self):
+        team_news._gemini_model[0] = None
         with mock.patch.dict("os.environ", {"GEMINI_API_KEY": "g", "ANTHROPIC_API_KEY": "a"}, clear=True):
             self.assertEqual(team_news.provider(), "gemini")
-            self.assertEqual(team_news.model_name(), config.TEAM_NEWS_GEMINI_MODEL)
+            self.assertEqual(team_news.model_name(), config.TEAM_NEWS_GEMINI_MODELS[0])
         with mock.patch.dict("os.environ", {"ANTHROPIC_API_KEY": "a"}, clear=True):
             self.assertEqual(team_news.provider(), "claude")
 
-    def _gemini_response(self, chunks):
+    def _ok(self, text):
         r = mock.Mock(status_code=200)
         r.raise_for_status = lambda: None
-        r.json = lambda: {"candidates": [{
-            "content": {"parts": [{"text": self._reply()}]},
-            "groundingMetadata": {"groundingChunks": chunks}}]}
+        r.json = lambda: {"candidates": [{"content": {"parts": [{"text": text}]}}]}
         return r
 
-    def test_gemini_call_reads_text_and_google_sources(self):
-        chunks = [{"web": {"title": "bbc.co.uk", "uri": "https://vertexaisearch.example/redirect/1"}}]
+    def test_gemini_call_uses_no_paid_tools_and_falls_back(self):
+        team_news._gemini_model[0] = None
+        missing = mock.Mock(status_code=404, text="not found for API version v1beta")
         with mock.patch.dict("os.environ", {"GEMINI_API_KEY": "g"}, clear=True), \
-             mock.patch.object(team_news.requests, "post", return_value=self._gemini_response(chunks)) as post:
-            text, sources = team_news._call_gemini("prompt")
+             mock.patch.object(team_news.requests, "post", side_effect=[missing, self._ok('{"players": []}')]) as post:
+            out = team_news._call_gemini("prompt")
+            self.assertEqual(team_news.model_name(), config.TEAM_NEWS_GEMINI_MODELS[1])
+        self.assertEqual(out, '{"players": []}')
         body = post.call_args.kwargs["json"]
-        self.assertEqual(body["tools"], [{"google_search": {}}])
-        self.assertIn("Szoboszlai", text)
-        self.assertEqual(sources, [("bbc.co.uk", "https://vertexaisearch.example/redirect/1")])
+        self.assertNotIn("tools", body)                                  # no search tool: free tier
+        self.assertIn(config.TEAM_NEWS_GEMINI_MODELS[0], post.call_args_list[0].args[0])
+        team_news._gemini_model[0] = None
 
-    def test_only_google_backed_sources_survive(self):
-        items = team_news.parse(self._reply(), known_ids={380, 411})
-        kept = team_news._keep_sources([dict(i) for i in items], [("bbc.co.uk", "https://r/1")])
-        self.assertEqual(kept[0]["source_url"], "https://www.bbc.co.uk/sport/x")     # same site: kept
-        none = team_news._keep_sources([dict(i) for i in items], [])
-        self.assertIsNone(none[0]["source_url"])                                     # no search: unusable
-        rows = self._rows()
-        self.assertEqual(team_news.apply(rows, {"items": none}, 7), [])
+    def test_calls_must_cite_a_headline_we_gave(self):
+        h = {"title": "Szoboszlai out for three weeks", "link": "https://bbc.co.uk/x", "source": "BBC",
+             "when": datetime.now(timezone.utc)}
+        raw = ('{"players": [{"player_id": 380, "name": "Szoboszlai", "club": "Liverpool", "status": "out",'
+               ' "start_chance": 0, "reason": "hamstring", "source_id": "A1"},'
+               ' {"player_id": 411, "name": "Haaland", "club": "Man City", "status": "doubtful",'
+               ' "start_chance": 50, "reason": "knock", "source_id": "Z9"}]}')
+        items = team_news._cite(team_news.parse(raw, {380, 411}), raw, {"A1": h})
+        self.assertEqual(items[0]["source_url"], "https://bbc.co.uk/x")
+        self.assertIsNone(items[1]["source_url"])                       # cites nothing we gave it
+        rows = pd.DataFrame({"player_id": [380, 411], "gw": [7, 7], "chance_of_playing": [None, None]})
+        applied = team_news.apply(rows, {"items": items}, 7)
+        self.assertEqual([a["player_id"] for a in applied], [380])
+
+    def test_headlines_keep_recent_unique_stories(self):
+        now = datetime.now(timezone.utc)
+        feed = [{"title": "Saka fit", "link": "l1", "source": "BBC", "when": now},
+                {"title": "Saka fit", "link": "l2", "source": "Sky", "when": now - timedelta(hours=2)},
+                {"title": "Old story", "link": "l3", "source": "BBC", "when": now - timedelta(days=9)}]
+        with mock.patch.object(team_news, "_rss", side_effect=[feed, []]):
+            hs = team_news.headlines("Arsenal")
+        self.assertEqual([h["link"] for h in hs], ["l1"])
 
     def test_no_key_means_no_call(self):
         with mock.patch.dict("os.environ", {}, clear=True), \

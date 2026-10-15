@@ -36,7 +36,9 @@ import os
 import re
 import time
 from datetime import datetime, timedelta, timezone
-from urllib.parse import urlparse
+from email.utils import parsedate_to_datetime
+from urllib.parse import quote_plus, urlparse
+import xml.etree.ElementTree as ET
 
 import requests
 
@@ -80,8 +82,13 @@ def provider() -> str | None:
     return None
 
 
+_gemini_model = [None]          # the free model that answered this run
+
+
 def model_name() -> str | None:
-    return {"gemini": config.TEAM_NEWS_GEMINI_MODEL, "claude": config.TEAM_NEWS_MODEL}.get(provider())
+    if provider() == "gemini":
+        return _gemini_model[0] or config.TEAM_NEWS_GEMINI_MODELS[0]
+    return config.TEAM_NEWS_MODEL if provider() == "claude" else None
 
 
 def enabled() -> bool:
@@ -110,43 +117,135 @@ def _host(url: str) -> str:
         return ""
 
 
-def _call_gemini(prompt: str) -> tuple:
-    """One Gemini call grounded in Google Search. Returns (text, sources),
-    sources being the pages Google actually returned: [(title, url)]."""
-    body = {"systemInstruction": {"parts": [{"text": SYSTEM}]},
+# ---------------------------------------------------------------------------
+# Free path: our own headlines, read by free Gemini (no search tool needed)
+# ---------------------------------------------------------------------------
+# On Gemini's free tier only the 2.5 models can search Google, and those are
+# closed to new projects; the 3.x models are free but can't search. So the
+# news is fetched here from free feeds — Google News headlines and BBC Sport's
+# club feed — and the model only reads them. Every call it makes has to cite
+# one of these headlines, which is what makes it checkable.
+NEWS_DAYS = 6
+HEADLINES_PER_CLUB = 25
+QUERY = '"{club}" (injury OR injured OR "team news" OR fitness OR doubt OR "ruled out" OR suspended OR "press conference") when:{days}d'
+FULL_NAME = {"Man City": "Manchester City", "Man Utd": "Manchester United", "Spurs": "Tottenham Hotspur",
+             "Nott'm Forest": "Nottingham Forest", "Wolves": "Wolverhampton Wanderers",
+             "Brighton": "Brighton & Hove Albion", "Bournemouth": "AFC Bournemouth",
+             "Newcastle": "Newcastle United", "West Ham": "West Ham United",
+             "Leicester": "Leicester City", "Leeds": "Leeds United", "Ipswich": "Ipswich Town",
+             "Coventry": "Coventry City", "Hull": "Hull City", "Sheffield Utd": "Sheffield United"}
+_feeds = requests.Session()
+_feeds.headers["User-Agent"] = "Mozilla/5.0 (var-ified-xi team news; a few requests a week)"
+
+
+def _rss(url: str) -> list:
+    try:
+        r = _feeds.get(url, timeout=30)
+        r.raise_for_status()
+        root = ET.fromstring(r.content)
+    except Exception as e:
+        logger.info("News feed unavailable (%s): %s", url[:80], e)
+        return []
+    out = []
+    for it in root.iter("item"):
+        try:
+            when = parsedate_to_datetime(it.findtext("pubDate") or "")
+        except (TypeError, ValueError):
+            continue
+        out.append({"title": (it.findtext("title") or "").strip(), "link": it.findtext("link"),
+                    "source": (it.findtext("source") or "BBC Sport").strip(), "when": when})
+    return out
+
+
+def headlines(club: str) -> list:
+    """This club's news from the last NEWS_DAYS days, newest first: Google
+    News search for injury/team-news stories, plus BBC Sport's club feed."""
+    name = FULL_NAME.get(club, club)
+    slug = re.sub(r"[^a-z]+", "-", name.lower().replace("&", "and")).strip("-")
+    items = _rss("https://news.google.com/rss/search?q=" + quote_plus(QUERY.format(club=name, days=NEWS_DAYS))
+                 + "&hl=en-GB&gl=GB&ceid=GB:en")
+    items += _rss(f"https://feeds.bbci.co.uk/sport/football/teams/{slug}/rss.xml")
+    cutoff = _now() - timedelta(days=NEWS_DAYS)
+    seen, out = set(), []
+    for it in sorted(items, key=lambda i: i["when"], reverse=True):
+        key = it["title"].lower()[:80]
+        if it["when"] >= cutoff and it["link"] and key not in seen:
+            seen.add(key)
+            out.append(it)
+    return out[:HEADLINES_PER_CLUB]
+
+
+def _prompt_headlines(clubs: list, gameweek: int, deadline: str, numbered: dict) -> str:
+    lines = [f"Today is {_now():%A %d %B %Y} UTC. Gameweek {gameweek} deadline: {deadline}.",
+             "Below are recent news headlines for each club, then the players to report on.",
+             "Use ONLY these headlines — no outside knowledge. Ignore women's, academy and",
+             "under-21 teams. Report every listed player; add any other player at these clubs",
+             "whom a headline says is ruled out. Each call that isn't no_news must cite the",
+             "headline id it comes from.", ""]
+    for c in clubs:
+        lines.append(f"{c['club']} ({c['fixture']}):")
+        for hid, h in numbered.get(c["club"], []):
+            lines.append(f"  [{hid}] {h['when']:%d %b} | {h['source']} | {h['title']}")
+        if not numbered.get(c["club"]):
+            lines.append("  (no recent headlines)")
+        lines.append("  Players: " + "; ".join(f"{p['name']} (id {p['player_id']}, {p['position']})"
+                                               for p in c["players"]))
+        lines.append("")
+    lines += ["Statuses: out = ruled out of this match; doubtful = a genuine doubt;",
+              "rotation_risk = fit but reported likely to be benched or rested;",
+              "expected_to_start = fit and expected to start; no_news = nothing in the headlines.",
+              "Return JSON:",
+              '{"players": [{"player_id": <id from the list, or null>, "name": "...", "club": "...",',
+              '  "status": "...", "start_chance": <0-100>, "reason": "<= 120 chars", "source_id": "<headline id or null>"}]}']
+    return "\n".join(lines)
+
+
+def _call_gemini(prompt: str) -> str:
+    """One call to a free Gemini model (no tools). Tries the models in
+    config.TEAM_NEWS_GEMINI_MODELS in order — all free-tier text models."""
+    body = {"systemInstruction": {"parts": [{"text": "You extract Premier League team news from the "
+                                                     "headlines you are given, for FPL managers. "
+                                                     "Never guess beyond them."}]},
             "contents": [{"role": "user", "parts": [{"text": prompt}]}],
-            "tools": [{"google_search": {}}],
-            "generationConfig": {"temperature": 0.2, "maxOutputTokens": 8192}}
-    url = GEMINI_URL.format(model=config.TEAM_NEWS_GEMINI_MODEL)
+            "generationConfig": {"temperature": 0.1, "maxOutputTokens": 8192,
+                                 "responseMimeType": "application/json"}}
     headers = {"x-goog-api-key": os.environ["GEMINI_API_KEY"], "content-type": "application/json"}
-    for attempt in range(3):
-        r = requests.post(url, headers=headers, json=body, timeout=180)
-        if r.status_code == 429:                       # free tier: a few requests a minute
-            time.sleep(30 * (attempt + 1))
+    models = [_gemini_model[0]] if _gemini_model[0] else list(config.TEAM_NEWS_GEMINI_MODELS)
+    last = None
+    for model in models:
+        for attempt in range(3):
+            r = requests.post(GEMINI_URL.format(model=model), headers=headers, json=body, timeout=180)
+            if r.status_code == 429:                   # free tier: a few requests a minute
+                time.sleep(30 * (attempt + 1))
+                continue
+            break
+        if r.status_code in (400, 403, 404):
+            last = f"{model}: {r.status_code} {r.text[:160]}"
+            logger.info("Team news: %s not available to this key, trying the next", model)
             continue
         r.raise_for_status()
+        _gemini_model[0] = model
         cand = (r.json().get("candidates") or [{}])[0]
-        text = "".join(p.get("text", "") for p in cand.get("content", {}).get("parts", []))
-        chunks = (cand.get("groundingMetadata") or {}).get("groundingChunks", [])
-        sources = [(c["web"].get("title", ""), c["web"].get("uri", "")) for c in chunks if c.get("web")]
-        return text, sources
-    raise RuntimeError("team news: Gemini rate limit")
+        return "".join(p.get("text", "") for p in cand.get("content", {}).get("parts", []))
+    raise RuntimeError(f"team news: no free Gemini model answered ({last})")
 
 
-def _keep_sources(items: list, sources: list) -> list:
-    """Only a call backed by a page Google returned can lower a projection:
-    an item's link is kept if its site is among those pages, swapped for the
-    matching (or first) returned page otherwise, and cleared when the model
-    didn't search at all."""
-    if not sources:
-        for it in items:
-            it["source_url"] = None
-        return items
+def _cite(items: list, raw: str, index: dict) -> list:
+    """Replace each call's source with the headline it cites; a call citing
+    nothing we gave it gets no source, so it can't change a projection."""
+    m = re.search(r"\{.*\}", raw, re.S)
+    cited = {}
+    if m:
+        try:
+            for p in json.loads(m.group(0)).get("players", []):
+                cited[(str(p.get("name", ""))[:40], str(p.get("club", ""))[:30])] = str(p.get("source_id") or "")
+        except json.JSONDecodeError:
+            pass
     for it in items:
-        host = _host(it.get("source_url") or "")
-        if host and any(host in (t or "").lower() or host in _host(u) for t, u in sources):
-            continue
-        it["source_url"] = sources[0][1]
+        h = index.get(cited.get((it["name"], it["club"]), ""))
+        it["source_url"] = h["link"] if h else None
+        it["source_date"] = h["when"].date().isoformat() if h else None
+        it["source_title"] = h["title"][:140] if h else None
     return items
 
 
@@ -211,13 +310,17 @@ def fetch(clubs: list, gameweek: int, deadline: str) -> dict:
     for i in range(0, len(clubs), CLUBS_PER_CALL):
         chunk = clubs[i:i + CLUBS_PER_CALL]
         try:
-            prompt = _prompt(chunk, gameweek, deadline)
             if use == "gemini":
-                text, sources = _call_gemini(prompt)
-                items += _keep_sources(parse(text, known), sources)
+                numbered, index = {}, {}
+                for ci, c in enumerate(chunk):
+                    hs = headlines(c["club"])
+                    numbered[c["club"]] = [(f"{chr(65 + ci)}{k + 1}", h) for k, h in enumerate(hs)]
+                    index.update(dict(numbered[c["club"]]))
+                raw = _call_gemini(_prompt_headlines(chunk, gameweek, deadline, numbered))
+                items += _cite(parse(raw, known), raw, index)
                 time.sleep(5)                            # stay inside the free per-minute limit
             else:
-                items += parse(_call(prompt), known)
+                items += parse(_call(_prompt(chunk, gameweek, deadline)), known)
         except Exception as e:                       # one club group failing isn't fatal
             errors.append(f"{', '.join(c['club'] for c in chunk)}: {e}")
             logger.warning("Team news for %s failed: %s", [c["club"] for c in chunk], e)
@@ -296,3 +399,20 @@ def apply(predict_df, news: dict | None, gameweek: int, max_age_days: int = 4) -
         applied.append({"player_id": pid, "status": status, "chance": chance,
                         "fpl_chance": int(fpl_chance)})
     return applied
+
+
+
+if __name__ == "__main__":
+    # python -m data_engine.team_news Arsenal Chelsea — reads those clubs now
+    # and prints the calls (never the key). Used by .github/workflows/news-check.yml.
+    import sys
+    logging.basicConfig(level=logging.INFO, format="%(message)s")
+    clubs = [{"club": c, "fixture": "next match", "players": []} for c in (sys.argv[1:] or ["Arsenal"])]
+    for c in clubs:
+        print(f"{c['club']}: {len(headlines(c['club']))} headlines in the last {NEWS_DAYS} days")
+    if provider():
+        news = fetch(clubs, 0, "next deadline")
+        print("model:", news["model"], "| errors:", news["errors"])
+        for it in news["items"]:
+            print(f"  {it['status']:<18} {it['name']:<22} {it['club']:<16} {it['reason'][:70]}"
+                  f"  [{it.get('source_title') or 'no source'}]")

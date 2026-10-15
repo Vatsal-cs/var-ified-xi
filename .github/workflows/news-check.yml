@@ -1,0 +1,30 @@
+name: Check team news
+
+# A one-minute check of the team-news reader (data_engine/team_news.py) with
+# the repo's Gemini key: fetches a few clubs' headlines, has the free model
+# read them, prints the calls. Changes nothing.
+on:
+  workflow_dispatch:
+    inputs:
+      clubs:
+        description: "Clubs to read (FPL names, space-separated)"
+        default: "Arsenal Liverpool Chelsea"
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: backend/requirements.txt
+      - name: Install dependencies
+        working-directory: backend
+        run: pip install -r requirements.txt
+      - name: Read the news
+        working-directory: backend
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: python -m data_engine.team_news ${{ inputs.clubs }}
