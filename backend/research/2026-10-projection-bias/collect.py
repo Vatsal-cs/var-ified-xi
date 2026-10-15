@@ -28,7 +28,10 @@ logger = logging.getLogger("collect")
 
 KEEP = ["player_id", "web_name", "team", "element_type", "now_cost", "round", "kickoff_time",
         "status", "chance_of_playing", "dc_avg_5", "xgi_avg_3", "points_avg_5",
-        "minutes_avg_3", "starts_avg_3"]
+        "minutes_avg_3", "starts_avg_3",
+        # other_matches inputs, when the model uses them
+        "xm_days_before", "xm_days_after", "xm_started_before", "xm_rested_before",
+        "intl_apps_14", "intl_far_14"]
 
 
 def _recent(season_df: pd.DataFrame) -> pd.DataFrame:
@@ -79,6 +82,7 @@ def main():
     ap.add_argument("season")
     ap.add_argument("--prior", nargs="*", default=[])
     ap.add_argument("--last-gw", type=int, default=6, help="live season only")
+    ap.add_argument("--tag", default="", help="suffix for the output file")
     args = ap.parse_args()
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(message)s", datefmt="%H:%M:%S")
     for name in ("data_engine.train_model", "data_engine.feature_engineering",
@@ -108,7 +112,7 @@ def main():
 
     rows = walk(season_df, prior, rounds)
     rows = rows.merge(_recent(season_df), on=["player_id", "round"], how="left")
-    path = os.path.join(HERE, f"rows_{args.season}.csv")
+    path = os.path.join(HERE, f"rows_{args.season}{args.tag}.csv")
     rows.to_csv(path, index=False)
     logger.info("wrote %d rows to %s", len(rows), path)
 

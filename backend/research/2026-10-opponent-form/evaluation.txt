@@ -1,0 +1,18 @@
+other_form_adj      2024-25       5   37   2442.2   32.9    2419-2497  0.997   0.717   0.0885
+other_form_adj      2025-26       5   37   2300.2   48.4    2261-2362  0.913   0.751   0.0784
+production          2024-25       5   37   2456.8   32.5    2438-2514  0.996   0.715   0.0887
+production          2025-26       5   37   2302.6   21.3    2272-2323  0.912   0.751   0.0785
+sched               2024-25       5   37   2464.8   36.5    2427-2525  0.994   0.716   0.0886
+sched               2025-26       5   37   2312.4   61.5    2229-2379  0.911   0.750   0.0785
+--------------------------------------------------------------------------------------------
+Paired against production, per-gameweek, averaged over seeds (block bootstrap, 2-GW blocks, 95% CI):
+  sched              pooled   +17.8 [-65, +99]  won 7/10 cells  -> NO DETECTABLE EFFECT
+                     2024-25 +8 [-37,+56]  2025-26 +10 [-59,+79]
+  form_adj           pooled   +10.8 [-45, +66]  won 3/10 cells  -> NO DETECTABLE EFFECT
+                     2024-25 +16 [-21,+53]  2025-26 -5 [-45,+36]
+  other_form_adj     pooled   -17.0 [-113, +87]  won 3/10 cells  -> NO DETECTABLE EFFECT
+                     2024-25 -15 [-98,+76]  2025-26 -2 [-52,+54]
+============================================================================================
+better = pooled CI above zero and ahead in every season; worse = the
+mirror image; anything else is no detectable effect, not a rejection.
+

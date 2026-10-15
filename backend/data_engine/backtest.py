@@ -410,7 +410,8 @@ VARIANTS = {
     ),
     "sched": Variant(
         name="sched",
-        description="production plus the strength of each player's last five opponents "
+        description="NO DETECTABLE EFFECT (Oct 2026, 5 seeds): +18 [-65, +99]. "
+                    "Production plus the strength of each player's last five opponents "
                     "(their defence and attack), so the model can weigh form by schedule "
                     "(research/2026-10-opponent-form)",
         fit=lambda df: train_model.train_models(df, save=False),
@@ -419,7 +420,8 @@ VARIANTS = {
     ),
     "form_adj": Variant(
         name="form_adj",
-        description="production plus opponent-adjusted form: xG, xGI and points scaled by "
+        description="NO DETECTABLE EFFECT (Oct 2026, 5 seeds): +11 [-45, +66]. "
+                    "Production plus opponent-adjusted form: xG, xGI and points scaled by "
                     "how strong each opponent was (research/2026-10-opponent-form)",
         fit=lambda df: train_model.train_models(df, save=False),
         predict=_bundle_predict,
@@ -427,7 +429,8 @@ VARIANTS = {
     ),
     "other_form_adj": Variant(
         name="other_form_adj",
-        description="production plus form in cup/European/international games weighted by "
+        description="NO DETECTABLE EFFECT (Oct 2026, 5 seeds): -17 [-113, +87]. "
+                    "Production plus form in cup/European/international games weighted by "
                     "opponent strength (Elo) (research/2026-10-opponent-form)",
         fit=lambda df: train_model.train_models(df, save=False),
         predict=_bundle_predict,

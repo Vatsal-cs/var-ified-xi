@@ -1,0 +1,7 @@
+group                     n   pred  actual    res  P60 pred  P60 real
+S started it           1191   3.57    3.47  -0.10     0.773     0.747
+R rested from it        958   3.61    3.83   0.22     0.811     0.844
+N no midweek game      7125   3.49    3.47  -0.02     0.820     0.834
+
+S started it: residual vs no-midweek -0.081 [-0.318, 0.142];  real-minus-predicted P(60+) -0.026 [-0.06, 0.006]  ->  no bias found
+R rested from it: residual vs no-midweek +0.236 [-0.071, 0.533];  real-minus-predicted P(60+) +0.033 [0.006, 0.058]  ->  no bias found
