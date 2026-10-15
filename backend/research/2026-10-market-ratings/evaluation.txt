@@ -1,0 +1,18 @@
+
+============================================================================================
+POOLED RESULTS (10 file(s))
+============================================================================================
+variant             season    seeds  GWs     mean     sd        range    MAE  rank-r  Brier60
+--------------------------------------------------------------------------------------------
+lagged_market_add   2024-25       5   37   2440.6   32.2    2396-2484  1.000   0.715   0.0885
+lagged_market_add   2025-26       5   37   2192.6   31.6    2161-2239  0.918   0.749   0.0786
+lagged_ratings      2024-25       5   37   2436.6   43.3    2386-2481  1.002   0.714   0.0885
+lagged_ratings      2025-26       5   37   2195.2   40.0    2130-2230  0.917   0.750   0.0786
+--------------------------------------------------------------------------------------------
+Paired against lagged_ratings, per-gameweek, averaged over seeds (block bootstrap, 2-GW blocks, 95% CI):
+  lagged_market_add  pooled    +1.4 [-107, +111]  won 6/10 cells  -> NO DETECTABLE EFFECT
+                     2024-25 +4 [-74,+84]  2025-26 -3 [-75,+73]
+============================================================================================
+better = pooled CI above zero and ahead in every season; worse = the
+mirror image; anything else is no detectable effect, not a rejection.
+

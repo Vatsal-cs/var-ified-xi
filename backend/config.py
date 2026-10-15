@@ -211,7 +211,8 @@ TEAM_FORM = False
 
 # What team form is built from: "xg" (each match's expected goals) or "odds"
 # (the goals betting odds expected before each match, odds_data.py). Research
-# only so far — see research/2026-10-market-ratings.
+# only. TESTED (Oct 2026, research/2026-10-market-ratings): odds-based team
+# form added to last season's ratings, +1 [-107, +111] — no detectable effect.
 TEAM_FORM_SOURCE = "xg"
 
 # Research only: when replaying a past season, rate its teams with the

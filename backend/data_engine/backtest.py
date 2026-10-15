@@ -513,7 +513,8 @@ VARIANTS = {
     ),
     "lagged_market_add": Variant(
         name="lagged_market_add",
-        description="lagged_ratings plus team ratings from betting odds: each team's "
+        description="NO DETECTABLE EFFECT (Oct 2026, 5 seeds): +1 [-107, +111]. "
+                    "lagged_ratings plus team ratings from betting odds: each team's "
                     "recency-weighted goals expected for and against by the market before "
                     "its earlier matches (research/2026-10-market-ratings)",
         fit=lambda df: train_model.train_models(df, save=False),

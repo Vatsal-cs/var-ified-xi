@@ -1,5 +1,5 @@
 # Team ratings from betting odds — pre-registration
-Written 2026-10-15 16:57 MDT, before any run.
+Written 2026-10-15 16:57 MDT, before any run. Commit 17b0702.
 
 Why: rating 2025-26 with its own FPL ratings instead of 2024-25's was worth
 +107 [+17, +198] points that season (research/2026-10-lagged-team-form). The
