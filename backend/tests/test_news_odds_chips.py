@@ -85,6 +85,20 @@ class Distributions(unittest.TestCase):
         self.assertEqual(out["p_return"], 0.5)
 
 
+class ProjectionShrink(unittest.TestCase):
+    def test_pulls_toward_position_mean_only_when_on(self):
+        from data_engine import train_model
+        bundle = {"full_means": {3: 4.0, 4: 5.0}}
+        raw = np.array([8.0, 2.0, 7.0])
+        types = [3, 3, 4]
+        with mock.patch.object(config, "CONDITIONAL_SHRINK", None):
+            np.testing.assert_allclose(train_model._shrink(bundle, raw, types), raw)
+        with mock.patch.object(config, "CONDITIONAL_SHRINK", {"k": 0.5}):
+            np.testing.assert_allclose(train_model._shrink(bundle, raw, types), [6.0, 3.0, 6.0])
+        with mock.patch.object(config, "CONDITIONAL_SHRINK", {"k_by_pos": {3: 1.0, 4: 0.0}}):
+            np.testing.assert_allclose(train_model._shrink(bundle, raw, types), [8.0, 2.0, 5.0])
+
+
 class ChipPlanner(unittest.TestCase):
     def _players(self):
         # 2 GK, 5 DEF, 5 MID, 3 FWD; ids 1-15

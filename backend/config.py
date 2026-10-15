@@ -264,6 +264,12 @@ CONFIRMATION_SEASONS = ["2022-23", "2023-24"]
 # several seeds (--seeds) and report the spread; production keeps 42.
 MODEL_SEED = 42
 
+# Pull the points-if-60+ projection toward its position's average:
+# mean + k * (projection - mean). None = off. {"k": 0.65} for one factor,
+# {"k_by_pos": {1: .., 2: .., 3: .., 4: ..}} per position. Under test
+# (research/2026-10-projection-shrink); off until it passes.
+CONDITIONAL_SHRINK = None
+
 # Seed averaging: train this many copies of the model, each with a different
 # seed (MODEL_SEED, then MODEL_SEED + 7919, ...), and average their
 # projections. 1 is a single model.

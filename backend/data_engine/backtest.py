@@ -196,6 +196,33 @@ class _without_features:
         config.FEATURE_COLUMNS = self._old
 
 
+# Shrink factors for the projection-shrink test, each fitted on OTHER seasons'
+# out-of-sample projections (research/2026-10-projection-bias rows): the
+# season being simulated never informs its own factor.
+SHRINK_BY_SEASON = {
+    "2024-25": {"k": 0.687, "k_by_pos": {1: 0.552, 2: 0.813, 3: 0.634, 4: 0.582}},   # from 2025-26
+    "2025-26": {"k": 0.596, "k_by_pos": {1: 0.279, 2: 0.626, 3: 0.655, 4: 0.443}},   # from 2024-25
+    "2022-23": {"k": 0.654, "k_by_pos": {1: 0.362, 2: 0.759, 3: 0.657, 4: 0.509}},   # from both
+    "2023-24": {"k": 0.654, "k_by_pos": {1: 0.362, 2: 0.759, 3: 0.657, 4: 0.509}},   # from both
+}
+
+
+def _shrink_predict(per_position: bool):
+    """Projections with config.CONDITIONAL_SHRINK set for the season being
+    predicted, read from the rows themselves."""
+    def predict(bundle, df):
+        cfg = SHRINK_BY_SEASON.get(str(df["season"].iloc[0])) if "season" in df.columns else None
+        old = config.CONDITIONAL_SHRINK
+        if cfg:
+            config.CONDITIONAL_SHRINK = ({"k_by_pos": cfg["k_by_pos"]} if per_position
+                                         else {"k": cfg["k"]})
+        try:
+            return _bundle_predict(bundle, df)
+        finally:
+            config.CONDITIONAL_SHRINK = old
+    return predict
+
+
 class _bag_ctx:
     """Temporarily sets the seed-averaging bag size used while fitting."""
     def __init__(self, size): self.size = size
@@ -334,6 +361,19 @@ VARIANTS = {
         fit=lambda df: train_model.train_models(df, save=False),
         predict=_bundle_predict,
         context=lambda: _without_features(["now_cost", "selected_by_percent"]),
+    ),
+    "shrink": Variant(
+        name="shrink",
+        description="production, points-if-60+ projections pulled toward the position "
+                    "average by one factor fitted on other seasons (research/2026-10-projection-shrink)",
+        fit=lambda df: train_model.train_models(df, save=False),
+        predict=_shrink_predict(per_position=False),
+    ),
+    "shrink_pos": Variant(
+        name="shrink_pos",
+        description="as shrink, with a separate factor per position",
+        fit=lambda df: train_model.train_models(df, save=False),
+        predict=_shrink_predict(per_position=True),
     ),
     "setpiece": Variant(
         name="setpiece",

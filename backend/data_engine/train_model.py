@@ -95,13 +95,30 @@ def _temporal_split(train_df: pd.DataFrame):
     )
 
 
+def _shrink(bundle: dict, raw: np.ndarray, element_types) -> np.ndarray:
+    """config.CONDITIONAL_SHRINK: pull each projection toward its position's
+    average 60+ minute score, raw -> mean + k * (raw - mean). Out of sample
+    the regressor's projections are too spread out — the top ones come in
+    low, the bottom ones high (research/2026-10-projection-shrink)."""
+    cfg = config.CONDITIONAL_SHRINK
+    means = bundle.get("full_means")
+    if not cfg or not means:
+        return raw
+    types = np.asarray(element_types).astype(int)
+    fallback = float(np.mean(list(means.values())))
+    m = np.array([means.get(t, fallback) for t in types])
+    by_pos = cfg.get("k_by_pos") or {}
+    k = np.array([by_pos.get(t, cfg.get("k", 1.0)) for t in types])
+    return m + k * (raw - m)
+
+
 def _predict_conditional_points(bundle: dict, X: pd.DataFrame, element_types: pd.Series) -> np.ndarray:
     """E[points | played 60+], from either the pooled regressor or the
     position-specific ones when the bundle carries them.
     """
     by_pos = bundle.get("points_reg_by_pos")
     if not by_pos:
-        return np.clip(bundle["points_reg"].predict(X), 0, None)
+        return np.clip(_shrink(bundle, bundle["points_reg"].predict(X), element_types), 0, None)
 
     types = np.asarray(element_types)
     out = np.zeros(len(X), dtype=float)
@@ -114,7 +131,7 @@ def _predict_conditional_points(bundle: dict, X: pd.DataFrame, element_types: pd
     unmodelled = ~np.isin(types, list(by_pos))
     if unmodelled.any():
         out[unmodelled] = bundle["points_reg"].predict(X.loc[unmodelled])
-    return np.clip(out, 0, None)
+    return np.clip(_shrink(bundle, out, element_types), 0, None)
 
 
 def _decomposed_xp(bundle: dict, X: pd.DataFrame, element_types: pd.Series,
@@ -270,9 +287,14 @@ def _fit_bundle(part: pd.DataFrame, per_position: bool = False,
     )
     cameo_global = float(cameo_rows[TARGET_COL].mean()) if not cameo_rows.empty else 1.0
 
+    # Each position's average score in a 60+ minute match, for pulling
+    # projections toward it (config.CONDITIONAL_SHRINK).
+    full_means = full_rows.groupby("element_type")[TARGET_COL].mean().to_dict()
+
     return {
         "minutes_clf": minutes_clf,
         "points_reg": points_reg,
+        "full_means": {int(k): float(v) for k, v in full_means.items()},
         "ceiling_reg": ceiling_reg,
         "points_reg_by_pos": points_reg_by_pos,
         "cameo_means": cameo_means,
