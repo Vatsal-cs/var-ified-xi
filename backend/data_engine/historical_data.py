@@ -196,7 +196,11 @@ def fetch_season(season: str, season_index: int):
     if config.TEAM_FORM:
         offset = HISTORICAL_TEAM_ID_BASE + season_index * 100
         names = {int(r["id"]) + offset: r["name"] for _, r in teams_df.iterrows()}
-        start = team_form.priors(final_team_form(_previous_season(season)), names)
+        if config.TEAM_FORM_SOURCE == "odds":
+            canon = {tid: odds_data.canonical_team(n) for tid, n in names.items()}
+            start = team_form.priors(final_market_form(_previous_season(season)), canon)
+        else:
+            start = team_form.priors(final_team_form(_previous_season(season)), names)
         team_form.SEASON_START[season] = start
         team_form.attach(out, start)
 
@@ -249,6 +253,23 @@ def final_team_form(season: str) -> dict:
         "expected_goals": pd.to_numeric(gw_df["expected_goals"], errors="coerce").fillna(0),
     }).dropna(subset=["team", "opponent_team"])
     return team_form.final_by_name(rows, dict(zip(teams_df["id"], teams_df["name"])))
+
+
+def final_market_form(season: str) -> dict:
+    """{canonical club name: (attack, defence)} at the end of a season, from
+    the goals betting odds expected in each of its matches — the prior for
+    the season after when team form comes from odds. None if unavailable."""
+    odds = odds_data.fetch_season_odds(season)
+    if odds.empty:
+        return None
+    rows = []
+    for i, m in enumerate(odds.itertuples()):
+        rows.append((m.home, i, m.date, m.home_xg, m.away_xg))
+        rows.append((m.away, i, m.date, m.away_xg, m.home_xg))
+    matches = (pd.DataFrame(rows, columns=["team", "fixture", "kickoff_time", "xg_for", "xg_against"])
+                 .sort_values(["kickoff_time", "fixture"]))
+    _, now = team_form.ratings(matches, {})
+    return now
 
 
 def _attach_odds_features(out: pd.DataFrame, gw_df: pd.DataFrame, season: str) -> None:

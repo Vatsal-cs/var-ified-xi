@@ -209,6 +209,11 @@ FEATURE_COLUMNS = [
 # fallback (last season's ratings) stays.
 TEAM_FORM = False
 
+# What team form is built from: "xg" (each match's expected goals) or "odds"
+# (the goals betting odds expected before each match, odds_data.py). Research
+# only so far — see research/2026-10-market-ratings.
+TEAM_FORM_SOURCE = "xg"
+
 # Research only: when replaying a past season, rate its teams with the
 # PREVIOUS season's published ratings — exactly what the live model has to do
 # in 2026-27 — instead of that season's own (which the archive may have saved

@@ -61,7 +61,18 @@ def team_matches(rows: pd.DataFrame) -> pd.DataFrame:
     rows: per-player per-match rows with team, opponent_team, fixture,
     kickoff_time and expected_goals. A team's xG is the sum over its
     players; its xG against is the opponent's.
+
+    With config.TEAM_FORM_SOURCE "odds", "xG" is instead the goals the
+    betting market expected before kickoff (odds_team_xg / odds_opp_xg, the
+    same on every player row of a team's match).
     """
+    if config.TEAM_FORM_SOURCE == "odds" and {"odds_team_xg", "odds_opp_xg"} <= set(rows.columns):
+        m = (rows.groupby(["fixture", "team"], as_index=False)
+                 .agg(kickoff_time=("kickoff_time", "min"),
+                      opponent=("opponent_team", "first"),
+                      xg_for=("odds_team_xg", "first"),
+                      xg_against=("odds_opp_xg", "first")))
+        return m.sort_values(["kickoff_time", "fixture"]).reset_index(drop=True)
     g = (rows.groupby(["fixture", "team"], as_index=False)
              .agg(kickoff_time=("kickoff_time", "min"),
                   opponent=("opponent_team", "first"),

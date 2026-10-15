@@ -200,6 +200,16 @@ class _lagged_ratings_ctx:
         config.LAGGED_TEAM_RATINGS = self._old
 
 
+class _market_source_ctx:
+    """Team form built from the goals betting odds expected before each match
+    (odds_data.py) instead of the xG that happened."""
+    def __enter__(self):
+        self._old = (config.TEAM_FORM_SOURCE, config.ATTACH_ODDS)
+        config.TEAM_FORM_SOURCE, config.ATTACH_ODDS = "odds", True
+    def __exit__(self, *a):
+        config.TEAM_FORM_SOURCE, config.ATTACH_ODDS = self._old
+
+
 @contextlib.contextmanager
 def _nested(*contexts):
     """Several variant contexts entered together, left in reverse order."""
@@ -500,6 +510,15 @@ VARIANTS = {
         fit=lambda df: train_model.train_models(df, save=False),
         predict=_bundle_predict,
         context=lambda: _nested(_lagged_ratings_ctx(), _team_form_add_ctx()),
+    ),
+    "lagged_market_add": Variant(
+        name="lagged_market_add",
+        description="lagged_ratings plus team ratings from betting odds: each team's "
+                    "recency-weighted goals expected for and against by the market before "
+                    "its earlier matches (research/2026-10-market-ratings)",
+        fit=lambda df: train_model.train_models(df, save=False),
+        predict=_bundle_predict,
+        context=lambda: _nested(_lagged_ratings_ctx(), _team_form_add_ctx(), _market_source_ctx()),
     ),
     "residual": Variant(
         name="residual",
