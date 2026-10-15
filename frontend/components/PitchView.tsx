@@ -3,8 +3,9 @@
 "use client";
 
 import { useState } from "react";
-import type { Player } from "@/lib/types";
+import type { Player, PointsDist } from "@/lib/types";
 import { kitFor, needsOutline } from "@/lib/teams";
+import { pct } from "@/lib/odds";
 
 const ROW_ORDER: Player["position"][] = ["FWD", "MID", "DEF", "GK"];
 const ROW_Y: Record<Player["position"], number> = { FWD: 17, MID: 40, DEF: 63, GK: 86 };
@@ -55,6 +56,42 @@ function FixtureRun({ xpByGw }: { xpByGw: Record<string, number> }) {
             </div>
           );
         })}
+      </div>
+    </div>
+  );
+}
+
+/** This week's points as a spread, not one number: the chance of each band
+ *  of score, from a blank to a big haul, plus the likely range. */
+const BANDS: { label: string; from: number; to: number; tone: string }[] = [
+  { label: "0–2", from: 0, to: 2, tone: "bg-ink-500/50" },
+  { label: "3–5", from: 3, to: 5, tone: "bg-pts/35" },
+  { label: "6–9", from: 6, to: 9, tone: "bg-pts/65" },
+  { label: "10–14", from: 10, to: 14, tone: "bg-gold/60" },
+  { label: "15+", from: 15, to: 99, tone: "bg-gold" },
+];
+
+function Spread({ dist }: { dist: PointsDist }) {
+  const shares = BANDS.map((b) => dist.pmf.slice(b.from, b.to + 1).reduce((a, x) => a + x, 0));
+  const peak = Math.max(...shares, 0.01);
+  return (
+    <div className="mt-4 border-t border-line pt-3">
+      <p className="label mb-2.5">
+        This gameweek &middot; likely {dist.p10}&ndash;{dist.p90} pts
+      </p>
+      <div className="grid grid-cols-5 gap-2">
+        {BANDS.map((b, i) => (
+          <div key={b.label} className="flex flex-col items-center gap-1">
+            <span className="font-mono text-[10px] tabular-nums text-ink-200">{pct(shares[i])}</span>
+            <div className="flex h-10 w-full items-end">
+              <div
+                className={`w-full rounded-t-sm ${b.tone}`}
+                style={{ height: `${Math.max(4, (shares[i] / peak) * 100)}%` }}
+              />
+            </div>
+            <span className="font-mono text-[9px] text-ink-500">{b.label}</span>
+          </div>
+        ))}
       </div>
     </div>
   );
@@ -252,6 +289,7 @@ export default function PitchView({ startingXi }: { startingXi: Player[] }) {
             </div>
           </div>
 
+          {active.dist && <Spread dist={active.dist} />}
           <FixtureRun xpByGw={active.xp_by_gw} />
         </div>
       ) : (

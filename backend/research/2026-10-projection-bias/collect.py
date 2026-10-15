@@ -64,6 +64,9 @@ def walk(season_df: pd.DataFrame, prior: pd.DataFrame, rounds) -> pd.DataFrame:
         rows["p60"] = backtest._p60(model, fixtures)["p"].to_numpy()
         rows["pts_if_60"] = train_model._bag_mean(
             model, lambda m: train_model._predict_conditional_points(m, X, fixtures["element_type"]))
+        # Play probabilities after the injury rule, for the points
+        # distributions (research/2026-10-distributions).
+        rows["p_cameo"] = (pred["p_cameo"] * pred["avail_factor"]).to_numpy()
         rows["actual"] = fixtures[config.TARGET_COL].to_numpy()
         rows["minutes"] = fixtures["minutes"].to_numpy()
         out.append(rows)

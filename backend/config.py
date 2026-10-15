@@ -39,6 +39,25 @@ INJURY_LOG_PATH = DATA_DIR / "injury_log.json"
 OVERRIDES_PATH = BACKEND_ROOT / "overrides.json"
 
 # ---------------------------------------------------------------------------
+# Team-news reader (data_engine/team_news.py)
+# ---------------------------------------------------------------------------
+# Claude with web search reads the latest team news for the clubs that matter
+# to you. Needs ANTHROPIC_API_KEY (a GitHub Actions secret in the cloud); off
+# without it. "Out" and "doubtful" calls lower the projection like an FPL flag
+# would (TEAM_NEWS_ADJUST), only when worse than FPL's own flag and sourced
+# from the last few days; "rotation risk" is shown, never applied. Untestable
+# on past seasons (no archived press conferences), so every call is logged to
+# TEAM_NEWS_LOG_PATH and judged live against who actually played.
+TEAM_NEWS_ENABLED = True
+TEAM_NEWS_ADJUST = True
+TEAM_NEWS_MODEL = "claude-sonnet-5-5"
+TEAM_NEWS_MAX_SEARCHES = 5          # per call; a call covers up to 4 clubs
+TEAM_NEWS_WINDOW_HOURS = 48         # only read the news this close to a deadline
+TEAM_NEWS_TTL_HOURS = 3             # reuse a result this fresh instead of paying again
+TEAM_NEWS_PATH = DATA_DIR / "team_news.json"
+TEAM_NEWS_LOG_PATH = DATA_DIR / "team_news_log.json"
+
+# ---------------------------------------------------------------------------
 # FPL public API (no auth required)
 # ---------------------------------------------------------------------------
 FPL_BASE_URL = "https://fantasy.premierleague.com/api"

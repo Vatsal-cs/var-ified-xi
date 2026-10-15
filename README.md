@@ -252,12 +252,18 @@ var-ified-xi/
 
 | Section | Answers |
 |---|---|
-| **This week** | The transfer to make, whether a hit is worth it, who to captain |
-| **Chip watch** | When to play a chip — and says "watching, nothing yet" explicitly, so silence never reads as broken |
+| **This week** | The transfer to make, whether a hit is worth it, who to captain — with the armband as head-to-heads ("Henderson beats Haaland 40%") and the team news for your players |
+| **Chip watch** | Every chip you hold placed in its best week up to the chip deadline, with and without a Wildcard now; says "watching, nothing yet" explicitly, so silence never reads as broken |
 | **Your league** | What the managers *ahead of you* own, what you're missing, who's already burned which chips |
-| **The squad** | The pitch in club colours; tap anyone for their projection and fixture run |
+| **The squad** | The pitch in club colours; tap anyone for their chance of each band of score and fixture run. Each bench player shows how often he'd outscore the starter he'd replace — a "coin flip" between 40% and 60% |
 | **The plan** | All six gameweeks of moves this week's decision belongs to |
 | **How it works** | The five pipeline stages in plain language |
+
+### Probabilities, chip plan, team news
+
+- **Probabilities.** Every player gets a full points distribution: the model's chance he plays, plus — for the points if he plays — how players projected the same way actually scored across two past seasons. Checked on a season it wasn't fitted on: the likely range holds the real score 85–93% of the time and "chance of 10+" lands within 2 points. Head-to-heads came out overconfident and are recalibrated by one fitted number ([research/2026-10-distributions](backend/research/2026-10-distributions/README.md)).
+- **Chip plan** (`chip_planner.py`). Triple Captain, Bench Boost and Free Hit valued in every week to the chip deadline — the captain again, the bench, the best one-week XI your budget buys minus your own — from the squad you'd hold that week, then placed together, one per week. Weeks past the transfer plan's horizon hold its last squad, so they're marked rough.
+- **Team news** (`team_news.py`). Claude, with web search, reads the news for your squad, this week's buys and the Wildcard squad within 48 hours of a deadline. "Out" and "doubt" calls worse than FPL's own flag lower the projection the way an FPL flag would; "rotation" is shown only. It can't be backtested (there are no archived press conferences), so every call is logged with its source and judged live. Needs an `ANTHROPIC_API_KEY` repository secret; about $0.30–1 a run.
 
 The league view is deliberately **not** an optimizer input. Tilting the solver toward players your rivals don't own was built and tested: it's roughly points-neutral, buying rank variance at the cost of expected points. That's the right trade when you're behind and the wrong one when you're ahead — a judgement about your situation, not one a solver should make quietly for you.
 

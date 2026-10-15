@@ -61,6 +61,7 @@ export default function Home() {
             advice={team.chip_advice}
             watch={team.chip_watch}
             expiry={team.chip_expiry}
+            plan={team.chip_plan}
             horizonGws={team.horizon_gws}
           />
           {team.wildcard_option && (
@@ -103,7 +104,11 @@ export default function Home() {
                 horizonGws={team.horizon_gws}
                 valueLabel={isPlan ? "Squad value" : "Budget used"}
               />
-              <BenchStrip bench={team.bench} />
+              <BenchStrip
+                bench={team.bench}
+                startingXi={team.starting_xi}
+                scale={team.odds_calibration?.pair_logit_scale ?? 1}
+              />
             </div>
             <PitchView startingXi={team.starting_xi} />
           </div>

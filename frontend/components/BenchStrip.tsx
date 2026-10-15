@@ -3,13 +3,37 @@
 
 import type { Player } from "@/lib/types";
 import { kitFor } from "@/lib/teams";
+import { headToHead, pct, swapTarget } from "@/lib/odds";
 import { Term } from "./ui";
 
-export default function BenchStrip({ bench }: { bench: Player[] }) {
+/** How the bench player compares with the starter he'd most plausibly
+ *  replace — the call the model made, as a head-to-head chance. */
+function CloseCall({ player, xi, scale }: { player: Player; xi: Player[]; scale: number }) {
+  const target = swapTarget(player, xi);
+  if (!target || !player.dist || !target.dist) return null;
+  const p = headToHead(player.dist.pmf, target.dist.pmf, scale);
+  const flip = p >= 0.4 && p <= 0.6;
+  return (
+    <p className={`mt-1 font-mono text-[10px] leading-snug ${flip ? "text-gold" : "text-ink-500"}`}>
+      beats {target.name} {pct(p)}
+      {flip && " · coin flip"}
+    </p>
+  );
+}
+
+export default function BenchStrip({
+  bench,
+  startingXi = [],
+  scale = 1,
+}: {
+  bench: Player[];
+  startingXi?: Player[];
+  scale?: number;
+}) {
   return (
     <div className="panel p-4">
       <p className="label mb-3">
-        <Term explain="If a starter doesn't play, FPL automatically subs in the first bench player who did — in this order. The reserve keeper can only ever replace the keeper.">
+        <Term explain="If a starter doesn't play, FPL automatically subs in the first bench player who did — in this order. The reserve keeper can only ever replace the keeper. 'Beats X' is how often he'd outscore the starter he'd most plausibly replace (ties left out); between 40% and 60% the start/bench call is a coin flip.">
           Bench &mdash; substitution order
         </Term>
       </p>
@@ -38,6 +62,7 @@ export default function BenchStrip({ bench }: { bench: Player[] }) {
                 <p className="mt-0.5 font-mono text-[11px] tabular-nums text-pts">
                   {p.predicted_points.toFixed(1)} pts
                 </p>
+                <CloseCall player={p} xi={startingXi} scale={scale} />
               </div>
             </li>
           );

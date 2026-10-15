@@ -11,7 +11,8 @@
 //   2. Calendar — named suggestions when a double or blank gameweek is close
 //      enough to act on, or an explicit "watching, nothing yet".
 
-import type { ChipExpiry, ChipSuggestion, ChipWatch } from "@/lib/types";
+import type { ChipExpiry, ChipPlan, ChipSuggestion, ChipWatch } from "@/lib/types";
+import ChipPlanner from "./ChipPlanner";
 
 const CHIP_LABEL: Record<ChipSuggestion["chip"], string> = {
   bboost: "Bench Boost",
@@ -20,7 +21,7 @@ const CHIP_LABEL: Record<ChipSuggestion["chip"], string> = {
   wildcard: "Wildcard",
 };
 
-function ExpiryPanel({ expiry }: { expiry: ChipExpiry }) {
+function ExpiryPanel({ expiry, plan }: { expiry: ChipExpiry; plan?: ChipPlan }) {
   const { deadline_gw, gameweeks_left, chips_left, urgent, best_weeks, visible_through_gw } = expiry;
   if (chips_left.length === 0) return null;
   const best = Object.fromEntries(best_weeks.map((b) => [b.chip, b]));
@@ -43,34 +44,39 @@ function ExpiryPanel({ expiry }: { expiry: ChipExpiry }) {
           : " Waiting for a double gameweek is fine only if one is confirmed before then."}
       </p>
 
-      <ul className="mt-4 divide-y divide-line border-y border-line">
-        {chips_left.map((chip) => {
-          const b = best[chip];
-          return (
-            <li key={chip} className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 py-2.5">
-              <span className="font-body text-sm font-medium text-ink-100">{CHIP_LABEL[chip]}</span>
-              <span className="font-mono text-[11.5px] text-ink-300">
-                {b ? (
-                  <>
-                    best week in sight <span className="text-ink-100">GW{b.gameweek}</span>
-                    {b.player ? <> &middot; {b.player}</> : <> &middot; bench</>}{" "}
-                    <span className="text-pts">+{b.value.toFixed(1)} pts</span>
-                  </>
-                ) : (
-                  "no single-week projection — best on a blank, a double or a squad rebuild"
-                )}
-              </span>
-            </li>
-          );
-        })}
-      </ul>
-
-      {visible_through_gw && visible_through_gw < deadline_gw && (
-        <p className="mt-3 font-mono text-[11px] text-ink-500">
-          Projections reach GW{visible_through_gw}; weeks after that come into view as the
-          season moves. Triple Captain adds one more copy of the captain&apos;s projection;
-          Bench Boost adds the bench&apos;s.
-        </p>
+      {plan && plan.scenarios.length > 0 ? (
+        <ChipPlanner plan={plan} />
+      ) : (
+        <>
+        <ul className="mt-4 divide-y divide-line border-y border-line">
+          {chips_left.map((chip) => {
+            const b = best[chip];
+            return (
+              <li key={chip} className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 py-2.5">
+                <span className="font-body text-sm font-medium text-ink-100">{CHIP_LABEL[chip]}</span>
+                <span className="font-mono text-[11.5px] text-ink-300">
+                  {b ? (
+                    <>
+                      best week in sight <span className="text-ink-100">GW{b.gameweek}</span>
+                      {b.player ? <> &middot; {b.player}</> : <> &middot; bench</>}{" "}
+                      <span className="text-pts">+{b.value.toFixed(1)} pts</span>
+                    </>
+                  ) : (
+                    "no single-week projection — best on a blank, a double or a squad rebuild"
+                  )}
+                </span>
+              </li>
+            );
+          })}
+        </ul>
+        {visible_through_gw && visible_through_gw < deadline_gw && (
+          <p className="mt-3 font-mono text-[11px] text-ink-500">
+            Projections reach GW{visible_through_gw}; weeks after that come into view as the
+            season moves. Triple Captain adds one more copy of the captain&apos;s projection;
+            Bench Boost adds the bench&apos;s.
+          </p>
+        )}
+        </>
       )}
     </div>
   );
@@ -80,18 +86,20 @@ export default function ChipAdvice({
   advice,
   watch,
   expiry,
+  plan,
   horizonGws,
 }: {
   advice?: ChipSuggestion[];
   watch?: ChipWatch;
   expiry?: ChipExpiry;
+  plan?: ChipPlan;
   horizonGws: number;
 }) {
   const next = watch?.next_double_gw ?? watch?.next_blank_gw;
 
   return (
     <div className="space-y-4">
-      {expiry && <ExpiryPanel expiry={expiry} />}
+      {expiry && <ExpiryPanel expiry={expiry} plan={plan} />}
 
       {advice && advice.length > 0 ? (
         <div className="space-y-3">

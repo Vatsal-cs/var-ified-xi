@@ -30,8 +30,11 @@ from datetime import datetime, timezone
 
 import config
 from data_engine import (
+    chip_planner,
     chips,
+    distributions,
     rivals,
+    team_news,
     entry_data,
     fetch_data,
     feature_engineering,
@@ -73,7 +76,9 @@ def build_output_json(bootstrap: dict, predictions_df, result: dict,
                       plan: dict = None, team_state=None,
                       chip_advice: list = None, chip_watch: dict = None,
                       league_view: dict = None, chip_expiry: dict = None,
-                      captain_override: dict = None, wildcard_option: dict = None) -> dict:
+                      captain_override: dict = None, wildcard_option: dict = None,
+                      pmfs: dict = None, captain_odds: list = None, chip_plan: dict = None,
+                      news_view: dict = None) -> dict:
     """Assembles the final clean JSON contract the frontend will consume."""
     teams_lookup = {t["id"]: t["name"] for t in bootstrap["teams"]}
     pos_lookup = config.POSITIONS
@@ -95,6 +100,8 @@ def build_output_json(bootstrap: dict, predictions_df, result: dict,
             "start_probability": round(float(row.get("p_full", 1.0)), 2),
             "is_captain": is_captain,
             "is_vice_captain": is_vice,
+            # The whole spread of outcomes, not just the average (distributions.py).
+            "dist": distributions.payload(pmfs[pid]) if pmfs and pid in pmfs else None,
         }
 
     starting_xi = [
@@ -132,6 +139,16 @@ def build_output_json(bootstrap: dict, predictions_df, result: dict,
         output["captain_override"] = captain_override
     if wildcard_option:
         output["wildcard_option"] = wildcard_option
+    if captain_odds:
+        output["captain_odds"] = captain_odds
+    if pmfs:
+        # The page compares any two players itself (bench close calls), with
+        # the same recalibration the backend uses.
+        output["odds_calibration"] = {"pair_logit_scale": distributions.PAIR_LOGIT_SCALE}
+    if chip_plan:
+        output["chip_plan"] = chip_plan
+    if news_view:
+        output["team_news"] = news_view
     if plan:
         output["transfer_plan"] = _plan_payload(plan, pred_lookup, pos_lookup, teams_lookup)
     if team_state:
@@ -239,29 +256,76 @@ def run_pipeline(team_id: int = None) -> None:
             len(train_df),
         )
 
-    # 4. Train / predict
+    # 4. Train
     logger.info("Training 2-stage model (minutes classifier + conditional points) on %d current-season rows...", len(train_df))
     model_bundle = train_model.train_models(train_df, historical_df=historical_train_df)
 
-    # One prediction per (player, upcoming fixture), then folded back to one
-    # row per player carrying both next-gameweek and whole-horizon expectations.
-    fixture_predictions = train_model.predict_points(model_bundle, predict_df, flag_counts)
-    predictions_df = feature_engineering.aggregate_horizon(fixture_predictions)
-
-    # 5. Optimize — either a fresh squad, or transfers from the team you own
     upcoming_gw = feature_engineering.next_gameweek(bootstrap)
-    plan, team_state, captain_override = None, None, None
-
+    team_state = None
     if team_id:
-        team_state = entry_data.build_team_state(
-            team_id, bootstrap, histories, upcoming_gw
-        )
-        result, plan = _plan_from_team(predictions_df, team_state, upcoming_gw)
-        captain_override = _apply_armband_override(result, plan, predictions_df, upcoming_gw)
-    else:
-        logger.info("Solving MILP squad optimizer over %d available players (horizon: %d GWs)...",
-                    len(predictions_df), config.HORIZON_GWS)
-        result = optimizer.optimize_squad(predictions_df, objective_col="horizon_points")
+        team_state = entry_data.build_team_state(team_id, bootstrap, histories, upcoming_gw)
+
+    # What the people you're actually playing against own. Decision support
+    # only — see rivals.py on why this deliberately doesn't feed the
+    # optimizer. Never fatal: a league that can't be read just isn't shown.
+    league_view = None
+    if team_id:
+        league_view = rivals.build_league_view(team_id, bootstrap, upcoming_gw)
+    team_names = {t["id"]: t["name"] for t in bootstrap["teams"]}
+
+    # 5. Predict and decide. A function, because fresh team news can change
+    # the projections, and then the whole decision is made again with it.
+    def decide(rows):
+        # One prediction per (player, upcoming fixture), then folded back to
+        # one row per player carrying both next-gameweek and whole-horizon
+        # expectations.
+        fixture_predictions = train_model.predict_points(model_bundle, rows, flag_counts)
+        predictions_df = feature_engineering.aggregate_horizon(fixture_predictions)
+        d = {"fixture_predictions": fixture_predictions, "predictions_df": predictions_df,
+             "plan": None, "captain_override": None, "wildcard": None, "wildcard_plan": None}
+        if team_state:
+            d["result"], d["plan"] = _plan_from_team(predictions_df, team_state, upcoming_gw)
+            d["captain_override"] = _apply_armband_override(d["result"], d["plan"],
+                                                            predictions_df, upcoming_gw)
+            # Is the Wildcard worth playing this week? Computed every refresh
+            # while it's in hand, so the answer is on the dashboard without
+            # anyone having to run anything.
+            if "wildcard" in (team_state.chips_available or []):
+                try:
+                    d["wildcard"], d["wildcard_plan"] = _wildcard_option(
+                        predictions_df, team_state, upcoming_gw, d["plan"], league_view, team_names)
+                except Exception as e:                      # never fatal to the refresh
+                    logger.warning("Wildcard check skipped: %s", e)
+        else:
+            logger.info("Solving MILP squad optimizer over %d available players (horizon: %d GWs)...",
+                        len(predictions_df), config.HORIZON_GWS)
+            d["result"] = optimizer.optimize_squad(predictions_df, objective_col="horizon_points")
+        return d
+
+    d = decide(predict_df)
+
+    # 5b. Team news, read for the clubs this decision involves. Out/doubtful
+    # calls worse than FPL's own flags re-run the decision with them.
+    news, news_applied = None, []
+    if team_state:
+        try:
+            clubs = _news_targets(d, team_state, bootstrap, fixtures, upcoming_gw)
+            news = team_news.get(clubs, upcoming_gw, _deadline(bootstrap, upcoming_gw))
+            news_applied = team_news.apply(predict_df, news, upcoming_gw)
+            if news_applied:
+                logger.info("Team news changes %d projection(s); deciding again.", len(news_applied))
+                d = decide(predict_df)
+        except Exception as e:                              # never fatal to the refresh
+            logger.warning("Team news skipped: %s", e)
+
+    predictions_df, result, plan = d["predictions_df"], d["result"], d["plan"]
+
+    # 5c. A full points distribution per player, and the captaincy odds.
+    pmfs, captain_odds = {}, None
+    tables = distributions.load_tables()
+    if tables:
+        pmfs = distributions.next_gameweek_pmfs(tables, d["fixture_predictions"], upcoming_gw)
+        captain_odds = _captain_odds(pmfs, result, predictions_df)
 
     # 6. Chip advice from the fixture calendar. Actionable advice only covers
     # the planning horizon (it needs to know your actual squad that week);
@@ -284,29 +348,15 @@ def run_pipeline(team_id: int = None) -> None:
     # Chips come in half-season sets and an unplayed one is lost at its
     # window's deadline, so the dashboard needs to say when — and what the
     # best week in sight is worth — not just wait for a double gameweek.
-    chip_expiry = None
+    chip_expiry, chip_plan = None, None
     if team_state:
         chip_expiry = chips.expiry_plan(team_state.chip_deadlines, upcoming_gw,
                                         plan, predictions_df)
-
-    # 6b. What the people you're actually playing against own. Decision
-    # support only — see rivals.py on why this deliberately doesn't feed the
-    # optimizer. Never fatal: a league that can't be read just isn't shown.
-    league_view = None
-    if team_id:
-        league_view = rivals.build_league_view(team_id, bootstrap, upcoming_gw)
-
-    # 6c. Is the Wildcard worth playing this week? Computed every refresh
-    # while it's in hand, so the answer is on the dashboard without anyone
-    # having to run anything.
-    wildcard_option = None
-    if team_state and "wildcard" in (team_state.chips_available or []):
         try:
-            wildcard_option = _wildcard_option(predictions_df, team_state, upcoming_gw,
-                                               plan, league_view,
-                                               {t["id"]: t["name"] for t in bootstrap["teams"]})
-        except Exception as e:                      # never fatal to the refresh
-            logger.warning("Wildcard check skipped: %s", e)
+            chip_plan = _chip_plan(model_bundle, flag_counts, bootstrap, history_df, histories,
+                                   fixtures, team_state, upcoming_gw, d, news)
+        except Exception as e:                              # never fatal to the refresh
+            logger.warning("Chip plan skipped: %s", e)
 
     # 7. Write output
     output = build_output_json(bootstrap, predictions_df, result, plan=plan,
@@ -314,8 +364,10 @@ def run_pipeline(team_id: int = None) -> None:
                                league_view=league_view,
                                chip_expiry=chip_expiry,
                                chip_watch=chip_watch,
-                               captain_override=captain_override,
-                               wildcard_option=wildcard_option)
+                               captain_override=d["captain_override"],
+                               wildcard_option=d["wildcard"],
+                               pmfs=pmfs, captain_odds=captain_odds, chip_plan=chip_plan,
+                               news_view=_news_payload(news, news_applied, d, team_state))
 
     config.OUTPUT_JSON_PATH.write_text(json.dumps(output, indent=2))
     config.FRONTEND_JSON_PATH.write_text(json.dumps(output, indent=2))
@@ -369,9 +421,10 @@ def _apply_armband_override(result: dict, plan: dict, predictions_df, gameweek) 
 
 
 def _wildcard_option(predictions_df, team_state, upcoming_gw, free_plan: dict,
-                     league_view: dict = None, team_names: dict = None) -> dict:
+                     league_view: dict = None, team_names: dict = None) -> tuple:
     """The same six-week plan with a Wildcard played this gameweek, against
-    the free-transfer plan the dashboard already recommends."""
+    the free-transfer plan the dashboard already recommends. Returns (the
+    dashboard's summary, the Wildcard plan itself)."""
     xp_by_gw = {
         int(row["player_id"]): {int(k): float(v) for k, v in (row["xp_by_gw"] or {}).items()}
         for _, row in predictions_df.iterrows()
@@ -421,7 +474,124 @@ def _wildcard_option(predictions_df, team_state, upcoming_gw, free_plan: dict,
             "out": [x["name"] for x in free_week["transfers_out"]],
             "in": [x["name"] for x in free_week["transfers_in"]],
         },
-    }
+    }, wild
+
+
+def _deadline(bootstrap: dict, gameweek: int) -> datetime:
+    for e in bootstrap["events"]:
+        if e["id"] == gameweek and e.get("deadline_time"):
+            return datetime.fromisoformat(e["deadline_time"].replace("Z", "+00:00"))
+    return datetime.now(timezone.utc)
+
+
+def _news_targets(d: dict, team_state, bootstrap: dict, fixtures: list, gameweek: int) -> list:
+    """The clubs to read team news for, each with the players that matter:
+    your squad, this week's planned buys, the Wildcard squad."""
+    ids = set(team_state.squad)
+    week = (d["plan"] or {}).get("weeks", [{}])[0]
+    ids |= {m["player_id"] for m in week.get("transfers_in", [])}
+    if d["wildcard"]:
+        ids |= {p["player_id"] for p in d["wildcard"]["squad"]}
+    els = {e["id"]: e for e in bootstrap["elements"]}
+    teams = {t["id"]: t["name"] for t in bootstrap["teams"]}
+    matches = {}
+    for f in fixtures:
+        if f.get("event") != gameweek:
+            continue
+        when = (f.get("kickoff_time") or "")[:16].replace("T", " ")
+        matches.setdefault(f["team_h"], []).append(f"home vs {teams.get(f['team_a'])}, {when} UTC")
+        matches.setdefault(f["team_a"], []).append(f"away at {teams.get(f['team_h'])}, {when} UTC")
+    clubs = {}
+    for pid in ids:
+        e = els.get(pid)
+        if not e or e["team"] not in matches:          # no match this week: nothing to read
+            continue
+        c = clubs.setdefault(e["team"], {"club": teams[e["team"]],
+                                         "fixture": "; ".join(matches[e["team"]]), "players": []})
+        c["players"].append({"player_id": pid, "name": f"{e['first_name']} {e['second_name']}",
+                             "position": config.POSITIONS.get(e["element_type"])})
+    return sorted(clubs.values(), key=lambda c: c["club"])
+
+
+def _news_payload(news: dict, applied: list, d: dict, team_state) -> dict | None:
+    """What the dashboard shows: calls about the players in this decision,
+    worst first, and which of them moved a projection."""
+    if not team_state:
+        return None
+    if not news:
+        return {"enabled": team_news.enabled(), "items": [], "applied": []}
+    ids = set(team_state.squad)
+    week = (d["plan"] or {}).get("weeks", [{}])[0]
+    ids |= {m["player_id"] for m in week.get("transfers_in", [])}
+    if d["wildcard"]:
+        ids |= {p["player_id"] for p in d["wildcard"]["squad"]}
+    order = {s: i for i, s in enumerate(team_news.STATUSES)}
+    items = [i for i in news.get("items", [])
+             if i.get("player_id") in ids or i.get("status") in team_news.APPLIED]
+    items.sort(key=lambda i: (order.get(i["status"], 9), i["name"]))
+    return {"enabled": team_news.enabled(), "fetched_at": news.get("fetched_at"),
+            "model": news.get("model"), "items": items, "applied": applied,
+            "errors": len(news.get("errors", []))}
+
+
+def _captain_odds(pmfs: dict, result: dict, predictions_df) -> list:
+    """The armband as head-to-heads: the captain, then the XI's next three
+    best projections, each with how often he'd outscore the captain (ties
+    left out, recalibrated) and his chance of 10+."""
+    proj = predictions_df.set_index("player_id")["predicted_points"].to_dict()
+    names = predictions_df.set_index("player_id")["web_name"].to_dict()
+    cap = result["captain_id"]
+    if cap not in pmfs:
+        return []
+    others = sorted((p for p in result["starting_ids"] if p in pmfs and p != cap),
+                    key=lambda p: -proj.get(p, 0))[:3]
+    rows = []
+    for p in [cap] + others:
+        s = distributions.summary(pmfs[p])
+        rows.append({"player_id": int(p), "name": names.get(p),
+                     "projected": round(float(proj.get(p, 0)), 2),
+                     "p_haul": s["p_haul"], "p10": s["p10"], "p90": s["p90"],
+                     "beats_captain": None if p == cap else
+                     round(distributions.head_to_head(pmfs[p], pmfs[cap]), 3)})
+    return rows
+
+
+def _chip_plan(model_bundle, flag_counts, bootstrap, history_df, histories, fixtures,
+               team_state, upcoming_gw, d, news) -> dict | None:
+    """Every chip you hold placed in its best week up to its deadline, with and
+    without a Wildcard now (data_engine/chip_planner.py)."""
+    held = [c for c in team_state.chips_available if c in chip_planner.PLANNED]
+    if not held:
+        return None
+    deadline = min(team_state.chip_deadlines[c] for c in held)
+    held = [c for c in held if team_state.chip_deadlines[c] == deadline]
+    gameweeks = list(range(upcoming_gw, deadline + 1))
+    if not gameweeks:
+        return None
+
+    # Projections out to the chip deadline: the same model, the same frozen
+    # form, each week's own fixtures (and the same team news).
+    rows = feature_engineering.build_prediction_set(bootstrap, history_df, histories,
+                                                    horizon=len(gameweeks))
+    team_news.apply(rows, news, upcoming_gw)
+    long = feature_engineering.aggregate_horizon(
+        train_model.predict_points(model_bundle, rows, flag_counts))
+    xp = {int(r.player_id): {int(k): float(v) for k, v in (r.xp_by_gw or {}).items()}
+          for r in long.itertuples()}
+
+    scenarios = {"free": {"label": "Without the Wildcard", "weeks": d["plan"]["weeks"]}}
+    if d["wildcard_plan"]:
+        scenarios["wildcard"] = {"label": "With the Wildcard now", "weeks": d["wildcard_plan"]["weeks"],
+                                 "blocked": {upcoming_gw}}
+    counts = chips.fixture_counts_by_gameweek(fixtures, upcoming_gw, len(gameweeks))
+    n_teams = len(bootstrap["teams"])
+    fixtures_by_gw = {gw: {"doubles": sum(1 for n in counts.get(gw, {}).values() if n >= 2),
+                           "blanks": n_teams - len(counts.get(gw, {}))} for gw in gameweeks}
+    out = chip_planner.plan(long, xp, gameweeks, held, scenarios,
+                            budget=team_state.squad_value + team_state.bank,
+                            fixtures_by_gw=fixtures_by_gw)
+    out["deadline_gw"] = deadline
+    return out
 
 
 def _plan_from_team(predictions_df, team_state, upcoming_gw):

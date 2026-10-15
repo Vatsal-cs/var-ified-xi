@@ -20,6 +20,99 @@ export interface Player {
   start_probability: number;
   is_captain: boolean;
   is_vice_captain: boolean;
+  /** The whole spread of next-gameweek outcomes (backend distributions.py). */
+  dist?: PointsDist | null;
+}
+
+/** A player's next-gameweek points distribution. Checked out of sample in
+ *  backend/research/2026-10-distributions. */
+export interface PointsDist {
+  mean: number;
+  /** 10th and 90th percentile scores: the likely range. */
+  p10: number;
+  p90: number;
+  /** P(2 or fewer), P(6+), P(10+). */
+  p_blank: number;
+  p_return: number;
+  p_haul: number;
+  /** P(score = i) for i = 0, 1, 2, ... (negative scores folded into 0). */
+  pmf: number[];
+}
+
+/** The armband as head-to-heads: the captain first, then the XI's next best. */
+export interface CaptainOdds {
+  player_id: number;
+  name: string;
+  projected: number;
+  p_haul: number;
+  p10: number;
+  p90: number;
+  /** P(he outscores the captain), ties left out, recalibrated. null for the captain. */
+  beats_captain: number | null;
+}
+
+export type PlannedChip = "3xc" | "bboost" | "freehit";
+
+export interface ChipWeek {
+  gameweek: number;
+  "3xc": number;
+  "3xc_player": string | null;
+  bboost: number;
+  freehit: number | null;
+  xi_points: number;
+  /** Inside the transfer plan's horizon (the squad is known), not a held squad. */
+  firm: boolean;
+  fixtures?: { doubles: number; blanks: number } | null;
+}
+
+export interface ChipPlacement {
+  chip: PlannedChip;
+  gameweek: number;
+  value: number;
+  player: string | null;
+  firm: boolean;
+  now: boolean;
+}
+
+export interface ChipScenario {
+  key: "free" | "wildcard";
+  label: string;
+  plan: ChipPlacement[];
+  total: number;
+  weeks: ChipWeek[];
+  firm_through_gw: number;
+}
+
+/** Every chip you hold placed in its best week, with and without a Wildcard now. */
+export interface ChipPlan {
+  deadline_gw: number;
+  gameweeks: number[];
+  chips: PlannedChip[];
+  scenarios: ChipScenario[];
+}
+
+export type NewsStatus = "out" | "doubtful" | "rotation_risk" | "expected_to_start" | "no_news";
+
+export interface NewsItem {
+  player_id: number | null;
+  name: string;
+  club: string;
+  status: NewsStatus;
+  start_chance: number | null;
+  reason: string;
+  source_url: string | null;
+  source_date: string | null;
+}
+
+/** What the team-news reader found for the players in this decision. */
+export interface TeamNewsView {
+  enabled: boolean;
+  fetched_at?: string;
+  model?: string;
+  items: NewsItem[];
+  /** Calls that lowered a projection (worse than FPL's own flag). */
+  applied: { player_id: number; status: NewsStatus; chance: number; fpl_chance: number }[];
+  errors?: number;
 }
 
 /** One player moving in or out in a planned transfer. */
@@ -194,4 +287,13 @@ export interface OptimizedTeam {
   /** Present when captain/vice are your own pick (backend/overrides.json)
    *  rather than the model's; holds what the model would have chosen. */
   captain_override?: { model_captain_id: number; model_vice_captain_id: number | null };
+  /** The captain against the XI's next best options. */
+  captain_odds?: CaptainOdds[];
+  /** Head-to-head chances are recalibrated by this log-odds scale (backend
+   *  distributions.PAIR_LOGIT_SCALE), so the page's own comparisons match. */
+  odds_calibration?: { pair_logit_scale: number };
+  /** Chip placement up to the chip deadline. */
+  chip_plan?: ChipPlan;
+  /** Team news for your squad, planned buys and the Wildcard squad. */
+  team_news?: TeamNewsView;
 }

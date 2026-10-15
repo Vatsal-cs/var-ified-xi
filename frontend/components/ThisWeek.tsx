@@ -7,6 +7,8 @@
 import type { OptimizedTeam, Player, PlannedWeek } from "@/lib/types";
 import { kitFor } from "@/lib/teams";
 import { Term } from "./ui";
+import CaptainOdds from "./CaptainOdds";
+import TeamNews from "./TeamNews";
 
 function named(team: OptimizedTeam, id: number | null): Player | undefined {
   if (id == null) return undefined;
@@ -217,6 +219,10 @@ export default function ThisWeek({ team }: { team: OptimizedTeam }) {
             </div>
 
             <CaptainLine team={team} />
+            {team.captain_odds && (
+              <CaptainOdds odds={team.captain_odds} />
+            )}
+            <TeamNews news={team.team_news} />
 
             <p className="border-t border-line pt-3 font-mono text-xs text-ink-400">
               Projected GW{team.gameweek} score after transfer costs:{" "}

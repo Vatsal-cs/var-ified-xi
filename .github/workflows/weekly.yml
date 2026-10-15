@@ -60,6 +60,8 @@ jobs:
         working-directory: backend
         env:
           FPL_TEAM_ID: ${{ vars.FPL_TEAM_ID }}
+          # Optional: turns on the team-news reader (data_engine/team_news.py).
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         run: python main.py
 
       - name: Commit the refreshed squad
@@ -68,6 +70,7 @@ jobs:
           git config user.name  "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add frontend/public/optimized_team.json backend/data/injury_log.json
+          git add backend/data/team_news.json backend/data/team_news_log.json 2>/dev/null || true
           if git diff --staged --quiet; then
             echo "Nothing changed — skipping commit."
           else

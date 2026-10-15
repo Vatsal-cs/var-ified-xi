@@ -25,6 +25,14 @@ const QA: { q: string; a: string }[] = [
     a: "The player with the highest projected points in your XI. Picking on a 'good day ceiling' instead was tested over two full seasons and lost both, so it isn't used: chasing upside also drags high-variance players into the rest of the squad, and the squad lost more than the armband gained.",
   },
   {
+    q: "What do the percentages mean?",
+    a: "Each player has a full points distribution, not just an average: his chance of playing, and for the points if he does, how players the model projected the same way actually scored over two past seasons. 'Beats X 45%' is how often he'd outscore X, ties left out. Checked on a season it wasn't built from, and recalibrated where it was overconfident. Most start/bench calls land between 40% and 60% — genuinely close.",
+  },
+  {
+    q: "Where does the team news come from?",
+    a: "Claude, with web search, reads press conferences and club news for your players within 48 hours of the deadline, and cites a source for every call. 'Out' and 'doubt' calls that are worse than FPL's own flag lower the projection, as an FPL flag would a few hours later. 'Rotation' is shown, never applied — predicted line-ups are guesses.",
+  },
+  {
     q: "How good is the model, honestly?",
     a: "Backtested over two full past seasons, it scores about 19% more points than having no model at all (just using each player's recent average). One gameweek tells you very little either way — judge it over 6–10.",
   },

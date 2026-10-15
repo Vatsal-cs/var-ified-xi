@@ -482,6 +482,14 @@ def predict_points(bundle: dict, prediction_df: pd.DataFrame, flag_counts: dict 
     out["predicted_points"] = _apply(
         _bag_mean(bundle, lambda m: _decomposed_xp(m, X, out["element_type"])))
 
+    # What distributions.py builds a full points distribution from: the
+    # points-if-60+ regressor on its own, and the availability multiplier
+    # _apply puts on the play probabilities (1 for a fit player, 0 for a
+    # blank, the chance of playing for a doubt).
+    out["pts_if_60"] = np.round(_bag_mean(
+        bundle, lambda m: _predict_conditional_points(m, X, out["element_type"])), 3)
+    out["avail_factor"] = _apply(np.ones(len(out)))
+
     # Upside estimate — same pipeline, high-quantile regressor. Used only to
     # choose the captain (points doubled ⇒ you want the biggest realistic
     # score, not the safest). Falls back to the mean if the bundle predates
