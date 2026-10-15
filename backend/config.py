@@ -55,7 +55,9 @@ TEAM_NEWS_ADJUST = True
 # (Google News, BBC Sport) — on the free tier only the 2.5 models can search,
 # and those are closed to new projects. The key's project has no billing, so
 # nothing here can cost money.
-TEAM_NEWS_GEMINI_MODELS = ["gemini-3.8-flash", "gemini-3.5-flash-lite"]
+# Flash-Lite first: it barely "thinks" by default, so it answers in seconds;
+# 3.8 Flash (asked to think little) is the fallback.
+TEAM_NEWS_GEMINI_MODELS = ["gemini-3.5-flash-lite", "gemini-3.8-flash"]
 TEAM_NEWS_MODEL = "claude-sonnet-5-5"         # used instead only if ANTHROPIC_API_KEY is set and Gemini's isn't
 TEAM_NEWS_MAX_SEARCHES = 5          # per call; a call covers up to 4 clubs
 TEAM_NEWS_WINDOW_HOURS = 48         # only read the news this close to a deadline

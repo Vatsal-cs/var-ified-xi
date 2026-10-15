@@ -245,6 +245,7 @@ class TeamNews(unittest.TestCase):
         self.assertEqual(out, '{"players": []}')
         body = post.call_args.kwargs["json"]
         self.assertNotIn("tools", body)                                  # no search tool: free tier
+        self.assertNotIn("thinkingConfig", body["generationConfig"])   # Flash-Lite: default thinking
         self.assertIn(config.TEAM_NEWS_GEMINI_MODELS[0], post.call_args_list[0].args[0])
         team_news._gemini_model[0] = None
 

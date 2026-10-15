@@ -49,7 +49,7 @@ logger = logging.getLogger(__name__)
 API_URL = "https://api.anthropic.com/v1/messages"
 STATUSES = ("out", "doubtful", "rotation_risk", "expected_to_start", "no_news")
 APPLIED = ("out", "doubtful")
-CLUBS_PER_CALL = 4
+CLUBS_PER_CALL = 3
 
 SYSTEM = """You check Premier League team news for Fantasy Premier League managers.
 Use web search to find the most recent news: manager press conferences, club
@@ -213,12 +213,27 @@ def _call_gemini(prompt: str) -> str:
     models = [_gemini_model[0]] if _gemini_model[0] else list(config.TEAM_NEWS_GEMINI_MODELS)
     last = None
     for model in models:
+        # Reading headlines needs little reasoning; long "thinking" only makes
+        # the free model slow (3.8 Flash thinks at medium unless told).
+        think = {**body, "generationConfig": {**body["generationConfig"],
+                                              "thinkingConfig": {"thinkingLevel": "low"}}}
+        payload = think if "flash-lite" not in model else body
         for attempt in range(3):
-            r = requests.post(GEMINI_URL.format(model=model), headers=headers, json=body, timeout=180)
+            try:
+                r = requests.post(GEMINI_URL.format(model=model), headers=headers, json=payload, timeout=300)
+            except requests.Timeout:
+                last = f"{model}: timed out"
+                r = None
+                break
             if r.status_code == 429:                   # free tier: a few requests a minute
                 time.sleep(30 * (attempt + 1))
                 continue
+            if r.status_code == 400 and payload is think and "thinking" in r.text.lower():
+                payload = body                         # this model won't take the setting
+                continue
             break
+        if r is None:
+            continue
         if r.status_code in (400, 403, 404):
             last = f"{model}: {r.status_code} {r.text[:160]}"
             logger.info("Team news: %s not available to this key, trying the next", model)
