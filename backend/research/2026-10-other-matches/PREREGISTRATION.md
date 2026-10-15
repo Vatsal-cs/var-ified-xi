@@ -1,7 +1,7 @@
 # Matches FPL doesn't show — pre-registration
-Written 2026-10-15 05:10 MDT, before any backtest run with these inputs.
-Amended 05:14 MDT (commit 0cde2ab), still before any run: added the form inputs and the
-second variant below, at the user's request.
+Written 2026-10-15 about 05:00 MDT, before any backtest run with these inputs,
+and amended before being committed (0cde2ab, 05:06 MDT), still before any
+run: the form inputs and the second variant below, at the user's request.
 
 Why: FPL's data is Premier League only. The model can't see a Champions
 League game on Wednesday, a League Cup tie, or a player flying to South
