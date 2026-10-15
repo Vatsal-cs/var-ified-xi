@@ -1,6 +1,6 @@
 {
  "gameweek": 7,
- "fetched_at": "2026-10-15T16:31:39.725595+00:00",
+ "fetched_at": "2026-10-15T20:18:09.003304+00:00",
  "model": "gemini-3.5-flash-lite",
  "clubs": [
   "Arsenal",
@@ -23,8 +23,8 @@
    "name": "David Raya Mart\u00edn",
    "club": "Arsenal",
    "status": "no_news",
-   "start_chance": 100,
-   "reason": "No news in the headlines regarding injury or rotation.",
+   "start_chance": null,
+   "reason": "No news in headlines",
    "source_url": null,
    "source_date": null,
    "source_title": null
@@ -34,8 +34,8 @@
    "name": "Gabriel dos Santos Magalh\u00e3es",
    "club": "Arsenal",
    "status": "no_news",
-   "start_chance": 100,
-   "reason": "No news in the headlines regarding injury or rotation.",
+   "start_chance": null,
+   "reason": "No news in headlines",
    "source_url": null,
    "source_date": null,
    "source_title": null
@@ -45,8 +45,8 @@
    "name": "Riccardo Calafiori",
    "club": "Arsenal",
    "status": "no_news",
-   "start_chance": 100,
-   "reason": "No news in the headlines regarding injury or rotation.",
+   "start_chance": null,
+   "reason": "No news in headlines",
    "source_url": null,
    "source_date": null,
    "source_title": null
@@ -56,8 +56,8 @@
    "name": "Francisco Evanilson de Lima Barbosa",
    "club": "Bournemouth",
    "status": "no_news",
-   "start_chance": 100,
-   "reason": "No news in the headlines regarding injury or rotation.",
+   "start_chance": null,
+   "reason": "No news in headlines",
    "source_url": null,
    "source_date": null,
    "source_title": null
@@ -67,8 +67,8 @@
    "name": "Vitaly Janelt",
    "club": "Brentford",
    "status": "no_news",
-   "start_chance": 100,
-   "reason": "No news in the headlines regarding injury or rotation.",
+   "start_chance": null,
+   "reason": "No news in headlines",
    "source_url": null,
    "source_date": null,
    "source_title": null
@@ -78,8 +78,8 @@
    "name": "Igor Thiago Nascimento Rodrigues",
    "club": "Brentford",
    "status": "no_news",
-   "start_chance": 100,
-   "reason": "No news in the headlines regarding injury or rotation.",
+   "start_chance": null,
+   "reason": "No news in headlines",
    "source_url": null,
    "source_date": null,
    "source_title": null
@@ -90,7 +90,7 @@
    "club": "Brighton",
    "status": "no_news",
    "start_chance": null,
-   "reason": "No news in the headlines.",
+   "reason": "no_news",
    "source_url": null,
    "source_date": null,
    "source_title": null
@@ -101,7 +101,7 @@
    "club": "Brighton",
    "status": "no_news",
    "start_chance": null,
-   "reason": "No news in the headlines.",
+   "reason": "no_news",
    "source_url": null,
    "source_date": null,
    "source_title": null
@@ -112,7 +112,7 @@
    "club": "Chelsea",
    "status": "no_news",
    "start_chance": null,
-   "reason": "No news in the headlines.",
+   "reason": "no_news",
    "source_url": null,
    "source_date": null,
    "source_title": null
@@ -123,7 +123,7 @@
    "club": "Chelsea",
    "status": "no_news",
    "start_chance": null,
-   "reason": "No news in the headlines.",
+   "reason": "no_news",
    "source_url": null,
    "source_date": null,
    "source_title": null
@@ -134,10 +134,10 @@
    "club": "Chelsea",
    "status": "no_news",
    "start_chance": null,
-   "reason": "Voted Player of the Matchweek.",
-   "source_url": "https://news.google.com/rss/articles/CBMimgFBVV95cUxQZ0gzeDB6cVU2YlM4VUdXaFRNalV4d2l3aHhZZEkxZFF6WVZWLWZJRWkzUWVJMWFZWEQya19Wb2JQSHNlMGoyWVBtWEhVUzJ1YXp2QnRGMG9yLXFsY25nMFZ0V3hlSHBqMlRUdWJEc1BlbUVPWURvekRZcUtlcVR5cUEzSWtFelAyOWZzYkhkZUY4MjIyR2dUTUR3?oc=5",
-   "source_date": "2026-10-14",
-   "source_title": "Chelsea's Henderson voted Player of the Matchweek - Premier League"
+   "reason": "no_news",
+   "source_url": null,
+   "source_date": null,
+   "source_title": null
   },
   {
    "player_id": 110,
@@ -145,7 +145,7 @@
    "club": "Coventry City",
    "status": "no_news",
    "start_chance": null,
-   "reason": "No news in the headlines.",
+   "reason": "no_news",
    "source_url": null,
    "source_date": null,
    "source_title": null
@@ -156,7 +156,7 @@
    "club": "Crystal Palace",
    "status": "no_news",
    "start_chance": null,
-   "reason": "No relevant news found in the headlines.",
+   "reason": "No news in the headlines for this player.",
    "source_url": null,
    "source_date": null,
    "source_title": null
@@ -167,7 +167,7 @@
    "club": "Liverpool",
    "status": "no_news",
    "start_chance": null,
-   "reason": "No relevant news found in the headlines.",
+   "reason": "No news in the headlines for this player.",
    "source_url": null,
    "source_date": null,
    "source_title": null
@@ -178,7 +178,7 @@
    "club": "Liverpool",
    "status": "doubtful",
    "start_chance": 50,
-   "reason": "Szoboszlai is a doubt for the Brentford clash.",
+   "reason": "Andoni Iraola says fitness status is 'too early' to declare; considered a doubt for Brentford.",
    "source_url": "https://news.google.com/rss/articles/CBMipwFBVV95cUxOUW1pMzR1b25acmJtTzU5V2c0YjZUUkczX3VtLUJtb1VOSDdoYlFjVWd2V0lxSF96X1ZfSzNZdE9rR0NBOWZkcmFXS2NzYzdmdnhETnNnTEQ0RExIQVJ6UkJXbnBGT2JmQy1NSXVzQXFEVU5hOFJvNW5rV1FLSF9fV3R1c2UzVHFoT29aNDlHT2ZCaU9fQVBBbFJxZzY3QzY5T3JhT25mOA?oc=5",
    "source_date": "2026-10-15",
    "source_title": "Liverpool team news: Dominik Szoboszlai, Alexander Isak and Cody Gakpo doubts for Brentford - The New York Times"
@@ -189,7 +189,7 @@
    "club": "Man City",
    "status": "no_news",
    "start_chance": null,
-   "reason": "No relevant news found in the headlines.",
+   "reason": "No news in the headlines for this player.",
    "source_url": null,
    "source_date": null,
    "source_title": null
@@ -200,7 +200,7 @@
    "club": "Man City",
    "status": "no_news",
    "start_chance": null,
-   "reason": "No relevant news found in the headlines.",
+   "reason": "No news in the headlines for this player.",
    "source_url": null,
    "source_date": null,
    "source_title": null
@@ -211,7 +211,7 @@
    "club": "Man City",
    "status": "no_news",
    "start_chance": null,
-   "reason": "No relevant news found in the headlines.",
+   "reason": "No news in the headlines for this player.",
    "source_url": null,
    "source_date": null,
    "source_title": null
@@ -222,7 +222,7 @@
    "club": "Man City",
    "status": "no_news",
    "start_chance": null,
-   "reason": "No relevant news found in the headlines.",
+   "reason": "No news in the headlines for this player.",
    "source_url": null,
    "source_date": null,
    "source_title": null
@@ -233,7 +233,7 @@
    "club": "Man City",
    "status": "no_news",
    "start_chance": null,
-   "reason": "No relevant news found in the headlines.",
+   "reason": "No news in the headlines for this player.",
    "source_url": null,
    "source_date": null,
    "source_title": null
@@ -244,7 +244,7 @@
    "club": "Newcastle",
    "status": "no_news",
    "start_chance": null,
-   "reason": "no news in headlines",
+   "reason": "No news mentioned in headlines",
    "source_url": null,
    "source_date": null,
    "source_title": null
@@ -255,7 +255,7 @@
    "club": "Newcastle",
    "status": "no_news",
    "start_chance": null,
-   "reason": "no news in headlines",
+   "reason": "No news mentioned in headlines",
    "source_url": null,
    "source_date": null,
    "source_title": null
@@ -266,7 +266,7 @@
    "club": "Newcastle",
    "status": "no_news",
    "start_chance": null,
-   "reason": "no news in headlines",
+   "reason": "No news mentioned in headlines",
    "source_url": null,
    "source_date": null,
    "source_title": null
@@ -277,7 +277,7 @@
    "club": "Nott'm Forest",
    "status": "no_news",
    "start_chance": null,
-   "reason": "no news in headlines",
+   "reason": "No news mentioned in headlines",
    "source_url": null,
    "source_date": null,
    "source_title": null
@@ -288,7 +288,7 @@
    "club": "Spurs",
    "status": "no_news",
    "start_chance": null,
-   "reason": "no news in headlines",
+   "reason": "No news mentioned in headlines",
    "source_url": null,
    "source_date": null,
    "source_title": null
@@ -299,7 +299,7 @@
    "club": "Sunderland",
    "status": "no_news",
    "start_chance": null,
-   "reason": "No specific news found in the headlines.",
+   "reason": "no news in headlines",
    "source_url": null,
    "source_date": null,
    "source_title": null
@@ -310,7 +310,7 @@
    "club": "Sunderland",
    "status": "no_news",
    "start_chance": null,
-   "reason": "No specific news found in the headlines.",
+   "reason": "no news in headlines",
    "source_url": null,
    "source_date": null,
    "source_title": null
