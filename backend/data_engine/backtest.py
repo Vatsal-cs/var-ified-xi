@@ -348,16 +348,18 @@ VARIANTS = {
     ),
     "no_price": Variant(
         name="no_price",
-        description="production without the player's price as a model input: "
-                    "price partly carries last season's reputation (research/2026-10-price-feature)",
+        description="NO DETECTABLE EFFECT, every run behind (Oct 2026, 5 seeds): "
+                    "-128 [-287, +30], 0 of 10 runs ahead. Production without the player's "
+                    "price as an input (research/2026-10-price-feature); price stays",
         fit=lambda df: train_model.train_models(df, save=False),
         predict=_bundle_predict,
         context=lambda: _without_features(["now_cost"]),
     ),
     "no_price_own": Variant(
         name="no_price_own",
-        description="production without price or ownership (selected_by_percent) as "
-                    "inputs — both reputation signals (research/2026-10-price-feature)",
+        description="NO DETECTABLE EFFECT (Oct 2026, 5 seeds): -99 [-249, +46], 2 of 10 "
+                    "runs ahead. Production without price or ownership as inputs "
+                    "(research/2026-10-price-feature)",
         fit=lambda df: train_model.train_models(df, save=False),
         predict=_bundle_predict,
         context=lambda: _without_features(["now_cost", "selected_by_percent"]),

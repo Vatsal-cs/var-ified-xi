@@ -1,0 +1,16 @@
+no_price            2024-25       5   37   2328.4   53.8    2246-2390  1.021   0.704   0.0911
+no_price            2025-26       5   37   2216.0   35.3    2168-2266  0.920   0.744   0.0795
+no_price_own        2024-25       5   37   2368.0   35.1    2307-2395  1.022   0.704   0.0911
+no_price_own        2025-26       5   37   2205.2   18.7    2172-2217  0.921   0.744   0.0796
+production          2024-25       5   37   2389.8   25.5    2365-2428  0.996   0.714   0.0889
+production          2025-26       5   37   2282.6   21.3    2265-2318  0.911   0.750   0.0788
+--------------------------------------------------------------------------------------------
+Paired against production, per-gameweek, averaged over seeds (block bootstrap, 2-GW blocks, 95% CI):
+  no_price           pooled  -128.0 [-287, +30]  won 0/10 cells  -> NO DETECTABLE EFFECT
+                     2024-25 -61 [-189,+69]  2025-26 -67 [-151,+20]
+  no_price_own       pooled   -99.2 [-249, +46]  won 2/10 cells  -> NO DETECTABLE EFFECT
+                     2024-25 -22 [-149,+100]  2025-26 -77 [-154,-7]
+============================================================================================
+better = pooled CI above zero and ahead in every season; worse = the
+mirror image; anything else is no detectable effect, not a rejection.
+

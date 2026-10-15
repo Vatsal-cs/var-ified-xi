@@ -1,0 +1,3 @@
+production     GW2-6 squad points  347.0  MAE 1.180  rank-r 0.696  per seed [344, 367, 330]
+no_price       GW2-6 squad points  342.0  MAE 1.184  rank-r 0.687  per seed [322, 347, 357]
+no_price_own   GW2-6 squad points  338.0  MAE 1.185  rank-r 0.687  per seed [350, 333, 331]
