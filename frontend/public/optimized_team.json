@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-15T16:11:57.633150+00:00",
+  "generated_at": "2026-10-15T16:31:51.150434+00:00",
   "gameweek": 7,
   "horizon_gws": 6,
   "mode": "transfer_plan",
@@ -1898,14 +1898,319 @@
   },
   "team_news": {
     "enabled": true,
-    "fetched_at": "2026-10-15T16:11:41.412623+00:00",
-    "model": "gemini-2.5-flash",
-    "items": [],
-    "applied": [],
-    "errors": 4
+    "fetched_at": "2026-10-15T16:31:39.725595+00:00",
+    "model": "gemini-3.5-flash-lite",
+    "items": [
+      {
+        "player_id": 368,
+        "name": "Dominik Szoboszlai",
+        "club": "Liverpool",
+        "status": "doubtful",
+        "start_chance": 50,
+        "reason": "Szoboszlai is a doubt for the Brentford clash.",
+        "source_url": "https://news.google.com/rss/articles/CBMipwFBVV95cUxOUW1pMzR1b25acmJtTzU5V2c0YjZUUkczX3VtLUJtb1VOSDdoYlFjVWd2V0lxSF96X1ZfSzNZdE9rR0NBOWZkcmFXS2NzYzdmdnhETnNnTEQ0RExIQVJ6UkJXbnBGT2JmQy1NSXVzQXFEVU5hOFJvNW5rV1FLSF9fV3R1c2UzVHFoT29aNDlHT2ZCaU9fQVBBbFJxZzY3QzY5T3JhT25mOA?oc=5",
+        "source_date": "2026-10-15",
+        "source_title": "Liverpool team news: Dominik Szoboszlai, Alexander Isak and Cody Gakpo doubts for Brentford - The New York Times"
+      },
+      {
+        "player_id": 350,
+        "name": "Alisson Becker",
+        "club": "Liverpool",
+        "status": "no_news",
+        "start_chance": null,
+        "reason": "No relevant news found in the headlines.",
+        "source_url": null,
+        "source_date": null,
+        "source_title": null
+      },
+      {
+        "player_id": 397,
+        "name": "Antoine Semenyo",
+        "club": "Man City",
+        "status": "no_news",
+        "start_chance": null,
+        "reason": "No relevant news found in the headlines.",
+        "source_url": null,
+        "source_date": null,
+        "source_title": null
+      },
+      {
+        "player_id": 110,
+        "name": "Carl Rushworth",
+        "club": "Coventry City",
+        "status": "no_news",
+        "start_chance": null,
+        "reason": "No news in the headlines.",
+        "source_url": null,
+        "source_date": null,
+        "source_title": null
+      },
+      {
+        "player_id": 154,
+        "name": "Cole Palmer",
+        "club": "Chelsea",
+        "status": "no_news",
+        "start_chance": null,
+        "reason": "No news in the headlines.",
+        "source_url": null,
+        "source_date": null,
+        "source_title": null
+      },
+      {
+        "player_id": 1,
+        "name": "David Raya Mart\u00edn",
+        "club": "Arsenal",
+        "status": "no_news",
+        "start_chance": 100,
+        "reason": "No news in the headlines regarding injury or rotation.",
+        "source_url": null,
+        "source_date": null,
+        "source_title": null
+      },
+      {
+        "player_id": 411,
+        "name": "Erling Haaland",
+        "club": "Man City",
+        "status": "no_news",
+        "start_chance": null,
+        "reason": "No relevant news found in the headlines.",
+        "source_url": null,
+        "source_date": null,
+        "source_title": null
+      },
+      {
+        "player_id": 79,
+        "name": "Francisco Evanilson de Lima Barbosa",
+        "club": "Bournemouth",
+        "status": "no_news",
+        "start_chance": 100,
+        "reason": "No news in the headlines regarding injury or rotation.",
+        "source_url": null,
+        "source_date": null,
+        "source_title": null
+      },
+      {
+        "player_id": 4,
+        "name": "Gabriel dos Santos Magalh\u00e3es",
+        "club": "Arsenal",
+        "status": "no_news",
+        "start_chance": 100,
+        "reason": "No news in the headlines regarding injury or rotation.",
+        "source_url": null,
+        "source_date": null,
+        "source_title": null
+      },
+      {
+        "player_id": 544,
+        "name": "Granit Xhaka",
+        "club": "Sunderland",
+        "status": "no_news",
+        "start_chance": null,
+        "reason": "No specific news found in the headlines.",
+        "source_url": null,
+        "source_date": null,
+        "source_title": null
+      },
+      {
+        "player_id": 106,
+        "name": "Igor Thiago Nascimento Rodrigues",
+        "club": "Brentford",
+        "status": "no_news",
+        "start_chance": 100,
+        "reason": "No news in the headlines regarding injury or rotation.",
+        "source_url": null,
+        "source_date": null,
+        "source_title": null
+      },
+      {
+        "player_id": 101,
+        "name": "Jordan Henderson",
+        "club": "Chelsea",
+        "status": "no_news",
+        "start_chance": null,
+        "reason": "Voted Player of the Matchweek.",
+        "source_url": "https://news.google.com/rss/articles/CBMimgFBVV95cUxQZ0gzeDB6cVU2YlM4VUdXaFRNalV4d2l3aHhZZEkxZFF6WVZWLWZJRWkzUWVJMWFZWEQya19Wb2JQSHNlMGoyWVBtWEhVUzJ1YXp2QnRGMG9yLXFsY25nMFZ0V3hlSHBqMlRUdWJEc1BlbUVPWURvekRZcUtlcVR5cUEzSWtFelAyOWZzYkhkZUY4MjIyR2dUTUR3?oc=5",
+        "source_date": "2026-10-14",
+        "source_title": "Chelsea's Henderson voted Player of the Matchweek - Premier League"
+      },
+      {
+        "player_id": 165,
+        "name": "Jo\u00e3o Pedro Junqueira de Jesus",
+        "club": "Chelsea",
+        "status": "no_news",
+        "start_chance": null,
+        "reason": "No news in the headlines.",
+        "source_url": null,
+        "source_date": null,
+        "source_title": null
+      },
+      {
+        "player_id": 391,
+        "name": "Jo\u0161ko Gvardiol",
+        "club": "Man City",
+        "status": "no_news",
+        "start_chance": null,
+        "reason": "No relevant news found in the headlines.",
+        "source_url": null,
+        "source_date": null,
+        "source_title": null
+      },
+      {
+        "player_id": 449,
+        "name": "Lewis Hall",
+        "club": "Newcastle",
+        "status": "no_news",
+        "start_chance": null,
+        "reason": "no news in headlines",
+        "source_url": null,
+        "source_date": null,
+        "source_title": null
+      },
+      {
+        "player_id": 388,
+        "name": "Marc Gu\u00e9hi",
+        "club": "Man City",
+        "status": "no_news",
+        "start_chance": null,
+        "reason": "No relevant news found in the headlines.",
+        "source_url": null,
+        "source_date": null,
+        "source_title": null
+      },
+      {
+        "player_id": 115,
+        "name": "Maxim De Cuyper",
+        "club": "Brighton",
+        "status": "no_news",
+        "start_chance": null,
+        "reason": "No news in the headlines.",
+        "source_url": null,
+        "source_date": null,
+        "source_title": null
+      },
+      {
+        "player_id": 472,
+        "name": "Murillo Costa dos Santos",
+        "club": "Nott'm Forest",
+        "status": "no_news",
+        "start_chance": null,
+        "reason": "no news in headlines",
+        "source_url": null,
+        "source_date": null,
+        "source_title": null
+      },
+      {
+        "player_id": 533,
+        "name": "Nordi Mukiele",
+        "club": "Sunderland",
+        "status": "no_news",
+        "start_chance": null,
+        "reason": "No specific news found in the headlines.",
+        "source_url": null,
+        "source_date": null,
+        "source_title": null
+      },
+      {
+        "player_id": 124,
+        "name": "Pascal Gro\u00df",
+        "club": "Brighton",
+        "status": "no_news",
+        "start_chance": null,
+        "reason": "No news in the headlines.",
+        "source_url": null,
+        "source_date": null,
+        "source_title": null
+      },
+      {
+        "player_id": 8,
+        "name": "Riccardo Calafiori",
+        "club": "Arsenal",
+        "status": "no_news",
+        "start_chance": 100,
+        "reason": "No news in the headlines regarding injury or rotation.",
+        "source_url": null,
+        "source_date": null,
+        "source_title": null
+      },
+      {
+        "player_id": 390,
+        "name": "R\u00faben dos Santos Gato Alves Dias",
+        "club": "Man City",
+        "status": "no_news",
+        "start_chance": null,
+        "reason": "No relevant news found in the headlines.",
+        "source_url": null,
+        "source_date": null,
+        "source_title": null
+      },
+      {
+        "player_id": 447,
+        "name": "Sven Botman",
+        "club": "Newcastle",
+        "status": "no_news",
+        "start_chance": null,
+        "reason": "no news in headlines",
+        "source_url": null,
+        "source_date": null,
+        "source_title": null
+      },
+      {
+        "player_id": 403,
+        "name": "S\u00e1vio Moreira de Oliveira",
+        "club": "Spurs",
+        "status": "no_news",
+        "start_chance": null,
+        "reason": "no news in headlines",
+        "source_url": null,
+        "source_date": null,
+        "source_title": null
+      },
+      {
+        "player_id": 98,
+        "name": "Vitaly Janelt",
+        "club": "Brentford",
+        "status": "no_news",
+        "start_chance": 100,
+        "reason": "No news in the headlines regarding injury or rotation.",
+        "source_url": null,
+        "source_date": null,
+        "source_title": null
+      },
+      {
+        "player_id": 199,
+        "name": "Walter Ben\u00edtez",
+        "club": "Crystal Palace",
+        "status": "no_news",
+        "start_chance": null,
+        "reason": "No relevant news found in the headlines.",
+        "source_url": null,
+        "source_date": null,
+        "source_title": null
+      },
+      {
+        "player_id": 464,
+        "name": "Yoane Wissa",
+        "club": "Newcastle",
+        "status": "no_news",
+        "start_chance": null,
+        "reason": "no news in headlines",
+        "source_url": null,
+        "source_date": null,
+        "source_title": null
+      }
+    ],
+    "applied": [
+      {
+        "player_id": 368,
+        "status": "doubtful",
+        "chance": 50,
+        "fpl_chance": 75
+      }
+    ],
+    "errors": 0
   },
   "other_matches": {
-    "from": "2026-10-15T16:11:57.554233",
+    "from": "2026-10-15T16:31:51.112064",
     "to": "2026-12-02T18:30:00",
     "clubs": [
       {
@@ -2774,7 +3079,7 @@
             "player_id": 368,
             "name": "Szoboszlai",
             "sell_price_m": 6.9,
-            "predicted_points": 1.58,
+            "predicted_points": 1.05,
             "position": "MID",
             "team": "Liverpool"
           }
