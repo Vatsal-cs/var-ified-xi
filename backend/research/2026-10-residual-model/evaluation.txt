@@ -1,0 +1,10 @@
+production          2024-25       4   37   2458.0   37.4    2438-2514  0.997   0.715   0.0886
+residual            2024-25       4   37   2407.2   26.8    2388-2446  1.011   0.715   0.0886
+--------------------------------------------------------------------------------------------
+Paired against production, per-gameweek, averaged over seeds (block bootstrap, 2-GW blocks, 95% CI):
+  residual           pooled   -50.8 [-166, +53]  won 1/4 cells  -> NO DETECTABLE EFFECT
+                     2024-25 -51 [-166,+53]
+============================================================================================
+better = pooled CI above zero and ahead in every season; worse = the
+mirror image; anything else is no detectable effect, not a rejection.
+

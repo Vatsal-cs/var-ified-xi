@@ -462,7 +462,8 @@ VARIANTS = {
     ),
     "residual": Variant(
         name="residual",
-        description="production plus a second model, trained on other seasons' misses, that "
+        description="NOT USED (Oct 2026): 2024-25 -51 [-166, +53], stopped once it couldn't pass. "
+                    "Production plus a second model, trained on other seasons' misses, that "
                     "corrects each projection from price, form, chances and minutes "
                     "(research/2026-10-residual-model)",
         fit=lambda df: train_model.train_models(df, save=False),
