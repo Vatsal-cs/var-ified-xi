@@ -33,6 +33,7 @@ from data_engine import (
     chip_planner,
     chips,
     distributions,
+    other_matches,
     rivals,
     team_news,
     entry_data,
@@ -78,7 +79,7 @@ def build_output_json(bootstrap: dict, predictions_df, result: dict,
                       league_view: dict = None, chip_expiry: dict = None,
                       captain_override: dict = None, wildcard_option: dict = None,
                       pmfs: dict = None, captain_odds: list = None, chip_plan: dict = None,
-                      news_view: dict = None) -> dict:
+                      news_view: dict = None, other_view: dict = None) -> dict:
     """Assembles the final clean JSON contract the frontend will consume."""
     teams_lookup = {t["id"]: t["name"] for t in bootstrap["teams"]}
     pos_lookup = config.POSITIONS
@@ -149,6 +150,8 @@ def build_output_json(bootstrap: dict, predictions_df, result: dict,
         output["chip_plan"] = chip_plan
     if news_view:
         output["team_news"] = news_view
+    if other_view:
+        output["other_matches"] = other_view
     if plan:
         output["transfer_plan"] = _plan_payload(plan, pred_lookup, pos_lookup, teams_lookup)
     if team_state:
@@ -221,10 +224,16 @@ def run_pipeline(team_id: int = None) -> None:
     history_df = feature_engineering.build_gameweek_history_df(bootstrap, histories, fixtures=fixtures)
     history_df = feature_engineering.add_rolling_features(history_df)
 
+    # Cup, European and international matches as inputs — only once tested
+    # in (config.OTHER_MATCHES); see data_engine/other_matches.py.
+    if config.OTHER_MATCHES:
+        _attach_other_matches(history_df, bootstrap)
     train_df = feature_engineering.build_training_set(history_df)
     predict_df = feature_engineering.build_prediction_set(
         bootstrap, history_df, histories, horizon=config.HORIZON_GWS
     )
+    if config.OTHER_MATCHES:
+        _attach_other_matches(predict_df, bootstrap)
 
     # 3. Historical multi-season augmentation (training only, never prediction)
     logger.info("Fetching historical seasons for training augmentation...")
@@ -358,6 +367,22 @@ def run_pipeline(team_id: int = None) -> None:
         except Exception as e:                              # never fatal to the refresh
             logger.warning("Chip plan skipped: %s", e)
 
+    # 6d. Your players' games outside the Premier League over the planning
+    # window — midweek European and cup ties, international duty. Shown
+    # whatever the model does with them; never fatal.
+    other_view = None
+    if team_state:
+        try:
+            ids = list(team_state.squad)
+            ids += [m["player_id"] for m in (plan or {}).get("weeks", [{}])[0].get("transfers_in", [])]
+            if d["wildcard"]:
+                ids += [p["player_id"] for p in d["wildcard"]["squad"]]
+            end = _deadline(bootstrap, upcoming_gw + config.HORIZON_GWS)
+            other_view = other_matches.view(bootstrap, ids, pd.Timestamp.now("UTC").tz_convert(None),
+                                            pd.Timestamp(end).tz_convert(None))
+        except Exception as e:
+            logger.warning("Other matches view skipped: %s", e)
+
     # 7. Write output
     output = build_output_json(bootstrap, predictions_df, result, plan=plan,
                                team_state=team_state, chip_advice=chip_advice,
@@ -367,7 +392,8 @@ def run_pipeline(team_id: int = None) -> None:
                                captain_override=d["captain_override"],
                                wildcard_option=d["wildcard"],
                                pmfs=pmfs, captain_odds=captain_odds, chip_plan=chip_plan,
-                               news_view=_news_payload(news, news_applied, d, team_state))
+                               news_view=_news_payload(news, news_applied, d, team_state),
+                               other_view=other_view)
 
     config.OUTPUT_JSON_PATH.write_text(json.dumps(output, indent=2))
     config.FRONTEND_JSON_PATH.write_text(json.dumps(output, indent=2))
@@ -477,6 +503,19 @@ def _wildcard_option(predictions_df, team_state, upcoming_gw, free_plan: dict,
     }, wild
 
 
+def _attach_other_matches(df, bootstrap: dict) -> None:
+    """other_matches inputs on this season's rows, in place; an ESPN outage
+    leaves neutral values rather than stopping the refresh."""
+    names = {e["id"]: f"{e['first_name']} {e['second_name']}" for e in bootstrap["elements"]}
+    clubs = {t["id"]: t["name"] for t in bootstrap["teams"]}
+    try:
+        other_matches.attach(df, other_matches.current_season(bootstrap), names, clubs)
+    except Exception as e:
+        logger.warning("Other matches unavailable (%s); neutral values used", e)
+        for col, v in other_matches.NEUTRAL.items():
+            df[col] = v
+
+
 def _deadline(bootstrap: dict, gameweek: int) -> datetime:
     for e in bootstrap["events"]:
         if e["id"] == gameweek and e.get("deadline_time"):
@@ -573,6 +612,8 @@ def _chip_plan(model_bundle, flag_counts, bootstrap, history_df, histories, fixt
     # form, each week's own fixtures (and the same team news).
     rows = feature_engineering.build_prediction_set(bootstrap, history_df, histories,
                                                     horizon=len(gameweeks))
+    if config.OTHER_MATCHES:
+        _attach_other_matches(rows, bootstrap)
     team_news.apply(rows, news, upcoming_gw)
     long = feature_engineering.aggregate_horizon(
         train_model.predict_points(model_bundle, rows, flag_counts))

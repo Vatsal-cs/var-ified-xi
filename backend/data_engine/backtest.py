@@ -381,17 +381,18 @@ VARIANTS = {
     ),
     "other_matches": Variant(
         name="other_matches",
-        description="production plus the matches FPL doesn't show: rest since the team's "
-                    "last cup/European match, the next one coming, whether the player started "
-                    "it, his international load (research/2026-10-other-matches)",
+        description="SHIPPED (Oct 2026): +87 [+13, +159] on tuning, +43 / +11 held back. "
+                    "Rest since the club's last cup/European match, the next one coming, whether "
+                    "the player started it, his international load — now in production too",
         fit=lambda df: train_model.train_models(df, save=False),
         predict=_bundle_predict,
         context=lambda: _other_matches_ctx(OTHER_LOAD_FEATURES),
     ),
     "other_matches_form": Variant(
         name="other_matches_form",
-        description="other_matches plus form in those games: appearances, goals + assists, "
-                    "shots and shots on target in the 30 days before",
+        description="NO DETECTABLE EFFECT (Oct 2026, 5 seeds): +81 [-4, +168]. other_matches "
+                    "plus form in those games: appearances, goals + assists, shots, shots on "
+                    "target in the 30 days before",
         fit=lambda df: train_model.train_models(df, save=False),
         predict=_bundle_predict,
         context=lambda: _other_matches_ctx(OTHER_MATCH_FEATURES),

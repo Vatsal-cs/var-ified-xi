@@ -11,6 +11,7 @@ import TransfersPanel from "@/components/TransfersPanel";
 import ChipAdvice from "@/components/ChipAdvice";
 import WildcardPanel from "@/components/WildcardPanel";
 import LeagueView from "@/components/LeagueView";
+import OtherMatches from "@/components/OtherMatches";
 import PipelineExplainer from "@/components/PipelineExplainer";
 import Glossary from "@/components/Glossary";
 import { Section } from "@/components/ui";
@@ -80,6 +81,18 @@ export default function Home() {
             lede="Points you and a rival both score cancel out. What moves you past them is the players they don't have — and what quietly costs you is the ones they all have and you don't."
           >
             <LeagueView league={team.league} />
+          </Section>
+        )}
+
+        {/* Games FPL doesn't show: cup, European and international */}
+        {team.other_matches && (
+          <Section
+            id="other"
+            eyebrow="Beyond the Premier League"
+            title="Midweek and international games"
+            lede="FPL only shows Premier League matches. These are the other games your players' clubs and countries play before the end of the planning window: a midweek tie means rotation risk, a long international trip means tired legs."
+          >
+            <OtherMatches view={team.other_matches} />
           </Section>
         )}
 

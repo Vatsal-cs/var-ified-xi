@@ -1,0 +1,12 @@
+production          2022-23       5   36   2377.2   45.9    2328-2440  1.130   0.693   0.0983
+production          2023-24       5   37   2352.4   55.2    2286-2430  0.970   0.689   0.0838
+--------------------------------------------------------------------------------------------
+Paired against production, per-gameweek, averaged over seeds (block bootstrap, 2-GW blocks, 95% CI):
+  other_matches      pooled   +54.0 [-74, +184]  won 7/10 cells  -> NO DETECTABLE EFFECT
+                     2022-23 +43 [-41,+137]  2023-24 +11 [-86,+96]
+============================================================================================
+better = pooled CI above zero and ahead in every season; worse = the
+mirror image; anything else is no detectable effect, not a rejection.
+
+
+[exited with code 0]

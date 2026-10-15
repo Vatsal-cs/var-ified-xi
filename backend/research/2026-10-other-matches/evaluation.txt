@@ -1,0 +1,16 @@
+other_matches       2024-25       5   37   2456.8   32.5    2438-2514  0.996   0.715   0.0887
+other_matches       2025-26       5   37   2302.6   21.3    2272-2323  0.912   0.751   0.0785
+other_matches_form  2024-25       5   37   2458.6   31.7    2403-2480  0.998   0.716   0.0885
+other_matches_form  2025-26       5   37   2295.0   29.6    2252-2334  0.913   0.751   0.0784
+production          2024-25       5   37   2389.8   25.5    2365-2428  0.996   0.714   0.0889
+production          2025-26       5   37   2282.6   21.3    2265-2318  0.911   0.750   0.0788
+--------------------------------------------------------------------------------------------
+Paired against production, per-gameweek, averaged over seeds (block bootstrap, 2-GW blocks, 95% CI):
+  other_matches      pooled   +87.0 [+13, +159]  won 9/10 cells  -> BETTER
+                     2024-25 +67 [+9,+125]  2025-26 +20 [-27,+64]
+  other_matches_form pooled   +81.2 [-4, +168]  won 9/10 cells  -> NO DETECTABLE EFFECT
+                     2024-25 +69 [+4,+137]  2025-26 +12 [-38,+66]
+============================================================================================
+better = pooled CI above zero and ahead in every season; worse = the
+mirror image; anything else is no detectable effect, not a rejection.
+

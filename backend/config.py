@@ -256,6 +256,9 @@ HISTORICAL_DATA_BASE_URL = "https://raw.githubusercontent.com/vaastav/Fantasy-Pr
 # then +18 / -17 here) — unconfirmed, not shipped.
 #                Oct 2026, seed averaging (bagged5): points not worse
 #                (+23), steadier picks in both — confirmed, shipped.
+#                Oct 2026, other_matches (cup/European/international load):
+#                +87 [+13, +159] on tuning, then +43 / +11 here — confirmed,
+#                shipped.
 TUNING_SEASONS = ["2024-25", "2025-26"]
 CONFIRMATION_SEASONS = ["2022-23", "2023-24"]
 
@@ -266,11 +269,18 @@ MODEL_SEED = 42
 
 # Matches FPL doesn't show — Champions/Europa/Conference League, League Cup,
 # FA Cup, and internationals — as model inputs (data_engine/other_matches.py):
-# rest since the team's last other match, the next one coming, whether the
-# player started it, and his international load. Under test
-# (research/2026-10-other-matches); off until it passes. The dashboard shows
-# your players' other matches either way.
-OTHER_MATCHES = False
+# rest since the club's last other match, the next one coming, whether the
+# player started it, and his international load.
+#
+# SHIPPED (Oct 2026, research/2026-10-other-matches): +87 [+13, +159] on the
+# tuning seasons (+67, +20; 9 of 10 runs ahead), then +43 and +11 on the
+# held-back 2022-23 and 2023-24 — positive in both, as pre-registered. Form in
+# those games (goals, shots) was tested alongside: +81 [-4, +168], not better,
+# so only the rest-and-load inputs are used.
+OTHER_MATCHES = True
+OTHER_MATCH_COLUMNS = ["xm_days_before", "xm_days_after", "xm_count_14", "xm_started_before",
+                       "xm_rested_before", "intl_apps_14", "intl_starts_14", "intl_far_14",
+                       "intl_days_before"]
 
 # Pull the points-if-60+ projection toward its position's average:
 # mean + k * (projection - mean). None = off. {"k": 0.65} for one factor,
@@ -603,3 +613,9 @@ RIVAL_LEAGUE_ID = None
 # effect — so "rejected" was always stronger than one seed could support. It
 # stays off: it adds a data dependency and shows no gain.
 ATTACH_ODDS = False
+
+
+# The shipped other-matches inputs join the model's inputs (defined above,
+# after FEATURE_COLUMNS, so this has to come last).
+if OTHER_MATCHES:
+    FEATURE_COLUMNS = FEATURE_COLUMNS + [c for c in OTHER_MATCH_COLUMNS if c not in FEATURE_COLUMNS]

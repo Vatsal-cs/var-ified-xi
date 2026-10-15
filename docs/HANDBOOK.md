@@ -485,6 +485,7 @@ backtest, 3 in the simulator — under the verdict rules in section 1.
 | Projections biased by player type: attackers vs steady defenders, after one missed match, points from one big game (new) | — | +0.02 [−0.43, +0.41] · −0.06 [−0.12, −0.00] · +0.12 [−0.23, +0.51] pts per match | no bias found — nothing to fix |
 | Drop price (and ownership) as model inputs (new) | — | −128 [−287, +30] · behind in 10 of 10 runs; with ownership too −99 [−249, +46] | no detectable effect, every run behind — price stays |
 | Pull the top projections back toward the position average (new) | — | −1 [−54, +53] · +20 and −21 by season; per position −21 [−78, +40] | no detectable effect — stays off (accuracy a little better, picks barely change) |
+| Cup, European and international matches as inputs: rest, rotation, international load (new) | — | +87 [+13, +159] · ahead in both seasons, 9 of 10 runs · held back **+43 and +11** | ✅ **shipped** |
 | Split populations vs starters-only for both stages | +7 | starters-only **+56** [+11, +103] on the tuning seasons — then +18 and −17 on the held-back seasons | ⚠️ **unconfirmed**: split populations stay |
 | Backtest from GW2, not GW8 | — | — | kept: a coverage fix, not a points claim |
 

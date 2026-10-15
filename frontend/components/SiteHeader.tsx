@@ -16,6 +16,7 @@ const LINKS = [
   { id: "week", label: "This week" },
   { id: "chips", label: "Chips" },
   { id: "league", label: "League" },
+  { id: "other", label: "Other games" },
   { id: "squad", label: "Squad" },
   { id: "outlook", label: "Plan" },
   { id: "how", label: "How" },

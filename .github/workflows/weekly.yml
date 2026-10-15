@@ -48,6 +48,15 @@ jobs:
           path: backend/data/raw/historical_*
           key: fpl-historical-v1
 
+      # Matches outside the Premier League (data_engine/other_matches.py).
+      # Finished months and matches never change, so the cache only grows.
+      - name: Restore other-matches cache
+        uses: actions/cache@v4
+        with:
+          path: backend/data/raw/espn
+          key: espn-${{ github.run_id }}
+          restore-keys: espn-
+
       - name: Check whether a deadline is near
         id: gate
         working-directory: backend

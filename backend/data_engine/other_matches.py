@@ -22,11 +22,12 @@ squad, so a common name at another club can't be mistaken for yours.
 
 attach() turns this into inputs on each Premier League match row: rest since
 the team's last other match, the next one coming, whether the player started
-it, and his international load in the fortnight before. Off unless
-config.OTHER_MATCHES is set (it is tested before it's used:
-research/2026-10-other-matches).
+it, and his international load in the fortnight before. Used by the model
+since it passed its test (config.OTHER_MATCHES, research/2026-10-other-matches).
 """
 
+import argparse
+import gzip
 import json
 import logging
 import re
@@ -88,10 +89,8 @@ NEUTRAL = {"xm_days_before": 14.0, "xm_days_after": 14.0, "xm_count_14": 0.0,
            "intl_apps_14": 0.0, "intl_starts_14": 0.0, "intl_far_14": 0.0,
            "intl_days_before": 21.0,
            "xm_apps_30": 0.0, "xm_ga_30": 0.0, "xm_shots_30": 0.0, "xm_sot_30": 0.0}
-# Rest and load: who is tired or rested.
-LOAD_FEATURES = ["xm_days_before", "xm_days_after", "xm_count_14", "xm_started_before",
-                 "xm_rested_before", "intl_apps_14", "intl_starts_14", "intl_far_14",
-                 "intl_days_before"]
+# Rest and load: who is tired or rested. The shipped inputs (config).
+LOAD_FEATURES = list(config.OTHER_MATCH_COLUMNS)
 # Form in those games: appearances, goals + assists, shots, shots on target
 # across cup, European and international matches in the 30 days before.
 FORM_FEATURES = ["xm_apps_30", "xm_ga_30", "xm_shots_30", "xm_sot_30"]
@@ -126,6 +125,21 @@ def _fetch(url: str):
     raise RuntimeError(f"ESPN unavailable: {url}")
 
 
+PACK_DIR = config.DATA_DIR / "other_matches"
+_packs = None
+
+
+def _packed(name: str):
+    """A finished season's data, committed to the repo (pack()), so a fresh
+    checkout — the cloud refresh — never has to fetch past seasons."""
+    global _packs
+    if _packs is None:
+        _packs = {}
+        for f in sorted(PACK_DIR.glob("*.json.gz")):
+            _packs.update(json.loads(gzip.decompress(f.read_bytes())))
+    return _packs.get(name)
+
+
 def _cached(name: str, url: str, process, max_age_hours: float = None):
     """process(raw JSON) -> the few fields used, cached on disk. A finished
     month or match never changes, so it's cached for good."""
@@ -133,6 +147,10 @@ def _cached(name: str, url: str, process, max_age_hours: float = None):
     if path.exists() and (max_age_hours is None
                           or time.time() - path.stat().st_mtime < max_age_hours * 3600):
         return json.loads(path.read_text())
+    if not path.exists():
+        hit = _packed(name)
+        if hit is not None:
+            return hit
     out = process(_fetch(url))
     CACHE.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(out))
@@ -156,7 +174,8 @@ def _events_from(data) -> list:
         c = (e.get("competitions") or [{}])[0]
         out.append({
             "id": e["id"], "date": e["date"],
-            "teams": [[x["team"]["displayName"], x["team"].get("id")] for x in c.get("competitors", [])],
+            "teams": [[x["team"]["displayName"], x["team"].get("id"), x.get("homeAway")]
+                      for x in c.get("competitors", [])],
             "finished": bool(e.get("status", {}).get("type", {}).get("completed")),
             "venue_country": (c.get("venue") or {}).get("address", {}).get("country"),
         })
@@ -237,7 +256,7 @@ def pl_team_ids(season: str) -> dict:
     ids = {}
     for month in season_months(season):
         for e in events("eng.1", month):
-            for name, tid in e["teams"]:
+            for name, tid, *_ in e["teams"]:
                 ids[name] = tid
     return ids
 
@@ -299,11 +318,11 @@ def season_tables(season: str, pl_clubs: list) -> tuple:
     months = season_months(season)
     clubs = {FPL_TO_ESPN.get(c, c) for c in pl_clubs}
     club_ev = [e for evs in _parallel(events, [(lg, m) for lg in CLUB_LEAGUES for m in months])
-               for e in evs if any(n in clubs for n, _ in e["teams"])]
+               for e in evs if any(n in clubs for n, *_ in e["teams"])]
     intl_ev = [e for evs in _parallel(events, [(lg, m) for lg in INTL_LEAGUES for m in months])
                for e in evs]
     club_rows = [{"club": n, "date": e["date"], "league": e["league"], "finished": e["finished"],
-                  "event_id": e["id"]} for e in club_ev for n, _ in e["teams"] if n in clubs]
+                  "event_id": e["id"]} for e in club_ev for n, *_ in e["teams"] if n in clubs]
     done = [e for e in club_ev + intl_ev if e["finished"]]
     lineups = _parallel(lineup, [(e["league"], e["id"]) for e in done])
     apps = []
@@ -461,16 +480,18 @@ def view(bootstrap: dict, player_ids: list, start: pd.Timestamp, end: pd.Timesta
     club_ev, intl_ev = pick(CLUB_LEAGUES), pick(INTL_LEAGUES)
 
     def match(e, side):
-        other = [n for n, _ in e["teams"] if n != side]
-        return {"date": e["date"].isoformat(), "competition": LEAGUE_LABEL.get(e["league"], e["league"]),
-                "opponent": other[0] if other else None,
-                "home": bool(e["teams"]) and e["teams"][0][0] == side,
+        other = [t[0] for t in e["teams"] if t[0] != side]
+        mine = next((t for t in e["teams"] if t[0] == side), None)
+        home = (mine[2] == "home") if mine and len(mine) > 2 and mine[2] else e["teams"][0][0] == side
+        return {"date": e["date"].tz_localize("UTC").isoformat(),
+                "competition": LEAGUE_LABEL.get(e["league"], e["league"]),
+                "opponent": other[0] if other else None, "home": bool(home),
                 "far": bool(e["venue_country"]) and e["venue_country"] not in EUROPE}
 
     club_rows = []
     for club in sorted({teams[els[p]["team"]] for p in ids}):
         espn = FPL_TO_ESPN.get(club, club)
-        ms = sorted((match(e, espn) for e in club_ev if any(n == espn for n, _ in e["teams"])),
+        ms = sorted((match(e, espn) for e in club_ev if any(t[0] == espn for t in e["teams"])),
                     key=lambda m: m["date"])
         if ms:
             club_rows.append({"club": club, "matches": ms,
@@ -486,10 +507,36 @@ def view(bootstrap: dict, player_ids: list, start: pd.Timestamp, end: pd.Timesta
         nat = nationality.get(link.get(p))
         if not nat:
             continue
-        mine = [e for e in intl_ev if any(_same_nation(n, nat) for n, _ in e["teams"])]
+        mine = [e for e in intl_ev if any(_same_nation(t[0], nat) for t in e["teams"])]
         if mine:
-            side = next(n for n, _ in mine[0]["teams"] if _same_nation(n, nat))
+            side = next(t[0] for t in mine[0]["teams"] if _same_nation(t[0], nat))
             intl_rows.append({"player_id": p, "name": els[p]["web_name"], "nation": nat,
                               "matches": sorted((match(e, side) for e in mine), key=lambda m: m["date"])})
     return {"from": start.isoformat(), "to": end.isoformat(), "clubs": club_rows,
             "international": sorted(intl_rows, key=lambda r: r["matches"][0]["date"])}
+
+
+def pack(season: str) -> int:
+    """Bundles one finished season's cached data into data/other_matches/,
+    to be committed. Returns how many entries."""
+    months = set(season_months(season))
+    names = {}
+    for f in CACHE.glob("e_*.json"):
+        if f.stem.rsplit("_", 1)[1] in months:
+            names[f.stem] = json.loads(f.read_text())
+    ids = {e["id"] for evs in names.values() for e in evs}
+    for f in CACHE.glob("m_*.json"):
+        if f.stem.rsplit("_", 1)[1] in ids:
+            names[f.stem] = json.loads(f.read_text())
+    for f in CACHE.glob(f"s_*_{season[:4]}.json"):
+        names[f.stem] = json.loads(f.read_text())
+    PACK_DIR.mkdir(parents=True, exist_ok=True)
+    (PACK_DIR / f"{season}.json.gz").write_bytes(gzip.compress(json.dumps(names).encode(), 9))
+    return len(names)
+
+
+if __name__ == "__main__":
+    ap = argparse.ArgumentParser(description="Bundle finished seasons' other-match data.")
+    ap.add_argument("--pack", nargs="+", required=True, help="seasons, e.g. 2023-24 2024-25")
+    for season in ap.parse_args().pack:
+        print(season, pack(season), "entries")

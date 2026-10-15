@@ -115,6 +115,24 @@ export interface TeamNewsView {
   errors?: number;
 }
 
+/** A match outside the Premier League (backend other_matches.py). */
+export interface OtherMatch {
+  date: string;
+  competition: string;
+  opponent: string | null;
+  home: boolean;
+  /** Played outside Europe — a long trip back. */
+  far: boolean;
+}
+
+/** Your players' cup, European and international games over the planning window. */
+export interface OtherMatchesView {
+  from: string;
+  to: string;
+  clubs: { club: string; players: string[]; matches: OtherMatch[] }[];
+  international: { player_id: number; name: string; nation: string; matches: OtherMatch[] }[];
+}
+
 /** One player moving in or out in a planned transfer. */
 export interface TransferMove {
   player_id: number;
@@ -296,4 +314,6 @@ export interface OptimizedTeam {
   chip_plan?: ChipPlan;
   /** Team news for your squad, planned buys and the Wildcard squad. */
   team_news?: TeamNewsView;
+  /** Cup, European and international games for the same players. */
+  other_matches?: OtherMatchesView;
 }

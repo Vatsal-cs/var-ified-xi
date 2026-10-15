@@ -99,6 +99,41 @@ class ProjectionShrink(unittest.TestCase):
             np.testing.assert_allclose(train_model._shrink(bundle, raw, types), [8.0, 2.0, 5.0])
 
 
+class OtherMatches(unittest.TestCase):
+    def _run(self):
+        from data_engine import other_matches as om
+        t = pd.Timestamp
+        rows = pd.DataFrame({"player_id": [1, 2, 1], "club": ["Arsenal", "Arsenal", "Arsenal"],
+                             "kickoff_time": [t("2025-10-04 14:00"), t("2025-10-04 14:00"), t("2025-10-25 14:00")]})
+        club = pd.DataFrame({"club": ["Arsenal", "Arsenal", "Arsenal"], "league": ["uefa.champions"] * 3,
+                             "date": [t("2025-10-01 19:00"), t("2025-10-21 19:00"), t("2025-10-29 19:00")],
+                             "finished": [True, True, False], "event_id": ["a", "b", "c"]})
+        apps = pd.DataFrame({"athlete_id": ["A1", "A1", "A1"], "kind": ["club", "intl", "intl"],
+                             "role": ["start", "start", "sub"], "far": [False, True, False],
+                             "league": ["uefa.champions", "fifa.worldq.conmebol", "fifa.friendly"],
+                             "date": [t("2025-10-01 19:00"), t("2025-10-12 23:00"), t("2025-10-14 19:00")],
+                             "goals": [1.0, 0.0, 0.0], "assists": [0.0, 1.0, 0.0],
+                             "shots": [3.0, 1.0, 0.0], "sot": [2.0, 1.0, 0.0]})
+        return om.features(rows, club, apps, {1: "A1", 2: "A2"})
+
+    def test_club_rest_and_rotation(self):
+        f = self._run()
+        self.assertAlmostEqual(f.loc[0, "xm_days_before"], 2.79, places=2)        # Wed 19:00 -> Sat 14:00
+        self.assertEqual(f.loc[0, "xm_count_14"], 1)
+        self.assertEqual((f.loc[0, "xm_started_before"], f.loc[0, "xm_rested_before"]), (1.0, 0.0))
+        self.assertEqual((f.loc[1, "xm_started_before"], f.loc[1, "xm_rested_before"]), (0.0, 1.0))
+        self.assertAlmostEqual(f.loc[2, "xm_days_after"], 4.21, places=2)         # next game ahead
+
+    def test_international_load_only_from_the_past(self):
+        f = self._run()
+        self.assertEqual(f.loc[0, "intl_apps_14"], 0)                              # all after kick-off
+        self.assertEqual(f.loc[2, "intl_apps_14"], 2)
+        self.assertEqual(f.loc[2, "intl_starts_14"], 1)
+        self.assertEqual(f.loc[2, "intl_far_14"], 1)
+        self.assertEqual(f.loc[2, "xm_ga_30"], 2)              # CL goal 24 days back + the assist
+        self.assertEqual(f.loc[2, "xm_apps_30"], 3)
+
+
 class ChipPlanner(unittest.TestCase):
     def _players(self):
         # 2 GK, 5 DEF, 5 MID, 3 FWD; ids 1-15
