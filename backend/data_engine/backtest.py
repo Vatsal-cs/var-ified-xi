@@ -185,6 +185,17 @@ class _lagged_ratings_ctx:
         config.LAGGED_TEAM_RATINGS = self._old
 
 
+class _without_features:
+    """Takes columns out of config.FEATURE_COLUMNS for the whole variant,
+    restoring whatever was there before (these can nest like _with_features)."""
+    def __init__(self, drop): self.drop = set(drop)
+    def __enter__(self):
+        self._old = config.FEATURE_COLUMNS
+        config.FEATURE_COLUMNS = [c for c in self._old if c not in self.drop]
+    def __exit__(self, *a):
+        config.FEATURE_COLUMNS = self._old
+
+
 class _bag_ctx:
     """Temporarily sets the seed-averaging bag size used while fitting."""
     def __init__(self, size): self.size = size
@@ -307,6 +318,22 @@ VARIANTS = {
                     "projections averaged (config.MODEL_BAG_SIZE = 5)",
         fit=_bagged_fit(5),
         predict=_bundle_predict,
+    ),
+    "no_price": Variant(
+        name="no_price",
+        description="production without the player's price as a model input: "
+                    "price partly carries last season's reputation (research/2026-10-price-feature)",
+        fit=lambda df: train_model.train_models(df, save=False),
+        predict=_bundle_predict,
+        context=lambda: _without_features(["now_cost"]),
+    ),
+    "no_price_own": Variant(
+        name="no_price_own",
+        description="production without price or ownership (selected_by_percent) as "
+                    "inputs — both reputation signals (research/2026-10-price-feature)",
+        fit=lambda df: train_model.train_models(df, save=False),
+        predict=_bundle_predict,
+        context=lambda: _without_features(["now_cost", "selected_by_percent"]),
     ),
     "setpiece": Variant(
         name="setpiece",
