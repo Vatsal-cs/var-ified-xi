@@ -1,0 +1,12 @@
+team_form_add       2024-25       5   37   2497.6   35.7    2446-2545  0.995   0.715   0.0887
+team_form_add       2025-26       5   37   2261.6   40.0    2221-2325  0.914   0.750   0.0786
+--------------------------------------------------------------------------------------------
+Paired against production, per-gameweek, averaged over seeds (block bootstrap, 2-GW blocks, 95% CI):
+  team_form_add      pooled    -0.2 [-110, +112]  won 5/10 cells  -> NO DETECTABLE EFFECT
+                     2024-25 +41 [-35,+113]  2025-26 -41 [-132,+46]
+============================================================================================
+better = pooled CI above zero and ahead in every season; worse = the
+mirror image; anything else is no detectable effect, not a rejection.
+
+
+[exited with code 0]

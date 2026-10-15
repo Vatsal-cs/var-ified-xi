@@ -474,7 +474,8 @@ VARIANTS = {
     ),
     "team_form_add": Variant(
         name="team_form_add",
-        description="production plus this season's team form (recent xG for and against, "
+        description="NO DETECTABLE EFFECT (Oct 2026, 5 seeds): -0.2 [-110, +112]. "
+                    "Production plus this season's team form (recent xG for and against, "
                     "per team and per match) as extra inputs, keeping the published ratings "
                     "(research/2026-10-team-form-add)",
         fit=lambda df: train_model.train_models(df, save=False),

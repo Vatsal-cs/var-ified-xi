@@ -93,6 +93,7 @@ Every verdict below was first decided on **one seed**. The October 2026 audit re
 | Cup, European and international matches as inputs: rest, rotation, international load (new) | — | +87 [+13, +159] · ahead in both seasons, 9 of 10 runs · held back **+43 and +11** | ✅ **shipped** |
 | Form adjusted for opponent strength: schedule strength, adjusted PL form, Elo-weighted cup/European/international form (new) | — | +18 [−65, +99] · +11 [−45, +66] · −17 [−113, +87] | no detectable effect — none used |
 | A second model that learns the first one's mistakes (new) | — | 2024-25 −51 [−166, +53], behind in 3 of 4 runs — stopped once it couldn't pass | not used |
+| This season's team form added to the ratings (new) | — | −0.2 [−110, +112] · +41 and −41 by season | no detectable effect — not used |
 | Split training populations, vs starters-only for both stages | +7 | starters-only **+56** [+11, +103] on the tuning seasons — then +18 and −17 on the held-back seasons | ⚠️ **unconfirmed**: split populations stay |
 
 The one **better** on the tuning seasons was a surprise: training *both* stages on established starters only — the setting this project had rejected — beat production by 56 points, ahead in both seasons. Under the rule written before the run, it then had to keep its sign on the two held-back seasons. It didn't: +18 in 2022-23, −17 in 2023-24. It stays off. That's exactly what the held-back seasons are for — without them, production would have switched models on a result that doesn't generalise.
