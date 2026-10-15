@@ -179,6 +179,18 @@ class _team_form_ctx:
         config.TEAM_FORM, config.FEATURE_COLUMNS = self._old
 
 
+class _team_form_add_ctx:
+    """This season's team form (xG for/against, team_form.py) built with the
+    rows and ADDED to the inputs, keeping FPL's (last-season) ratings."""
+    def __enter__(self):
+        self._old = (config.TEAM_FORM, config.FEATURE_COLUMNS)
+        config.TEAM_FORM = True
+        config.FEATURE_COLUMNS = list(config.FEATURE_COLUMNS) + [
+            c for c in config.TEAM_FORM_COLUMNS if c not in config.FEATURE_COLUMNS]
+    def __exit__(self, *a):
+        config.TEAM_FORM, config.FEATURE_COLUMNS = self._old
+
+
 class _lagged_ratings_ctx:
     """Past seasons rated with the season-before's FPL ratings, as live."""
     def __enter__(self):
@@ -459,6 +471,15 @@ VARIANTS = {
         fit=lambda df: train_model.train_models(df, save=False),
         predict=_bundle_predict,
         context=lambda: _extra_features(OTHER_FORM_ADJ_FEATURES),
+    ),
+    "team_form_add": Variant(
+        name="team_form_add",
+        description="production plus this season's team form (recent xG for and against, "
+                    "per team and per match) as extra inputs, keeping the published ratings "
+                    "(research/2026-10-team-form-add)",
+        fit=lambda df: train_model.train_models(df, save=False),
+        predict=_bundle_predict,
+        context=_team_form_add_ctx,
     ),
     "residual": Variant(
         name="residual",
