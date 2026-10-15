@@ -369,6 +369,21 @@ def fallback_team_strengths(teams: list, season: str = None) -> dict:
     return out
 
 
+def attach_other_matches(df: pd.DataFrame, season: str, season_index: int) -> None:
+    """Adds other_matches' inputs to one archived season, in place: names
+    are the archive's full names, clubs its own team list."""
+    from data_engine import other_matches
+    teams = pd.read_csv(config.RAW_DIR / f"historical_{season}_teams.csv")
+    offset = HISTORICAL_TEAM_ID_BASE + season_index * 100
+    clubs = {offset + int(i): n for i, n in zip(teams["id"], teams["name"])}
+    try:
+        other_matches.attach(df, season, dict(zip(df["player_id"], df["web_name"])), clubs)
+    except Exception as e:                           # an outage leaves neutral values
+        logger.warning("Other matches for %s unavailable (%s); neutral values used", season, e)
+        for col, v in other_matches.NEUTRAL.items():
+            df[col] = v
+
+
 def build_historical_training_df(seasons=None) -> pd.DataFrame:
     """Fetches every configured historical season and concatenates them into
     one raw history-shaped DataFrame, ready for add_rolling_features().
@@ -381,6 +396,8 @@ def build_historical_training_df(seasons=None) -> pd.DataFrame:
         logger.info("Fetching historical season %s...", season)
         df = fetch_season(season, season_index=i)
         if df is not None and not df.empty:
+            if config.OTHER_MATCHES:
+                attach_other_matches(df, season, i)
             frames.append(df)
             logger.info("  %s: %d rows", season, len(df))
 

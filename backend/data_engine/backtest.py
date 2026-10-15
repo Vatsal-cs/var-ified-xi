@@ -78,6 +78,8 @@ from data_engine import (
     train_model,
 )
 from data_engine.odds_data import ODDS_FEATURE_COLUMNS
+from data_engine.other_matches import FEATURES as OTHER_MATCH_FEATURES
+from data_engine.other_matches import LOAD_FEATURES as OTHER_LOAD_FEATURES
 from data_engine.setpiece_data import SETPIECE_FEATURE_COLUMNS
 
 logger = logging.getLogger(__name__)
@@ -223,6 +225,19 @@ def _shrink_predict(per_position: bool):
     return predict
 
 
+class _other_matches_ctx:
+    """Other competitions and internationals as inputs. Held open across data
+    loading: the columns are built with the rows."""
+    def __init__(self, columns): self.columns = columns
+    def __enter__(self):
+        self._old = (config.OTHER_MATCHES, config.FEATURE_COLUMNS)
+        config.OTHER_MATCHES = True
+        config.FEATURE_COLUMNS = list(config.FEATURE_COLUMNS) + [
+            c for c in self.columns if c not in config.FEATURE_COLUMNS]
+    def __exit__(self, *a):
+        config.OTHER_MATCHES, config.FEATURE_COLUMNS = self._old
+
+
 class _bag_ctx:
     """Temporarily sets the seed-averaging bag size used while fitting."""
     def __init__(self, size): self.size = size
@@ -364,6 +379,23 @@ VARIANTS = {
         predict=_bundle_predict,
         context=lambda: _without_features(["now_cost", "selected_by_percent"]),
     ),
+    "other_matches": Variant(
+        name="other_matches",
+        description="production plus the matches FPL doesn't show: rest since the team's "
+                    "last cup/European match, the next one coming, whether the player started "
+                    "it, his international load (research/2026-10-other-matches)",
+        fit=lambda df: train_model.train_models(df, save=False),
+        predict=_bundle_predict,
+        context=lambda: _other_matches_ctx(OTHER_LOAD_FEATURES),
+    ),
+    "other_matches_form": Variant(
+        name="other_matches_form",
+        description="other_matches plus form in those games: appearances, goals + assists, "
+                    "shots and shots on target in the 30 days before",
+        fit=lambda df: train_model.train_models(df, save=False),
+        predict=_bundle_predict,
+        context=lambda: _other_matches_ctx(OTHER_MATCH_FEATURES),
+    ),
     "shrink": Variant(
         name="shrink",
         description="NO DETECTABLE EFFECT (Oct 2026, 5 seeds): -1 [-54, +53]. Points-if-60+ "
@@ -493,6 +525,8 @@ def load_season_frame(season: str, season_index: int,
     if raw is None or raw.empty:
         raise SystemExit(f"Season {season} could not be loaded.")
 
+    if config.OTHER_MATCHES:
+        historical_data.attach_other_matches(raw, season, season_index)
     df = feature_engineering.add_rolling_features(raw)
     df["season"] = season
     if availability:
@@ -694,7 +728,7 @@ FIXTURE_CONTEXT_COLUMNS = [
     "days_since_last_match",
     "kickoff_time",
 ] + list(ODDS_FEATURE_COLUMNS) + ["opp_xg_for", "opp_xg_against",
-                                   "match_xg_for", "match_xg_against"]
+                                   "match_xg_for", "match_xg_against"] + list(OTHER_MATCH_FEATURES)
 
 
 def frozen_form_for_doubles(fixtures: pd.DataFrame) -> pd.DataFrame:

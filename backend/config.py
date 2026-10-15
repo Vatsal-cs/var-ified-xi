@@ -264,6 +264,14 @@ CONFIRMATION_SEASONS = ["2022-23", "2023-24"]
 # several seeds (--seeds) and report the spread; production keeps 42.
 MODEL_SEED = 42
 
+# Matches FPL doesn't show — Champions/Europa/Conference League, League Cup,
+# FA Cup, and internationals — as model inputs (data_engine/other_matches.py):
+# rest since the team's last other match, the next one coming, whether the
+# player started it, and his international load. Under test
+# (research/2026-10-other-matches); off until it passes. The dashboard shows
+# your players' other matches either way.
+OTHER_MATCHES = False
+
 # Pull the points-if-60+ projection toward its position's average:
 # mean + k * (projection - mean). None = off. {"k": 0.65} for one factor,
 # {"k_by_pos": {1: .., 2: .., 3: .., 4: ..}} per position.
