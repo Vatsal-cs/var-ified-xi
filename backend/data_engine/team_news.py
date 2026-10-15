@@ -248,14 +248,12 @@ def _call_gemini(prompt: str) -> str:
 def _cite(items: list, raw: str, index: dict) -> list:
     """Replace each call's source with the headline it cites; a call citing
     nothing we gave it gets no source, so it can't change a projection."""
-    m = re.search(r"\{.*\}", raw, re.S)
     cited = {}
-    if m:
-        try:
-            for p in json.loads(m.group(0)).get("players", []):
-                cited[(str(p.get("name", ""))[:40], str(p.get("club", ""))[:30])] = str(p.get("source_id") or "")
-        except json.JSONDecodeError:
-            pass
+    try:
+        for p in _json_from(raw).get("players", []):
+            cited[(str(p.get("name", ""))[:40], str(p.get("club", ""))[:30])] = str(p.get("source_id") or "")
+    except (ValueError, AttributeError):
+        pass
     for it in items:
         h = index.get(cited.get((it["name"], it["club"]), ""))
         it["source_url"] = h["link"] if h else None
@@ -283,14 +281,23 @@ def _call(prompt: str) -> str:
     raise RuntimeError("team news: search turn never finished")
 
 
+def _json_from(text: str) -> dict:
+    """The first complete JSON value in a reply (fenced or not); a bare list
+    is read as the players."""
+    m = re.search(r"```(?:json)?\s*(.*?)```", text, re.S)
+    body = m.group(1) if m else text
+    starts = [k for k in (body.find("{"), body.find("[")) if k >= 0]
+    if not starts:
+        raise ValueError("no JSON in the reply")
+    obj, _ = json.JSONDecoder().raw_decode(body[min(starts):])
+    return {"players": obj} if isinstance(obj, list) else obj
+
+
 def parse(text: str, known_ids: set) -> list:
     """The reply's JSON, cleaned: known statuses only, chances clamped, ids
     checked against the players asked about (None if he wasn't on the list)."""
-    m = re.search(r"```json\s*(\{.*?\})\s*```", text, re.S) or re.search(r"(\{.*\})", text, re.S)
-    if not m:
-        raise ValueError("no JSON in the reply")
     items = []
-    for p in json.loads(m.group(1)).get("players", []):
+    for p in _json_from(text).get("players", []):
         status = str(p.get("status", "")).strip().lower()
         if status not in STATUSES:
             continue
@@ -332,7 +339,11 @@ def fetch(clubs: list, gameweek: int, deadline: str) -> dict:
                     numbered[c["club"]] = [(f"{chr(65 + ci)}{k + 1}", h) for k, h in enumerate(hs)]
                     index.update(dict(numbered[c["club"]]))
                 raw = _call_gemini(_prompt_headlines(chunk, gameweek, deadline, numbered))
-                items += _cite(parse(raw, known), raw, index)
+                try:
+                    items += _cite(parse(raw, known), raw, index)
+                except ValueError:
+                    logger.warning("Team news reply not readable; it began: %r", raw[:300])
+                    raise
                 time.sleep(5)                            # stay inside the free per-minute limit
             else:
                 items += parse(_call(_prompt(chunk, gameweek, deadline)), known)
