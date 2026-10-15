@@ -339,3 +339,15 @@ class TeamStrengthFallback(unittest.TestCase):
                            "strength_defence_away": 1200}]}
         self.assertEqual(feature_engineering._team_strength_lookup(boot)[1],
                          {"attack": 1250, "defence": 1150})
+
+
+class AgeMatchesHistory(unittest.TestCase):
+    """History has no birth dates (every row is FALLBACK_AGE), so a live row
+    with a real age is a value training only saw on this season's rows — the
+    trees used it to pick out single players (Henderson, GW7 2026-27)."""
+
+    def test_live_age_is_the_historical_fallback(self):
+        from data_engine import feature_engineering
+        self.assertFalse(config.PLAYER_AGE)
+        self.assertEqual(feature_engineering._player_age("1990-06-17"), config.FALLBACK_AGE)
+        self.assertEqual(feature_engineering._player_age(None), config.FALLBACK_AGE)

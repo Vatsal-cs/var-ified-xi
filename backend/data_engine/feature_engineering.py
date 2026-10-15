@@ -133,7 +133,10 @@ def _parse_kickoff(kickoff_str):
 def _player_age(birth_date_str) -> float:
     """Age in years as of today. Returns NaN (filled to 0 later) if the API
     doesn't have a birth date for this player (happens for some new signings).
+    The fallback for everyone unless config.PLAYER_AGE (see there for why).
     """
+    if not config.PLAYER_AGE:
+        return FALLBACK_AGE
     if not birth_date_str:
         return np.nan
     try:

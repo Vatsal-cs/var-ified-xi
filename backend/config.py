@@ -234,6 +234,16 @@ if TEAM_FORM:
 # which would read as an implausible outlier rather than "unknown".
 FALLBACK_AGE = 26.0
 
+# Real ages are OFF: every player gets FALLBACK_AGE. Found Oct 2026 (GW7):
+# the historical rows all carry 26.0, so only this season's rows had a real
+# age, and the trees used it as a name tag — an age nobody else has picked
+# out one player's own matches. Henderson (36, two starts, one 18-pointer)
+# got +4.3 on his points-if-60+ from age alone (2.4 -> 5.1 projected), Groß
+# +1.3. Every backtest replays archive seasons where age is always 26, so
+# the tested model never used age; this makes live runs match it. Turn on
+# only with birth dates for the historical seasons too, and a backtest.
+PLAYER_AGE = False
+
 # Rows/predictions with fewer rest days than this are flagged as short-rest
 # in the output (informational — the model already sees days_since_last_match
 # as a raw feature, this is just for the "why" surfaced to the frontend).
