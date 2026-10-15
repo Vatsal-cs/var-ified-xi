@@ -371,8 +371,9 @@ def get(clubs: list, gameweek: int, deadline: datetime, force: bool = False) -> 
     cached = load_cached(gameweek)
     if not enabled():
         return cached
-    fresh = cached and _now() - datetime.fromisoformat(cached["fetched_at"]) < \
-        timedelta(hours=config.TEAM_NEWS_TTL_HOURS)
+    # A result with failed club groups is never reused: the next run retries.
+    fresh = cached and not cached.get("errors") and \
+        _now() - datetime.fromisoformat(cached["fetched_at"]) < timedelta(hours=config.TEAM_NEWS_TTL_HOURS)
     near = deadline - _now() < timedelta(hours=config.TEAM_NEWS_WINDOW_HOURS)
     if fresh or not (near or force):
         return cached
