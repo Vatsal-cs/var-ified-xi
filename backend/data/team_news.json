@@ -1,7 +1,8 @@
 {
  "gameweek": 7,
- "fetched_at": "2026-10-16T22:04:33.346239+00:00",
+ "fetched_at": "2026-10-16T22:36:01.734769+00:00",
  "model": "gemini-3.5-flash-lite",
+ "prompt_version": 2,
  "clubs": [
   "Arsenal",
   "Brentford",
@@ -20,7 +21,7 @@
    "club": "Arsenal",
    "status": "no_news",
    "start_chance": null,
-   "reason": "No news in headlines",
+   "reason": "No news in the headlines",
    "source_url": null,
    "source_date": null,
    "source_title": null
@@ -31,7 +32,7 @@
    "club": "Arsenal",
    "status": "no_news",
    "start_chance": null,
-   "reason": "No news in headlines",
+   "reason": "No news in the headlines",
    "source_url": null,
    "source_date": null,
    "source_title": null
@@ -42,7 +43,7 @@
    "club": "Arsenal",
    "status": "no_news",
    "start_chance": null,
-   "reason": "No news in headlines",
+   "reason": "No news in the headlines",
    "source_url": null,
    "source_date": null,
    "source_title": null
@@ -53,7 +54,7 @@
    "club": "Brentford",
    "status": "no_news",
    "start_chance": null,
-   "reason": "No news in headlines",
+   "reason": "No news in the headlines",
    "source_url": null,
    "source_date": null,
    "source_title": null
@@ -64,7 +65,7 @@
    "club": "Brighton",
    "status": "no_news",
    "start_chance": null,
-   "reason": "No news in headlines",
+   "reason": "No news in the headlines",
    "source_url": null,
    "source_date": null,
    "source_title": null
@@ -75,7 +76,7 @@
    "club": "Everton",
    "status": "no_news",
    "start_chance": null,
-   "reason": "no_news",
+   "reason": "No specific news mentions this player.",
    "source_url": null,
    "source_date": null,
    "source_title": null
@@ -86,7 +87,7 @@
    "club": "Man City",
    "status": "no_news",
    "start_chance": null,
-   "reason": "no_news",
+   "reason": "No specific news mentions this player.",
    "source_url": null,
    "source_date": null,
    "source_title": null
@@ -95,9 +96,9 @@
    "player_id": 399,
    "name": "Rayan Cherki",
    "club": "Man City",
-   "status": "rotation_risk",
-   "start_chance": 50,
-   "reason": "Mentioned as potentially dropping out of the lineup against Ipswich.",
+   "status": "no_news",
+   "start_chance": null,
+   "reason": "Headline notes he could drop out but does not confirm status.",
    "source_url": "https://news.google.com/rss/articles/CBMif0FVX3lxTFBtdTVWS2xLWmtRUUtDaGJHSTA4MzktU2ZMS0J4dGhFeFJ5SmxzQThkQmZkMWFINS1pNm5HVTNqb190bXhyeEFDRHY3M1AyRXRCcDN1YlNlNUlHeHN6WkxTcEtvcFhmTzVsbGhMWVpybko1VzdKcWtLU3FES1ZBVDQ?oc=5",
    "source_date": "2026-10-15",
    "source_title": "Man City Team News vs Ipswich: Foden Back, Cherki Could Drop Out - The False 9"
@@ -106,9 +107,9 @@
    "player_id": 411,
    "name": "Erling Haaland",
    "club": "Man City",
-   "status": "doubtful",
-   "start_chance": 50,
-   "reason": "Latest team news discusses his fitness after an injury scare.",
+   "status": "no_news",
+   "start_chance": null,
+   "reason": "Mentioned regarding an injury scare and needing rest, but not ruled out.",
    "source_url": "https://news.google.com/rss/articles/CBMijgFBVV95cUxNeEE2M2RZaXFqSXFaQVcxTGhBODZkNE96NV90bXRLY21wek5JbmtKYzFTeWhOOV94dXdYRDYzb3dNbDJXeWRGOWFvUXItLWZCdEc5eG0tQXFpWDJibFdOYy11S00yQVpSSE1wYU5FczBaTkJjSUZLWm42Smx0OTdVY01jaElTX0RoSnQzN0FB?oc=5",
    "source_date": "2026-10-16",
    "source_title": "Will Erling Haaland start against Ipswich? Latest Man City team news after injury scare - Yahoo Sports"
@@ -119,7 +120,7 @@
    "club": "Newcastle",
    "status": "no_news",
    "start_chance": null,
-   "reason": "no_news",
+   "reason": "No specific news mentions this player.",
    "source_url": null,
    "source_date": null,
    "source_title": null
@@ -130,7 +131,7 @@
    "club": "Newcastle",
    "status": "no_news",
    "start_chance": null,
-   "reason": "no_news",
+   "reason": "No specific news mentions this player.",
    "source_url": null,
    "source_date": null,
    "source_title": null
@@ -141,7 +142,7 @@
    "club": "Nott'm Forest",
    "status": "no_news",
    "start_chance": null,
-   "reason": "No news mentions Murillo Costa dos Santos in the provided headlines",
+   "reason": "No news in the headlines.",
    "source_url": null,
    "source_date": null,
    "source_title": null
@@ -152,7 +153,7 @@
    "club": "Spurs",
    "status": "no_news",
    "start_chance": null,
-   "reason": "No specific news updates concerning S\u00e1vio's fitness or availability status for the upcoming match.",
+   "reason": "No news in the headlines.",
    "source_url": null,
    "source_date": null,
    "source_title": null
@@ -163,7 +164,7 @@
    "club": "Sunderland",
    "status": "no_news",
    "start_chance": null,
-   "reason": "No news in the headlines regarding Granit Xhaka.",
+   "reason": "No news in the headlines.",
    "source_url": null,
    "source_date": null,
    "source_title": null
@@ -172,12 +173,12 @@
    "player_id": 533,
    "name": "Nordi Mukiele",
    "club": "Sunderland",
-   "status": "out",
-   "start_chance": 0,
-   "reason": "R\u00e9gis Le Bris confirms Meunier out as Sunderland assess Isidor for Bournemouth",
-   "source_url": "https://news.google.com/rss/articles/CBMiuwFBVV95cUxPdkN5al9IN3ZuMlJVT1JSYmNISTVoa1NWblh6S3FrVmpUa2pzZzVYVFdvai13d1J2VUx6RHJENVdhN1U3aWNER2hPWm5CekViSGMta2h4TUV6NzdsNGV6bFRqYmlkeHE2cEJQSUc2VHlZeFd5T2U0UlJIWFpweWJ3TjRKOFJ2Z0RXTHZyZGF5SC1CV0U4U1FUcDZXZVBRLUo2QWlOYkVoMkpVM3VRVFZlUUZOelBzd3RPaWhN?oc=5",
-   "source_date": "2026-10-16",
-   "source_title": "R\u00e9gis Le Bris confirms Meunier out as Sunderland assess Isidor for Bournemouth - OneFootball"
+   "status": "no_news",
+   "start_chance": null,
+   "reason": "No news in the headlines.",
+   "source_url": null,
+   "source_date": null,
+   "source_title": null
   }
  ],
  "errors": []
