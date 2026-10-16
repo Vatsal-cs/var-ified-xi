@@ -1,56 +1,56 @@
 {
-  "generated_at": "2026-10-16T02:10:38.932226+00:00",
+  "generated_at": "2026-10-16T02:44:57.440855+00:00",
   "gameweek": 7,
   "horizon_gws": 6,
   "mode": "transfer_plan",
   "budget_used_m": 100.3,
   "budget_total_m": 100.0,
-  "predicted_total_points": 60.67,
+  "predicted_total_points": 59.85,
   "starting_xi": [
     {
-      "player_id": 1,
-      "name": "Raya",
+      "player_id": 109,
+      "name": "Verbruggen",
       "position": "GK",
-      "team": "Arsenal",
-      "now_cost_m": 6.1,
-      "predicted_points": 4.3,
-      "horizon_points": 16.62,
+      "team": "Brighton",
+      "now_cost_m": 4.6,
+      "predicted_points": 3.48,
+      "horizon_points": 13.91,
       "xp_by_gw": {
-        "7": 4.3,
-        "8": 4.25,
-        "9": 3.38,
-        "10": 4.38,
-        "11": 4.16,
-        "12": 3.16
+        "7": 3.48,
+        "8": 2.96,
+        "9": 2.76,
+        "10": 3.42,
+        "11": 4.39,
+        "12": 3.45
       },
       "start_probability": 0.95,
       "is_captain": false,
       "is_vice_captain": false,
       "dist": {
-        "mean": 3.44,
+        "mean": 3.27,
         "p10": 1,
         "p90": 7,
-        "p_blank": 0.528,
-        "p_return": 0.329,
-        "p_haul": 0.006,
+        "p_blank": 0.567,
+        "p_return": 0.239,
+        "p_haul": 0.042,
         "pmf": [
-          0.0521,
-          0.1696,
+          0.0679,
+          0.1931,
           0.3064,
-          0.1414,
+          0.149,
+          0.0165,
+          0.0279,
+          0.099,
+          0.0461,
+          0.0279,
+          0.0238,
+          0.0215,
+          0.0129,
           0.0,
-          0.0013,
-          0.2025,
-          0.0627,
-          0.0026,
-          0.0549,
-          0.0039,
+          0.005,
+          0.0015,
+          0.0015,
           0.0,
-          0.0013,
-          0.0,
-          0.0,
-          0.0,
-          0.0013,
           0.0,
           0.0,
           0.0,
@@ -681,49 +681,49 @@
   ],
   "bench": [
     {
-      "player_id": 109,
-      "name": "Verbruggen",
+      "player_id": 1,
+      "name": "Raya",
       "position": "GK",
-      "team": "Brighton",
-      "now_cost_m": 4.6,
-      "predicted_points": 3.48,
-      "horizon_points": 13.91,
+      "team": "Arsenal",
+      "now_cost_m": 6.1,
+      "predicted_points": 4.3,
+      "horizon_points": 16.62,
       "xp_by_gw": {
-        "7": 3.48,
-        "8": 2.96,
-        "9": 2.76,
-        "10": 3.42,
-        "11": 4.39,
-        "12": 3.45
+        "7": 4.3,
+        "8": 4.25,
+        "9": 3.38,
+        "10": 4.38,
+        "11": 4.16,
+        "12": 3.16
       },
       "start_probability": 0.95,
       "is_captain": false,
       "is_vice_captain": false,
       "dist": {
-        "mean": 3.27,
+        "mean": 3.44,
         "p10": 1,
         "p90": 7,
-        "p_blank": 0.567,
-        "p_return": 0.239,
-        "p_haul": 0.042,
+        "p_blank": 0.528,
+        "p_return": 0.329,
+        "p_haul": 0.006,
         "pmf": [
-          0.0679,
-          0.1931,
+          0.0521,
+          0.1696,
           0.3064,
-          0.149,
-          0.0165,
-          0.0279,
-          0.099,
-          0.0461,
-          0.0279,
-          0.0238,
-          0.0215,
-          0.0129,
+          0.1414,
           0.0,
-          0.005,
-          0.0015,
-          0.0015,
+          0.0013,
+          0.2025,
+          0.0627,
+          0.0026,
+          0.0549,
+          0.0039,
           0.0,
+          0.0013,
+          0.0,
+          0.0,
+          0.0,
+          0.0013,
           0.0,
           0.0,
           0.0,
@@ -1683,7 +1683,7 @@
     "errors": 0
   },
   "other_matches": {
-    "from": "2026-10-16T02:10:38.885970",
+    "from": "2026-10-16T02:44:57.402164",
     "to": "2026-12-02T18:30:00",
     "clubs": [
       {
@@ -1719,9 +1719,9 @@
           }
         ],
         "players": [
-          "Raya",
           "Calafiori",
-          "Konsa"
+          "Konsa",
+          "Raya"
         ]
       },
       {
@@ -1884,27 +1884,6 @@
     ],
     "international": [
       {
-        "player_id": 1,
-        "name": "Raya",
-        "nation": "Spain",
-        "matches": [
-          {
-            "date": "2026-11-12T19:45:00+00:00",
-            "competition": "Nations League",
-            "opponent": "Czechia",
-            "home": false,
-            "far": false
-          },
-          {
-            "date": "2026-11-15T19:45:00+00:00",
-            "competition": "Nations League",
-            "opponent": "England",
-            "home": true,
-            "far": false
-          }
-        ]
-      },
-      {
         "player_id": 8,
         "name": "Calafiori",
         "nation": "Italy",
@@ -2010,6 +1989,27 @@
         ]
       },
       {
+        "player_id": 1,
+        "name": "Raya",
+        "nation": "Spain",
+        "matches": [
+          {
+            "date": "2026-11-12T19:45:00+00:00",
+            "competition": "Nations League",
+            "opponent": "Czechia",
+            "home": false,
+            "far": false
+          },
+          {
+            "date": "2026-11-15T19:45:00+00:00",
+            "competition": "Nations League",
+            "opponent": "England",
+            "home": true,
+            "far": false
+          }
+        ]
+      },
+      {
         "player_id": 533,
         "name": "Mukiele",
         "nation": "France",
@@ -2031,8 +2031,8 @@
         ]
       },
       {
-        "player_id": 447,
-        "name": "Botman",
+        "player_id": 109,
+        "name": "Verbruggen",
         "nation": "Netherlands",
         "matches": [
           {
@@ -2052,8 +2052,8 @@
         ]
       },
       {
-        "player_id": 109,
-        "name": "Verbruggen",
+        "player_id": 447,
+        "name": "Botman",
         "nation": "Netherlands",
         "matches": [
           {
@@ -2184,11 +2184,15 @@
     "gameweek": 7
   },
   "lineup_check": {
-    "model_agrees": true,
-    "points_yours": 60.67,
+    "model_agrees": false,
+    "points_yours": 59.85,
     "points_model": 60.67,
-    "model_would_start": [],
-    "model_would_bench": [],
+    "model_would_start": [
+      "Raya"
+    ],
+    "model_would_bench": [
+      "Verbruggen"
+    ],
     "model_captain": "Haaland",
     "model_vice_captain": "Semenyo",
     "suggested_changes": [],
@@ -2205,7 +2209,7 @@
         "hits": 0,
         "hit_cost": 0,
         "bank_m": 0.4,
-        "predicted_points": 60.67,
+        "predicted_points": 59.85,
         "captain_id": 411
       },
       {
