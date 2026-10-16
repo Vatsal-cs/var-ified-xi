@@ -1,11 +1,11 @@
 {
-  "generated_at": "2026-10-16T12:21:40.535049+00:00",
+  "generated_at": "2026-10-16T22:05:05.261400+00:00",
   "gameweek": 7,
   "horizon_gws": 6,
   "mode": "transfer_plan",
   "budget_used_m": 100.3,
   "budget_total_m": 100.0,
-  "predicted_total_points": 59.85,
+  "predicted_total_points": 52.69,
   "starting_xi": [
     {
       "player_id": 109,
@@ -501,10 +501,10 @@
       "position": "FWD",
       "team": "Man City",
       "now_cost_m": 15.6,
-      "predicted_points": 7.17,
-      "horizon_points": 23.83,
+      "predicted_points": 3.59,
+      "horizon_points": 20.25,
       "xp_by_gw": {
-        "7": 7.17,
+        "7": 3.59,
         "8": 4.95,
         "9": 5.09,
         "10": 5.77,
@@ -515,31 +515,31 @@
       "is_captain": true,
       "is_vice_captain": false,
       "dist": {
-        "mean": 5.52,
-        "p10": 1,
-        "p90": 13,
-        "p_blank": 0.521,
-        "p_return": 0.428,
-        "p_haul": 0.192,
+        "mean": 2.76,
+        "p10": 0,
+        "p90": 9,
+        "p_blank": 0.76,
+        "p_return": 0.214,
+        "p_haul": 0.096,
         "pmf": [
-          0.0675,
-          0.0444,
-          0.4088,
+          0.5337,
+          0.0222,
+          0.2044,
           0.0,
-          0.0048,
-          0.0466,
-          0.0796,
-          0.0545,
-          0.0522,
-          0.0499,
+          0.0024,
+          0.0233,
+          0.0398,
+          0.0272,
+          0.0261,
+          0.0249,
           0.0,
-          0.023,
-          0.0207,
-          0.0751,
+          0.0115,
+          0.0103,
+          0.0375,
           0.0,
           0.0,
-          0.0417,
-          0.0313,
+          0.0209,
+          0.0156,
           0.0,
           0.0,
           0.0,
@@ -747,49 +747,49 @@
       "position": "DEF",
       "team": "Sunderland",
       "now_cost_m": 5.4,
-      "predicted_points": 3.85,
-      "horizon_points": 17.88,
+      "predicted_points": 0.0,
+      "horizon_points": 1.4,
       "xp_by_gw": {
-        "7": 3.85,
-        "8": 4.33,
-        "9": 5.15,
-        "10": 4.03,
-        "11": 4.07,
-        "12": 4.58
+        "7": 0.0,
+        "8": 0.43,
+        "9": 0.52,
+        "10": 0.4,
+        "11": 0.41,
+        "12": 0.46
       },
       "start_probability": 0.89,
       "is_captain": false,
       "is_vice_captain": false,
       "dist": {
-        "mean": 3.88,
+        "mean": 0.0,
         "p10": 0,
-        "p90": 9,
-        "p_blank": 0.518,
-        "p_return": 0.351,
-        "p_haul": 0.072,
+        "p90": 0,
+        "p_blank": 1.0,
+        "p_return": 0.0,
+        "p_haul": 0.0,
         "pmf": [
-          0.1187,
-          0.2136,
-          0.1857,
-          0.0427,
-          0.0523,
-          0.0356,
-          0.1574,
-          0.0421,
-          0.0461,
-          0.0338,
-          0.0227,
-          0.0209,
-          0.0031,
-          0.0018,
-          0.008,
-          0.0098,
-          0.0018,
-          0.0025,
+          1.0,
           0.0,
           0.0,
           0.0,
-          0.0012,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
           0.0,
           0.0,
           0.0,
@@ -1209,7 +1209,7 @@
       {
         "chip": "bboost",
         "gameweek": 11,
-        "value": 15.5,
+        "value": 15.4,
         "player": null
       },
       {
@@ -1225,10 +1225,10 @@
     {
       "player_id": 411,
       "name": "Haaland",
-      "projected": 7.17,
-      "p_haul": 0.192,
-      "p10": 1,
-      "p90": 13,
+      "projected": 3.59,
+      "p_haul": 0.096,
+      "p10": 0,
+      "p90": 9,
       "beats_captain": null
     },
     {
@@ -1238,7 +1238,7 @@
       "p_haul": 0.158,
       "p10": 0,
       "p90": 12,
-      "beats_captain": 0.467
+      "beats_captain": 0.66
     },
     {
       "player_id": 399,
@@ -1247,7 +1247,7 @@
       "p_haul": 0.15,
       "p10": 0,
       "p90": 11,
-      "beats_captain": 0.458
+      "beats_captain": 0.662
     },
     {
       "player_id": 403,
@@ -1256,7 +1256,7 @@
       "p_haul": 0.157,
       "p10": 1,
       "p90": 12,
-      "beats_captain": 0.493
+      "beats_captain": 0.694
     }
   ],
   "odds_calibration": {
@@ -1291,7 +1291,7 @@
           {
             "chip": "bboost",
             "gameweek": 11,
-            "value": 15.5,
+            "value": 15.4,
             "player": null,
             "firm": true,
             "now": false
@@ -1307,21 +1307,21 @@
           {
             "chip": "freehit",
             "gameweek": 14,
-            "value": 9.8,
+            "value": 9.6,
             "player": null,
             "firm": false,
             "now": false
           }
         ],
-        "total": 32.5,
+        "total": 32.2,
         "weeks": [
           {
             "gameweek": 7,
-            "3xc": 7.2,
-            "3xc_player": "Haaland",
-            "bboost": 14.1,
-            "freehit": 0.8,
-            "xi_points": 60.7,
+            "3xc": 5.6,
+            "3xc_player": "Semenyo",
+            "bboost": 10.2,
+            "freehit": 2.7,
+            "xi_points": 55.5,
             "firm": true,
             "fixtures": {
               "doubles": 0,
@@ -1332,9 +1332,9 @@
             "gameweek": 8,
             "3xc": 6.6,
             "3xc_player": "Gibbs-White",
-            "bboost": 13.2,
-            "freehit": 1.6,
-            "xi_points": 57.3,
+            "bboost": 9.9,
+            "freehit": 1.9,
+            "xi_points": 56.8,
             "firm": true,
             "fixtures": {
               "doubles": 0,
@@ -1346,8 +1346,8 @@
             "3xc": 5.4,
             "3xc_player": "Gibbs-White",
             "bboost": 12.7,
-            "freehit": 1.1,
-            "xi_points": 54.8,
+            "freehit": 1.3,
+            "xi_points": 53.5,
             "firm": true,
             "fixtures": {
               "doubles": 0,
@@ -1359,8 +1359,8 @@
             "3xc": 5.8,
             "3xc_player": "Haaland",
             "bboost": 14.0,
-            "freehit": 3.5,
-            "xi_points": 55.6,
+            "freehit": 3.2,
+            "xi_points": 55.8,
             "firm": true,
             "fixtures": {
               "doubles": 0,
@@ -1371,9 +1371,9 @@
             "gameweek": 11,
             "3xc": 6.5,
             "3xc_player": "Haaland",
-            "bboost": 15.5,
-            "freehit": 2.0,
-            "xi_points": 58.0,
+            "bboost": 15.4,
+            "freehit": 2.8,
+            "xi_points": 57.2,
             "firm": true,
             "fixtures": {
               "doubles": 0,
@@ -1385,8 +1385,8 @@
             "3xc": 5.3,
             "3xc_player": "Gibbs-White",
             "bboost": 13.4,
-            "freehit": 2.3,
-            "xi_points": 52.9,
+            "freehit": 2.8,
+            "xi_points": 51.9,
             "firm": true,
             "fixtures": {
               "doubles": 0,
@@ -1397,7 +1397,7 @@
             "gameweek": 13,
             "3xc": 6.6,
             "3xc_player": "Gibbs-White",
-            "bboost": 12.9,
+            "bboost": 13.2,
             "freehit": 3.0,
             "xi_points": 55.3,
             "firm": false,
@@ -1410,9 +1410,9 @@
             "gameweek": 14,
             "3xc": 5.8,
             "3xc_player": "Gibbs-White",
-            "bboost": 13.9,
-            "freehit": 9.8,
-            "xi_points": 53.9,
+            "bboost": 14.2,
+            "freehit": 9.6,
+            "xi_points": 54.2,
             "firm": false,
             "fixtures": {
               "doubles": 0,
@@ -1423,9 +1423,9 @@
             "gameweek": 15,
             "3xc": 5.7,
             "3xc_player": "Gibbs-White",
-            "bboost": 12.7,
+            "bboost": 12.0,
             "freehit": 4.3,
-            "xi_points": 53.1,
+            "xi_points": 52.7,
             "firm": false,
             "fixtures": {
               "doubles": 0,
@@ -1437,8 +1437,8 @@
             "3xc": 7.2,
             "3xc_player": "Haaland",
             "bboost": 13.2,
-            "freehit": 4.4,
-            "xi_points": 58.1,
+            "freehit": 4.6,
+            "xi_points": 57.8,
             "firm": false,
             "fixtures": {
               "doubles": 0,
@@ -1449,9 +1449,9 @@
             "gameweek": 17,
             "3xc": 5.1,
             "3xc_player": "Haaland",
-            "bboost": 12.4,
-            "freehit": 2.2,
-            "xi_points": 53.7,
+            "bboost": 13.5,
+            "freehit": 2.6,
+            "xi_points": 53.2,
             "firm": false,
             "fixtures": {
               "doubles": 0,
@@ -1462,7 +1462,7 @@
             "gameweek": 18,
             "3xc": 6.1,
             "3xc_player": "Haaland",
-            "bboost": 13.4,
+            "bboost": 13.2,
             "freehit": 5.2,
             "xi_points": 54.4,
             "firm": false,
@@ -1475,9 +1475,9 @@
             "gameweek": 19,
             "3xc": 6.5,
             "3xc_player": "Haaland",
-            "bboost": 13.3,
-            "freehit": 5.5,
-            "xi_points": 58.0,
+            "bboost": 13.8,
+            "freehit": 4.8,
+            "xi_points": 57.8,
             "firm": false,
             "fixtures": {
               "doubles": 0,
@@ -1492,41 +1492,41 @@
   },
   "team_news": {
     "enabled": true,
-    "fetched_at": "2026-10-16T12:21:24.696449+00:00",
+    "fetched_at": "2026-10-16T22:04:33.346239+00:00",
     "model": "gemini-3.5-flash-lite",
     "items": [
+      {
+        "player_id": 533,
+        "name": "Nordi Mukiele",
+        "club": "Sunderland",
+        "status": "out",
+        "start_chance": 0,
+        "reason": "R\u00e9gis Le Bris confirms Meunier out as Sunderland assess Isidor for Bournemouth",
+        "source_url": "https://news.google.com/rss/articles/CBMiuwFBVV95cUxPdkN5al9IN3ZuMlJVT1JSYmNISTVoa1NWblh6S3FrVmpUa2pzZzVYVFdvai13d1J2VUx6RHJENVdhN1U3aWNER2hPWm5CekViSGMta2h4TUV6NzdsNGV6bFRqYmlkeHE2cEJQSUc2VHlZeFd5T2U0UlJIWFpweWJ3TjRKOFJ2Z0RXTHZyZGF5SC1CV0U4U1FUcDZXZVBRLUo2QWlOYkVoMkpVM3VRVFZlUUZOelBzd3RPaWhN?oc=5",
+        "source_date": "2026-10-16",
+        "source_title": "R\u00e9gis Le Bris confirms Meunier out as Sunderland assess Isidor for Bournemouth - OneFootball"
+      },
+      {
+        "player_id": 411,
+        "name": "Erling Haaland",
+        "club": "Man City",
+        "status": "doubtful",
+        "start_chance": 50,
+        "reason": "Latest team news discusses his fitness after an injury scare.",
+        "source_url": "https://news.google.com/rss/articles/CBMijgFBVV95cUxNeEE2M2RZaXFqSXFaQVcxTGhBODZkNE96NV90bXRLY21wek5JbmtKYzFTeWhOOV94dXdYRDYzb3dNbDJXeWRGOWFvUXItLWZCdEc5eG0tQXFpWDJibFdOYy11S00yQVpSSE1wYU5FczBaTkJjSUZLWm42Smx0OTdVY01jaElTX0RoSnQzN0FB?oc=5",
+        "source_date": "2026-10-16",
+        "source_title": "Will Erling Haaland start against Ipswich? Latest Man City team news after injury scare - Yahoo Sports"
+      },
       {
         "player_id": 399,
         "name": "Rayan Cherki",
         "club": "Man City",
         "status": "rotation_risk",
         "start_chance": 50,
-        "reason": "Headlines suggest Rayan Cherki could drop out of the starting lineup against Ipswich.",
+        "reason": "Mentioned as potentially dropping out of the lineup against Ipswich.",
         "source_url": "https://news.google.com/rss/articles/CBMif0FVX3lxTFBtdTVWS2xLWmtRUUtDaGJHSTA4MzktU2ZMS0J4dGhFeFJ5SmxzQThkQmZkMWFINS1pNm5HVTNqb190bXhyeEFDRHY3M1AyRXRCcDN1YlNlNUlHeHN6WkxTcEtvcFhmTzVsbGhMWVpybko1VzdKcWtLU3FES1ZBVDQ?oc=5",
         "source_date": "2026-10-15",
         "source_title": "Man City Team News vs Ipswich: Foden Back, Cherki Could Drop Out - The False 9"
-      },
-      {
-        "player_id": 1,
-        "name": "David Raya Mart\u00edn",
-        "club": "Arsenal",
-        "status": "expected_to_start",
-        "start_chance": 100,
-        "reason": "Featured in FPL preview before Forest clash.",
-        "source_url": "https://news.google.com/rss/articles/CBMihAFBVV95cUxNSy1EeEw1eVBIbW1NLVB1cWZSS0R1Y0hZZTdjYl90UWRPTXdkZ1puR25TaFVBLXpYYVliY203bEs3WGlPQmJ1SXJ4Wko3SGZMamdtRmNTR2RqRFhCd1dMQWZZdWVUUWJOWUlKUWhsS19TcmtzZUpaLVY0T0gzaTgxLVFJZXI?oc=5",
-        "source_date": "2026-10-16",
-        "source_title": "FPL Arsenal Players GW7: Calafiori, Saka and Raya Before Forest - The False 9"
-      },
-      {
-        "player_id": 8,
-        "name": "Riccardo Calafiori",
-        "club": "Arsenal",
-        "status": "expected_to_start",
-        "start_chance": 100,
-        "reason": "Covered in FPL Arsenal players preview ahead of Forest.",
-        "source_url": "https://news.google.com/rss/articles/CBMihAFBVV95cUxNSy1EeEw1eVBIbW1NLVB1cWZSS0R1Y0hZZTdjYl90UWRPTXdkZ1puR25TaFVBLXpYYVliY203bEs3WGlPQmJ1SXJ4Wko3SGZMamdtRmNTR2RqRFhCd1dMQWZZdWVUUWJOWUlKUWhsS19TcmtzZUpaLVY0T0gzaTgxLVFJZXI?oc=5",
-        "source_date": "2026-10-16",
-        "source_title": "FPL Arsenal Players GW7: Calafiori, Saka and Raya Before Forest - The False 9"
       },
       {
         "player_id": 397,
@@ -1534,7 +1534,7 @@
         "club": "Man City",
         "status": "no_news",
         "start_chance": null,
-        "reason": "No news mentioned in the headlines for Antoine Semenyo.",
+        "reason": "no_news",
         "source_url": null,
         "source_date": null,
         "source_title": null
@@ -1545,18 +1545,18 @@
         "club": "Brighton",
         "status": "no_news",
         "start_chance": null,
-        "reason": "No news found in headlines.",
+        "reason": "No news in headlines",
         "source_url": null,
         "source_date": null,
         "source_title": null
       },
       {
-        "player_id": 411,
-        "name": "Erling Haaland",
-        "club": "Man City",
+        "player_id": 1,
+        "name": "David Raya Mart\u00edn",
+        "club": "Arsenal",
         "status": "no_news",
         "start_chance": null,
-        "reason": "No fitness news mentioned for Erling Haaland in the headlines.",
+        "reason": "No news in headlines",
         "source_url": null,
         "source_date": null,
         "source_title": null
@@ -1567,7 +1567,18 @@
         "club": "Arsenal",
         "status": "no_news",
         "start_chance": null,
-        "reason": "No news found in headlines.",
+        "reason": "No news in headlines",
+        "source_url": null,
+        "source_date": null,
+        "source_title": null
+      },
+      {
+        "player_id": 544,
+        "name": "Granit Xhaka",
+        "club": "Sunderland",
+        "status": "no_news",
+        "start_chance": null,
+        "reason": "No news in the headlines regarding Granit Xhaka.",
         "source_url": null,
         "source_date": null,
         "source_title": null
@@ -1578,7 +1589,7 @@
         "club": "Newcastle",
         "status": "no_news",
         "start_chance": null,
-        "reason": "No specific news mentions Harvey Barnes in the headlines.",
+        "reason": "no_news",
         "source_url": null,
         "source_date": null,
         "source_title": null
@@ -1589,7 +1600,29 @@
         "club": "Brentford",
         "status": "no_news",
         "start_chance": null,
-        "reason": "No news found in headlines.",
+        "reason": "No news in headlines",
+        "source_url": null,
+        "source_date": null,
+        "source_title": null
+      },
+      {
+        "player_id": 472,
+        "name": "Murillo Costa dos Santos",
+        "club": "Nott'm Forest",
+        "status": "no_news",
+        "start_chance": null,
+        "reason": "No news mentions Murillo Costa dos Santos in the provided headlines",
+        "source_url": null,
+        "source_date": null,
+        "source_title": null
+      },
+      {
+        "player_id": 8,
+        "name": "Riccardo Calafiori",
+        "club": "Arsenal",
+        "status": "no_news",
+        "start_chance": null,
+        "reason": "No news in headlines",
         "source_url": null,
         "source_date": null,
         "source_title": null
@@ -1600,7 +1633,18 @@
         "club": "Newcastle",
         "status": "no_news",
         "start_chance": null,
-        "reason": "No specific news mentions Sven Botman in the headlines.",
+        "reason": "no_news",
+        "source_url": null,
+        "source_date": null,
+        "source_title": null
+      },
+      {
+        "player_id": 403,
+        "name": "S\u00e1vio Moreira de Oliveira",
+        "club": "Spurs",
+        "status": "no_news",
+        "start_chance": null,
+        "reason": "No specific news updates concerning S\u00e1vio's fitness or availability status for the upcoming match.",
         "source_url": null,
         "source_date": null,
         "source_title": null
@@ -1611,17 +1655,30 @@
         "club": "Everton",
         "status": "no_news",
         "start_chance": null,
-        "reason": "No news mentioned in the headlines regarding Thierno Barry's status for the upcoming match.",
+        "reason": "no_news",
         "source_url": null,
         "source_date": null,
         "source_title": null
       }
     ],
-    "applied": [],
-    "errors": 1
+    "applied": [
+      {
+        "player_id": 411,
+        "status": "doubtful",
+        "chance": 50,
+        "fpl_chance": 100
+      },
+      {
+        "player_id": 533,
+        "status": "out",
+        "chance": 0,
+        "fpl_chance": 100
+      }
+    ],
+    "errors": 0
   },
   "other_matches": {
-    "from": "2026-10-16T12:21:40.473882",
+    "from": "2026-10-16T22:05:05.201424",
     "to": "2026-12-02T18:30:00",
     "clubs": [
       {
@@ -2123,18 +2180,64 @@
   },
   "lineup_check": {
     "model_agrees": false,
-    "points_yours": 59.85,
-    "points_model": 60.67,
+    "points_yours": 52.69,
+    "points_model": 55.53,
     "model_would_start": [
       "Raya"
     ],
     "model_would_bench": [
       "Verbruggen"
     ],
-    "model_captain": "Haaland",
-    "model_vice_captain": "Semenyo",
-    "suggested_changes": [],
-    "suggested_gain": 0.0
+    "model_captain": "Semenyo",
+    "model_vice_captain": "Cherki",
+    "suggested_changes": [
+      {
+        "out": "Verbruggen",
+        "out_id": 109,
+        "in": "Kinsky",
+        "in_id": 496,
+        "in_cost_m": 4.5,
+        "out_points": 3.48,
+        "in_points": 3.65
+      },
+      {
+        "out": "Konsa",
+        "out_id": 31,
+        "in": "Gabriel",
+        "in_id": 4,
+        "in_cost_m": 7.9,
+        "out_points": 4.02,
+        "in_points": 4.54
+      },
+      {
+        "out": "Barnes",
+        "out_id": 453,
+        "in": "R\u00faben",
+        "in_id": 390,
+        "in_cost_m": 5.5,
+        "out_points": 4.45,
+        "in_points": 4.84
+      },
+      {
+        "out": "Haaland",
+        "out_id": 411,
+        "in": "B.Fernandes",
+        "in_id": 426,
+        "in_cost_m": 11.9,
+        "out_points": 3.59,
+        "in_points": 5.03
+      },
+      {
+        "out": "Mukiele",
+        "out_id": 533,
+        "in": "Evanilson",
+        "in_id": 79,
+        "in_cost_m": 6.0,
+        "out_points": 0.0,
+        "in_points": 4.13
+      }
+    ],
+    "suggested_gain": 2.2
   },
   "transfer_plan": {
     "weeks": [
@@ -2147,7 +2250,7 @@
         "hits": 0,
         "hit_cost": 0,
         "bank_m": 0.4,
-        "predicted_points": 59.85,
+        "predicted_points": 52.69,
         "captain_id": 411
       },
       {
@@ -2193,19 +2296,37 @@
         "hits": 0,
         "hit_cost": 0,
         "bank_m": 0.7,
-        "predicted_points": 57.33,
+        "predicted_points": 56.81,
         "captain_id": 480
       },
       {
         "gameweek": 9,
-        "transfers_in": [],
-        "transfers_out": [],
-        "transfer_count": 0,
+        "transfers_in": [
+          {
+            "player_id": 566,
+            "name": "Silva",
+            "cost_m": 5.0,
+            "predicted_points": 3.9,
+            "position": "DEF",
+            "team": "Bournemouth"
+          }
+        ],
+        "transfers_out": [
+          {
+            "player_id": 533,
+            "name": "Mukiele",
+            "sell_price_m": 5.4,
+            "predicted_points": 0.52,
+            "position": "DEF",
+            "team": "Sunderland"
+          }
+        ],
+        "transfer_count": 1,
         "free_transfers": 1,
         "hits": 0,
         "hit_cost": 0,
-        "bank_m": 0.7,
-        "predicted_points": 54.78,
+        "bank_m": 1.1,
+        "predicted_points": 53.53,
         "captain_id": 480
       },
       {
@@ -2231,11 +2352,11 @@
           }
         ],
         "transfer_count": 1,
-        "free_transfers": 2,
+        "free_transfers": 1,
         "hits": 0,
         "hit_cost": 0,
-        "bank_m": 0.2,
-        "predicted_points": 55.58,
+        "bank_m": 0.6,
+        "predicted_points": 55.85,
         "captain_id": 411
       },
       {
@@ -2248,14 +2369,6 @@
             "predicted_points": 4.35,
             "position": "DEF",
             "team": "Crystal Palace"
-          },
-          {
-            "player_id": 644,
-            "name": "Timber",
-            "cost_m": 5.0,
-            "predicted_points": 4.48,
-            "position": "MID",
-            "team": "Crystal Palace"
           }
         ],
         "transfers_out": [
@@ -2266,22 +2379,14 @@
             "predicted_points": 2.88,
             "position": "DEF",
             "team": "Newcastle"
-          },
-          {
-            "player_id": 544,
-            "name": "Xhaka",
-            "sell_price_m": 5.4,
-            "predicted_points": 3.76,
-            "position": "MID",
-            "team": "Sunderland"
           }
         ],
-        "transfer_count": 2,
-        "free_transfers": 2,
+        "transfer_count": 1,
+        "free_transfers": 1,
         "hits": 0,
         "hit_cost": 0,
         "bank_m": 0.7,
-        "predicted_points": 58.03,
+        "predicted_points": 57.18,
         "captain_id": 411
       },
       {
@@ -2311,7 +2416,7 @@
         "hits": 0,
         "hit_cost": 0,
         "bank_m": 1.8,
-        "predicted_points": 52.9,
+        "predicted_points": 51.94,
         "captain_id": 480
       }
     ]
