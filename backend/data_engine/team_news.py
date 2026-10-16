@@ -35,6 +35,7 @@ import logging
 import os
 import re
 import time
+import unicodedata
 from datetime import datetime, timedelta, timezone
 from email.utils import parsedate_to_datetime
 from urllib.parse import quote_plus, urlparse
@@ -181,7 +182,10 @@ def _prompt_headlines(clubs: list, gameweek: int, deadline: str, numbered: dict)
              "Use ONLY these headlines — no outside knowledge. Ignore women's, academy and",
              "under-21 teams. Report every listed player; add any other player at these clubs",
              "whom a headline says is ruled out. Each call that isn't no_news must cite the",
-             "headline id it comes from.", ""]
+             "headline id it comes from, and that headline must name the player himself.",
+             "A question headline (\"Will X start?\") or a past injury scare he has since played",
+             "through is not a doubt. The manager's latest press conference outranks earlier",
+             "reports.", ""]
     for c in clubs:
         lines.append(f"{c['club']} ({c['fixture']}):")
         for hid, h in numbered.get(c["club"], []):
@@ -245,9 +249,33 @@ def _call_gemini(prompt: str) -> str:
     raise RuntimeError(f"team news: no free Gemini model answered ({last})")
 
 
+# Bumped whenever the reading instructions change, so a cached read from the
+# old ones isn't reused. 2: headlines must name the player; question
+# headlines and past scares aren't doubts (Oct 2026).
+PROMPT_VERSION = 2
+
+
+def _fold(text: str) -> str:
+    """Lower case, accents off: "Sávio" and "Savio" read the same."""
+    return "".join(c for c in unicodedata.normalize("NFKD", text.lower())
+                   if not unicodedata.combining(c))
+
+
+def _names_him(title: str, name: str) -> bool:
+    """Does the headline name this player? Any part of his name of four
+    letters or more ("Mukiele" in "Nordi Mukiele") is enough."""
+    words = set(re.findall(r"[a-z]+", _fold(title)))
+    return any(len(w) >= 4 and w in words for w in re.findall(r"[a-z]+", _fold(name)))
+
+
 def _cite(items: list, raw: str, index: dict) -> list:
     """Replace each call's source with the headline it cites; a call citing
-    nothing we gave it gets no source, so it can't change a projection."""
+    nothing we gave it gets no source, so it can't change a projection.
+
+    The cited headline must also name the player. Oct 2026, GW7: a headline
+    about Sunderland's Meunier came back as "Mukiele out", and would have
+    zeroed a fit player's projection. A call whose headline is about someone
+    else is dropped to no_news."""
     cited = {}
     try:
         for p in _json_from(raw).get("players", []):
@@ -256,6 +284,12 @@ def _cite(items: list, raw: str, index: dict) -> list:
         pass
     for it in items:
         h = index.get(cited.get((it["name"], it["club"]), ""))
+        if h and it["status"] != "no_news" and not _names_him(h["title"], it["name"]):
+            logger.warning("Team news: %s cited a headline that doesn't name him (%r); dropped.",
+                           it["name"], h["title"][:80])
+            it.update(status="no_news", start_chance=None,
+                      reason=f"Cited a headline about someone else: {h['title'][:90]}")
+            h = None
         it["source_url"] = h["link"] if h else None
         it["source_date"] = h["when"].date().isoformat() if h else None
         it["source_title"] = h["title"][:140] if h else None
@@ -351,6 +385,7 @@ def fetch(clubs: list, gameweek: int, deadline: str) -> dict:
             errors.append(f"{', '.join(c['club'] for c in chunk)}: {e}")
             logger.warning("Team news for %s failed: %s", [c["club"] for c in chunk], e)
     return {"gameweek": gameweek, "fetched_at": _now().isoformat(), "model": model_name(),
+            "prompt_version": PROMPT_VERSION,
             "clubs": [c["club"] for c in clubs], "items": items, "errors": errors}
 
 
@@ -372,7 +407,8 @@ def get(clubs: list, gameweek: int, deadline: datetime, force: bool = False) -> 
     if not enabled():
         return cached
     # A result with failed club groups is never reused: the next run retries.
-    fresh = cached and not cached.get("errors") and \
+    # Nor is one read under an older prompt: a prompt fix should act at once.
+    fresh = cached and not cached.get("errors") and cached.get("prompt_version") == PROMPT_VERSION and \
         _now() - datetime.fromisoformat(cached["fetched_at"]) < timedelta(hours=config.TEAM_NEWS_TTL_HOURS)
     near = deadline - _now() < timedelta(hours=config.TEAM_NEWS_WINDOW_HOURS)
     if fresh or not (near or force):
@@ -408,6 +444,9 @@ def apply(predict_df, news: dict | None, gameweek: int, max_age_days: int = 4) -
     for item in news.get("items", []):
         pid, status = item.get("player_id"), item.get("status")
         if pid is None or status not in APPLIED or not item.get("source_url"):
+            continue
+        # Checked again here so a cached read from before the rule can't act.
+        if item.get("source_title") and not _names_him(item["source_title"], item.get("name", "")):
             continue
         try:
             age = (today - datetime.fromisoformat(item["source_date"]).date()).days

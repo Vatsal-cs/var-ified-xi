@@ -12,8 +12,8 @@
     "bank_m": 0.4,
     "picks": [
       {
-        "id": 109,
-        "name": "Verbruggen"
+        "id": 1,
+        "name": "Raya"
       },
       {
         "id": 447,
@@ -56,8 +56,8 @@
         "name": "Barry"
       },
       {
-        "id": 1,
-        "name": "Raya"
+        "id": 109,
+        "name": "Verbruggen"
       },
       {
         "id": 533,

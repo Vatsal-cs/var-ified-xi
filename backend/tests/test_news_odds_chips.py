@@ -266,6 +266,22 @@ class TeamNews(unittest.TestCase):
         applied = team_news.apply(rows, {"items": items}, 7)
         self.assertEqual([a["player_id"] for a in applied], [380])
 
+    def test_a_headline_about_someone_else_cannot_rule_him_out(self):
+        h = {"title": "Régis Le Bris confirms Meunier out as Sunderland assess Isidor",
+             "link": "https://x/y", "source": "OneFootball", "when": datetime.now(timezone.utc)}
+        raw = ('{"players": [{"player_id": 533, "name": "Nordi Mukiele", "club": "Sunderland",'
+               ' "status": "out", "start_chance": 0, "reason": "out", "source_id": "S1"},'
+               ' {"player_id": 403, "name": "Sávio Moreira de Oliveira", "club": "Spurs",'
+               ' "status": "doubtful", "start_chance": 50, "reason": "knock", "source_id": "S2"}]}')
+        h2 = {"title": "Savio a doubt for Coventry clash", "link": "https://x/z", "source": "BBC",
+              "when": datetime.now(timezone.utc)}
+        items = team_news._cite(team_news.parse(raw, {533, 403}), raw, {"S1": h, "S2": h2})
+        self.assertEqual(items[0]["status"], "no_news")
+        self.assertIsNone(items[0]["source_url"])
+        self.assertEqual(items[1]["source_url"], "https://x/z")         # accents don't matter
+        rows = pd.DataFrame({"player_id": [533, 403], "gw": [7, 7], "chance_of_playing": [None, None]})
+        self.assertEqual([a["player_id"] for a in team_news.apply(rows, {"items": items}, 7)], [403])
+
     def test_headlines_keep_recent_unique_stories(self):
         now = datetime.now(timezone.utc)
         feed = [{"title": "Saka fit", "link": "l1", "source": "BBC", "when": now},
