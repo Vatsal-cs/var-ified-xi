@@ -1,15 +1,14 @@
 {
  "gameweek": 7,
- "fetched_at": "2026-10-15T20:18:09.003304+00:00",
+ "fetched_at": "2026-10-16T00:48:35.516244+00:00",
  "model": "gemini-3.5-flash-lite",
  "clubs": [
   "Arsenal",
-  "Bournemouth",
   "Brentford",
   "Brighton",
   "Chelsea",
   "Coventry City",
-  "Crystal Palace",
+  "Everton",
   "Liverpool",
   "Man City",
   "Newcastle",
@@ -30,17 +29,6 @@
    "source_title": null
   },
   {
-   "player_id": 4,
-   "name": "Gabriel dos Santos Magalh\u00e3es",
-   "club": "Arsenal",
-   "status": "no_news",
-   "start_chance": null,
-   "reason": "No news in headlines",
-   "source_url": null,
-   "source_date": null,
-   "source_title": null
-  },
-  {
    "player_id": 8,
    "name": "Riccardo Calafiori",
    "club": "Arsenal",
@@ -52,9 +40,9 @@
    "source_title": null
   },
   {
-   "player_id": 79,
-   "name": "Francisco Evanilson de Lima Barbosa",
-   "club": "Bournemouth",
+   "player_id": 31,
+   "name": "Ezri Konsa Ngoyo",
+   "club": "Arsenal",
    "status": "no_news",
    "start_chance": null,
    "reason": "No news in headlines",
@@ -85,12 +73,23 @@
    "source_title": null
   },
   {
+   "player_id": 109,
+   "name": "Bart Verbruggen",
+   "club": "Brighton",
+   "status": "no_news",
+   "start_chance": null,
+   "reason": "No news in headlines",
+   "source_url": null,
+   "source_date": null,
+   "source_title": null
+  },
+  {
    "player_id": 115,
    "name": "Maxim De Cuyper",
    "club": "Brighton",
    "status": "no_news",
    "start_chance": null,
-   "reason": "no_news",
+   "reason": "No news in headlines",
    "source_url": null,
    "source_date": null,
    "source_title": null
@@ -101,7 +100,7 @@
    "club": "Brighton",
    "status": "no_news",
    "start_chance": null,
-   "reason": "no_news",
+   "reason": "No news in headlines",
    "source_url": null,
    "source_date": null,
    "source_title": null
@@ -112,7 +111,7 @@
    "club": "Chelsea",
    "status": "no_news",
    "start_chance": null,
-   "reason": "no_news",
+   "reason": "No news mentioned in headlines",
    "source_url": null,
    "source_date": null,
    "source_title": null
@@ -123,18 +122,7 @@
    "club": "Chelsea",
    "status": "no_news",
    "start_chance": null,
-   "reason": "no_news",
-   "source_url": null,
-   "source_date": null,
-   "source_title": null
-  },
-  {
-   "player_id": 101,
-   "name": "Jordan Henderson",
-   "club": "Chelsea",
-   "status": "no_news",
-   "start_chance": null,
-   "reason": "no_news",
+   "reason": "No news mentioned in headlines",
    "source_url": null,
    "source_date": null,
    "source_title": null
@@ -145,18 +133,18 @@
    "club": "Coventry City",
    "status": "no_news",
    "start_chance": null,
-   "reason": "no_news",
+   "reason": "No news mentioned in headlines",
    "source_url": null,
    "source_date": null,
    "source_title": null
   },
   {
-   "player_id": 199,
-   "name": "Walter Ben\u00edtez",
-   "club": "Crystal Palace",
+   "player_id": 249,
+   "name": "Thierno Barry",
+   "club": "Everton",
    "status": "no_news",
    "start_chance": null,
-   "reason": "No news in the headlines for this player.",
+   "reason": "No fitness issues reported",
    "source_url": null,
    "source_date": null,
    "source_title": null
@@ -167,7 +155,7 @@
    "club": "Liverpool",
    "status": "no_news",
    "start_chance": null,
-   "reason": "No news in the headlines for this player.",
+   "reason": "None",
    "source_url": null,
    "source_date": null,
    "source_title": null
@@ -178,7 +166,7 @@
    "club": "Liverpool",
    "status": "doubtful",
    "start_chance": 50,
-   "reason": "Andoni Iraola says fitness status is 'too early' to declare; considered a doubt for Brentford.",
+   "reason": "Szoboszlai is a doubt for the Brentford match.",
    "source_url": "https://news.google.com/rss/articles/CBMipwFBVV95cUxOUW1pMzR1b25acmJtTzU5V2c0YjZUUkczX3VtLUJtb1VOSDdoYlFjVWd2V0lxSF96X1ZfSzNZdE9rR0NBOWZkcmFXS2NzYzdmdnhETnNnTEQ0RExIQVJ6UkJXbnBGT2JmQy1NSXVzQXFEVU5hOFJvNW5rV1FLSF9fV3R1c2UzVHFoT29aNDlHT2ZCaU9fQVBBbFJxZzY3QzY5T3JhT25mOA?oc=5",
    "source_date": "2026-10-15",
    "source_title": "Liverpool team news: Dominik Szoboszlai, Alexander Isak and Cody Gakpo doubts for Brentford - The New York Times"
@@ -189,18 +177,7 @@
    "club": "Man City",
    "status": "no_news",
    "start_chance": null,
-   "reason": "No news in the headlines for this player.",
-   "source_url": null,
-   "source_date": null,
-   "source_title": null
-  },
-  {
-   "player_id": 390,
-   "name": "R\u00faben dos Santos Gato Alves Dias",
-   "club": "Man City",
-   "status": "no_news",
-   "start_chance": null,
-   "reason": "No news in the headlines for this player.",
+   "reason": "None",
    "source_url": null,
    "source_date": null,
    "source_title": null
@@ -211,7 +188,7 @@
    "club": "Man City",
    "status": "no_news",
    "start_chance": null,
-   "reason": "No news in the headlines for this player.",
+   "reason": "None",
    "source_url": null,
    "source_date": null,
    "source_title": null
@@ -222,10 +199,21 @@
    "club": "Man City",
    "status": "no_news",
    "start_chance": null,
-   "reason": "No news in the headlines for this player.",
+   "reason": "None",
    "source_url": null,
    "source_date": null,
    "source_title": null
+  },
+  {
+   "player_id": 399,
+   "name": "Rayan Cherki",
+   "club": "Man City",
+   "status": "rotation_risk",
+   "start_chance": 50,
+   "reason": "Rayan Cherki could drop out of the starting lineup against Ipswich.",
+   "source_url": "https://news.google.com/rss/articles/CBMif0FVX3lxTFBtdTVWS2xLWmtRUUtDaGJHSTA4MzktU2ZMS0J4dGhFeFJ5SmxzQThkQmZkMWFINS1pNm5HVTNqb190bXhyeEFDRHY3M1AyRXRCcDN1YlNlNUlHeHN6WkxTcEtvcFhmTzVsbGhMWVpybko1VzdKcWtLU3FES1ZBVDQ?oc=5",
+   "source_date": "2026-10-15",
+   "source_title": "Man City Team News vs Ipswich: Foden Back, Cherki Could Drop Out - The False 9"
   },
   {
    "player_id": 411,
@@ -233,7 +221,7 @@
    "club": "Man City",
    "status": "no_news",
    "start_chance": null,
-   "reason": "No news in the headlines for this player.",
+   "reason": "None",
    "source_url": null,
    "source_date": null,
    "source_title": null
@@ -244,7 +232,18 @@
    "club": "Newcastle",
    "status": "no_news",
    "start_chance": null,
-   "reason": "No news mentioned in headlines",
+   "reason": "None",
+   "source_url": null,
+   "source_date": null,
+   "source_title": null
+  },
+  {
+   "player_id": 453,
+   "name": "Harvey Barnes",
+   "club": "Newcastle",
+   "status": "no_news",
+   "start_chance": null,
+   "reason": "None",
    "source_url": null,
    "source_date": null,
    "source_title": null
@@ -255,7 +254,7 @@
    "club": "Newcastle",
    "status": "no_news",
    "start_chance": null,
-   "reason": "No news mentioned in headlines",
+   "reason": "None",
    "source_url": null,
    "source_date": null,
    "source_title": null
@@ -266,7 +265,7 @@
    "club": "Newcastle",
    "status": "no_news",
    "start_chance": null,
-   "reason": "No news mentioned in headlines",
+   "reason": "None",
    "source_url": null,
    "source_date": null,
    "source_title": null
@@ -276,8 +275,19 @@
    "name": "Murillo Costa dos Santos",
    "club": "Nott'm Forest",
    "status": "no_news",
-   "start_chance": null,
-   "reason": "No news mentioned in headlines",
+   "start_chance": 100,
+   "reason": "No news in headlines",
+   "source_url": null,
+   "source_date": null,
+   "source_title": null
+  },
+  {
+   "player_id": 480,
+   "name": "Morgan Gibbs-White",
+   "club": "Nott'm Forest",
+   "status": "no_news",
+   "start_chance": 100,
+   "reason": "No news in headlines",
    "source_url": null,
    "source_date": null,
    "source_title": null
@@ -287,8 +297,8 @@
    "name": "S\u00e1vio Moreira de Oliveira",
    "club": "Spurs",
    "status": "no_news",
-   "start_chance": null,
-   "reason": "No news mentioned in headlines",
+   "start_chance": 100,
+   "reason": "No news in headlines",
    "source_url": null,
    "source_date": null,
    "source_title": null
@@ -298,8 +308,8 @@
    "name": "Nordi Mukiele",
    "club": "Sunderland",
    "status": "no_news",
-   "start_chance": null,
-   "reason": "no news in headlines",
+   "start_chance": 100,
+   "reason": "No news in headlines",
    "source_url": null,
    "source_date": null,
    "source_title": null
@@ -309,8 +319,8 @@
    "name": "Granit Xhaka",
    "club": "Sunderland",
    "status": "no_news",
-   "start_chance": null,
-   "reason": "no news in headlines",
+   "start_chance": 100,
+   "reason": "No news in headlines",
    "source_url": null,
    "source_date": null,
    "source_title": null
