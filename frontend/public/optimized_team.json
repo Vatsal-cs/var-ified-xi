@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-16T02:44:57.440855+00:00",
+  "generated_at": "2026-10-16T12:21:40.535049+00:00",
   "gameweek": 7,
   "horizon_gws": 6,
   "mode": "transfer_plan",
@@ -1492,30 +1492,41 @@
   },
   "team_news": {
     "enabled": true,
-    "fetched_at": "2026-10-16T00:48:35.516244+00:00",
+    "fetched_at": "2026-10-16T12:21:24.696449+00:00",
     "model": "gemini-3.5-flash-lite",
     "items": [
-      {
-        "player_id": 368,
-        "name": "Dominik Szoboszlai",
-        "club": "Liverpool",
-        "status": "doubtful",
-        "start_chance": 50,
-        "reason": "Szoboszlai is a doubt for the Brentford match.",
-        "source_url": "https://news.google.com/rss/articles/CBMipwFBVV95cUxOUW1pMzR1b25acmJtTzU5V2c0YjZUUkczX3VtLUJtb1VOSDdoYlFjVWd2V0lxSF96X1ZfSzNZdE9rR0NBOWZkcmFXS2NzYzdmdnhETnNnTEQ0RExIQVJ6UkJXbnBGT2JmQy1NSXVzQXFEVU5hOFJvNW5rV1FLSF9fV3R1c2UzVHFoT29aNDlHT2ZCaU9fQVBBbFJxZzY3QzY5T3JhT25mOA?oc=5",
-        "source_date": "2026-10-15",
-        "source_title": "Liverpool team news: Dominik Szoboszlai, Alexander Isak and Cody Gakpo doubts for Brentford - The New York Times"
-      },
       {
         "player_id": 399,
         "name": "Rayan Cherki",
         "club": "Man City",
         "status": "rotation_risk",
         "start_chance": 50,
-        "reason": "Rayan Cherki could drop out of the starting lineup against Ipswich.",
+        "reason": "Headlines suggest Rayan Cherki could drop out of the starting lineup against Ipswich.",
         "source_url": "https://news.google.com/rss/articles/CBMif0FVX3lxTFBtdTVWS2xLWmtRUUtDaGJHSTA4MzktU2ZMS0J4dGhFeFJ5SmxzQThkQmZkMWFINS1pNm5HVTNqb190bXhyeEFDRHY3M1AyRXRCcDN1YlNlNUlHeHN6WkxTcEtvcFhmTzVsbGhMWVpybko1VzdKcWtLU3FES1ZBVDQ?oc=5",
         "source_date": "2026-10-15",
         "source_title": "Man City Team News vs Ipswich: Foden Back, Cherki Could Drop Out - The False 9"
+      },
+      {
+        "player_id": 1,
+        "name": "David Raya Mart\u00edn",
+        "club": "Arsenal",
+        "status": "expected_to_start",
+        "start_chance": 100,
+        "reason": "Featured in FPL preview before Forest clash.",
+        "source_url": "https://news.google.com/rss/articles/CBMihAFBVV95cUxNSy1EeEw1eVBIbW1NLVB1cWZSS0R1Y0hZZTdjYl90UWRPTXdkZ1puR25TaFVBLXpYYVliY203bEs3WGlPQmJ1SXJ4Wko3SGZMamdtRmNTR2RqRFhCd1dMQWZZdWVUUWJOWUlKUWhsS19TcmtzZUpaLVY0T0gzaTgxLVFJZXI?oc=5",
+        "source_date": "2026-10-16",
+        "source_title": "FPL Arsenal Players GW7: Calafiori, Saka and Raya Before Forest - The False 9"
+      },
+      {
+        "player_id": 8,
+        "name": "Riccardo Calafiori",
+        "club": "Arsenal",
+        "status": "expected_to_start",
+        "start_chance": 100,
+        "reason": "Covered in FPL Arsenal players preview ahead of Forest.",
+        "source_url": "https://news.google.com/rss/articles/CBMihAFBVV95cUxNSy1EeEw1eVBIbW1NLVB1cWZSS0R1Y0hZZTdjYl90UWRPTXdkZ1puR25TaFVBLXpYYVliY203bEs3WGlPQmJ1SXJ4Wko3SGZMamdtRmNTR2RqRFhCd1dMQWZZdWVUUWJOWUlKUWhsS19TcmtzZUpaLVY0T0gzaTgxLVFJZXI?oc=5",
+        "source_date": "2026-10-16",
+        "source_title": "FPL Arsenal Players GW7: Calafiori, Saka and Raya Before Forest - The False 9"
       },
       {
         "player_id": 397,
@@ -1523,7 +1534,7 @@
         "club": "Man City",
         "status": "no_news",
         "start_chance": null,
-        "reason": "None",
+        "reason": "No news mentioned in the headlines for Antoine Semenyo.",
         "source_url": null,
         "source_date": null,
         "source_title": null
@@ -1534,18 +1545,7 @@
         "club": "Brighton",
         "status": "no_news",
         "start_chance": null,
-        "reason": "No news in headlines",
-        "source_url": null,
-        "source_date": null,
-        "source_title": null
-      },
-      {
-        "player_id": 1,
-        "name": "David Raya Mart\u00edn",
-        "club": "Arsenal",
-        "status": "no_news",
-        "start_chance": null,
-        "reason": "No news in headlines",
+        "reason": "No news found in headlines.",
         "source_url": null,
         "source_date": null,
         "source_title": null
@@ -1556,7 +1556,7 @@
         "club": "Man City",
         "status": "no_news",
         "start_chance": null,
-        "reason": "None",
+        "reason": "No fitness news mentioned for Erling Haaland in the headlines.",
         "source_url": null,
         "source_date": null,
         "source_title": null
@@ -1567,18 +1567,7 @@
         "club": "Arsenal",
         "status": "no_news",
         "start_chance": null,
-        "reason": "No news in headlines",
-        "source_url": null,
-        "source_date": null,
-        "source_title": null
-      },
-      {
-        "player_id": 544,
-        "name": "Granit Xhaka",
-        "club": "Sunderland",
-        "status": "no_news",
-        "start_chance": 100,
-        "reason": "No news in headlines",
+        "reason": "No news found in headlines.",
         "source_url": null,
         "source_date": null,
         "source_title": null
@@ -1589,7 +1578,7 @@
         "club": "Newcastle",
         "status": "no_news",
         "start_chance": null,
-        "reason": "None",
+        "reason": "No specific news mentions Harvey Barnes in the headlines.",
         "source_url": null,
         "source_date": null,
         "source_title": null
@@ -1600,40 +1589,7 @@
         "club": "Brentford",
         "status": "no_news",
         "start_chance": null,
-        "reason": "No news in headlines",
-        "source_url": null,
-        "source_date": null,
-        "source_title": null
-      },
-      {
-        "player_id": 472,
-        "name": "Murillo Costa dos Santos",
-        "club": "Nott'm Forest",
-        "status": "no_news",
-        "start_chance": 100,
-        "reason": "No news in headlines",
-        "source_url": null,
-        "source_date": null,
-        "source_title": null
-      },
-      {
-        "player_id": 533,
-        "name": "Nordi Mukiele",
-        "club": "Sunderland",
-        "status": "no_news",
-        "start_chance": 100,
-        "reason": "No news in headlines",
-        "source_url": null,
-        "source_date": null,
-        "source_title": null
-      },
-      {
-        "player_id": 8,
-        "name": "Riccardo Calafiori",
-        "club": "Arsenal",
-        "status": "no_news",
-        "start_chance": null,
-        "reason": "No news in headlines",
+        "reason": "No news found in headlines.",
         "source_url": null,
         "source_date": null,
         "source_title": null
@@ -1644,18 +1600,7 @@
         "club": "Newcastle",
         "status": "no_news",
         "start_chance": null,
-        "reason": "None",
-        "source_url": null,
-        "source_date": null,
-        "source_title": null
-      },
-      {
-        "player_id": 403,
-        "name": "S\u00e1vio Moreira de Oliveira",
-        "club": "Spurs",
-        "status": "no_news",
-        "start_chance": 100,
-        "reason": "No news in headlines",
+        "reason": "No specific news mentions Sven Botman in the headlines.",
         "source_url": null,
         "source_date": null,
         "source_title": null
@@ -1666,24 +1611,17 @@
         "club": "Everton",
         "status": "no_news",
         "start_chance": null,
-        "reason": "No fitness issues reported",
+        "reason": "No news mentioned in the headlines regarding Thierno Barry's status for the upcoming match.",
         "source_url": null,
         "source_date": null,
         "source_title": null
       }
     ],
-    "applied": [
-      {
-        "player_id": 368,
-        "status": "doubtful",
-        "chance": 50,
-        "fpl_chance": 75
-      }
-    ],
-    "errors": 0
+    "applied": [],
+    "errors": 1
   },
   "other_matches": {
-    "from": "2026-10-16T02:44:57.402164",
+    "from": "2026-10-16T12:21:40.473882",
     "to": "2026-12-02T18:30:00",
     "clubs": [
       {

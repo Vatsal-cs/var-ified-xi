@@ -927,5 +927,133 @@
     "source_title": null
    }
   ]
+ },
+ {
+  "gameweek": 7,
+  "fetched_at": "2026-10-16T12:21:24.696449+00:00",
+  "model": "gemini-3.5-flash-lite",
+  "items": [
+   {
+    "player_id": 1,
+    "name": "David Raya Mart\u00edn",
+    "club": "Arsenal",
+    "status": "expected_to_start",
+    "start_chance": 100,
+    "reason": "Featured in FPL preview before Forest clash.",
+    "source_url": "https://news.google.com/rss/articles/CBMihAFBVV95cUxNSy1EeEw1eVBIbW1NLVB1cWZSS0R1Y0hZZTdjYl90UWRPTXdkZ1puR25TaFVBLXpYYVliY203bEs3WGlPQmJ1SXJ4Wko3SGZMamdtRmNTR2RqRFhCd1dMQWZZdWVUUWJOWUlKUWhsS19TcmtzZUpaLVY0T0gzaTgxLVFJZXI?oc=5",
+    "source_date": "2026-10-16",
+    "source_title": "FPL Arsenal Players GW7: Calafiori, Saka and Raya Before Forest - The False 9"
+   },
+   {
+    "player_id": 8,
+    "name": "Riccardo Calafiori",
+    "club": "Arsenal",
+    "status": "expected_to_start",
+    "start_chance": 100,
+    "reason": "Covered in FPL Arsenal players preview ahead of Forest.",
+    "source_url": "https://news.google.com/rss/articles/CBMihAFBVV95cUxNSy1EeEw1eVBIbW1NLVB1cWZSS0R1Y0hZZTdjYl90UWRPTXdkZ1puR25TaFVBLXpYYVliY203bEs3WGlPQmJ1SXJ4Wko3SGZMamdtRmNTR2RqRFhCd1dMQWZZdWVUUWJOWUlKUWhsS19TcmtzZUpaLVY0T0gzaTgxLVFJZXI?oc=5",
+    "source_date": "2026-10-16",
+    "source_title": "FPL Arsenal Players GW7: Calafiori, Saka and Raya Before Forest - The False 9"
+   },
+   {
+    "player_id": 31,
+    "name": "Ezri Konsa Ngoyo",
+    "club": "Arsenal",
+    "status": "no_news",
+    "start_chance": null,
+    "reason": "No news found in headlines.",
+    "source_url": null,
+    "source_date": null,
+    "source_title": null
+   },
+   {
+    "player_id": 106,
+    "name": "Igor Thiago Nascimento Rodrigues",
+    "club": "Brentford",
+    "status": "no_news",
+    "start_chance": null,
+    "reason": "No news found in headlines.",
+    "source_url": null,
+    "source_date": null,
+    "source_title": null
+   },
+   {
+    "player_id": 109,
+    "name": "Bart Verbruggen",
+    "club": "Brighton",
+    "status": "no_news",
+    "start_chance": null,
+    "reason": "No news found in headlines.",
+    "source_url": null,
+    "source_date": null,
+    "source_title": null
+   },
+   {
+    "player_id": 249,
+    "name": "Thierno Barry",
+    "club": "Everton",
+    "status": "no_news",
+    "start_chance": null,
+    "reason": "No news mentioned in the headlines regarding Thierno Barry's status for the upcoming match.",
+    "source_url": null,
+    "source_date": null,
+    "source_title": null
+   },
+   {
+    "player_id": 397,
+    "name": "Antoine Semenyo",
+    "club": "Man City",
+    "status": "no_news",
+    "start_chance": null,
+    "reason": "No news mentioned in the headlines for Antoine Semenyo.",
+    "source_url": null,
+    "source_date": null,
+    "source_title": null
+   },
+   {
+    "player_id": 399,
+    "name": "Rayan Cherki",
+    "club": "Man City",
+    "status": "rotation_risk",
+    "start_chance": 50,
+    "reason": "Headlines suggest Rayan Cherki could drop out of the starting lineup against Ipswich.",
+    "source_url": "https://news.google.com/rss/articles/CBMif0FVX3lxTFBtdTVWS2xLWmtRUUtDaGJHSTA4MzktU2ZMS0J4dGhFeFJ5SmxzQThkQmZkMWFINS1pNm5HVTNqb190bXhyeEFDRHY3M1AyRXRCcDN1YlNlNUlHeHN6WkxTcEtvcFhmTzVsbGhMWVpybko1VzdKcWtLU3FES1ZBVDQ?oc=5",
+    "source_date": "2026-10-15",
+    "source_title": "Man City Team News vs Ipswich: Foden Back, Cherki Could Drop Out - The False 9"
+   },
+   {
+    "player_id": 411,
+    "name": "Erling Haaland",
+    "club": "Man City",
+    "status": "no_news",
+    "start_chance": null,
+    "reason": "No fitness news mentioned for Erling Haaland in the headlines.",
+    "source_url": null,
+    "source_date": null,
+    "source_title": null
+   },
+   {
+    "player_id": 453,
+    "name": "Harvey Barnes",
+    "club": "Newcastle",
+    "status": "no_news",
+    "start_chance": null,
+    "reason": "No specific news mentions Harvey Barnes in the headlines.",
+    "source_url": null,
+    "source_date": null,
+    "source_title": null
+   },
+   {
+    "player_id": 447,
+    "name": "Sven Botman",
+    "club": "Newcastle",
+    "status": "no_news",
+    "start_chance": null,
+    "reason": "No specific news mentions Sven Botman in the headlines.",
+    "source_url": null,
+    "source_date": null,
+    "source_title": null
+   }
+  ]
  }
 ]
