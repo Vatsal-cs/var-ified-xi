@@ -200,6 +200,28 @@ export interface ChipExpiry {
   visible_through_gw: number | null;
 }
 
+export interface LineupCheck {
+  model_agrees: boolean;
+  points_yours: number;
+  points_model: number;
+  model_would_start: string[];
+  model_would_bench: string[];
+  model_captain: string | null;
+  model_vice_captain: string | null;
+  /** Squad changes the model would still make (free until the deadline),
+   *  only when worth suggested_gain >= 1 point over the horizon. */
+  suggested_changes: {
+    out: string;
+    out_id: number;
+    in: string;
+    in_id: number;
+    in_cost_m: number;
+    out_points: number;
+    in_points: number;
+  }[];
+  suggested_gain: number;
+}
+
 export interface TeamInfo {
   name: string;
   entry_id: number;
@@ -339,6 +361,12 @@ export interface OptimizedTeam {
   /** Present when captain/vice are your own pick (backend/overrides.json)
    *  rather than the model's; holds what the model would have chosen. */
   captain_override?: { model_captain_id: number; model_vice_captain_id: number | null };
+  /** A Wildcard or Free Hit you've played this gameweek, with the team you
+   *  set in the FPL app (backend/overrides.json "team"): FPL keeps it private
+   *  until the deadline, so the page shows your set team, not last week's. */
+  active_chip?: { chip: "wildcard" | "freehit"; gameweek: number };
+  /** Your set lineup against the model's best XI from the same 15. */
+  lineup_check?: LineupCheck | null;
   /** The captain against the XI's next best options. */
   captain_odds?: CaptainOdds[];
   /** Head-to-head chances are recalibrated by this log-odds scale (backend

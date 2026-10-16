@@ -4,5 +4,77 @@
   "captain_id": 124,
   "captain": "Groß",
   "vice_captain_id": 411,
-  "vice_captain": "Haaland"
+  "vice_captain": "Haaland",
+  "team": {
+    "_about": "The team you've set in the FPL app with a Wildcard or Free Hit, for the days before the deadline when FPL's public data still shows last week's squad. Picks in FPL order: the XI first, then the bench in substitution order (reserve keeper first). Ignored once the gameweek's deadline has passed, when the public data catches up.",
+    "gameweek": 7,
+    "chip": "wildcard",
+    "bank_m": 0.4,
+    "picks": [
+      {
+        "id": 1,
+        "name": "Raya"
+      },
+      {
+        "id": 447,
+        "name": "Botman"
+      },
+      {
+        "id": 8,
+        "name": "Calafiori"
+      },
+      {
+        "id": 31,
+        "name": "Konsa"
+      },
+      {
+        "id": 453,
+        "name": "Barnes"
+      },
+      {
+        "id": 399,
+        "name": "Cherki"
+      },
+      {
+        "id": 397,
+        "name": "Semenyo"
+      },
+      {
+        "id": 403,
+        "name": "Sávio"
+      },
+      {
+        "id": 411,
+        "name": "Haaland"
+      },
+      {
+        "id": 106,
+        "name": "Thiago"
+      },
+      {
+        "id": 249,
+        "name": "Barry"
+      },
+      {
+        "id": 109,
+        "name": "Verbruggen"
+      },
+      {
+        "id": 533,
+        "name": "Mukiele"
+      },
+      {
+        "id": 544,
+        "name": "Xhaka"
+      },
+      {
+        "id": 472,
+        "name": "Murillo"
+      }
+    ],
+    "captain_id": 411,
+    "captain": "Haaland",
+    "vice_captain_id": 397,
+    "vice_captain": "Semenyo"
+  }
 }

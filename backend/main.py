@@ -82,7 +82,7 @@ def build_output_json(bootstrap: dict, predictions_df, result: dict,
                       captain_override: dict = None, wildcard_option: dict = None,
                       pmfs: dict = None, captain_odds: list = None, chip_plan: dict = None,
                       news_view: dict = None, other_view: dict = None,
-                      pick_checks: list = None) -> dict:
+                      pick_checks: list = None, locked: dict = None) -> dict:
     """Assembles the final clean JSON contract the frontend will consume."""
     teams_lookup = {t["id"]: t["name"] for t in bootstrap["teams"]}
     pos_lookup = config.POSITIONS
@@ -113,7 +113,10 @@ def build_output_json(bootstrap: dict, predictions_df, result: dict,
                         is_vice=(pid == result["vice_captain_id"]))
         for pid in result["starting_ids"]
     ]
-    bench = [player_payload(pid) for pid in order_bench(result["bench_ids"], pred_lookup)]
+    # Your own bench order when you've set the team yourself; otherwise the
+    # order that makes automatic substitutions worth the most.
+    bench_order = result["bench_ids"] if locked else order_bench(result["bench_ids"], pred_lookup)
+    bench = [player_payload(pid) for pid in bench_order]
 
     current_gw = feature_engineering.next_gameweek(bootstrap)
 
@@ -157,6 +160,9 @@ def build_output_json(bootstrap: dict, predictions_df, result: dict,
         output["other_matches"] = other_view
     if pick_checks:
         output["pick_checks"] = pick_checks
+    if locked:
+        output["active_chip"] = {"chip": locked["chip"], "gameweek": locked["gameweek"]}
+        output["lineup_check"] = locked.get("check")
     if plan:
         output["transfer_plan"] = _plan_payload(plan, pred_lookup, pos_lookup, teams_lookup)
     if team_state:
@@ -278,6 +284,10 @@ def run_pipeline(team_id: int = None) -> None:
     team_state = None
     if team_id:
         team_state = entry_data.build_team_state(team_id, bootstrap, histories, upcoming_gw)
+    # A Wildcard or Free Hit made in the FPL app stays hidden from the public
+    # API until the deadline, so the team you've actually set comes from
+    # overrides.json until then.
+    locked = _locked_team(team_state, bootstrap, upcoming_gw) if team_state else None
 
     # What the people you're actually playing against own. Decision support
     # only — see rivals.py on why this deliberately doesn't feed the
@@ -298,7 +308,11 @@ def run_pipeline(team_id: int = None) -> None:
         d = {"fixture_predictions": fixture_predictions, "predictions_df": predictions_df,
              "plan": None, "captain_override": None, "wildcard": None, "wildcard_plan": None}
         if team_state:
-            d["result"], d["plan"] = _plan_from_team(predictions_df, team_state, upcoming_gw)
+            if locked:
+                d["result"], d["plan"], locked["check"] = _plan_locked(
+                    predictions_df, team_state, upcoming_gw, locked)
+            else:
+                d["result"], d["plan"] = _plan_from_team(predictions_df, team_state, upcoming_gw)
             d["captain_override"] = _apply_armband_override(d["result"], d["plan"],
                                                             predictions_df, upcoming_gw)
             # Is the Wildcard worth playing this week? Computed every refresh
@@ -356,7 +370,7 @@ def run_pipeline(team_id: int = None) -> None:
     # watch for" check so the dashboard can say so explicitly instead of
     # going quiet, which reads the same as broken.
     chip_advice = chips.advise(
-        fixtures, bootstrap["teams"], upcoming_gw,
+        fixtures, bootstrap["teams"], upcoming_gw + (1 if locked else 0),
         chips_available=team_state.chips_available if team_state else None,
         predictions_df=predictions_df,
         owned_squad=result["squad_ids"] if team_state else None,
@@ -374,10 +388,11 @@ def run_pipeline(team_id: int = None) -> None:
     chip_expiry, chip_plan = None, None
     if team_state:
         chip_expiry = chips.expiry_plan(team_state.chip_deadlines, upcoming_gw,
-                                        plan, predictions_df)
+                                        {"weeks": plan["weeks"][1:]} if locked else plan,
+                                        predictions_df)
         try:
             chip_plan = _chip_plan(model_bundle, flag_counts, bootstrap, history_df, histories,
-                                   fixtures, team_state, upcoming_gw, d, news)
+                                   fixtures, team_state, upcoming_gw, d, news, locked)
         except Exception as e:                              # never fatal to the refresh
             logger.warning("Chip plan skipped: %s", e)
 
@@ -408,7 +423,7 @@ def run_pipeline(team_id: int = None) -> None:
                                pmfs=pmfs, captain_odds=captain_odds, chip_plan=chip_plan,
                                news_view=_news_payload(news, news_applied, d, team_state),
                                other_view=other_view,
-                               pick_checks=d.get("pick_checks"))
+                               pick_checks=d.get("pick_checks"), locked=locked)
 
     config.OUTPUT_JSON_PATH.write_text(json.dumps(output, indent=2))
     config.FRONTEND_JSON_PATH.write_text(json.dumps(output, indent=2))
@@ -730,7 +745,7 @@ def _captain_odds(pmfs: dict, result: dict, predictions_df) -> list:
 
 
 def _chip_plan(model_bundle, flag_counts, bootstrap, history_df, histories, fixtures,
-               team_state, upcoming_gw, d, news) -> dict | None:
+               team_state, upcoming_gw, d, news, locked: dict = None) -> dict | None:
     """Every chip you hold placed in its best week up to its deadline, with and
     without a Wildcard now (data_engine/chip_planner.py)."""
     held = [c for c in team_state.chips_available if c in chip_planner.PLANNED]
@@ -755,6 +770,9 @@ def _chip_plan(model_bundle, flag_counts, bootstrap, history_df, histories, fixt
           for r in long.itertuples()}
 
     scenarios = {"free": {"label": "Without the Wildcard", "weeks": d["plan"]["weeks"]}}
+    if locked:
+        scenarios = {"free": {"label": f"Your {CHIP_NAMES.get(locked['chip'], locked['chip'])} team",
+                              "weeks": d["plan"]["weeks"], "blocked": {upcoming_gw}}}
     if d["wildcard_plan"]:
         scenarios["wildcard"] = {"label": "With the Wildcard now", "weeks": d["wildcard_plan"]["weeks"],
                                  "blocked": {upcoming_gw}}
@@ -767,6 +785,143 @@ def _chip_plan(model_bundle, flag_counts, bootstrap, history_df, histories, fixt
                             fixtures_by_gw=fixtures_by_gw)
     out["deadline_gw"] = deadline
     return out
+
+
+CHIP_NAMES = {"wildcard": "Wildcard", "freehit": "Free Hit"}
+# Smallest horizon gain (decay-weighted points) worth showing as a change to
+# a team you've already set; below it the solver is swapping near-equals.
+LOCKED_TWEAK_MIN = 1.0
+
+
+def _locked_team(team_state, bootstrap: dict, gameweek: int) -> dict | None:
+    """The team you've set in the FPL app for this gameweek with a Wildcard or
+    Free Hit (config.OVERRIDES_PATH, "team"). FPL keeps a chip's transfers
+    private until the deadline, so without this every refresh before then
+    plans from last week's squad. Applied to team_state in place: the squad,
+    the bank, and the chip leaves the ones you hold. Ignored, with a warning,
+    once the gameweek has passed or if it isn't a legal FPL squad."""
+    path = config.OVERRIDES_PATH
+    try:
+        team = json.loads(path.read_text()).get("team") if path.exists() else None
+    except (OSError, json.JSONDecodeError) as e:
+        logger.warning("Ignoring %s: %s", path.name, e)
+        return None
+    if not team or team.get("gameweek") != gameweek:
+        return None
+    chip = team.get("chip")
+    picks = [int(p["id"]) for p in team.get("picks", [])]
+    players = {e["id"]: e for e in bootstrap["elements"]}
+    problem = None
+    if chip not in CHIP_NAMES:
+        problem = f"chip {chip!r} isn't one that changes the squad"
+    elif len(picks) != 15 or len(set(picks)) != 15 or any(p not in players for p in picks):
+        problem = "it needs 15 different, current FPL player ids"
+    else:
+        count = lambda ids, t: sum(players[p]["element_type"] == t for p in ids)
+        xi = picks[:11]
+        clubs = pd.Series([players[p]["team"] for p in picks]).value_counts()
+        if [count(picks, t) for t in (1, 2, 3, 4)] != [2, 5, 5, 3]:
+            problem = "a squad is 2 keepers, 5 defenders, 5 midfielders and 3 forwards"
+        elif clubs.max() > config.MAX_PLAYERS_PER_CLUB:
+            problem = f"more than {config.MAX_PLAYERS_PER_CLUB} players from one club"
+        elif (count(xi, 1) != 1 or not 3 <= count(xi, 2) <= 5 or not 2 <= count(xi, 3) <= 5
+              or not 1 <= count(xi, 4) <= 3 or players[picks[11]]["element_type"] != 1):
+            problem = "the first 11 must be a legal XI and pick 12 the reserve keeper"
+        elif team.get("captain_id") not in xi or team.get("vice_captain_id") not in xi \
+                or team.get("captain_id") == team.get("vice_captain_id"):
+            problem = "captain and vice must be two different players in the XI"
+    if problem:
+        logger.warning("Ignoring your GW%s team in %s: %s.", gameweek, path.name, problem)
+        return None
+
+    old = team_state.sell_prices
+    team_state.squad = picks
+    # Players you kept sell at what they did; new signings at today's price.
+    team_state.sell_prices = {p: old.get(p, players[p]["now_cost"]) for p in picks}
+    team_state.bank = int(round(float(team.get("bank_m", 0)) * 10))
+    team_state.squad_value = sum(team_state.sell_prices.values())
+    if chip in team_state.chips_available:
+        team_state.chips_available = [c for c in team_state.chips_available if c != chip]
+        team_state.chips_used = list(team_state.chips_used) + [chip]
+    logger.info("Your %s team for GW%s (%s): %s", CHIP_NAMES[chip], gameweek, path.name,
+                ", ".join(players[p]["web_name"] for p in picks[:11]))
+    return {"chip": chip, "gameweek": gameweek, "starting_ids": picks[:11],
+            "bench_ids": picks[11:], "captain_id": team["captain_id"],
+            "vice_captain_id": team["vice_captain_id"]}
+
+
+def _plan_locked(predictions_df, team_state, upcoming_gw, locked: dict):
+    """The plan from a team you've already set for this gameweek: no transfers
+    this week, normal weeks after it (a Wildcard keeps the free transfers you
+    had banked). Your XI, bench order and armband are what the dashboard
+    shows; the model's own choice for the same 15 comes back alongside, so a
+    disagreement is visible. Returns (result, plan, check)."""
+    xp_by_gw = {
+        int(row["player_id"]): {int(k): float(v) for k, v in (row["xp_by_gw"] or {}).items()}
+        for _, row in predictions_df.iterrows()
+    }
+    gameweeks = [upcoming_gw + i for i in range(config.HORIZON_GWS)]
+    plan = transfer_optimizer.plan_transfers(
+        predictions_df, team_state, xp_by_gw, gameweeks, max_total_hits=0,
+        wildcard=locked["chip"] == "wildcard", locked_first_week=True)
+    plan["hit_recommendation"] = None
+    week = plan["weeks"][0]
+    p = predictions_df.set_index("player_id")
+    proj = p["predicted_points"].to_dict()
+    names = p["web_name"].to_dict()
+
+    # Squad changes are still free until the deadline: what the model would
+    # still change, shown only when it's worth at least LOCKED_TWEAK_MIN over
+    # the horizon (below that it's the solver shuffling near-equal players).
+    tweaks = []
+    open_plan = transfer_optimizer.plan_transfers(
+        predictions_df, team_state, xp_by_gw, gameweeks, max_total_hits=0,
+        wildcard=locked["chip"] == "wildcard")
+    gain = round(planner.horizon_score(open_plan) - planner.horizon_score(plan), 1)
+    first = open_plan["weeks"][0]
+    if first["transfer_count"] and gain >= LOCKED_TWEAK_MIN:
+        for out, inn in zip(first["transfers_out"], first["transfers_in"]):
+            tweaks.append({"out": out["name"], "out_id": out["player_id"],
+                           "in": inn["name"], "in_id": inn["player_id"],
+                           "in_cost_m": inn["cost_m"],
+                           "out_points": out["predicted_points"], "in_points": inn["predicted_points"]})
+    model_cap, model_vice = planner.pick_captains(week["starting_ids"], proj)
+    xi, cap = locked["starting_ids"], locked["captain_id"]
+    yours = round(sum(proj.get(i, 0) for i in xi) + proj.get(cap, 0), 2)
+    model = round(sum(proj.get(i, 0) for i in week["starting_ids"]) + proj.get(model_cap, 0), 2)
+    check = {
+        "model_agrees": set(xi) == set(week["starting_ids"]) and cap == model_cap,
+        "points_yours": yours,
+        "points_model": model,
+        "model_would_start": [names.get(i) for i in week["starting_ids"] if i not in xi],
+        "model_would_bench": [names.get(i) for i in xi if i not in week["starting_ids"]],
+        "model_captain": names.get(model_cap),
+        "model_vice_captain": names.get(model_vice),
+        "suggested_changes": tweaks,
+        "suggested_gain": gain if tweaks else 0.0,
+    }
+    if tweaks:
+        logger.info("The model would still change your GW%s team (+%.1f over %d weeks): %s",
+                    upcoming_gw, gain, len(gameweeks),
+                    ", ".join(f"{t['out']} -> {t['in']}" for t in tweaks))
+    elif not check["model_agrees"]:
+        logger.info("The model would line your GW%s team up differently: start %s, bench %s, "
+                    "captain %s", upcoming_gw, check["model_would_start"],
+                    check["model_would_bench"], check["model_captain"])
+    else:
+        logger.info("The model agrees with your GW%s team, lineup and armband.", upcoming_gw)
+    week.update(starting_ids=xi, captain_id=cap, vice_captain_id=locked["vice_captain_id"],
+                predicted_points=yours)
+    result = {
+        "squad_ids": list(team_state.squad),
+        "starting_ids": xi,
+        "bench_ids": locked["bench_ids"],
+        "captain_id": cap,
+        "vice_captain_id": locked["vice_captain_id"],
+        "total_cost": sum(team_state.sell_prices.values()),
+        "total_predicted_points": yours,
+    }
+    return result, plan, check
 
 
 def _plan_from_team(predictions_df, team_state, upcoming_gw):

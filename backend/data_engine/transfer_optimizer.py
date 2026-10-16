@@ -85,6 +85,7 @@ def plan_transfers(
     rules=None,
     bench_weight: float = None,
     wildcard: bool = False,
+    locked_first_week: bool = False,
 ) -> dict:
     """Solves the multi-gameweek transfer problem.
 
@@ -117,6 +118,9 @@ def plan_transfers(
     wildcard:   play a Wildcard in week 0 — every transfer that week is free,
                 and (rules since 2024/25) the banked free transfers are kept,
                 so the next week starts with them plus one.
+    locked_first_week: no transfers in week 0 — the squad is already set
+                for it (a Wildcard made in the FPL app, which the public API
+                hides until the deadline). Week 0 still picks the XI.
 
     Returns the full plan: transfers per gameweek, the resulting squad, and
     the starting XI and captain for the immediate gameweek.
@@ -264,6 +268,8 @@ def plan_transfers(
 
         if idx == 0:
             prob += free[t] == (SQUAD_SIZE if wildcard else team_state.free_transfers)
+            if locked_first_week:
+                prob += transfers[t] == 0
         elif idx == 1 and wildcard:
             # The Wildcard week's transfers don't touch the bank.
             prob += free[t] <= min(team_state.free_transfers + 1, bank_cap)

@@ -4,7 +4,7 @@
 // The one thing you came here for: the decision to make before this week's
 // deadline. Everything below it on the page is supporting detail.
 
-import type { OptimizedTeam, PickCheck, Player, PlannedWeek } from "@/lib/types";
+import type { LineupCheck, OptimizedTeam, PickCheck, Player, PlannedWeek } from "@/lib/types";
 import { kitFor } from "@/lib/teams";
 import { Term } from "./ui";
 import CaptainOdds from "./CaptainOdds";
@@ -138,14 +138,88 @@ function TransferRows({ week, checks = [] }: { week: PlannedWeek; checks?: PickC
   );
 }
 
+const CHIP_LABEL: Record<string, string> = { wildcard: "Wildcard", freehit: "Free Hit" };
+
+/** Your chip team against the model's view of the same 15: whether it would
+ *  still change a player (free until the deadline) or the lineup. */
+function LockedCheck({ check, chip }: { check?: LineupCheck | null; chip: string }) {
+  if (!check) return null;
+  const changes = check.suggested_changes ?? [];
+  if (changes.length > 0) {
+    return (
+      <div className="rounded-[2px] border border-warn/40 bg-warn/[0.06] p-3.5">
+        <p className="label text-warn">The model would still change this</p>
+        <ul className="mt-2 space-y-1.5">
+          {changes.map((c) => (
+            <li
+              key={c.out_id}
+              className="flex flex-wrap items-center gap-x-2 gap-y-0.5 font-mono text-sm"
+            >
+              <span className="text-risk line-through decoration-risk/40">{c.out}</span>
+              <span aria-hidden className="text-ink-500">
+                &rarr;
+              </span>
+              <span className="font-medium text-pts">{c.in}</span>
+              <span className="text-[11px] text-ink-500">
+                £{c.in_cost_m.toFixed(1)}m · {c.out_points.toFixed(1)} &rarr;{" "}
+                {c.in_points.toFixed(1)} pts this week
+              </span>
+            </li>
+          ))}
+        </ul>
+        <p className="mt-2 font-body text-xs text-ink-300">
+          +{check.suggested_gain.toFixed(1)} points over the planning window. Free while
+          your {chip} is active, until the deadline; after that it costs a transfer.
+        </p>
+      </div>
+    );
+  }
+  if (!check.model_agrees) {
+    return (
+      <div className="rounded-[2px] border border-warn/40 bg-warn/[0.06] p-3.5">
+        <p className="label text-warn">The model would line it up differently</p>
+        <p className="mt-1.5 font-body text-sm text-ink-200">
+          {check.model_would_start.length > 0 && (
+            <>
+              Start <span className="text-pts">{check.model_would_start.join(", ")}</span>
+              {check.model_would_bench.length > 0 && (
+                <>
+                  {" "}
+                  over <span className="text-risk">{check.model_would_bench.join(", ")}</span>
+                </>
+              )}
+              .{" "}
+            </>
+          )}
+          Captain {check.model_captain}, vice {check.model_vice_captain}.
+        </p>
+        <p className="mt-1 font-mono text-[11px] text-ink-500">
+          {check.points_model.toFixed(1)} pts its way vs {check.points_yours.toFixed(1)} yours
+        </p>
+      </div>
+    );
+  }
+  return (
+    <p className="font-body text-[15px] text-ink-200">
+      The model agrees: same XI, same armband, and nothing in the market worth changing for.
+      Changes stay free until the deadline if the news turns.
+    </p>
+  );
+}
+
 export default function ThisWeek({ team }: { team: OptimizedTeam }) {
   const plan = team.transfer_plan;
   const week = plan?.weeks[0];
   const hit = plan?.hit_recommendation ?? null;
+  const chip =
+    team.active_chip && team.active_chip.gameweek === team.gameweek
+      ? CHIP_LABEL[team.active_chip.chip] ?? team.active_chip.chip
+      : null;
 
   // Headline
-  const headline =
-    team.mode !== "transfer_plan"
+  const headline = chip
+    ? `${chip} played`
+    : team.mode !== "transfer_plan"
       ? "Your optimal squad"
       : !week || week.transfers_out.length === 0
       ? "Hold this week"
@@ -161,9 +235,16 @@ export default function ThisWeek({ team }: { team: OptimizedTeam }) {
         </p>
         {team.team && (
           <p className="font-mono text-[11px] text-ink-400">
-            {team.team.name} &middot; {team.team.free_transfers} free transfer
-            {team.team.free_transfers === 1 ? "" : "s"} &middot;{" "}
-            &pound;{team.team.bank_m.toFixed(1)}m bank
+            {team.team.name} &middot;{" "}
+            {chip ? (
+              <span className="text-gold">{chip} active &middot; unlimited free transfers</span>
+            ) : (
+              <>
+                {team.team.free_transfers} free transfer
+                {team.team.free_transfers === 1 ? "" : "s"}
+              </>
+            )}{" "}
+            &middot; &pound;{team.team.bank_m.toFixed(1)}m bank
           </p>
         )}
       </div>
@@ -173,7 +254,24 @@ export default function ThisWeek({ team }: { team: OptimizedTeam }) {
       </h1>
 
       <div className="mt-5 space-y-4">
-        {team.mode === "transfer_plan" && week ? (
+        {chip && week ? (
+          <>
+            <p className="prose-note">
+              Your team for Gameweek {team.gameweek}, as you set it in the FPL app. FPL keeps
+              a {chip}&apos;s transfers private until the deadline, so this comes from your
+              own entry rather than FPL&apos;s public data, and every refresh re-checks it
+              against the latest projections and team news.
+            </p>
+            <LockedCheck check={team.lineup_check} chip={chip} />
+            <CaptainLine team={team} />
+            {team.captain_odds && <CaptainOdds odds={team.captain_odds} />}
+            <TeamNews news={team.team_news} />
+            <p className="border-t border-line pt-3 font-mono text-xs text-ink-400">
+              Projected GW{team.gameweek} score for your XI:{" "}
+              <span className="text-pts">{week.predicted_points.toFixed(1)} pts</span>
+            </p>
+          </>
+        ) : team.mode === "transfer_plan" && week ? (
           <>
             <TransferRows week={week} checks={team.pick_checks} />
 

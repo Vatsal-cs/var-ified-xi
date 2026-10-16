@@ -287,6 +287,8 @@ The league view is deliberately **not** an optimizer input. Tilting the solver t
 
 Set `FPL_TEAM_ID` as a repository variable for transfer plans instead of fresh squads.
 
+**Your Wildcard or Free Hit team.** FPL keeps a chip's transfers private until the deadline, so until then every refresh would plan from last week's squad. Put the team you've set in `backend/overrides.json` under `"team"` (gameweek, chip, bank, the 15 FPL ids in FPL order — XI first, then the bench in substitution order — and the armband). The dashboard then shows that team and lineup, and each refresh re-checks it: a squad change the model would still make (worth 1+ point over the planning window, free until the deadline), or a different XI or captain, appears at the top of *This week*. It's ignored once the deadline passes and FPL's public data catches up.
+
 **Run now.** The dashboard header has a *Run now* button. It starts `weekly.yml` with `force` on — latest FPL data, retrain, re-solve — and reloads the page when the redeployed site has the new numbers, about 6 minutes later. With no setup it reads *Run on GitHub*: it opens the workflow's page, where **Run workflow** starts the run, and the dashboard tab reloads itself when the new deploy lands. For one-tap runs, add a Vercel environment variable `GITHUB_TOKEN`: a fine-grained GitHub token with **Actions: Read and write** on this repository only. The token stays on the server (`app/api/refresh`). Because the site is public, clicks are limited to one run at a time, 10 minutes between manual runs, and 6 a day.
 
 ---

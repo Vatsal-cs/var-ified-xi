@@ -40,6 +40,12 @@ export default function Home() {
 
   const formation = deriveFormation(team.starting_xi);
   const isPlan = team.mode === "transfer_plan";
+  const chipTeam =
+    team.active_chip && team.active_chip.gameweek === team.gameweek
+      ? team.active_chip.chip === "freehit"
+        ? "Free Hit"
+        : "Wildcard"
+      : null;
 
   return (
     <div id="top">
@@ -100,9 +106,17 @@ export default function Home() {
         <Section
           id="squad"
           eyebrow="The squad"
-          title={isPlan ? "Your team after these moves" : "The starting XI"}
+          title={
+            chipTeam
+              ? `Your ${chipTeam} team`
+              : isPlan
+              ? "Your team after these moves"
+              : "The starting XI"
+          }
           lede={
-            isPlan
+            chipTeam
+              ? "Your XI and bench order as you set them. Tap any player for their projection and upcoming fixtures."
+              : isPlan
               ? "How the pitch looks once this week's transfers are made. Tap any player for their projection and upcoming fixtures."
               : "The 15 the solver picked, and the 11 it starts. Tap any player for detail."
           }
