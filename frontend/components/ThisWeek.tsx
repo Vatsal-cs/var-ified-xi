@@ -2,7 +2,7 @@
 // Path: var-ified-xi/frontend/components/ThisWeek.tsx
 //
 // The one thing you came here for: the decision to make before this week's
-// deadline. Everything below it on the page is supporting detail.
+// deadline. The other pages are supporting detail.
 
 import type { LineupCheck, OptimizedTeam, PickCheck, Player, PlannedWeek } from "@/lib/types";
 import { kitFor } from "@/lib/teams";

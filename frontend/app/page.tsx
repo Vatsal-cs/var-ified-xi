@@ -1,42 +1,19 @@
 // File: page.tsx
 // Path: var-ified-xi/frontend/app/page.tsx
+//
+// This week: the decision that's due, and the team it produces.
 
 import { getTeamData, deriveFormation } from "@/lib/getTeamData";
-import SiteHeader from "@/components/SiteHeader";
+import PageShell, { NoData } from "@/components/PageShell";
 import ThisWeek from "@/components/ThisWeek";
 import PitchView from "@/components/PitchView";
 import BenchStrip from "@/components/BenchStrip";
 import SquadStats from "@/components/SquadStats";
-import TransfersPanel from "@/components/TransfersPanel";
-import ChipAdvice from "@/components/ChipAdvice";
-import WildcardPanel from "@/components/WildcardPanel";
-import LeagueView from "@/components/LeagueView";
-import OtherMatches from "@/components/OtherMatches";
-import PipelineExplainer from "@/components/PipelineExplainer";
-import Glossary from "@/components/Glossary";
 import { Section } from "@/components/ui";
 
 export default function Home() {
   const team = getTeamData();
-
-  if (!team) {
-    return (
-      <main className="mx-auto flex min-h-screen max-w-lg flex-col items-center justify-center gap-3 px-6 text-center">
-        <p className="font-mono text-[11px] uppercase tracking-[0.24em] text-warn">
-          No data yet
-        </p>
-        <h1 className="font-display text-2xl font-bold tracking-tight text-ink-100">
-          Run the engine to generate a plan
-        </h1>
-        <p className="prose-note">
-          From <code className="rounded bg-surface px-1.5 py-0.5 font-mono text-pts">backend/</code>,
-          run <code className="rounded bg-surface px-1.5 py-0.5 font-mono text-pts">python main.py --team-id YOUR_ID</code>.
-          It writes <code className="rounded bg-surface px-1.5 py-0.5 font-mono text-pts">optimized_team.json</code> straight
-          into this app&apos;s <code className="rounded bg-surface px-1.5 py-0.5 font-mono text-pts">public/</code> folder.
-        </p>
-      </main>
-    );
-  }
+  if (!team) return <NoData />;
 
   const formation = deriveFormation(team.starting_xi);
   const isPlan = team.mode === "transfer_plan";
@@ -48,137 +25,48 @@ export default function Home() {
       : null;
 
   return (
-    <div id="top">
-      <SiteHeader team={team} />
+    <PageShell team={team}>
+      {/* The decision that's due */}
+      <ThisWeek team={team} />
 
-      <main className="mx-auto max-w-6xl space-y-16 px-5 py-12 pb-28 sm:space-y-20">
-        {/* The decision that's due */}
-        <ThisWeek team={team} />
-
-        {/* Wildcard / Triple Captain / Bench Boost / Free Hit — named the
-            moment a double or blank gameweek is close enough to act on,
-            and explicit about "watching, nothing yet" otherwise. */}
-        <Section
-          id="chips"
-          eyebrow="Chip watch"
-          title="When to play a chip"
-          lede="Chips come in two half-season sets, and an unplayed chip is lost at its deadline. This tracks the deadline, values the best week in sight, and watches the fixture calendar for doubles and blanks."
-        >
-          <ChipAdvice
-            advice={team.chip_advice}
-            watch={team.chip_watch}
-            expiry={team.chip_expiry}
-            plan={team.chip_plan}
-            horizonGws={team.horizon_gws}
-          />
-          {team.wildcard_option && (
-            <div className="mt-4">
-              <WildcardPanel option={team.wildcard_option} />
-            </div>
-          )}
-        </Section>
-
-        {/* Who you're actually racing, and what they own */}
-        {team.league && (
-          <Section
-            id="league"
-            eyebrow="Your league"
-            title="What the managers ahead of you own"
-            lede="Points you and a rival both score cancel out. What moves you past them is the players they don't have — and what quietly costs you is the ones they all have and you don't."
-          >
-            <LeagueView league={team.league} />
-          </Section>
-        )}
-
-        {/* Games FPL doesn't show: cup, European and international */}
-        {team.other_matches && (
-          <Section
-            id="other"
-            eyebrow="Beyond the Premier League"
-            title="Midweek and international games"
-            lede="FPL only shows Premier League matches. These are the other games your players' clubs and countries play before the end of the planning window: a midweek tie means rotation risk, a long international trip means tired legs."
-          >
-            <OtherMatches view={team.other_matches} />
-          </Section>
-        )}
-
-        {/* The squad it produces */}
-        <Section
-          id="squad"
-          eyebrow="The squad"
-          title={
-            chipTeam
-              ? `Your ${chipTeam} team`
-              : isPlan
-              ? "Your team after these moves"
-              : "The starting XI"
-          }
-          lede={
-            chipTeam
-              ? "Your XI and bench order as you set them. Tap any player for their projection and upcoming fixtures."
-              : isPlan
-              ? "How the pitch looks once this week's transfers are made. Tap any player for their projection and upcoming fixtures."
-              : "The 15 the solver picked, and the 11 it starts. Tap any player for detail."
-          }
-        >
-          <div className="grid gap-6 lg:grid-cols-[1fr_360px]">
-            <div className="space-y-6">
-              <SquadStats
-                used={team.budget_used_m}
-                total={team.budget_total_m}
-                points={team.predicted_total_points}
-                formation={formation}
-                horizonGws={team.horizon_gws}
-                valueLabel={isPlan ? "Squad value" : "Budget used"}
-              />
-              <BenchStrip
-                bench={team.bench}
-                startingXi={team.starting_xi}
-                scale={team.odds_calibration?.pair_logit_scale ?? 1}
-              />
-            </div>
-            <PitchView startingXi={team.starting_xi} />
+      {/* The squad it produces */}
+      <Section
+        id="squad"
+        eyebrow="The squad"
+        title={
+          chipTeam
+            ? `Your ${chipTeam} team`
+            : isPlan
+            ? "Your team after these moves"
+            : "The starting XI"
+        }
+        lede={
+          chipTeam
+            ? "Your XI and bench order as you set them. Tap any player for their projection and upcoming fixtures."
+            : isPlan
+            ? "How the pitch looks once this week's transfers are made. Tap any player for their projection and upcoming fixtures."
+            : "The 15 the solver picked, and the 11 it starts. Tap any player for detail."
+        }
+      >
+        <div className="grid gap-6 lg:grid-cols-[1fr_360px]">
+          <div className="space-y-6">
+            <SquadStats
+              used={team.budget_used_m}
+              total={team.budget_total_m}
+              points={team.predicted_total_points}
+              formation={formation}
+              horizonGws={team.horizon_gws}
+              valueLabel={isPlan ? "Squad value" : "Budget used"}
+            />
+            <BenchStrip
+              bench={team.bench}
+              startingXi={team.starting_xi}
+              scale={team.odds_calibration?.pair_logit_scale ?? 1}
+            />
           </div>
-        </Section>
-
-        {/* The multi-week plan (transfer mode only, and only if there's more than week 1) */}
-        {isPlan && team.transfer_plan && team.transfer_plan.weeks.length > 1 && (
-          <Section
-            id="outlook"
-            eyebrow="The plan"
-            title={`The next ${team.transfer_plan.weeks.length} gameweeks`}
-            lede="The run of moves this week's decision belongs to. The solver looks this far ahead so it doesn't sell a player it would only have to buy back."
-          >
-            <TransfersPanel weeks={team.transfer_plan.weeks} />
-          </Section>
-        )}
-
-        {/* How the answer was produced */}
-        <Section
-          id="how"
-          eyebrow="Under the hood"
-          title="How this was decided"
-          lede="Five stages, run in order, every time the engine runs. Expand any stage for the real mechanics."
-        >
-          <PipelineExplainer />
-        </Section>
-
-        {/* Questions */}
-        <Section
-          id="faq"
-          eyebrow="Good to know"
-          title="Questions you might have"
-          lede="Straight answers to what this page tends to raise."
-        >
-          <Glossary />
-        </Section>
-
-        <footer className="border-t border-line pt-8 text-center font-mono text-[11px] text-ink-500">
-          VAR-ified XI — built on the free FPL API. Not affiliated with the Premier
-          League or Fantasy Premier League. Projections are estimates, not
-          guarantees.
-        </footer>
-      </main>
-    </div>
+          <PitchView startingXi={team.starting_xi} />
+        </div>
+      </Section>
+    </PageShell>
   );
 }

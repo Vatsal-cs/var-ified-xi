@@ -7,6 +7,7 @@
 // they don't have, and what threatens you is the ones they all have and you
 // don't.
 
+import Link from "next/link";
 import type { LeagueView as LeagueViewData } from "@/lib/types";
 import { InfoNote, Term } from "./ui";
 
@@ -180,8 +181,11 @@ export default function LeagueView({ league }: { league: LeagueViewData }) {
             You have {yourLeft}{" "}of this half&apos;s chips left. Rivals who played theirs
             early haven&apos;t lost anything for good — everyone gets a new set at GW
             {win.end + 1}. Yours are only an edge if you play them by the GW{win.end}{" "}
-            deadline; unplayed, they&apos;re worth nothing. See Chip watch above for the
-            best week in sight for each.
+            deadline; unplayed, they&apos;re worth nothing.{" "}
+            <Link href="/plan" className="text-gold underline decoration-gold/40 underline-offset-2">
+              Plan &amp; chips
+            </Link>{" "}
+            has the best week in sight for each.
           </p>
         )}
       </div>
