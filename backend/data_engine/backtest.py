@@ -587,7 +587,8 @@ VARIANTS = {
     ),
     "form_tilt": Variant(
         name="form_tilt",
-        description="production plus an early-season tilt (GW<=10) toward points per match "
+        description="NO DETECTABLE EFFECT, behind in both (Oct 2026, 5 seeds): -17.6 [-45, +9]. "
+                    "Production plus an early-season tilt (GW<=10) toward points per match "
                     "played over the last five, weight fitted on the other season "
                     "(research/2026-10-form-tilt)",
         fit=lambda df: train_model.train_models(df, save=False),

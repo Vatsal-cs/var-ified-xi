@@ -1,5 +1,5 @@
 # Early-season tilt toward points per match played — pre-registration
-Written 2026-10-17 13:13 MDT, before any run.
+Written 2026-10-17 13:13 MDT, before any run. Commit 75b53ea.
 
 Why: the model's six-week projections sit in a tight band and barely follow
 what players have scored this season. GW7 2026-27: Sávio (10 points, 65
