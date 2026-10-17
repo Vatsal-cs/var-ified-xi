@@ -184,8 +184,9 @@ def _prompt_headlines(clubs: list, gameweek: int, deadline: str, numbered: dict)
              "whom a headline says is ruled out. Each call that isn't no_news must cite the",
              "headline id it comes from, and that headline must name the player himself.",
              "A question headline (\"Will X start?\") or a past injury scare he has since played",
-             "through is not a doubt. The manager's latest press conference outranks earlier",
-             "reports.", ""]
+             "through is not an injury doubt. But a headline predicting he may be dropped,",
+             "benched or rested (\"X could drop out\", \"set to rotate\") IS rotation_risk.",
+             "The manager's latest press conference outranks earlier reports.", ""]
     for c in clubs:
         lines.append(f"{c['club']} ({c['fixture']}):")
         for hid, h in numbered.get(c["club"], []):
@@ -251,8 +252,10 @@ def _call_gemini(prompt: str) -> str:
 
 # Bumped whenever the reading instructions change, so a cached read from the
 # old ones isn't reused. 2: headlines must name the player; question
-# headlines and past scares aren't doubts (Oct 2026).
-PROMPT_VERSION = 2
+# headlines and past scares aren't doubts (Oct 2026). 3: ...but a predicted
+# benching is still rotation_risk — version 2 turned GW7's correct "Cherki
+# could drop out" into no_news.
+PROMPT_VERSION = 3
 
 
 def _fold(text: str) -> str:
@@ -417,7 +420,66 @@ def get(clubs: list, gameweek: int, deadline: datetime, force: bool = False) -> 
     news = fetch(clubs, gameweek, deadline.isoformat())
     config.TEAM_NEWS_PATH.write_text(json.dumps(news, indent=1))
     _log_calls(news)
+    _keep_calls(news)
     return news
+
+
+def _keep_calls(news: dict) -> None:
+    """This gameweek's latest read, in a file that keeps every gameweek: what
+    judge() scores once the gameweek is played."""
+    path = config.TEAM_NEWS_CALLS_PATH
+    try:
+        calls = json.loads(path.read_text()) if path.exists() else {}
+    except (OSError, json.JSONDecodeError):
+        calls = {}
+    # The newest read replaces the gameweek's calls: the one in force at the
+    # deadline is what gets scored.
+    week = calls[str(news["gameweek"])] = {}
+    for it in news.get("items", []):
+        if it.get("player_id") is not None:
+            week[str(it["player_id"])] = {"name": it["name"], "club": it["club"], "status": it["status"],
+                                          "chance": it.get("start_chance"), "at": news["fetched_at"]}
+    path.write_text(json.dumps(calls, indent=1, ensure_ascii=False))
+
+
+# How each call is scored against the gameweek's real minutes
+# (research/2026-10-team-news/PREREGISTRATION.md).
+CORRECT_IF = {
+    "out": lambda minutes, starts: minutes == 0,
+    "doubtful": lambda minutes, starts: minutes < 60,
+    "rotation_risk": lambda minutes, starts: starts == 0,
+    "expected_to_start": lambda minutes, starts: starts > 0,
+    "no_news": lambda minutes, starts: starts > 0,
+}
+ROTATION_BAR = {"calls": 30, "rate": 0.60}      # before rotation calls may move a projection
+
+
+def judge(calls: dict, played, finished_gws: set) -> dict:
+    """The reader's record: for every finished gameweek, each player's last
+    call against what happened. played: rows with player_id, round, minutes,
+    starts (a double gameweek's matches are summed). Only gameweeks FPL marks
+    finished count, since a gameweek in progress has zero rows for matches not
+    yet played."""
+    by_status = {s: {"calls": 0, "correct": 0} for s in STATUSES}
+    recent = []
+    if played is None or played.empty:
+        return {"gameweeks": [], "by_status": by_status, "recent": [], "rotation_bar": ROTATION_BAR}
+    real = played.groupby(["player_id", "round"])[["minutes", "starts"]].sum()
+    judged = sorted(int(g) for g in calls if int(g) in finished_gws)
+    for gw in judged:
+        for pid, c in calls[str(gw)].items():
+            key = (int(pid), gw)
+            if c["status"] not in CORRECT_IF or key not in real.index:
+                continue
+            minutes, starts = (float(v) for v in real.loc[key])
+            ok = bool(CORRECT_IF[c["status"]](minutes, starts))
+            by_status[c["status"]]["calls"] += 1
+            by_status[c["status"]]["correct"] += int(ok)
+            if c["status"] != "no_news":
+                recent.append({"gameweek": gw, "name": c["name"], "status": c["status"],
+                               "minutes": int(minutes), "started": starts > 0, "correct": ok})
+    return {"gameweeks": judged, "by_status": by_status, "recent": recent[-12:],
+            "rotation_bar": ROTATION_BAR}
 
 
 def _log_calls(news: dict) -> None:

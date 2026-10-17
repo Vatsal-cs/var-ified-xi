@@ -282,6 +282,31 @@ class TeamNews(unittest.TestCase):
         rows = pd.DataFrame({"player_id": [533, 403], "gw": [7, 7], "chance_of_playing": [None, None]})
         self.assertEqual([a["player_id"] for a in team_news.apply(rows, {"items": items}, 7)], [403])
 
+    def test_record_scores_each_call_against_who_played(self):
+        calls = {"7": {"399": {"name": "Cherki", "club": "Man City", "status": "rotation_risk", "chance": 50, "at": "t"},
+                       "533": {"name": "Mukiele", "club": "Sunderland", "status": "out", "chance": 0, "at": "t"},
+                       "411": {"name": "Haaland", "club": "Man City", "status": "no_news", "chance": None, "at": "t"}},
+                 "8": {"399": {"name": "Cherki", "club": "Man City", "status": "rotation_risk", "chance": 50, "at": "t"}}}
+        played = pd.DataFrame({"player_id": [399, 533, 411, 399], "round": [7, 7, 7, 8],
+                               "minutes": [0, 90, 90, 0], "starts": [0, 1, 1, 0]})
+        r = team_news.judge(calls, played, finished_gws={7})        # GW8 still being played
+        self.assertEqual(r["gameweeks"], [7])
+        self.assertEqual(r["by_status"]["rotation_risk"], {"calls": 1, "correct": 1})
+        self.assertEqual(r["by_status"]["out"], {"calls": 1, "correct": 0})       # he played 90
+        self.assertEqual(r["by_status"]["no_news"], {"calls": 1, "correct": 1})
+        self.assertEqual([c["name"] for c in r["recent"]], ["Cherki", "Mukiele"])
+
+    def test_the_newest_read_is_the_one_scored(self):
+        import tempfile
+        with tempfile.TemporaryDirectory() as tmp:
+            with mock.patch.object(config, "TEAM_NEWS_CALLS_PATH", Path(tmp) / "calls.json"):
+                item = lambda pid, st: {"player_id": pid, "name": f"P{pid}", "club": "C", "status": st, "start_chance": None}
+                team_news._keep_calls({"gameweek": 7, "fetched_at": "a", "items": [item(1, "out"), item(2, "no_news")]})
+                team_news._keep_calls({"gameweek": 7, "fetched_at": "b", "items": [item(2, "doubtful")]})
+                calls = json.loads((Path(tmp) / "calls.json").read_text())
+        self.assertEqual(list(calls["7"]), ["2"])
+        self.assertEqual(calls["7"]["2"]["status"], "doubtful")
+
     def test_headlines_keep_recent_unique_stories(self):
         now = datetime.now(timezone.utc)
         feed = [{"title": "Saka fit", "link": "l1", "source": "BBC", "when": now},

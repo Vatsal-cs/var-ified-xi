@@ -1037,7 +1037,7 @@ python -m data_engine.backtest --seasons 2025-26 --stride 3</code></pre>
         <table>
           <thead><tr><th>Workflow</th><th>When</th><th>Does</th></tr></thead>
           <tbody>
-            <tr><td class="mono">weekly.yml</td><td>Twice daily (cron)</td><td>Checks the next deadline and exits in seconds unless one is within ~30h. Otherwise refreshes, retrains, re-solves, commits — which triggers a Vercel redeploy</td></tr>
+            <tr><td class="mono">weekly.yml</td><td>Every 4 hours (cron)</td><td>Checks the next deadline and exits in seconds unless one is within ~30h. Otherwise refreshes, retrains, re-solves, commits — which triggers a Vercel redeploy</td></tr>
             <tr><td class="mono">simulate.yml</td><td>Manual</td><td>Runs a policy race in the cloud and writes the result table into the run summary</td></tr>
           </tbody>
         </table>

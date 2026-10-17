@@ -6,7 +6,7 @@
 // calls worse than FPL's own flag have already lowered the projection; those
 // are marked. Rotation risk is information only.
 
-import type { NewsItem, NewsStatus, TeamNewsView } from "@/lib/types";
+import type { NewsItem, NewsRecord, NewsStatus, TeamNewsView } from "@/lib/types";
 import { Term } from "./ui";
 import Ago from "./Ago";
 
@@ -58,16 +58,55 @@ function Row({ item, applied }: { item: NewsItem; applied?: { chance: number; fp
   );
 }
 
+/** How the reader's calls turned out, scored after each gameweek
+ *  (research/2026-10-team-news). Rotation calls only start moving
+ *  projections once enough of them have been checked and right. */
+function Record({ record }: { record?: NewsRecord | null }) {
+  if (!record) return null;
+  if (record.gameweeks.length === 0) {
+    return (
+      <p className="mt-2 border-t border-line pt-2 font-mono text-[10.5px] text-ink-500">
+        Record: every call is scored against who actually played once the gameweek ends.
+      </p>
+    );
+  }
+  const part = (s: NewsStatus, label: string) => {
+    const r = record.by_status[s];
+    return r && r.calls > 0 ? `${label} ${r.correct}/${r.calls} right` : null;
+  };
+  const parts = [part("out", "out"), part("doubtful", "doubt"), part("rotation_risk", "rotation")].filter(Boolean);
+  const rot = record.by_status.rotation_risk;
+  const bar = record.rotation_bar;
+  const rate = rot.calls ? rot.correct / rot.calls : 0;
+  const live = rot.calls >= bar.calls && rate >= bar.rate;
+  return (
+    <div className="mt-2 border-t border-line pt-2 font-mono text-[10.5px] text-ink-500">
+      <p>
+        Record since GW{record.gameweeks[0]}:{" "}
+        {parts.length ? parts.join(" · ") : "no out, doubt or rotation calls checked yet"}
+      </p>
+      <p className="mt-0.5">
+        Rotation calls can start moving projections only once {bar.calls} have been checked at{" "}
+        {Math.round(bar.rate * 100)}%+ right
+        {live ? " — reached." : ` — ${rot.calls} checked so far${rot.calls ? `, ${Math.round(rate * 100)}% right` : ""}.`}
+      </p>
+    </div>
+  );
+}
+
 export default function TeamNews({ news }: { news?: TeamNewsView }) {
   if (!news) return null;
   if (!news.fetched_at) {
     return (
-      <p className="font-mono text-[11px] text-ink-500">
-        Team news reader:{" "}
-        {news.enabled
-          ? "reads the news within 48 hours of the deadline."
-          : "off. It needs a free Gemini key (aistudio.google.com, a project with no billing) saved as the GEMINI_API_KEY secret in the GitHub repo."}
-      </p>
+      <div>
+        <p className="font-mono text-[11px] text-ink-500">
+          Team news reader:{" "}
+          {news.enabled
+            ? "reads the news within 48 hours of the deadline."
+            : "off. It needs a free Gemini key (aistudio.google.com, a project with no billing) saved as the GEMINI_API_KEY secret in the GitHub repo."}
+        </p>
+        <Record record={news.record} />
+      </div>
     );
   }
   const applied = Object.fromEntries(news.applied.map((a) => [a.player_id, a]));
@@ -109,6 +148,7 @@ export default function TeamNews({ news }: { news?: TeamNewsView }) {
           {news.errors} club group{news.errors === 1 ? "" : "s"} couldn&apos;t be read this run.
         </p>
       )}
+      <Record record={news.record} />
     </div>
   );
 }

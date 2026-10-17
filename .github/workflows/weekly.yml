@@ -6,10 +6,13 @@ name: Refresh squad
 # deadline, and exits in seconds otherwise.
 on:
   schedule:
-    # Twice daily. GitHub's scheduler is best-effort and can run late under
-    # load, so the deadline window below is generous rather than exact.
-    - cron: "0 7 * * *"
-    - cron: "0 19 * * *"
+    # Every four hours. GitHub's scheduler is best-effort and runs late under
+    # load: before GW7 2026-27 the 07:00 UTC run started at 11:31, after the
+    # 10:00 deadline, and the 19:00 one at 21:57. Twice a day could leave the
+    # last check before a deadline a day old. Off-deadline runs exit in
+    # seconds; on a private repo this stays well inside the free 2,000
+    # minutes, and the free plan's $0 spending limit means it can never bill.
+    - cron: "0 1,5,9,13,17,21 * * *"
   workflow_dispatch:
     inputs:
       force:
@@ -81,7 +84,7 @@ jobs:
           git config user.name  "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add frontend/public/optimized_team.json backend/data/injury_log.json
-          git add backend/data/team_news.json backend/data/team_news_log.json 2>/dev/null || true
+          git add backend/data/team_news.json backend/data/team_news_log.json backend/data/team_news_calls.json 2>/dev/null || true
           if git diff --staged --quiet; then
             echo "Nothing changed — skipping commit."
           else

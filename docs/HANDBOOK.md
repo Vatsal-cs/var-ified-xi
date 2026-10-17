@@ -686,7 +686,7 @@ numbers go on the page and the call stays yours.
 
 | Workflow | When | Does |
 |---|---|---|
-| `weekly.yml` | Twice daily (cron) | Checks the next deadline and exits in seconds unless one is within ~30h. Otherwise refreshes, retrains, re-solves, commits — which triggers a Vercel redeploy |
+| `weekly.yml` | Every 4 hours (cron) | Checks the next deadline and exits in seconds unless one is within ~30h. Otherwise refreshes, retrains, re-solves, commits — which triggers a Vercel redeploy |
 | `simulate.yml` | Manual | Runs a policy race in the cloud and writes the result table into the run summary |
 
 Set `FPL_TEAM_ID` as a repository variable to get transfer plans rather than

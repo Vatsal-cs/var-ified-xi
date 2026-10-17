@@ -421,7 +421,8 @@ def run_pipeline(team_id: int = None) -> None:
                                captain_override=d["captain_override"],
                                wildcard_option=d["wildcard"],
                                pmfs=pmfs, captain_odds=captain_odds, chip_plan=chip_plan,
-                               news_view=_news_payload(news, news_applied, d, team_state),
+                               news_view=_news_payload(news, news_applied, d, team_state,
+                                                       history_df, bootstrap),
                                other_view=other_view,
                                pick_checks=d.get("pick_checks"), locked=locked)
 
@@ -701,13 +702,27 @@ def _news_targets(d: dict, team_state, bootstrap: dict, fixtures: list, gameweek
     return sorted(clubs.values(), key=lambda c: c["club"])
 
 
-def _news_payload(news: dict, applied: list, d: dict, team_state) -> dict | None:
+def _news_record(history_df, bootstrap: dict) -> dict | None:
+    """The reader's record so far against who actually played; never fatal."""
+    try:
+        path = config.TEAM_NEWS_CALLS_PATH
+        calls = json.loads(path.read_text()) if path.exists() else {}
+        finished = {e["id"] for e in bootstrap["events"] if e.get("finished")}
+        return team_news.judge(calls, history_df, finished)
+    except Exception as e:
+        logger.warning("Team news record skipped: %s", e)
+        return None
+
+
+def _news_payload(news: dict, applied: list, d: dict, team_state,
+                  history_df=None, bootstrap: dict = None) -> dict | None:
     """What the dashboard shows: calls about the players in this decision,
-    worst first, and which of them moved a projection."""
+    worst first, which of them moved a projection, and the reader's record."""
     if not team_state:
         return None
+    record = _news_record(history_df, bootstrap) if bootstrap else None
     if not news:
-        return {"enabled": team_news.enabled(), "items": [], "applied": []}
+        return {"enabled": team_news.enabled(), "items": [], "applied": [], "record": record}
     ids = set(team_state.squad)
     week = (d["plan"] or {}).get("weeks", [{}])[0]
     ids |= {m["player_id"] for m in week.get("transfers_in", [])}
@@ -719,7 +734,7 @@ def _news_payload(news: dict, applied: list, d: dict, team_state) -> dict | None
     items.sort(key=lambda i: (order.get(i["status"], 9), i["name"]))
     return {"enabled": team_news.enabled(), "fetched_at": news.get("fetched_at"),
             "model": news.get("model"), "items": items, "applied": applied,
-            "errors": len(news.get("errors", []))}
+            "errors": len(news.get("errors", [])), "record": record}
 
 
 def _captain_odds(pmfs: dict, result: dict, predictions_df) -> list:

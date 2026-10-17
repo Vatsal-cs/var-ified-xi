@@ -115,6 +115,16 @@ export interface TeamNewsView {
   /** Calls that lowered a projection (worse than FPL's own flag). */
   applied: { player_id: number; status: NewsStatus; chance: number; fpl_chance: number }[];
   errors?: number;
+  /** The reader's record: each finished gameweek's calls against who played. */
+  record?: NewsRecord | null;
+}
+
+export interface NewsRecord {
+  gameweeks: number[];
+  by_status: Record<NewsStatus, { calls: number; correct: number }>;
+  recent: { gameweek: number; name: string; status: NewsStatus; minutes: number; started: boolean; correct: boolean }[];
+  /** Rotation calls only move projections once this many were checked at this hit rate. */
+  rotation_bar: { calls: number; rate: number };
 }
 
 /** A match outside the Premier League (backend other_matches.py). */

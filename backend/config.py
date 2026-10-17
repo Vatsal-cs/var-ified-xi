@@ -64,6 +64,9 @@ TEAM_NEWS_WINDOW_HOURS = 48         # only read the news this close to a deadlin
 TEAM_NEWS_TTL_HOURS = 3             # reuse a result this fresh instead of paying again
 TEAM_NEWS_PATH = DATA_DIR / "team_news.json"
 TEAM_NEWS_LOG_PATH = DATA_DIR / "team_news_log.json"
+# The last call per player per gameweek, kept for the whole season (the log
+# above keeps only recent reads): what team_news.judge() scores.
+TEAM_NEWS_CALLS_PATH = DATA_DIR / "team_news_calls.json"
 
 # ---------------------------------------------------------------------------
 # FPL public API (no auth required)
