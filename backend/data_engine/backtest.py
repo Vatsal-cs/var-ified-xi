@@ -257,6 +257,35 @@ SHRINK_BY_SEASON = {
 }
 
 
+# Early-season tilt toward points per match played (research/2026-10-form-tilt):
+# each season's weight fitted on the OTHER tuning season's GW<=10 rows (rows
+# projected 2.5+, 3+ appearances in the last five); held-back seasons get the
+# mean of the two.
+FORM_TILT_BY_SEASON = {"2024-25": 0.10,   # from 2025-26
+                       "2025-26": 0.17,   # from 2024-25
+                       "2022-23": 0.135, "2023-24": 0.135}
+FORM_TILT_LAST_GW = 10
+
+
+def form_tilt(pred: pd.Series, df: pd.DataFrame, w: float, last_gw: int = FORM_TILT_LAST_GW) -> pd.Series:
+    """pred + w x (points per match played over the last five - pred), for
+    gameweeks up to last_gw, players with 3+ of the last 5 played and
+    projected 2.5+. Everything else unchanged."""
+    gw = df["target_gw"] if "target_gw" in df.columns else df["round"]
+    played = df["played_avg_5"].to_numpy(dtype=float)
+    form = np.where(played > 0, df["points_avg_5"].to_numpy(dtype=float) / np.maximum(played, 1e-9), 0.0)
+    p = pred.to_numpy(dtype=float).copy()
+    m = (gw.to_numpy() <= last_gw) & (played >= 0.6 - 1e-9) & (p >= 2.5)
+    p[m] += w * (form[m] - p[m])
+    return pd.Series(p, index=pred.index)
+
+
+def _form_tilt_predict(bundle, df):
+    pred = _bundle_predict(bundle, df)
+    w = FORM_TILT_BY_SEASON.get(str(df["season"].iloc[0])) if "season" in df.columns else None
+    return form_tilt(pred, df, w) if w else pred
+
+
 def _shrink_predict(per_position: bool):
     """Projections with config.CONDITIONAL_SHRINK set for the season being
     predicted, read from the rows themselves."""
@@ -555,6 +584,14 @@ VARIANTS = {
                     "(research/2026-10-residual-model)",
         fit=lambda df: train_model.train_models(df, save=False),
         predict=_residual_predict,
+    ),
+    "form_tilt": Variant(
+        name="form_tilt",
+        description="production plus an early-season tilt (GW<=10) toward points per match "
+                    "played over the last five, weight fitted on the other season "
+                    "(research/2026-10-form-tilt)",
+        fit=lambda df: train_model.train_models(df, save=False),
+        predict=_form_tilt_predict,
     ),
     "shrink": Variant(
         name="shrink",

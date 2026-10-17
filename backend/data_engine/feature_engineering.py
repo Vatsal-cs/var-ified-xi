@@ -93,6 +93,10 @@ ROLLING_FEATURE_SPEC = [
     ("saves", "saves_avg", [3]),
     ("clean_sheets", "cs_avg", [5]),
     ("goals_conceded", "gc_avg", [3]),
+    # Share of the last five gameweeks he played in at all: with points_avg_5
+    # it gives points per match played. Under test in research/2026-10-form-tilt;
+    # computed always, not a model input.
+    ("played", "played_avg", [5]),
 ]
 
 
@@ -320,6 +324,8 @@ def add_rolling_features(df: pd.DataFrame) -> pd.DataFrame:
     for _c, _v in {**ODDS_NEUTRAL, **SETPIECE_NEUTRAL}.items():
         if _c not in df.columns:
             df[_c] = _v
+    if "minutes" in df.columns:
+        df["played"] = (df["minutes"] > 0).astype(float)
     grp = df.groupby("player_id", group_keys=False)
 
     # The same output counts for more against a strong defence and less
@@ -404,6 +410,8 @@ def latest_form_snapshot(df: pd.DataFrame) -> pd.DataFrame:
     predicted.
     """
     df = df.sort_values(["player_id", "round"])
+    if "minutes" in df.columns and "played" not in df.columns:
+        df["played"] = (df["minutes"] > 0).astype(float)
     grp = df.groupby("player_id", group_keys=False)
 
     out = df.copy()
