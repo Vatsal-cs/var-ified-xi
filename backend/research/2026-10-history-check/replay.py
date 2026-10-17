@@ -25,8 +25,7 @@ seasons = {"production": ["2023-24", "2024-25", "2025-26"], "recency": ["2023-24
            "last_season": ["2025-26"], "this_season": []}[variant]
 past = None
 if seasons:
-    config.HISTORICAL_SEASONS = seasons
-    past = fe.build_training_set(fe.add_rolling_features(historical_data.build_historical_training_df()))
+    past = fe.build_training_set(fe.add_rolling_features(historical_data.build_historical_training_df(seasons)))
 cur = fe.build_gameweek_history_df(boot, hists, fixtures=fixtures)
 cur = fe.add_rolling_features(cur)
 if config.OTHER_MATCHES:
@@ -35,7 +34,7 @@ cur = cur[cur["round"] <= 6]
 v = backtest.VARIANTS["recency" if variant == "recency" else "production"]
 s = backtest.simulate_season(cur, v, prior_seasons_df=past, start_gw=2)
 out = {"variant": variant, "seed": seed, "points": s["total_points"], "mae": s["mae"], "spearman": s["spearman"],
-       "by_gw": s.get("by_gw") or s.get("gameweeks")}
+       "per_gw": s.get("per_gw")}
 here = os.path.dirname(os.path.abspath(__file__))
 json.dump(out, open(os.path.join(here, f"r_{variant}_s{seed}.json"), "w"), default=str)
 print(variant, seed, s["total_points"], round(s["mae"], 3), round(s["spearman"], 3))

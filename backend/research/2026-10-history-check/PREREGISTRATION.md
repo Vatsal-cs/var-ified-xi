@@ -1,5 +1,5 @@
 # Is the old-season training data hurting the model THIS season? — pre-registration
-Written 2026-10-17 12:51 MDT, before any run.
+Written 2026-10-17 12:51 MDT, before any run. Commit 0bb8895.
 
 Why: the user's point — the past-season tests replay past seasons, so they
 can't show whether old data misleads the model in 2026-27, where ratings are
