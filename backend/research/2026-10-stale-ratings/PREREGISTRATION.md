@@ -1,5 +1,5 @@
 # Training on stale team ratings, as the live model plays on them — pre-registration
-Written 2026-10-17 12:11 MDT, before any run.
+Written 2026-10-17 12:11 MDT, before any run. Commit de0b3f7.
 
 Why: FPL publishes no team ratings for 2026-27, so the live model plays every
 match on last season's. But it learned from past seasons rated with their OWN

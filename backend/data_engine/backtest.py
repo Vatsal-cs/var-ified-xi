@@ -421,7 +421,8 @@ VARIANTS = {
     ),
     "live_ratings": Variant(
         name="live_ratings",
-        description="production as it runs live in 2026-27: trained on earlier seasons rated "
+        description="Reference for research/2026-10-stale-ratings (lagged_ratings vs this: -14 "
+                    "[-85, +58], not used). Production as it runs live in 2026-27: trained on earlier seasons rated "
                     "with their own FPL ratings, the replayed season rated with the season "
                     "before's (research/2026-10-stale-ratings)",
         fit=lambda df: train_model.train_models(df, save=False),

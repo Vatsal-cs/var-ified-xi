@@ -492,6 +492,7 @@ backtest, 3 in the simulator — under the verdict rules in section 1.
 | Real player ages: a live-only bug, not a test. History stores every age as 26, so only this season's rows had real ages and the trees used them to tell players apart (Henderson, 36: 2.4 → 5.1 projected) | — | never in any backtest: age is 26 in every replayed season | 🐞 **fixed**: age off, so live runs match what was tested |
 | This season's team form, tested with last season's ratings as live (new) | — | +6 [−118, +123] · +13 and −7 by season · the season's own ratings were worth +107 in 2025-26 | no detectable effect — not used |
 | Team ratings from betting odds, with last season's ratings as live (new) | — | +1 [−107, +111] · +4 and −3 by season | no detectable effect — not used |
+| Training on stale team ratings, as the live model plays on them (new) | — | −14 [−85, +58] on 2025-26 · stale ratings themselves cost ~93 a season | no detectable effect — not used |
 | Split populations vs starters-only for both stages | +7 | starters-only **+56** [+11, +103] on the tuning seasons — then +18 and −17 on the held-back seasons | ⚠️ **unconfirmed**: split populations stay |
 | Backtest from GW2, not GW8 | — | — | kept: a coverage fix, not a points claim |
 

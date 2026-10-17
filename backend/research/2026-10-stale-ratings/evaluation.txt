@@ -1,0 +1,16 @@
+
+============================================================================================
+POOLED RESULTS (5 file(s))
+============================================================================================
+variant             season    seeds  GWs     mean     sd        range    MAE  rank-r  Brier60
+--------------------------------------------------------------------------------------------
+lagged_ratings      2025-26       5   37   2195.2   40.0    2130-2230  0.917   0.750   0.0786
+live_ratings        2025-26       5   37   2209.6   20.0    2190-2240  0.916   0.750   0.0785
+--------------------------------------------------------------------------------------------
+Paired against live_ratings, per-gameweek, averaged over seeds (block bootstrap, 2-GW blocks, 95% CI):
+  lagged_ratings     pooled   -14.4 [-85, +58]  won 2/5 cells  -> NO DETECTABLE EFFECT
+                     2025-26 -14 [-85,+58]
+============================================================================================
+better = pooled CI above zero and ahead in every season; worse = the
+mirror image; anything else is no detectable effect, not a rejection.
+
