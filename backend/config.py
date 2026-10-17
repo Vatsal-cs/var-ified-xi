@@ -223,6 +223,11 @@ TEAM_FORM_SOURCE = "xg"
 # in 2026-27 — instead of that season's own (which the archive may have saved
 # with hindsight). Never affects live runs.
 LAGGED_TEAM_RATINGS = False
+# Research only: lag the ratings for these seasons alone. The backtest's
+# live_ratings variant sets it to the replayed season, so the model trains on
+# earlier seasons' own ratings and plays the replayed one on last season's —
+# exactly how the live model runs in 2026-27 (research/2026-10-stale-ratings).
+LAGGED_TEAM_RATINGS_SEASONS = ()
 TEAM_FORM_COLUMNS = ["team_xg_for", "team_xg_against", "opp_xg_for",
                      "opp_xg_against", "match_xg_for", "match_xg_against"]
 TEAM_FORM_REPLACES = ["team_strength_attack", "team_strength_defence",

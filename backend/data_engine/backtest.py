@@ -191,6 +191,22 @@ class _team_form_add_ctx:
         config.TEAM_FORM, config.FEATURE_COLUMNS = self._old
 
 
+# The seasons being replayed in this run, set by main() before the variants
+# race, for contexts that treat the replayed season differently from the
+# seasons it trains on.
+_REPLAYED = ()
+
+
+class _live_ratings_ctx:
+    """The replayed season on last season's ratings, the seasons it trains on
+    with their own — how the live model runs in 2026-27."""
+    def __enter__(self):
+        self._old = config.LAGGED_TEAM_RATINGS_SEASONS
+        config.LAGGED_TEAM_RATINGS_SEASONS = tuple(_REPLAYED)
+    def __exit__(self, *a):
+        config.LAGGED_TEAM_RATINGS_SEASONS = self._old
+
+
 class _lagged_ratings_ctx:
     """Past seasons rated with the season-before's FPL ratings, as live."""
     def __enter__(self):
@@ -402,6 +418,15 @@ VARIANTS = {
                     "captain on the mean projection",
         fit=lambda df: train_model.train_models(df, save=False),
         predict=_bundle_predict,
+    ),
+    "live_ratings": Variant(
+        name="live_ratings",
+        description="production as it runs live in 2026-27: trained on earlier seasons rated "
+                    "with their own FPL ratings, the replayed season rated with the season "
+                    "before's (research/2026-10-stale-ratings)",
+        fit=lambda df: train_model.train_models(df, save=False),
+        predict=_bundle_predict,
+        context=_live_ratings_ctx,
     ),
     "lagged_ratings": Variant(
         name="lagged_ratings",
@@ -1052,6 +1077,8 @@ def main(argv=None) -> None:
     index = {s: i for i, s in enumerate(all_seasons)}
     availability = not args.no_availability
 
+    global _REPLAYED
+    _REPLAYED = tuple(args.seasons)
     runs = []
     for variant_name in args.variants:
         variant = VARIANTS[variant_name]

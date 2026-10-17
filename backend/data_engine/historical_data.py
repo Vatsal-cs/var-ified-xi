@@ -112,7 +112,7 @@ def fetch_season(season: str, season_index: int):
 
     id_strength, name_strength = _team_strength_lookups(teams_df)
     name_to_id = dict(zip(teams_df["name"], teams_df["id"]))
-    if config.LAGGED_TEAM_RATINGS:
+    if config.LAGGED_TEAM_RATINGS or season in config.LAGGED_TEAM_RATINGS_SEASONS:
         id_strength, name_strength = _lagged_strengths(season, teams_df)
 
     # Unique per (season, element) — offset so it never collides with a
