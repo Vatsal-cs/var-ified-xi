@@ -530,7 +530,8 @@ VARIANTS = {
     ),
     "ownership": Variant(
         name="ownership",
-        description="production with selected_by_percent actually filled in for training "
+        description="SHIPPED (Oct 2026): +122 [+26, +216], held back +65 / +14 — now in production. "
+                    "Production with selected_by_percent actually filled in for training "
                     "rows (it was 0 everywhere) (research/2026-10-ownership)",
         fit=lambda df: train_model.train_models(df, save=False),
         predict=_bundle_predict,

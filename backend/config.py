@@ -236,8 +236,11 @@ LAGGED_TEAM_RATINGS_SEASONS = ()
 # With this on, training rows get the share of managers owning the player
 # that gameweek (archive: selections / (total / 15); this season: the same
 # from FPL's per-gameweek `selected`), in percent like the live value.
-# Under test: research/2026-10-ownership.
-OWNERSHIP_FEATURE = False
+# SHIPPED (Oct 2026, research/2026-10-ownership): +122 [+26, +216] on the
+# tuning seasons (+59, +63, 8 of 10 runs), then +65 and +14 on the held-back
+# 2022-23 and 2023-24; MAE, rank correlation and the minutes Brier score
+# improved in all four seasons — the crowd knows who's starting.
+OWNERSHIP_FEATURE = True
 
 # How much each club has been rotating: the average number of starters changed
 # from the previous match, over its last five (team_changes_avg5). The minutes
@@ -316,6 +319,9 @@ HISTORICAL_DATA_BASE_URL = "https://raw.githubusercontent.com/vaastav/Fantasy-Pr
 #                Oct 2026, other_matches (cup/European/international load):
 #                +87 [+13, +159] on tuning, then +43 / +11 here — confirmed,
 #                shipped.
+#                Oct 2026, ownership (selected_by_percent filled in for
+#                training): +122 [+26, +216] on tuning, then +65 / +14 here
+#                — confirmed, shipped.
 TUNING_SEASONS = ["2024-25", "2025-26"]
 CONFIRMATION_SEASONS = ["2022-23", "2023-24"]
 
