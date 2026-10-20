@@ -22,8 +22,14 @@ export default function CoinFlips({
   const flips = coinFlips(xi, bench, scale);
   if (flips.length === 0) return null;
   return (
-    <div className="rounded-[2px] border border-gold/30 bg-gold/[0.05] p-3.5">
-      <p className="label text-gold">
+    <div className="rounded-[2px] border border-violet/30 bg-violet/[0.06] p-3.5">
+      <p className="label flex items-center gap-2 text-violet">
+        <span
+          aria-hidden
+          className="inline-flex h-4 w-4 animate-coin items-center justify-center rounded-full border border-gold/70 bg-gold/20 text-[8px] text-gold [transform-style:preserve-3d]"
+        >
+          ½
+        </span>
         <Term explain="A bench player and a starter he could replace, each with a 40-60% chance of outscoring the other (ties left out). Over thousands of past calls, the higher projection won only 52% of the time when the two were within half a point. Make these calls last, after the final refresh before the deadline, when the press conferences and team news are in.">
           Coin-flip calls this week
         </Term>
@@ -36,7 +42,7 @@ export default function CoinFlips({
             <span className="text-ink-500">or</span>
             <span className="text-ink-100">{f.sub.name}</span>
             <span className="text-[11px] text-ink-500">bench, {f.sub.predicted_points.toFixed(1)}</span>
-            <span className="text-[11px] text-gold">
+            <span className="text-[11px] text-violet">
               {pct(1 - f.p)} / {pct(f.p)}
             </span>
           </li>

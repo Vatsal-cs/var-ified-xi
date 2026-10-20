@@ -36,6 +36,10 @@ module.exports = {
         },
         // Semantics, deliberately muted to sit beside the gold.
         pts: "#8FBF7A", // gains, points, good
+        // Two more accents, used sparingly: chances and probabilities (violet),
+        // information and fixtures (sky). Muted like the rest, never neon.
+        violet: "#A48BE0",
+        sky: "#7DB7D8",
         warn: "#D9A441", // caution, chips
         risk: "#C96A5C", // exposure, sold, loss
         ink: {
@@ -64,10 +68,72 @@ module.exports = {
           "0%, 100%": { opacity: "1" },
           "50%": { opacity: "0.25" },
         },
+        // The VAR mark drawing itself: strokes with pathLength="1".
+        draw: {
+          "0%": { strokeDashoffset: "1" },
+          "100%": { strokeDashoffset: "0" },
+        },
+        // A review line sweeping across a panel once, left to right.
+        scan: {
+          "0%": { transform: "translateX(-10%)", opacity: "0" },
+          "12%": { opacity: "1" },
+          "88%": { opacity: "1" },
+          "100%": { transform: "translateX(1000%)", opacity: "0" },
+        },
+        stamp: {
+          "0%": { transform: "scale(1.8) rotate(-12deg)", opacity: "0" },
+          "60%": { transform: "scale(0.94) rotate(-5deg)", opacity: "1" },
+          "100%": { transform: "scale(1) rotate(-6deg)", opacity: "1" },
+        },
+        fromLeft: {
+          "0%": { transform: "translateX(-18px)", opacity: "0" },
+          "100%": { transform: "translateX(0)", opacity: "1" },
+        },
+        fromRight: {
+          "0%": { transform: "translateX(18px)", opacity: "0" },
+          "100%": { transform: "translateX(0)", opacity: "1" },
+        },
+        strike: {
+          "0%": { transform: "scaleX(0)" },
+          "100%": { transform: "scaleX(1)" },
+        },
+        dropIn: {
+          "0%": { transform: "translate(-50%, -80%) scale(0.8)", opacity: "0" },
+          "70%": { transform: "translate(-50%, -48%) scale(1.04)", opacity: "1" },
+          "100%": { transform: "translate(-50%, -50%) scale(1)", opacity: "1" },
+        },
+        ring: {
+          "0%": { boxShadow: "0 0 0 0 rgba(224,166,74,0.55)" },
+          "70%": { boxShadow: "0 0 0 10px rgba(224,166,74,0)" },
+          "100%": { boxShadow: "0 0 0 0 rgba(224,166,74,0)" },
+        },
+        grow: {
+          "0%": { transform: "scaleX(0)" },
+          "100%": { transform: "scaleX(1)" },
+        },
+        coin: {
+          "0%": { transform: "rotateY(0deg)" },
+          "100%": { transform: "rotateY(1080deg)" },
+        },
+        glow: {
+          "0%, 100%": { opacity: "0.35" },
+          "50%": { opacity: "0.7" },
+        },
       },
       animation: {
         rise: "rise 0.45s cubic-bezier(0.22,1,0.36,1) forwards",
         pulseDot: "pulseDot 2.4s ease-in-out infinite",
+        draw: "draw 1.1s cubic-bezier(0.65,0,0.35,1) forwards",
+        scan: "scan 1.6s cubic-bezier(0.45,0,0.2,1) 0.25s both",
+        stamp: "stamp 0.55s cubic-bezier(0.22,1,0.36,1) both",
+        fromLeft: "fromLeft 0.55s cubic-bezier(0.22,1,0.36,1) both",
+        fromRight: "fromRight 0.55s cubic-bezier(0.22,1,0.36,1) both",
+        strike: "strike 0.45s cubic-bezier(0.65,0,0.35,1) both",
+        dropIn: "dropIn 0.6s cubic-bezier(0.22,1,0.36,1) both",
+        ring: "ring 2.2s cubic-bezier(0.22,1,0.36,1) infinite",
+        grow: "grow 0.9s cubic-bezier(0.22,1,0.36,1) both",
+        coin: "coin 1.4s cubic-bezier(0.45,0,0.2,1) both",
+        glow: "glow 3.2s ease-in-out infinite",
       },
     },
   },

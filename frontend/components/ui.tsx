@@ -5,6 +5,7 @@
 // same way: a titled section with a plain-language subtitle, a hoverable
 // jargon term, an inline explainer note, and a stat tile.
 
+import { Reveal } from "./motion";
 import type { ReactNode } from "react";
 
 /** A page section with a heading and a one-line plain description. */
@@ -22,6 +23,7 @@ export function Section({
   children: ReactNode;
 }) {
   return (
+    <Reveal>
     <section id={id} aria-labelledby={id ? `${id}-h` : undefined} className="scroll-mt-32">
       {eyebrow && (
         <p className="eyebrow-rule mb-4">
@@ -39,6 +41,7 @@ export function Section({
       {lede && <p className="mt-3 max-w-[58ch] prose-note">{lede}</p>}
       <div className="mt-8">{children}</div>
     </section>
+    </Reveal>
   );
 }
 

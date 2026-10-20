@@ -10,6 +10,7 @@ import { Term } from "./ui";
 import CaptainOdds from "./CaptainOdds";
 import TeamNews from "./TeamNews";
 import CoinFlips from "./CoinFlips";
+import { CountUp, Spotlight } from "./motion";
 
 function named(team: OptimizedTeam, id: number | null): Player | undefined {
   if (id == null) return undefined;
@@ -62,11 +63,16 @@ function SwapCard({
   const isOut = tone === "out";
   return (
     <div
-      className={`relative flex-1 overflow-hidden rounded-[3px] border p-3.5 ${
+      className={`relative flex-1 overflow-hidden rounded-[3px] border p-3.5 transition-transform duration-300 hover:-translate-y-0.5 ${
         isOut
-          ? "border-risk/25 bg-risk/[0.06]"
-          : "border-pts/30 bg-pts/[0.07]"
+          ? "animate-fromLeft border-risk/25 bg-risk/[0.06]"
+          : "animate-fromRight border-pts/30 bg-pts/[0.07]"
       }`}
+      style={
+        isOut
+          ? undefined
+          : { animationDelay: "0.2s", boxShadow: `0 14px 36px -22px ${kit.shirt}, 0 0 0 1px ${kit.shirt}22` }
+      }
     >
       <span
         className="absolute inset-y-0 left-0 w-1"
@@ -78,10 +84,19 @@ function SwapCard({
       </p>
       <p
         className={`mt-1.5 font-display text-[26px] leading-[1.05] ${
-          isOut ? "text-ink-300 line-through decoration-risk/50" : "text-ink-100"
+          isOut ? "text-ink-300" : "text-ink-100"
         }`}
       >
-        {name}
+        <span className="relative inline-block">
+          {name}
+          {isOut && (
+            <span
+              aria-hidden
+              className="absolute inset-x-0 top-[55%] h-[2px] origin-left animate-strike bg-risk/70"
+              style={{ animationDelay: "0.65s" }}
+            />
+          )}
+        </span>
       </p>
       <p className="mt-0.5 font-mono text-[11px] text-ink-400">
         {kit.abbr} &middot; {sub}
@@ -99,7 +114,14 @@ function TransferRows({ week, checks = [] }: { week: PlannedWeek; checks?: PickC
     );
   }
   return (
-    <ul className="space-y-3">
+    <ul className="relative space-y-3">
+      <li
+        aria-hidden
+        className="pointer-events-none absolute -top-12 right-0 hidden animate-stamp rounded-[3px] border-2 border-pts/70 px-2.5 py-1 font-mono text-[11px] font-bold uppercase tracking-[0.2em] text-pts/90 sm:block"
+        style={{ animationDelay: "1s" }}
+      >
+        Check complete &#10003;
+      </li>
       {week.transfers_out.map((out, i) => {
         const inn = week.transfers_in[i];
         return (
@@ -112,7 +134,8 @@ function TransferRows({ week, checks = [] }: { week: PlannedWeek; checks?: PickC
             />
             <span
               aria-hidden
-              className="flex w-7 flex-none items-center justify-center font-display text-xl text-ink-500"
+              className="flex w-7 flex-none animate-fromLeft items-center justify-center font-display text-xl text-gold/80"
+              style={{ animationDelay: "0.35s" }}
             >
               &rarr;
             </span>
@@ -229,7 +252,10 @@ export default function ThisWeek({ team }: { team: OptimizedTeam }) {
       : `Make these ${week.transfers_out.length} transfers`;
 
   return (
-    <div id="week" className="panel-lead scroll-mt-32 p-6 sm:p-9">
+    <Spotlight id="week" className="panel-lead scroll-mt-32 p-6 sm:p-9">
+      <span aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
+        <span className="absolute inset-y-0 left-0 w-[10%] animate-scan bg-gradient-to-r from-transparent via-gold/20 to-transparent" />
+      </span>
       <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
         <p className="font-mono text-[10px] uppercase tracking-[0.28em] text-gold">
           Gameweek {team.gameweek} &middot; before the deadline
@@ -250,7 +276,7 @@ export default function ThisWeek({ team }: { team: OptimizedTeam }) {
         )}
       </div>
 
-      <h1 className="mt-3 font-display text-[44px] leading-[1] tracking-[-0.02em] text-ink-100 sm:text-[60px]">
+      <h1 className="mt-3 animate-rise font-display text-[44px] leading-[1] tracking-[-0.02em] text-ink-100 sm:text-[60px]">
         {headline}
       </h1>
 
@@ -270,7 +296,7 @@ export default function ThisWeek({ team }: { team: OptimizedTeam }) {
             <TeamNews news={team.team_news} />
             <p className="border-t border-line pt-3 font-mono text-xs text-ink-400">
               Projected GW{team.gameweek} score for your XI:{" "}
-              <span className="text-pts">{week.predicted_points.toFixed(1)} pts</span>
+              <span className="text-pts"><CountUp value={week.predicted_points} /> pts</span>
             </p>
           </>
         ) : team.mode === "transfer_plan" && week ? (
@@ -336,7 +362,7 @@ export default function ThisWeek({ team }: { team: OptimizedTeam }) {
             <p className="border-t border-line pt-3 font-mono text-xs text-ink-400">
               Projected GW{team.gameweek} score after transfer costs:{" "}
               <span className="text-pts">
-                {week.predicted_points.toFixed(1)} pts
+                <CountUp value={week.predicted_points} /> pts
               </span>
             </p>
           </>
@@ -371,6 +397,6 @@ export default function ThisWeek({ team }: { team: OptimizedTeam }) {
           </>
         )}
       </div>
-    </div>
+    </Spotlight>
   );
 }

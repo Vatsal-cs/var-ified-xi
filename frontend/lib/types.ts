@@ -343,6 +343,8 @@ export interface WildcardOption {
 
 export interface OptimizedTeam {
   generated_at: string;
+  /** The deadline of `gameweek`, ISO time (absent in older files). */
+  deadline?: string | null;
   gameweek: number | null;
   horizon_gws: number;
   /** "fresh_squad" builds from scratch; "transfer_plan" works from your real team. */

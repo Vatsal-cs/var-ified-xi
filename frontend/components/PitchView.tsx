@@ -104,6 +104,7 @@ function PlayerChip({
   isActive,
   onSelect,
   coinFlip = false,
+  order = 0,
 }: {
   player: Player;
   x: number;
@@ -111,6 +112,8 @@ function PlayerChip({
   isActive: boolean;
   onSelect: () => void;
   coinFlip?: boolean;
+  /** Position in the drop-in sequence: the keeper first, the forwards last. */
+  order?: number;
 }) {
   const kit = kitFor(player.team);
   const outline = needsOutline(kit);
@@ -125,13 +128,22 @@ function PlayerChip({
       )} projected points`}
       // Fixed width so a long surname can't widen the button and shove the
       // whole column off its mark. Five across on a phone is the tight case.
-      className="group absolute z-10 flex w-[62px] -translate-x-1/2 -translate-y-1/2 flex-col items-center focus:outline-none sm:w-[84px]"
-      style={{ left: `${x}%`, top: `${y}%` }}
+      className="group absolute z-10 flex w-[62px] -translate-x-1/2 -translate-y-1/2 animate-dropIn flex-col items-center focus:outline-none sm:w-[84px]"
+      style={{ left: `${x}%`, top: `${y}%`, animationDelay: `${0.15 + order * 0.07}s` }}
     >
       {/* Shirt */}
       <span className="relative block">
+        {/* The club's colour, glowing on the grass under the shirt */}
         <span
-          className={`flex h-12 w-12 items-center justify-center rounded-full font-display text-[11px] tracking-wide shadow-lg transition-all duration-200 group-hover:-translate-y-1 group-hover:shadow-xl sm:h-[52px] sm:w-[52px] ${
+          aria-hidden
+          className="absolute -inset-2 rounded-full opacity-30 blur-md transition-opacity duration-300 group-hover:opacity-60"
+          style={{ background: kit.shirt }}
+        />
+        {player.is_captain && (
+          <span aria-hidden className="absolute inset-0 z-[2] animate-ring rounded-full" />
+        )}
+        <span
+          className={`relative z-[1] flex h-12 w-12 items-center justify-center rounded-full font-display text-[11px] tracking-wide shadow-lg transition-all duration-200 group-hover:-translate-y-1 group-hover:shadow-xl sm:h-[52px] sm:w-[52px] ${
             isActive ? "ring-2 ring-gold ring-offset-2 ring-offset-[#16221A]" : ""
           }`}
           style={{
@@ -235,9 +247,10 @@ export default function PitchView({
           </g>
         </svg>
 
-        {placed.map(({ player, x, y }) => (
+        {placed.map(({ player, x, y }, i) => (
           <PlayerChip
             key={player.player_id}
+            order={placed.length - 1 - i}
             player={player}
             x={x}
             y={y}

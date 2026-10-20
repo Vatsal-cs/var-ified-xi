@@ -31,7 +31,7 @@ export default function CaptainOdds({ odds }: { odds: Odds[] }) {
         </span>
       </p>
       <ul className="mt-3 max-w-md space-y-2.5">
-        {others.map((o) => {
+        {others.map((o, i) => {
           const b = o.beats_captain ?? 0;
           return (
             <li key={o.player_id}>
@@ -43,7 +43,10 @@ export default function CaptainOdds({ odds }: { odds: Odds[] }) {
               </div>
               <span className="relative mt-1 block h-1.5 rounded-full bg-line" aria-hidden>
                 <span className="absolute inset-y-[-2px] left-1/2 w-px bg-ink-400" />
-                <span className="block h-full rounded-full bg-pts/55" style={{ width: `${b * 100}%` }} />
+                <span
+                  className="block h-full origin-left animate-grow rounded-full bg-gradient-to-r from-violet/40 to-violet/80"
+                  style={{ width: `${b * 100}%`, animationDelay: `${0.3 + i * 0.12}s` }}
+                />
               </span>
             </li>
           );

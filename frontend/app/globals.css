@@ -101,7 +101,29 @@ body > * {
   }
 }
 
+/* Sections arrive as they scroll into view (components/Reveal.tsx). The
+   hidden state only applies once JavaScript has marked the page, so nothing
+   stays invisible without it. */
+.js-reveal .reveal {
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1), transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.js-reveal .reveal.is-in {
+  opacity: 1;
+  transform: none;
+}
+
+/* A soft spotlight that follows the pointer across the lead panel. */
+.spotlight {
+  background: radial-gradient(420px circle at var(--mx, 30%) var(--my, 0%), rgba(224, 166, 74, 0.07), transparent 60%);
+}
+
 @media (prefers-reduced-motion: reduce) {
+  .js-reveal .reveal {
+    opacity: 1;
+    transform: none;
+  }
   html {
     scroll-behavior: auto;
   }

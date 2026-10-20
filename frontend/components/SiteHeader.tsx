@@ -12,6 +12,8 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { OptimizedTeam } from "@/lib/types";
 import RefreshButton from "@/components/RefreshButton";
+import VarMark from "@/components/VarMark";
+import { Countdown } from "@/components/motion";
 
 /** One page of the site, as the nav lists it (components/PageShell.tsx). */
 export type NavPage = { href: string; label: string };
@@ -41,7 +43,8 @@ export default function SiteHeader({
       <div className="absolute inset-0 -z-10 border-b border-line bg-base" />
 
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-5 py-3">
-        <Link href="/" className="flex items-baseline gap-2.5">
+        <Link href="/" className="flex items-center gap-2.5">
+          <VarMark />
           <span className="font-display text-[19px] leading-none tracking-[-0.01em] text-ink-100">
             VAR<span className="italic text-gold">ified</span> XI
           </span>
@@ -53,6 +56,9 @@ export default function SiteHeader({
           </span>
           <span className="pill border-gold/35 text-gold">
             GW {team.gameweek ?? "—"}
+          </span>
+          <span className="hidden sm:inline-flex">
+            <Countdown deadline={team.deadline} />
           </span>
           <span className="hidden items-center gap-1.5 text-ink-400 md:inline-flex">
             <span className="h-1.5 w-1.5 animate-pulseDot rounded-full bg-pts" />

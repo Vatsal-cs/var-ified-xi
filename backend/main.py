@@ -120,9 +120,13 @@ def build_output_json(bootstrap: dict, predictions_df, result: dict,
 
     current_gw = feature_engineering.next_gameweek(bootstrap)
 
+    deadline = next((e.get("deadline_time") for e in bootstrap.get("events", [])
+                     if e.get("id") == current_gw), None)
     output = {
         "generated_at": datetime.now(timezone.utc).isoformat(),
         "gameweek": current_gw,
+        # The deadline for that gameweek, so the page can count down to it.
+        "deadline": deadline,
         "horizon_gws": config.HORIZON_GWS,
         "mode": "transfer_plan" if plan else "fresh_squad",
         "budget_used_m": round(result["total_cost"] / 10, 1),
