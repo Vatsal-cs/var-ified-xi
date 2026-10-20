@@ -57,10 +57,11 @@ class Wildcard(unittest.TestCase):
         gws = [6, 7]
         xp = {r.player_id: {6: 0.0 if r.player_id >= 90 else 1.0, 7: r.predicted_points}
               for r in df.itertuples()}
-        # Stars only score from week 7: with 2 banked, week 7 starts with 3.
+        # Stars only score from week 7: with 2 in the Wildcard week, week 7
+        # starts with the same 2 (the chip week adds none).
         plan = transfer_optimizer.plan_transfers(df, _state(2, gw=6), xp, gws,
                                                  max_total_hits=0, wildcard=True)
-        self.assertLessEqual(plan["weeks"][1]["transfer_count"] - plan["weeks"][1]["hits"], 3)
+        self.assertLessEqual(plan["weeks"][1]["transfer_count"] - plan["weeks"][1]["hits"], 2)
         self.assertEqual(plan["weeks"][1]["hits"], 0)
 
 

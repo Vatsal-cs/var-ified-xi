@@ -50,10 +50,18 @@ class FreeTransferReplay(unittest.TestCase):
         got = [entry_data.replay_free_transfers(h, set(), gw) for gw in range(2, 9)]
         self.assertEqual(got, [1, 2, 3, 4, 5, 5, 5])
 
-    def test_wildcard_week_spends_nothing(self):
+    def test_wildcard_week_spends_nothing_and_adds_nothing(self):
         h = history(0, 0, 11, first=1)             # GW3 is a wildcard
-        self.assertEqual(entry_data.replay_free_transfers(h, {3}, 4), 3)
+        self.assertEqual(entry_data.replay_free_transfers(h, {3}, 4), 2)
         self.assertEqual(entry_data.replay_free_transfers(h, set(), 4), 1)
+
+    def test_one_in_one_out_through_a_wildcard(self):
+        # The live team, 2026-27: created GW2, then 1, 0, 2, 1 transfers,
+        # Wildcard in GW7. The FPL app shows one free transfer for GW8.
+        h = [{"event": gw, "event_transfers": n} for gw, n in
+             ((2, 0), (3, 1), (4, 0), (5, 2), (6, 1), (7, 14))]
+        self.assertEqual(entry_data.replay_free_transfers(h, {7}, 7), 1)
+        self.assertEqual(entry_data.replay_free_transfers(h, {7}, 8), 1)
 
     def test_cap_is_a_parameter(self):
         h = history(0, 0, 0, 0)

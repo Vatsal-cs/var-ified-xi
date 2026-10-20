@@ -8,8 +8,9 @@ Builds the plan two ways from your real team — your sell prices, bank and free
 transfers — and the same projections the dashboard uses:
 
   * free transfers only (what the dashboard recommends without a chip);
-  * a Wildcard this gameweek: every transfer free, the bank of free transfers
-    kept for next week, then normal weeks after it.
+  * a Wildcard this gameweek: every transfer free, the free transfers you
+    had saved kept for next week (no new one for the Wildcard week), then
+    normal weeks after it.
 
 Both are scored on the same six-week, decay-weighted objective, so the gap is
 what the Wildcard is worth over the planning horizon. It doesn't count what a

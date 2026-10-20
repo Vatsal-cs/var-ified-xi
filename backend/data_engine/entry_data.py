@@ -143,7 +143,11 @@ def replay_free_transfers(events: list, chip_weeks: set, upcoming_gw: int,
         the week after it starts with exactly one free transfer — whether the
         team was created before GW1 or joined later in the season.
       * Every later gameweek adds one, up to `cap`.
-      * Transfers spend them; Wildcard and Free Hit weeks don't.
+      * Transfers spend them. A Wildcard or Free Hit week spends none, and
+        adds none either: the next week starts with what that week had.
+        (FPL keeps the transfers you'd SAVED; that week's own one is used by
+        the chip. Checked against the app, GW8 2026-27: one free transfer
+        into the Wildcard week, one after it, not two.)
 
     events: entry history rows ({"event", "event_transfers"}), any order.
     """
@@ -154,8 +158,9 @@ def replay_free_transfers(events: list, chip_weeks: set, upcoming_gw: int,
 
     free = 0                      # the creation week banks nothing
     for e in played:
-        if e["event"] not in chip_weeks:
-            free = max(free - e.get("event_transfers", 0), 0)
+        if e["event"] in chip_weeks:
+            continue
+        free = max(free - e.get("event_transfers", 0), 0)
         free = min(free + 1, cap)
     return max(1, free)
 

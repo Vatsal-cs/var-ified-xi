@@ -43,8 +43,8 @@ class LockedFirstWeek(unittest.TestCase):
         plan = transfer_optimizer.plan_transfers(df, _state(2, gw=6), xp, gws, max_total_hits=0,
                                                  wildcard=True, locked_first_week=True)
         self.assertEqual(plan["weeks"][0]["transfer_count"], 0)
-        # A Wildcard keeps the two banked: week 7 has three free, and uses them.
-        self.assertEqual(plan["weeks"][1]["transfer_count"], 3)
+        # A Wildcard keeps the two it had: week 7 has two free, and uses them.
+        self.assertEqual(plan["weeks"][1]["transfer_count"], 2)
         self.assertEqual(plan["weeks"][1]["hits"], 0)
 
 

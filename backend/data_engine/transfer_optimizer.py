@@ -116,8 +116,9 @@ def plan_transfers(
     bench_weight: share of a bench player's projection counted in the
                 objective. Defaults to config.BENCH_WEIGHT, read at call time.
     wildcard:   play a Wildcard in week 0 — every transfer that week is free,
-                and (rules since 2024/25) the banked free transfers are kept,
-                so the next week starts with them plus one.
+                and (rules since 2024/25) the saved free transfers are kept:
+                the next week starts with what week 0 had, with no new one
+                for the Wildcard week itself.
     locked_first_week: no transfers in week 0 — the squad is already set
                 for it (a Wildcard made in the FPL app, which the public API
                 hides until the deadline). Week 0 still picks the XI.
@@ -271,8 +272,9 @@ def plan_transfers(
             if locked_first_week:
                 prob += transfers[t] == 0
         elif idx == 1 and wildcard:
-            # The Wildcard week's transfers don't touch the bank.
-            prob += free[t] <= min(team_state.free_transfers + 1, bank_cap)
+            # The Wildcard week's transfers don't touch the bank, and the
+            # week adds none: the next starts with what this one had.
+            prob += free[t] <= min(team_state.free_transfers, bank_cap)
         elif t in unlimited:
             prob += free[t] == SQUAD_SIZE
         elif t in topups:
