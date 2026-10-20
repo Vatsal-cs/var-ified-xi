@@ -1,9 +1,9 @@
 {
-  "generated_at": "2026-10-20T15:49:57.480919+00:00",
+  "generated_at": "2026-10-20T17:17:41.006536+00:00",
   "gameweek": 8,
   "horizon_gws": 6,
   "mode": "transfer_plan",
-  "budget_used_m": 99.2,
+  "budget_used_m": 100.4,
   "budget_total_m": 100.0,
   "predicted_total_points": 52.16,
   "starting_xi": [
@@ -742,67 +742,6 @@
       }
     },
     {
-      "player_id": 455,
-      "name": "Tonali",
-      "position": "MID",
-      "team": "Spurs",
-      "now_cost_m": 5.3,
-      "predicted_points": 3.13,
-      "horizon_points": 15.7,
-      "xp_by_gw": {
-        "8": 3.13,
-        "9": 3.93,
-        "10": 3.52,
-        "11": 4.67,
-        "12": 3.9,
-        "13": 4.02
-      },
-      "start_probability": 0.92,
-      "is_captain": false,
-      "is_vice_captain": false,
-      "dist": {
-        "mean": 3.4,
-        "p10": 1,
-        "p90": 8,
-        "p_blank": 0.568,
-        "p_return": 0.172,
-        "p_haul": 0.056,
-        "pmf": [
-          0.044,
-          0.1159,
-          0.4079,
-          0.1539,
-          0.0423,
-          0.0643,
-          0.024,
-          0.0421,
-          0.0239,
-          0.0259,
-          0.0228,
-          0.0085,
-          0.0077,
-          0.0063,
-          0.0018,
-          0.0058,
-          0.0026,
-          0.0002,
-          0.0,
-          0.0,
-          0.0,
-          0.0002,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0
-        ]
-      }
-    },
-    {
       "player_id": 249,
       "name": "Barry",
       "position": "FWD",
@@ -914,6 +853,67 @@
           0.0,
           0.0,
           0.0006,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      }
+    },
+    {
+      "player_id": 403,
+      "name": "S\u00e1vio",
+      "position": "MID",
+      "team": "Spurs",
+      "now_cost_m": 6.5,
+      "predicted_points": 0.0,
+      "horizon_points": 0.93,
+      "xp_by_gw": {
+        "8": 0.0,
+        "9": 0.29,
+        "10": 0.27,
+        "11": 0.34,
+        "12": 0.28,
+        "13": 0.3
+      },
+      "start_probability": 0.69,
+      "is_captain": false,
+      "is_vice_captain": false,
+      "dist": {
+        "mean": 0.0,
+        "p10": 0,
+        "p90": 0,
+        "p_blank": 1.0,
+        "p_return": 0.0,
+        "p_haul": 0.0,
+        "pmf": [
+          1.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
           0.0,
           0.0,
           0.0,
@@ -1217,7 +1217,7 @@
       {
         "chip": "bboost",
         "gameweek": 11,
-        "value": 14.0,
+        "value": 14.3,
         "player": null
       },
       {
@@ -1298,7 +1298,7 @@
           {
             "chip": "bboost",
             "gameweek": 11,
-            "value": 14.0,
+            "value": 14.3,
             "player": null,
             "firm": true,
             "now": false
@@ -1314,19 +1314,19 @@
           {
             "chip": "freehit",
             "gameweek": 14,
-            "value": 7.7,
+            "value": 7.9,
             "player": null,
             "firm": false,
             "now": false
           }
         ],
-        "total": 29.9,
+        "total": 30.4,
         "weeks": [
           {
             "gameweek": 8,
             "3xc": 4.8,
             "3xc_player": "Thiago",
-            "bboost": 11.5,
+            "bboost": 8.4,
             "freehit": 2.2,
             "xi_points": 52.2,
             "firm": true,
@@ -1340,8 +1340,8 @@
             "3xc": 5.5,
             "3xc_player": "Haaland",
             "bboost": 12.1,
-            "freehit": 1.6,
-            "xi_points": 53.0,
+            "freehit": 1.9,
+            "xi_points": 52.8,
             "firm": true,
             "fixtures": {
               "doubles": 0,
@@ -1350,11 +1350,11 @@
           },
           {
             "gameweek": 10,
-            "3xc": 6.3,
-            "3xc_player": "Saka",
+            "3xc": 6.2,
+            "3xc_player": "Haaland",
             "bboost": 13.4,
-            "freehit": 4.0,
-            "xi_points": 56.4,
+            "freehit": 4.8,
+            "xi_points": 55.6,
             "firm": true,
             "fixtures": {
               "doubles": 0,
@@ -1365,9 +1365,9 @@
             "gameweek": 11,
             "3xc": 7.2,
             "3xc_player": "Haaland",
-            "bboost": 14.0,
-            "freehit": 3.4,
-            "xi_points": 56.8,
+            "bboost": 14.3,
+            "freehit": 3.8,
+            "xi_points": 56.3,
             "firm": true,
             "fixtures": {
               "doubles": 0,
@@ -1379,8 +1379,8 @@
             "3xc": 4.8,
             "3xc_player": "Haaland",
             "bboost": 13.8,
-            "freehit": 2.6,
-            "xi_points": 51.2,
+            "freehit": 3.2,
+            "xi_points": 50.6,
             "firm": true,
             "fixtures": {
               "doubles": 0,
@@ -1391,9 +1391,9 @@
             "gameweek": 13,
             "3xc": 6.4,
             "3xc_player": "Haaland",
-            "bboost": 12.8,
-            "freehit": 0.9,
-            "xi_points": 55.9,
+            "bboost": 12.7,
+            "freehit": 1.7,
+            "xi_points": 55.1,
             "firm": true,
             "fixtures": {
               "doubles": 0,
@@ -1405,8 +1405,8 @@
             "3xc": 5.6,
             "3xc_player": "Haaland",
             "bboost": 12.8,
-            "freehit": 7.7,
-            "xi_points": 52.9,
+            "freehit": 7.9,
+            "xi_points": 52.8,
             "firm": false,
             "fixtures": {
               "doubles": 0,
@@ -1418,8 +1418,8 @@
             "3xc": 5.6,
             "3xc_player": "Haaland",
             "bboost": 13.1,
-            "freehit": 3.4,
-            "xi_points": 52.1,
+            "freehit": 4.4,
+            "xi_points": 51.1,
             "firm": false,
             "fixtures": {
               "doubles": 0,
@@ -1430,9 +1430,9 @@
             "gameweek": 16,
             "3xc": 8.2,
             "3xc_player": "Haaland",
-            "bboost": 13.7,
-            "freehit": 3.4,
-            "xi_points": 58.4,
+            "bboost": 13.2,
+            "freehit": 3.7,
+            "xi_points": 58.1,
             "firm": false,
             "fixtures": {
               "doubles": 0,
@@ -1444,8 +1444,8 @@
             "3xc": 5.7,
             "3xc_player": "Haaland",
             "bboost": 13.3,
-            "freehit": 0.7,
-            "xi_points": 56.7,
+            "freehit": 1.2,
+            "xi_points": 56.2,
             "firm": false,
             "fixtures": {
               "doubles": 0,
@@ -1456,9 +1456,9 @@
             "gameweek": 18,
             "3xc": 6.6,
             "3xc_player": "Haaland",
-            "bboost": 13.0,
-            "freehit": 4.2,
-            "xi_points": 54.7,
+            "bboost": 12.7,
+            "freehit": 4.8,
+            "xi_points": 54.2,
             "firm": false,
             "fixtures": {
               "doubles": 0,
@@ -1470,8 +1470,8 @@
             "3xc": 7.3,
             "3xc_player": "Haaland",
             "bboost": 13.2,
-            "freehit": 1.6,
-            "xi_points": 63.1,
+            "freehit": 4.0,
+            "xi_points": 60.7,
             "firm": false,
             "fixtures": {
               "doubles": 0,
@@ -1489,7 +1489,9 @@
     "items": [],
     "applied": [],
     "record": {
-      "gameweeks": [],
+      "gameweeks": [
+        7
+      ],
       "by_status": {
         "out": {
           "calls": 0,
@@ -1508,8 +1510,8 @@
           "correct": 0
         },
         "no_news": {
-          "calls": 0,
-          "correct": 0
+          "calls": 15,
+          "correct": 12
         }
       },
       "recent": [],
@@ -1520,7 +1522,7 @@
     }
   },
   "other_matches": {
-    "from": "2026-10-20T15:49:57.413982",
+    "from": "2026-10-20T17:17:40.939277",
     "to": "2026-12-05T11:00:00",
     "clubs": [
       {
@@ -1904,27 +1906,6 @@
         ]
       },
       {
-        "player_id": 455,
-        "name": "Tonali",
-        "nation": "Italy",
-        "matches": [
-          {
-            "date": "2026-11-12T19:45:00+00:00",
-            "competition": "Nations League",
-            "opponent": "France",
-            "home": true,
-            "far": false
-          },
-          {
-            "date": "2026-11-15T19:45:00+00:00",
-            "competition": "Nations League",
-            "opponent": "Belgium",
-            "home": false,
-            "far": false
-          }
-        ]
-      },
-      {
         "player_id": 447,
         "name": "Botman",
         "nation": "Netherlands",
@@ -2084,19 +2065,6 @@
       "transfer": true,
       "alternatives": [
         {
-          "player_id": 154,
-          "name": "Palmer",
-          "team": "CHE",
-          "cost_m": 9.7,
-          "next": 4.5,
-          "six_weeks": 17.5,
-          "ppg": 5.4,
-          "vs": -0.7,
-          "flags": [
-            "his price adds +1.5 to his projection"
-          ]
-        },
-        {
           "player_id": 542,
           "name": "E.Le F\u00e9e",
           "team": "SUN",
@@ -2117,6 +2085,17 @@
           "ppg": 3.0,
           "vs": -2.5,
           "flags": []
+        },
+        {
+          "player_id": 455,
+          "name": "Tonali",
+          "team": "TOT",
+          "cost_m": 5.3,
+          "next": 3.1,
+          "six_weeks": 15.7,
+          "ppg": 3.6,
+          "vs": -2.5,
+          "flags": []
         }
       ]
     }
@@ -2133,14 +2112,6 @@
             "predicted_points": 4.8,
             "position": "MID",
             "team": "Chelsea"
-          },
-          {
-            "player_id": 455,
-            "name": "Tonali",
-            "cost_m": 5.3,
-            "predicted_points": 3.13,
-            "position": "MID",
-            "team": "Spurs"
           }
         ],
         "transfers_out": [
@@ -2151,21 +2122,13 @@
             "predicted_points": 0.0,
             "position": "MID",
             "team": "Man City"
-          },
-          {
-            "player_id": 403,
-            "name": "S\u00e1vio",
-            "sell_price_m": 6.5,
-            "predicted_points": 0.0,
-            "position": "MID",
-            "team": "Spurs"
           }
         ],
-        "transfer_count": 2,
-        "free_transfers": 2,
+        "transfer_count": 1,
+        "free_transfers": 1,
         "hits": 0,
         "hit_cost": 0,
-        "bank_m": 1.9,
+        "bank_m": 0.7,
         "predicted_points": 52.16,
         "captain_id": 106
       },
@@ -2173,42 +2136,42 @@
         "gameweek": 9,
         "transfers_in": [
           {
-            "player_id": 350,
-            "name": "A.Becker",
-            "cost_m": 5.5,
-            "predicted_points": 3.55,
-            "position": "GK",
-            "team": "Liverpool"
+            "player_id": 455,
+            "name": "Tonali",
+            "cost_m": 5.3,
+            "predicted_points": 3.93,
+            "position": "MID",
+            "team": "Spurs"
           }
         ],
         "transfers_out": [
           {
-            "player_id": 1,
-            "name": "Raya",
-            "sell_price_m": 6.1,
-            "predicted_points": 3.32,
-            "position": "GK",
-            "team": "Arsenal"
+            "player_id": 403,
+            "name": "S\u00e1vio",
+            "sell_price_m": 6.5,
+            "predicted_points": 0.29,
+            "position": "MID",
+            "team": "Spurs"
           }
         ],
         "transfer_count": 1,
         "free_transfers": 1,
         "hits": 0,
         "hit_cost": 0,
-        "bank_m": 2.5,
-        "predicted_points": 52.99,
+        "bank_m": 1.9,
+        "predicted_points": 52.76,
         "captain_id": 411
       },
       {
         "gameweek": 10,
         "transfers_in": [
           {
-            "player_id": 12,
-            "name": "Saka",
-            "cost_m": 9.6,
-            "predicted_points": 6.26,
+            "player_id": 236,
+            "name": "Dewsbury-Hall",
+            "cost_m": 6.6,
+            "predicted_points": 4.88,
             "position": "MID",
-            "team": "Arsenal"
+            "team": "Everton"
           }
         ],
         "transfers_out": [
@@ -2225,9 +2188,9 @@
         "free_transfers": 1,
         "hits": 0,
         "hit_cost": 0,
-        "bank_m": 0.8,
-        "predicted_points": 56.38,
-        "captain_id": 12
+        "bank_m": 3.2,
+        "predicted_points": 55.57,
+        "captain_id": 411
       },
       {
         "gameweek": 11,
@@ -2255,8 +2218,8 @@
         "free_transfers": 1,
         "hits": 0,
         "hit_cost": 0,
-        "bank_m": 1.5,
-        "predicted_points": 56.77,
+        "bank_m": 3.9,
+        "predicted_points": 56.29,
         "captain_id": 411
       },
       {
@@ -2285,8 +2248,8 @@
         "free_transfers": 1,
         "hits": 0,
         "hit_cost": 0,
-        "bank_m": 0.1,
-        "predicted_points": 51.16,
+        "bank_m": 2.5,
+        "predicted_points": 50.63,
         "captain_id": 411
       },
       {
@@ -2315,8 +2278,8 @@
         "free_transfers": 1,
         "hits": 0,
         "hit_cost": 0,
-        "bank_m": 0.5,
-        "predicted_points": 55.86,
+        "bank_m": 2.9,
+        "predicted_points": 55.08,
         "captain_id": 411
       }
     ]
@@ -2326,7 +2289,7 @@
     "entry_id": 9927826,
     "bank_m": 0.4,
     "squad_value_m": 100.9,
-    "free_transfers": 2,
+    "free_transfers": 1,
     "chips_available": [
       "bboost",
       "3xc",
