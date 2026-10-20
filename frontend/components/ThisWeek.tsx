@@ -9,6 +9,7 @@ import { kitFor } from "@/lib/teams";
 import { Term } from "./ui";
 import CaptainOdds from "./CaptainOdds";
 import TeamNews from "./TeamNews";
+import CoinFlips from "./CoinFlips";
 
 function named(team: OptimizedTeam, id: number | null): Player | undefined {
   if (id == null) return undefined;
@@ -265,6 +266,7 @@ export default function ThisWeek({ team }: { team: OptimizedTeam }) {
             <LockedCheck check={team.lineup_check} chip={chip} />
             <CaptainLine team={team} />
             {team.captain_odds && <CaptainOdds odds={team.captain_odds} />}
+            <CoinFlips xi={team.starting_xi} bench={team.bench} scale={team.odds_calibration?.pair_logit_scale ?? 1} />
             <TeamNews news={team.team_news} />
             <p className="border-t border-line pt-3 font-mono text-xs text-ink-400">
               Projected GW{team.gameweek} score for your XI:{" "}
@@ -328,6 +330,7 @@ export default function ThisWeek({ team }: { team: OptimizedTeam }) {
             {team.captain_odds && (
               <CaptainOdds odds={team.captain_odds} />
             )}
+            <CoinFlips xi={team.starting_xi} bench={team.bench} scale={team.odds_calibration?.pair_logit_scale ?? 1} />
             <TeamNews news={team.team_news} />
 
             <p className="border-t border-line pt-3 font-mono text-xs text-ink-400">

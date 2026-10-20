@@ -103,12 +103,14 @@ function PlayerChip({
   y,
   isActive,
   onSelect,
+  coinFlip = false,
 }: {
   player: Player;
   x: number;
   y: number;
   isActive: boolean;
   onSelect: () => void;
+  coinFlip?: boolean;
 }) {
   const kit = kitFor(player.team);
   const outline = needsOutline(kit);
@@ -154,6 +156,14 @@ function PlayerChip({
             {armband}
           </span>
         )}
+        {coinFlip && (
+          <span
+            title="Coin flip with a bench player"
+            className="absolute -left-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full border-2 border-[#16221A] bg-gold/90 font-mono text-[9px] font-bold text-base"
+          >
+            ½
+          </span>
+        )}
       </span>
 
       {/* Name + points tag */}
@@ -169,7 +179,14 @@ function PlayerChip({
   );
 }
 
-export default function PitchView({ startingXi }: { startingXi: Player[] }) {
+export default function PitchView({
+  startingXi,
+  coinFlipIds = [],
+}: {
+  startingXi: Player[];
+  /** Starters in a coin-flip call with a bench player (CoinFlips). */
+  coinFlipIds?: number[];
+}) {
   const [active, setActive] = useState<Player | null>(null);
   const rows = groupByRow(startingXi);
 
@@ -225,6 +242,7 @@ export default function PitchView({ startingXi }: { startingXi: Player[] }) {
             x={x}
             y={y}
             isActive={active?.player_id === player.player_id}
+            coinFlip={coinFlipIds.includes(player.player_id)}
             onSelect={() =>
               setActive(active?.player_id === player.player_id ? null : player)
             }

@@ -10,12 +10,15 @@ import PitchView from "@/components/PitchView";
 import BenchStrip from "@/components/BenchStrip";
 import SquadStats from "@/components/SquadStats";
 import { Section } from "@/components/ui";
+import { coinFlips } from "@/lib/odds";
 
 export default function Home() {
   const team = getTeamData();
   if (!team) return <NoData />;
 
   const formation = deriveFormation(team.starting_xi);
+  const flipIds = coinFlips(team.starting_xi, team.bench, team.odds_calibration?.pair_logit_scale ?? 1)
+    .map((f) => f.starter.player_id);
   const isPlan = team.mode === "transfer_plan";
   const chipTeam =
     team.active_chip && team.active_chip.gameweek === team.gameweek
@@ -64,7 +67,7 @@ export default function Home() {
               scale={team.odds_calibration?.pair_logit_scale ?? 1}
             />
           </div>
-          <PitchView startingXi={team.starting_xi} />
+          <PitchView startingXi={team.starting_xi} coinFlipIds={flipIds} />
         </div>
       </Section>
     </PageShell>
