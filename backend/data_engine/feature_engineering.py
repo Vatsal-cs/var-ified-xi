@@ -321,6 +321,34 @@ def attach_live_setpieces(df: pd.DataFrame, bootstrap: dict) -> None:
         ).astype(float)
 
 
+def team_rotation(df: pd.DataFrame) -> pd.DataFrame:
+    """Per (team, fixture): how many of the starters weren't in the previous
+    match's XI, and that count averaged over the team's last five matches —
+    before this one (team_changes_avg5, for training rows) and including it
+    (team_changes_now, for predicting the next)."""
+    need = {"team", "fixture", "kickoff_time", "player_id", "starts"}
+    if not need <= set(df.columns):
+        return pd.DataFrame(columns=["team", "fixture", "team_changes_avg5", "team_changes_now"])
+    st = df[pd.to_numeric(df["starts"], errors="coerce").fillna(0) > 0]
+    matches = (st.groupby(["team", "fixture"])
+                 .agg(kick=("kickoff_time", "min"), xi=("player_id", frozenset))
+                 .reset_index().sort_values(["team", "kick"]))
+    changes = []
+    for _, g in matches.groupby("team", sort=False):
+        prev = None
+        for r in g.itertuples():
+            changes.append(len(r.xi - prev) if prev is not None else np.nan)
+            prev = r.xi
+    matches["changes"] = changes
+    by_team = matches.groupby("team")["changes"]
+    matches["team_changes_avg5"] = by_team.transform(lambda c: c.shift(1).rolling(5, min_periods=1).mean())
+    matches["team_changes_now"] = by_team.transform(lambda c: c.rolling(5, min_periods=1).mean())
+    return matches[["team", "fixture", "kick", "team_changes_avg5", "team_changes_now"]]
+
+
+TEAM_CHANGES_NEUTRAL = 2.5      # a typical club's changes per match, when unknown
+
+
 def add_rolling_features(df: pd.DataFrame) -> pd.DataFrame:
     """Adds rolling-average form features per player, shifted by 1 gameweek
     so we never leak the current/target gameweek's own stats into training.
@@ -377,6 +405,12 @@ def add_rolling_features(df: pd.DataFrame) -> pd.DataFrame:
     df["form"] = df["points_avg_5"]
 
     df["fixture_difficulty"] = (df["opp_strength_defence"] - df["team_strength_attack"]) / 100.0
+
+    if config.TEAM_ROTATION_FEATURE:
+        rot = team_rotation(df).set_index(["team", "fixture"])["team_changes_avg5"]
+        key = pd.MultiIndex.from_arrays([df["team"], df["fixture"]])
+        df["team_changes_avg5"] = rot.reindex(key).to_numpy()
+        df["team_changes_avg5"] = df["team_changes_avg5"].fillna(TEAM_CHANGES_NEUTRAL)
 
     # Rest days between consecutive PL matches for the same player. Note:
     # FPL's history endpoint only covers Premier League gameweek fixtures —
@@ -442,6 +476,10 @@ def latest_form_snapshot(df: pd.DataFrame) -> pd.DataFrame:
     out["form"] = out["points_avg_5"]
     if "age" in out.columns:
         out["age"] = out["age"].fillna(FALLBACK_AGE)
+    if config.TEAM_ROTATION_FEATURE:
+        # Going into the next match: the rate including the latest one.
+        rot = team_rotation(df).sort_values("kick").groupby("team")["team_changes_now"].last()
+        out["team_changes_avg5"] = out["team"].map(rot).fillna(TEAM_CHANGES_NEUTRAL)
     out = out.fillna(0)
     return out.groupby("player_id", as_index=False).tail(1).copy()
 

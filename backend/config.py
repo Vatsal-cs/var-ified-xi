@@ -238,6 +238,21 @@ LAGGED_TEAM_RATINGS_SEASONS = ()
 # from FPL's per-gameweek `selected`), in percent like the live value.
 # Under test: research/2026-10-ownership.
 OWNERSHIP_FEATURE = False
+
+# How much each club has been rotating: the average number of starters changed
+# from the previous match, over its last five (team_changes_avg5). The minutes
+# model only ever saw each player's own record, never that his manager rotates
+# (GW7 2026-27: City started 55% of the players the model gave 82%).
+# Under test: research/2026-10-rotation-calibration.
+TEAM_ROTATION_FEATURE = False
+TEAM_ROTATION_COLUMNS = ["team_changes_avg5"]
+
+# Points-if-60+ mapped through what players projected at each level really
+# scored (the smoothed distribution groups), per position, instead of taken at
+# face value: the top end runs high (projected 7.95 if they played, scored
+# 6.23). A dict {position: (centers, real means)}; None is off.
+# Under test: research/2026-10-rotation-calibration.
+PTS_IF_60_CALIBRATION = None
 TEAM_FORM_COLUMNS = ["team_xg_for", "team_xg_against", "opp_xg_for",
                      "opp_xg_against", "match_xg_for", "match_xg_against"]
 TEAM_FORM_REPLACES = ["team_strength_attack", "team_strength_defence",

@@ -112,13 +112,35 @@ def _shrink(bundle: dict, raw: np.ndarray, element_types) -> np.ndarray:
     return m + k * (raw - m)
 
 
+def _calibrate(raw: np.ndarray, element_types) -> np.ndarray:
+    """config.PTS_IF_60_CALIBRATION: each points-if-60+ mapped to what players
+    projected at that level really scored, per position (piecewise linear
+    between groups, shifted past the ends)."""
+    cal = config.PTS_IF_60_CALIBRATION
+    if not cal:
+        return raw
+    out = np.asarray(raw, dtype=float).copy()
+    types = np.asarray(element_types).astype(int)
+    for pos, (centers, means) in cal.items():
+        m = types == int(pos)
+        if not m.any():
+            continue
+        c, y, x = np.asarray(centers, float), np.asarray(means, float), out[m]
+        mapped = np.interp(x, c, y)
+        mapped = np.where(x < c[0], y[0] + (x - c[0]), mapped)
+        mapped = np.where(x > c[-1], y[-1] + (x - c[-1]), mapped)
+        out[m] = mapped
+    return out
+
+
 def _predict_conditional_points(bundle: dict, X: pd.DataFrame, element_types: pd.Series) -> np.ndarray:
     """E[points | played 60+], from either the pooled regressor or the
     position-specific ones when the bundle carries them.
     """
     by_pos = bundle.get("points_reg_by_pos")
     if not by_pos:
-        return np.clip(_shrink(bundle, bundle["points_reg"].predict(X), element_types), 0, None)
+        return np.clip(_calibrate(_shrink(bundle, bundle["points_reg"].predict(X), element_types),
+                                  element_types), 0, None)
 
     types = np.asarray(element_types)
     out = np.zeros(len(X), dtype=float)
@@ -131,7 +153,7 @@ def _predict_conditional_points(bundle: dict, X: pd.DataFrame, element_types: pd
     unmodelled = ~np.isin(types, list(by_pos))
     if unmodelled.any():
         out[unmodelled] = bundle["points_reg"].predict(X.loc[unmodelled])
-    return np.clip(_shrink(bundle, out, element_types), 0, None)
+    return np.clip(_calibrate(_shrink(bundle, out, element_types), element_types), 0, None)
 
 
 def _decomposed_xp(bundle: dict, X: pd.DataFrame, element_types: pd.Series,

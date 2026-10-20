@@ -197,6 +197,53 @@ class _team_form_add_ctx:
 _REPLAYED = ()
 
 
+class _team_rotation_ctx:
+    """Each club's recent rotation rate built into the rows and the inputs."""
+    def __enter__(self):
+        self._old = (config.TEAM_ROTATION_FEATURE, config.FEATURE_COLUMNS)
+        config.TEAM_ROTATION_FEATURE = True
+        config.FEATURE_COLUMNS = list(config.FEATURE_COLUMNS) + [
+            c for c in config.TEAM_ROTATION_COLUMNS if c not in config.FEATURE_COLUMNS]
+    def __exit__(self, *a):
+        config.TEAM_ROTATION_FEATURE, config.FEATURE_COLUMNS = self._old
+
+
+# Calibration curve for each simulated season, fitted on the OTHER tuning
+# season's walk-forward rows (research/2026-10-projection-bias); held-back
+# seasons use both.
+CALIBRATION_ROWS = {"2024-25": ["2025-26"], "2025-26": ["2024-25"],
+                    "2022-23": ["2024-25", "2025-26"], "2023-24": ["2024-25", "2025-26"]}
+_CALIBRATION_CACHE = {}
+
+
+def calibration_for(season: str):
+    """{position: (centers, real means)} from the smoothed distribution groups
+    fitted on the other season's rows."""
+    if season not in _CALIBRATION_CACHE:
+        import os
+        from data_engine import distributions as D
+        here = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "research",
+                            "2026-10-projection-bias")
+        rows = pd.concat([pd.read_csv(os.path.join(here, f"rows_{s}.csv"))
+                          for s in CALIBRATION_ROWS[season]], ignore_index=True)
+        t = D.build_tables(rows)
+        _CALIBRATION_CACHE[season] = {
+            int(pos): (list(tab["centers"]), [D._mean(np.asarray(p)) for p in tab["pmf"]])
+            for pos, tab in t["full"].items()}
+    return _CALIBRATION_CACHE[season]
+
+
+def _calibrated_predict(bundle, df):
+    season = str(df["season"].iloc[0]) if "season" in df.columns else None
+    old = config.PTS_IF_60_CALIBRATION
+    if season in CALIBRATION_ROWS:
+        config.PTS_IF_60_CALIBRATION = calibration_for(season)
+    try:
+        return _bundle_predict(bundle, df)
+    finally:
+        config.PTS_IF_60_CALIBRATION = old
+
+
 class _ownership_ctx:
     """Ownership filled in for training rows (config.OWNERSHIP_FEATURE)."""
     def __enter__(self):
@@ -456,6 +503,30 @@ VARIANTS = {
                     "captain on the mean projection",
         fit=lambda df: train_model.train_models(df, save=False),
         predict=_bundle_predict,
+    ),
+    "team_rotation": Variant(
+        name="team_rotation",
+        description="production plus each club's rotation rate: starters changed per "
+                    "match, averaged over its last five (research/2026-10-rotation-calibration)",
+        fit=lambda df: train_model.train_models(df, save=False),
+        predict=_bundle_predict,
+        context=_team_rotation_ctx,
+    ),
+    "calibrated": Variant(
+        name="calibrated",
+        description="production with points-if-60+ mapped to what players projected at that "
+                    "level really scored, curve fitted on the other season "
+                    "(research/2026-10-rotation-calibration)",
+        fit=lambda df: train_model.train_models(df, save=False),
+        predict=_calibrated_predict,
+    ),
+    "lagged_market_replace": Variant(
+        name="lagged_market_replace",
+        description="lagged_ratings with the stale FPL ratings REPLACED by ratings built from "
+                    "betting odds, updated after every match (research/2026-10-market-replace)",
+        fit=lambda df: train_model.train_models(df, save=False),
+        predict=_bundle_predict,
+        context=lambda: _nested(_lagged_ratings_ctx(), _team_form_ctx(), _market_source_ctx()),
     ),
     "ownership": Variant(
         name="ownership",
