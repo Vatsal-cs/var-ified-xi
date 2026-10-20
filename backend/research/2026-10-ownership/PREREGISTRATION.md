@@ -1,5 +1,5 @@
 # Ownership as a model input, actually filled in — pre-registration
-Written 2026-10-20 14:38 MDT, before any run.
+Written 2026-10-20 14:38 MDT, before any run. Commit e00626d.
 
 Why (found in the GW7 audit): selected_by_percent has been in FEATURE_COLUMNS
 all along, but every training row held 0 — the archive keeps ownership under
