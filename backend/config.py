@@ -228,6 +228,16 @@ LAGGED_TEAM_RATINGS = False
 # earlier seasons' own ratings and plays the replayed one on last season's —
 # exactly how the live model runs in 2026-27 (research/2026-10-stale-ratings).
 LAGGED_TEAM_RATINGS_SEASONS = ()
+
+# Ownership (selected_by_percent) as a model input. It has been in
+# FEATURE_COLUMNS all along but was 0 in every training row — the archive's
+# ownership is kept under another name and this season's rows never carried
+# it — so the trees never used it, while live rows held real percentages.
+# With this on, training rows get the share of managers owning the player
+# that gameweek (archive: selections / (total / 15); this season: the same
+# from FPL's per-gameweek `selected`), in percent like the live value.
+# Under test: research/2026-10-ownership.
+OWNERSHIP_FEATURE = False
 TEAM_FORM_COLUMNS = ["team_xg_for", "team_xg_against", "opp_xg_for",
                      "opp_xg_against", "match_xg_for", "match_xg_against"]
 TEAM_FORM_REPLACES = ["team_strength_attack", "team_strength_defence",

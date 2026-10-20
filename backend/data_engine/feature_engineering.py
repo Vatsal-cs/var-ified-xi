@@ -270,6 +270,7 @@ def build_gameweek_history_df(bootstrap: dict, player_histories: dict,
                 "saves": float(gw.get("saves", 0) or 0),
                 "clean_sheets": float(gw.get("clean_sheets", 0) or 0),
                 "goals_conceded": float(gw.get("goals_conceded", 0) or 0),
+                "selected": float(gw.get("selected", 0) or 0),
             })
 
     if skipped:
@@ -280,6 +281,11 @@ def build_gameweek_history_df(bootstrap: dict, player_histories: dict,
     if df.empty:
         raise ValueError("No gameweek history rows built — check player_histories input.")
     df.sort_values(["player_id", "round"], inplace=True)
+    if config.OWNERSHIP_FEATURE:
+        # Share of managers owning him that gameweek, in percent: every
+        # manager holds 15 players, so a round's selections sum to 15x the field.
+        field = df.groupby("round")["selected"].transform("sum") / 15.0
+        df["selected_by_percent"] = (df["selected"] / field.where(field > 0)).fillna(0.0).clip(0, 1) * 100.0
     attach_live_setpieces(df, bootstrap)
     if config.TEAM_FORM:
         team_form.attach(df, live_team_form_start(bootstrap))

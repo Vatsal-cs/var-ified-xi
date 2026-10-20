@@ -203,6 +203,8 @@ def fetch_season(season: str, season_index: int):
             start = team_form.priors(final_team_form(_previous_season(season)), names)
         team_form.SEASON_START[season] = start
         team_form.attach(out, start)
+    if config.OWNERSHIP_FEATURE:
+        out["selected_by_percent"] = out["ownership"].astype(float) * 100.0
 
     return out
 

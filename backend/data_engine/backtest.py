@@ -197,6 +197,15 @@ class _team_form_add_ctx:
 _REPLAYED = ()
 
 
+class _ownership_ctx:
+    """Ownership filled in for training rows (config.OWNERSHIP_FEATURE)."""
+    def __enter__(self):
+        self._old = config.OWNERSHIP_FEATURE
+        config.OWNERSHIP_FEATURE = True
+    def __exit__(self, *a):
+        config.OWNERSHIP_FEATURE = self._old
+
+
 class _live_ratings_ctx:
     """The replayed season on last season's ratings, the seasons it trains on
     with their own — how the live model runs in 2026-27."""
@@ -447,6 +456,14 @@ VARIANTS = {
                     "captain on the mean projection",
         fit=lambda df: train_model.train_models(df, save=False),
         predict=_bundle_predict,
+    ),
+    "ownership": Variant(
+        name="ownership",
+        description="production with selected_by_percent actually filled in for training "
+                    "rows (it was 0 everywhere) (research/2026-10-ownership)",
+        fit=lambda df: train_model.train_models(df, save=False),
+        predict=_bundle_predict,
+        context=_ownership_ctx,
     ),
     "live_ratings": Variant(
         name="live_ratings",
