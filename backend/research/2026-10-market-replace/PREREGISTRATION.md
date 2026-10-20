@@ -1,5 +1,5 @@
 # Stale FPL ratings replaced by odds-based ratings — pre-registration
-Written 2026-10-20 14:50 MDT, before any run.
+Written 2026-10-20 14:50 MDT, before any run. Commit 0707500.
 
 Why: Brighton have outscored their projections every week of 2026-27 (+2.7 a
 player-match GW2-6, +4.0 in GW7) under last season's ratings. Earlier tests
@@ -20,3 +20,6 @@ REPLACES the stale ratings with odds-based ratings in the live set-up.
 lagged_market_replace vs lagged_ratings, seeds 42, 7, 13, 101, 2024; 2024-25
 and 2025-26 (plus 2024-25); --bag-size 1. ACCEPT only if "better"; then ONCE on
 2022-23 and 2023-24; ship (odds-based ratings live) only if > 0 in both.
+
+Note added before any run (2026-10-20): ownership shipped after this was written
+(research/2026-10-ownership), so the reference variants include it.

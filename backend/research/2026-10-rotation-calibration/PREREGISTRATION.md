@@ -1,5 +1,5 @@
 # Club rotation rate, and calibrated points-if-60+ — pre-registration
-Written 2026-10-20 14:50 MDT, before any run.
+Written 2026-10-20 14:50 MDT, before any run. Commit 0707500.
 
 Why (GW7 2026-27 audit): City started 55% of the players the model gave 82%
 (the minutes model only knows each player's own record, never that his manager
@@ -21,3 +21,6 @@ Seeds 42, 7, 13, 101, 2024; 2024-25 (trained on itself) and 2025-26 (plus
 2024-25); --bag-size 1. Each variant judged on its own: ACCEPT only if
 "better" (pooled 95% CI above zero AND ahead in both seasons); then ONCE on
 2022-23 and 2023-24, logged in config's "Uses so far"; ship only if > 0 in both.
+
+Note added before any run (2026-10-20): ownership shipped after this was written
+(research/2026-10-ownership), so the reference variants include it.
