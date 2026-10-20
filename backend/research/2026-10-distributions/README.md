@@ -70,3 +70,29 @@ really happened, so they're unaffected — which is why Haaland's distribution
 averages ~6 when his projection says 7.8. Whether shrinking the projections
 themselves would score more points is a separate question for the backtest,
 not settled here.
+
+## Update, October 2026: group averages made to rise with the projection
+
+The small top groups were noisy enough to run backwards: forwards projected
+6.2 if they played 60+ really averaged 4.5, below those projected 5.5 (5.0),
+and keepers had the same kind of dip. A player projected just above 6
+(Haaland, GW8 2026-27) inherited it: his distribution averaged 4.2 against a
+5.7 projection. `distributions.MONOTONE_MEANS` now pools out-of-order
+neighbouring groups to their match-weighted average and shifts each group's
+distribution to it, shape kept.
+
+Same checks, same split (`output_monotone.txt`), before → after:
+
+| | fit 2024-25 → test 2025-26 | fit 2025-26 → test 2024-25 |
+|---|---|---|
+| 10–90 range holds the score (pool) | 87.6% → 88.2% | 85.2% → 85.6% |
+| A outscores B, Brier (recalibrated) | 0.2425 → 0.2422 | 0.2434 → 0.2433 |
+| Chance of 10+ by tenths | within 2 points, as before | within 2 points except one bin at 3 |
+
+Equal or slightly better everywhere, so it ships. The log-odds scale refits
+to 0.75 on the new tables (was 0.73) and is updated to match.
+
+What the smoothing doesn't change: the top groups still score less than the
+model projects (players projected 7.95 if they play averaged 6.23; Haaland,
+projected 8.65 at his highest, averaged 7.0). That's the projection running
+high at the top, which the distributions report honestly.

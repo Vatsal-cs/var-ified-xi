@@ -52,6 +52,14 @@ SIZE = SUPPORT_MAX - SUPPORT_MIN + 1
 QUANTILES = [0, .1, .2, .3, .4, .5, .6, .7, .8, .9, .95, .98, 1.0]
 MIN_GROUP = 60          # smaller groups merge into their neighbour
 
+# A higher points-if-60+ should never mean a lower real average. The small top
+# groups (60-75 matches) are noisy enough to break that: forwards projected
+# 6.2 really averaged 4.5, below those projected 5.5 (5.0) — so a player
+# projected just above 6 (Haaland, GW8 2026-27) inherited a dip that is only
+# noise. Each group's distribution is moved so the real averages rise with the
+# projection (pool-adjacent-violators, weighted by matches); its shape is kept.
+MONOTONE_MEANS = True
+
 
 def _hist(points) -> np.ndarray:
     idx = np.clip(np.asarray(points, dtype=int) - SUPPORT_MIN, 0, SIZE - 1)
@@ -87,11 +95,33 @@ def build_tables(rows: pd.DataFrame) -> dict:
             centers[-1] = (centers[-1] * ns[-1] + merged["pts_if_60"].sum()) / n
             pmfs[-1] = (pmfs[-1] * ns[-1] + _hist(merged["actual"]) * len(merged)) / n
             ns[-1] = n
+        if MONOTONE_MEANS:
+            pmfs = _monotone(pmfs, ns)
         out["full"][str(pos)] = {"centers": [round(c, 4) for c in centers],
                                  "pmf": [[round(float(x), 6) for x in p] for p in pmfs],
                                  "n": ns}
         out["cameo"][str(pos)] = [round(float(x), 6) for x in _hist(cameo["actual"])]
     return out
+
+
+def _mean(p: np.ndarray) -> float:
+    return float((np.arange(SIZE) + SUPPORT_MIN) @ p)
+
+
+def _monotone(pmfs: list, ns: list) -> list:
+    """Groups' distributions moved so their averages never fall as the
+    projection rises: adjacent groups out of order are pooled to their
+    match-weighted average, then each distribution is shifted to it."""
+    blocks = []                                   # [mean, matches, group indexes]
+    for i, (p, n) in enumerate(zip(pmfs, ns)):
+        blocks.append([_mean(p), n, [i]])
+        while len(blocks) > 1 and blocks[-2][0] > blocks[-1][0]:
+            m2, n2, i2 = blocks.pop()
+            m1, n1, i1 = blocks.pop()
+            blocks.append([(m1 * n1 + m2 * n2) / (n1 + n2), n1 + n2, i1 + i2])
+    target = {i: m for m, _, idx in blocks for i in idx}
+    return [_shift(p, target[i] - _mean(p)) if abs(target[i] - _mean(p)) > 1e-9 else p
+            for i, p in enumerate(pmfs)]
 
 
 def load_tables(path: Path = TABLES_PATH) -> dict | None:
@@ -186,7 +216,7 @@ def summary(p: np.ndarray) -> dict:
 # each player's own range and 10+ chance were honest. Scaling the log-odds by
 # this factor, fitted on both seasons' pairs, brings 2025-26 within 2 points
 # in every bin and 2024-25 within 3 up to 70% (research/2026-10-distributions).
-PAIR_LOGIT_SCALE = 0.73
+PAIR_LOGIT_SCALE = 0.75
 
 
 def beats(a: np.ndarray, b: np.ndarray) -> tuple:
