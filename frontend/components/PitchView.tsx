@@ -97,6 +97,15 @@ function Spread({ dist }: { dist: PointsDist }) {
   );
 }
 
+/** The colour of the light pool under a shirt: the shirt itself, or its
+ *  trim when the shirt is too dark to glow on night-time grass. */
+function poolColour(kit: { shirt: string; trim: string }) {
+  const hex = kit.shirt.replace("#", "");
+  const [r, g, b] = [0, 2, 4].map((i) => parseInt(hex.slice(i, i + 2), 16) / 255);
+  const lum = 0.2126 * r + 0.7152 * g + 0.0722 * b;
+  return lum < 0.18 ? kit.trim : kit.shirt;
+}
+
 function PlayerChip({
   player,
   x,
@@ -126,25 +135,25 @@ function PlayerChip({
       aria-label={`${player.name}, ${player.team}, ${player.predicted_points.toFixed(
         1
       )} projected points`}
-      // Fixed width so a long surname can't widen the button and shove the
-      // whole column off its mark. Five across on a phone is the tight case.
-      className="group absolute z-10 flex w-[62px] -translate-x-1/2 -translate-y-1/2 animate-dropIn flex-col items-center focus:outline-none sm:w-[84px]"
+      // A share of the pitch's width, never more than one slot: five across is
+      // 16.7% apart, so 16% wide can't overlap at any screen size.
+      className="group absolute z-10 flex w-[16%] max-w-[84px] -translate-x-1/2 -translate-y-1/2 animate-dropIn flex-col items-center focus:outline-none"
       style={{ left: `${x}%`, top: `${y}%`, animationDelay: `${0.15 + order * 0.07}s` }}
     >
       {/* Shirt */}
       <span className="relative block">
-        {/* The club's colour, glowing on the grass under the shirt */}
+        {/* A pool of the club's colour on the grass, like a floodlit shadow */}
         <span
           aria-hidden
-          className="absolute -inset-2 rounded-full opacity-30 blur-md transition-opacity duration-300 group-hover:opacity-60"
-          style={{ background: kit.shirt }}
+          className="absolute left-1/2 top-full h-2.5 w-[130%] -translate-x-1/2 -translate-y-1/2 rounded-[50%] opacity-60 blur-[3px] transition-opacity duration-300 group-hover:opacity-100"
+          style={{ background: poolColour(kit) }}
         />
         {player.is_captain && (
           <span aria-hidden className="absolute inset-0 z-[2] animate-ring rounded-full" />
         )}
         <span
-          className={`relative z-[1] flex h-12 w-12 items-center justify-center rounded-full font-display text-[11px] tracking-wide shadow-lg transition-all duration-200 group-hover:-translate-y-1 group-hover:shadow-xl sm:h-[52px] sm:w-[52px] ${
-            isActive ? "ring-2 ring-gold ring-offset-2 ring-offset-[#16221A]" : ""
+          className={`relative z-[1] flex h-9 w-9 items-center justify-center rounded-full font-display text-[9px] tracking-wide shadow-lg transition-all duration-200 group-hover:-translate-y-1 group-hover:shadow-xl sm:h-11 sm:w-11 sm:text-[10px] ${
+            isActive ? "ring-2 ring-gold ring-offset-2 ring-offset-[#11301F]" : ""
           }`}
           style={{
             background: kit.shirt,
@@ -159,7 +168,7 @@ function PlayerChip({
 
         {armband && (
           <span
-            className={`absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full border-2 border-[#16221A] font-mono text-[9px] font-bold ${
+            className={`absolute -right-1.5 -top-1.5 z-[3] flex h-[18px] w-[18px] items-center justify-center rounded-full border-2 border-[#10241A] font-mono text-[8px] font-bold ${
               player.is_captain
                 ? "bg-gold text-base"
                 : "bg-ink-200 text-base"
@@ -171,7 +180,7 @@ function PlayerChip({
         {coinFlip && (
           <span
             title="Coin flip with a bench player"
-            className="absolute -left-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full border-2 border-[#16221A] bg-gold/90 font-mono text-[9px] font-bold text-base"
+            className="absolute -left-1.5 -top-1.5 z-[3] flex h-[18px] w-[18px] items-center justify-center rounded-full border-2 border-[#10241A] bg-violet font-mono text-[8px] font-bold text-base"
           >
             ½
           </span>
@@ -179,11 +188,15 @@ function PlayerChip({
       </span>
 
       {/* Name + points tag */}
-      <span className="mt-1.5 block w-full rounded bg-base/80 px-0.5 py-0.5 backdrop-blur-sm">
-        <span className="block truncate text-center font-body text-[10px] font-medium leading-tight text-ink-100">
+      <span className="mt-2 block w-full rounded-[2px] bg-base/85 px-0.5 py-0.5 backdrop-blur-sm">
+        <span className="block truncate text-center font-body text-[9px] font-medium leading-tight text-ink-100 sm:text-[10px]">
           {player.name}
         </span>
-        <span className="block text-center font-mono text-[9px] leading-tight text-gold">
+        <span
+          className={`block text-center font-mono text-[9px] leading-tight ${
+            player.predicted_points >= 5 ? "text-pts" : player.predicted_points >= 4 ? "text-gold" : "text-ink-300"
+          }`}
+        >
           {player.predicted_points.toFixed(1)}
         </span>
       </span>
@@ -214,17 +227,19 @@ export default function PitchView({
   return (
     <div>
       <div className="relative mx-auto aspect-[3/4] w-full max-w-md overflow-hidden rounded-[3px] border border-line shadow-panel">
-        {/* Turf: a deep green base with mown stripes */}
-        <div className="absolute inset-0 bg-[linear-gradient(175deg,#1B2A1E_0%,#16221A_50%,#101A14_100%)]" />
+        {/* Turf: a night-match green with mown stripes */}
+        <div className="absolute inset-0 bg-[linear-gradient(175deg,#173A27_0%,#11301F_45%,#0B2016_100%)]" />
         <div
-          className="absolute inset-0 opacity-[0.55]"
+          className="absolute inset-0"
           style={{
             backgroundImage:
-              "repeating-linear-gradient(180deg, rgba(240,235,226,0.028) 0 8.33%, transparent 8.33% 16.66%)",
+              "repeating-linear-gradient(180deg, rgba(255,255,255,0.035) 0 8.33%, transparent 8.33% 16.66%)",
           }}
         />
-        {/* Floodlight falloff from the top */}
-        <div className="absolute inset-0 bg-[radial-gradient(120%_70%_at_50%_-5%,rgba(240,235,226,0.07),transparent_60%)]" />
+        {/* Four floodlights, one in each corner */}
+        <div className="absolute inset-0 bg-[radial-gradient(60%_45%_at_0%_0%,rgba(255,236,190,0.10),transparent_70%),radial-gradient(60%_45%_at_100%_0%,rgba(255,236,190,0.10),transparent_70%),radial-gradient(60%_45%_at_0%_100%,rgba(190,220,255,0.06),transparent_70%),radial-gradient(60%_45%_at_100%_100%,rgba(190,220,255,0.06),transparent_70%)]" />
+        {/* Edge vignette */}
+        <div className="absolute inset-0 shadow-[inset_0_0_60px_rgba(0,0,0,0.55)]" />
 
         {/* Markings */}
         <svg
@@ -233,7 +248,7 @@ export default function PitchView({
           preserveAspectRatio="none"
           aria-hidden
         >
-          <g fill="none" stroke="rgba(255,255,255,0.16)" strokeWidth="0.45">
+          <g fill="none" stroke="rgba(255,255,255,0.28)" strokeWidth="0.45" style={{ filter: "drop-shadow(0 0 1.2px rgba(255,255,255,0.35))" }}>
             <rect x="3" y="3" width="94" height="127" />
             <line x1="3" y1="66.5" x2="97" y2="66.5" />
             <circle cx="50" cy="66.5" r="10" />

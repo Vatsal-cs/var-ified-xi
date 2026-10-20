@@ -87,7 +87,7 @@ export default function SiteHeader({
                     >
                       {l.label}
                       {isActive && (
-                        <span className="absolute inset-x-3 -bottom-[7px] h-[2px] bg-gold" />
+                        <span className="absolute inset-x-3 -bottom-[7px] h-[2px] bg-gradient-to-r from-gold via-violet to-sky" />
                       )}
                     </Link>
                   </li>

@@ -276,7 +276,7 @@ export default function ThisWeek({ team }: { team: OptimizedTeam }) {
         )}
       </div>
 
-      <h1 className="mt-3 animate-rise font-display text-[44px] leading-[1] tracking-[-0.02em] text-ink-100 sm:text-[60px]">
+      <h1 className="mt-3 animate-rise font-display text-[44px] leading-[1] tracking-[-0.02em] text-gradient-gold sm:text-[60px]">
         {headline}
       </h1>
 

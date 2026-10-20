@@ -21,15 +21,17 @@ export default function SquadStats({
   const pct = Math.min(100, (used / total) * 100);
   return (
     <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-      <div className="panel transition-colors duration-200 hover:border-line-strong p-4">
+      <div className="panel group relative overflow-hidden p-4 transition-all duration-300 hover:-translate-y-0.5 hover:border-line-strong">
+        <span aria-hidden className="absolute inset-x-0 top-0 h-[2px] bg-sky opacity-80" />
+        <span aria-hidden className="pointer-events-none absolute -right-8 -top-8 h-24 w-24 rounded-full bg-sky opacity-[0.07] blur-2xl transition-opacity duration-300 group-hover:opacity-[0.16]" />
         <p className="label">{valueLabel}</p>
-        <p className="mt-1.5 stat">
+        <p className="mt-1.5 stat text-sky">
           &pound;{used.toFixed(1)}
           <span className="text-sm text-ink-500">m</span>
         </p>
         <div className="mt-2 h-1 w-full overflow-hidden rounded-full bg-line">
           <div
-            className="h-full rounded-full bg-pts transition-[width] duration-700 ease-out"
+            className="h-full origin-left animate-grow rounded-full bg-gradient-to-r from-sky/60 to-sky"
             style={{ width: `${pct}%` }}
           />
         </div>
@@ -46,7 +48,7 @@ export default function SquadStats({
         sub="XI + captain"
       />
 
-      <Stat label="Formation" value={formation} sub="chosen by the solver" />
+      <Stat label="Formation" value={formation} tone="violet" sub="chosen by the solver" />
 
       <Stat
         label={
@@ -55,6 +57,7 @@ export default function SquadStats({
           </Term>
         }
         value={`${horizonGws} GWs`}
+        tone="gold"
         sub="look-ahead window"
       />
     </div>

@@ -35,6 +35,7 @@ export default function Home() {
       {/* The squad it produces */}
       <Section
         id="squad"
+        tone="pts"
         eyebrow="The squad"
         title={
           chipTeam

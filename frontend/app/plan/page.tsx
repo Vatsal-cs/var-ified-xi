@@ -23,6 +23,7 @@ export default function PlanPage() {
       {team.mode === "transfer_plan" && weeks.length > 1 && (
         <Section
           id="outlook"
+          tone="violet"
           eyebrow="The plan"
           title={`The next ${weeks.length} gameweeks`}
           lede="The run of moves this week's decision belongs to. The solver looks this far ahead so it doesn't sell a player it would only have to buy back."
@@ -36,6 +37,7 @@ export default function PlanPage() {
           and explicit about "watching, nothing yet" otherwise. */}
       <Section
         id="chips"
+        tone="gold"
         eyebrow="Chip watch"
         title="When to play a chip"
         lede="Chips come in two half-season sets, and an unplayed chip is lost at its deadline. This tracks the deadline, values the best week in sight, and watches the fixture calendar for doubles and blanks."

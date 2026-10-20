@@ -20,6 +20,7 @@ export default function HowPage() {
     <PageShell team={team}>
       <Section
         id="how"
+        tone="sky"
         eyebrow="Under the hood"
         title="How this was decided"
         lede="Five stages, run in order, every time the engine runs. Expand any stage for the real mechanics."
@@ -29,6 +30,7 @@ export default function HowPage() {
 
       <Section
         id="faq"
+        tone="violet"
         eyebrow="Good to know"
         title="Questions you might have"
         lede="Straight answers to what this page tends to raise."

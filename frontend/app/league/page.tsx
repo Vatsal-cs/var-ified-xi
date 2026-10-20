@@ -19,6 +19,7 @@ export default function LeaguePage() {
     <PageShell team={team}>
       <Section
         id="league"
+        tone="sky"
         eyebrow="Your league"
         title="What the managers ahead of you own"
         lede="Points you and a rival both score cancel out. What moves you past them is the players they don't have — and what quietly costs you is the ones they all have and you don't."

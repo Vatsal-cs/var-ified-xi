@@ -43,6 +43,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       className={`${display.variable} ${body.variable} ${mono.variable}`}
     >
       <body className="min-h-screen bg-base font-body text-ink-200 antialiased">
+        <div aria-hidden className="aurora">
+          <span className="animate-drift" style={{ background: "#E0A64A", left: "-15vmax", top: "-20vmax" }} />
+          <span className="animate-drift" style={{ background: "#A48BE0", right: "-20vmax", top: "20vh", animationDelay: "-12s" }} />
+          <span className="animate-drift" style={{ background: "#3E9C8C", left: "10vw", bottom: "-30vmax", animationDelay: "-24s" }} />
+        </div>
         {children}
       </body>
     </html>

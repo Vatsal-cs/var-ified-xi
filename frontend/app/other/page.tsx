@@ -19,6 +19,7 @@ export default function OtherPage() {
     <PageShell team={team}>
       <Section
         id="other"
+        tone="coral"
         eyebrow="Beyond the Premier League"
         title="Midweek and international games"
         lede="FPL only shows Premier League matches. These are the other games your players' clubs and countries play before the end of the planning window: a midweek tie means rotation risk, a long international trip means tired legs."

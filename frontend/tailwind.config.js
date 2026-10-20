@@ -40,6 +40,7 @@ module.exports = {
         // information and fixtures (sky). Muted like the rest, never neon.
         violet: "#A48BE0",
         sky: "#7DB7D8",
+        coral: "#E58A6F",
         warn: "#D9A441", // caution, chips
         risk: "#C96A5C", // exposure, sold, loss
         ink: {
@@ -119,6 +120,15 @@ module.exports = {
           "0%, 100%": { opacity: "0.35" },
           "50%": { opacity: "0.7" },
         },
+        shimmer: {
+          "0%": { backgroundPosition: "0% 50%" },
+          "100%": { backgroundPosition: "200% 50%" },
+        },
+        drift: {
+          "0%": { transform: "translate3d(0,0,0) scale(1)" },
+          "50%": { transform: "translate3d(6vw,4vh,0) scale(1.12)" },
+          "100%": { transform: "translate3d(-4vw,-2vh,0) scale(0.95)" },
+        },
       },
       animation: {
         rise: "rise 0.45s cubic-bezier(0.22,1,0.36,1) forwards",
@@ -134,6 +144,8 @@ module.exports = {
         grow: "grow 0.9s cubic-bezier(0.22,1,0.36,1) both",
         coin: "coin 1.4s cubic-bezier(0.45,0,0.2,1) both",
         glow: "glow 3.2s ease-in-out infinite",
+        shimmer: "shimmer 7s linear infinite",
+        drift: "drift 38s ease-in-out infinite alternate",
       },
     },
   },
