@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <!-- VAR-ified XI: the referee's "check the screen" rectangle, with a gold tick. -->
+  <rect width="32" height="32" rx="7" fill="#131110"/>
+  <rect x="4.6" y="7.6" width="22.8" height="16.8" rx="2.6" fill="none" stroke="#F2EDE4" stroke-width="2.3"/>
+  <path d="M10.4 16.4 L14.4 20.1 L21.8 12.2" fill="none" stroke="#E0A64A" stroke-width="3.1" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
