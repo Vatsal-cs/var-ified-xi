@@ -1,0 +1,13 @@
+population: 3991 midfielder/forward gameweeks projected 2.5+ with a European/cup/international game in the 30 days before
+  pooled   goal/assist there: n=1308 projected 3.91 scored 3.93 | none: n=2683 projected 3.57 scored 3.54 | difference in misses +0.04 [-0.21, +0.29]
+  2024-25  goal/assist there: n= 651 projected 4.09 scored 3.99 | none: n=1205 projected 3.61 scored 3.63 | difference in misses -0.12 [-0.53, +0.27]
+  2025-26  goal/assist there: n= 657 projected 3.73 scored 3.86 | none: n=1478 projected 3.54 scored 3.47 | difference in misses +0.20 [-0.10, +0.50]
+
+STEP 1 VERDICT: STOP — no signal beyond what the model already knows
+
+descriptive — opponent strength (xm_opp_30, median split) among those with a goal or assist:
+  strong opponents  n= 654 projected 3.98 scored 4.00 miss +0.02
+  weak opponents    n= 654 projected 3.84 scored 3.85 miss +0.02
+descriptive — shots on target there (xm_sot_30):
+  2+ on target      n= 968 projected 3.93 scored 3.95 miss +0.02
+  0-1 on target     n=3023 projected 3.60 scored 3.58 miss -0.02
