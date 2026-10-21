@@ -13,7 +13,7 @@ import { usePathname } from "next/navigation";
 import type { OptimizedTeam } from "@/lib/types";
 import RefreshButton from "@/components/RefreshButton";
 import VarMark from "@/components/VarMark";
-import { Countdown } from "@/components/motion";
+import { DeadlineBar } from "@/components/motion";
 
 /** One page of the site, as the nav lists it (components/PageShell.tsx). */
 export type NavPage = { href: string; label: string };
@@ -57,9 +57,6 @@ export default function SiteHeader({
           <span className="pill border-gold/35 text-gold">
             GW {team.gameweek ?? "—"}
           </span>
-          <span className="hidden sm:inline-flex">
-            <Countdown deadline={team.deadline} />
-          </span>
           <span className="hidden items-center gap-1.5 text-ink-400 md:inline-flex">
             <span className="h-1.5 w-1.5 animate-pulseDot rounded-full bg-pts" />
             {timeAgo(team.generated_at)}
@@ -67,6 +64,8 @@ export default function SiteHeader({
           <RefreshButton generatedAt={team.generated_at} />
         </div>
       </div>
+
+      <DeadlineBar deadline={team.deadline} gameweek={team.gameweek} />
 
       {pages.length > 0 && (
         <nav aria-label="Pages" className="border-t border-line">

@@ -4,7 +4,8 @@
 
 import { useState } from "react";
 import type { Player, PointsDist } from "@/lib/types";
-import { kitFor, needsOutline } from "@/lib/teams";
+import { kitFor } from "@/lib/teams";
+import Crest from "@/components/Crest";
 import { pct } from "@/lib/odds";
 
 const ROW_ORDER: Player["position"][] = ["FWD", "MID", "DEF", "GK"];
@@ -125,79 +126,81 @@ function PlayerChip({
   order?: number;
 }) {
   const kit = kitFor(player.team);
-  const outline = needsOutline(kit);
-  const armband = player.is_captain ? "C" : player.is_vice_captain ? "V" : null;
+  const pts = player.predicted_points;
+  // Badges are sized in em off a pitch-relative font size, so they scale with
+  // the crest instead of with the phone's text setting.
+  const badge =
+    "absolute z-[3] rounded-[0.32em] px-[0.42em] py-[0.24em] font-body text-[clamp(8px,2.3cqw,10.5px)] font-extrabold leading-none tracking-[0.06em] shadow-[0_2px_6px_rgba(0,0,0,0.65)]";
 
   return (
     <button
       onClick={onSelect}
       aria-pressed={isActive}
-      aria-label={`${player.name}, ${player.team}, ${player.predicted_points.toFixed(
-        1
-      )} projected points`}
-      // A share of the pitch's width, never more than one slot: five across is
-      // 16.7% apart, so 16% wide can't overlap at any screen size.
-      className="group absolute z-10 flex w-[16%] max-w-[84px] -translate-x-1/2 -translate-y-1/2 animate-dropIn flex-col items-center focus:outline-none"
+      aria-label={`${player.name}, ${player.team}, ${pts.toFixed(1)} projected points${
+        player.is_captain ? ", captain" : player.is_vice_captain ? ", vice-captain" : ""
+      }`}
+      // Everything is sized in cqw, a share of the pitch's own width, so a
+      // phone's larger text setting can't swell the chips into each other:
+      // five across sit 16.7% apart and each is 16% wide.
+      className="group absolute z-10 flex w-[16cqw] -translate-x-1/2 -translate-y-1/2 animate-dropIn flex-col items-center focus:outline-none"
       style={{ left: `${x}%`, top: `${y}%`, animationDelay: `${0.15 + order * 0.07}s` }}
     >
-      {/* Shirt */}
-      <span className="relative block">
+      <span className="relative block h-[11cqw] w-[11cqw] transition-transform duration-200 group-hover:-translate-y-[0.8cqw]">
         {/* A pool of the club's colour on the grass, like a floodlit shadow */}
         <span
           aria-hidden
-          className="absolute left-1/2 top-full h-2.5 w-[130%] -translate-x-1/2 -translate-y-1/2 rounded-[50%] opacity-60 blur-[3px] transition-opacity duration-300 group-hover:opacity-100"
+          className="absolute left-1/2 top-[98%] h-[2.2cqw] w-[120%] -translate-x-1/2 -translate-y-1/2 rounded-[50%] opacity-35 blur-[3px] transition-opacity duration-300 group-hover:opacity-80"
           style={{ background: poolColour(kit) }}
         />
+        {/* The captain's halo */}
         {player.is_captain && (
-          <span aria-hidden className="absolute inset-0 z-[2] animate-ring rounded-full" />
-        )}
-        <span
-          className={`relative z-[1] flex h-9 w-9 items-center justify-center rounded-full font-display text-[9px] tracking-wide shadow-lg transition-all duration-200 group-hover:-translate-y-1 group-hover:shadow-xl sm:h-11 sm:w-11 sm:text-[10px] ${
-            isActive ? "ring-2 ring-gold ring-offset-2 ring-offset-[#11301F]" : ""
-          }`}
-          style={{
-            background: kit.shirt,
-            color: kit.trim,
-            boxShadow: outline
-              ? "0 0 0 1.5px rgba(0,0,0,0.45), 0 6px 14px -6px rgba(0,0,0,0.8)"
-              : "0 6px 14px -6px rgba(0,0,0,0.8)",
-          }}
-        >
-          {kit.abbr}
-        </span>
-
-        {armband && (
           <span
-            className={`absolute -right-1.5 -top-1.5 z-[3] flex h-[18px] w-[18px] items-center justify-center rounded-full border-2 border-[#10241A] font-mono text-[8px] font-bold ${
-              player.is_captain
-                ? "bg-gold text-base"
-                : "bg-ink-200 text-base"
-            }`}
-          >
-            {armband}
+            aria-hidden
+            className="absolute -inset-[2cqw] animate-glow rounded-full bg-[radial-gradient(circle,rgba(224,166,74,0.5),transparent_66%)]"
+          />
+        )}
+        <Crest
+          team={player.team}
+          className={`relative z-[1] h-full w-full drop-shadow-[0_4px_5px_rgba(0,0,0,0.7)] transition-transform duration-200 ${
+            isActive ? "scale-110" : ""
+          }`}
+        />
+        {player.is_captain && (
+          <span className={`${badge} -bottom-[0.3cqw] -right-[1.8cqw] bg-gradient-to-b from-[#F7DC9E] to-[#D49A43] text-[#2B1D06]`}>
+            C
+          </span>
+        )}
+        {player.is_vice_captain && (
+          <span className={`${badge} -bottom-[0.3cqw] -right-[2.4cqw] bg-[#0D1A13] text-gold ring-1 ring-inset ring-gold/70`}>
+            VC
           </span>
         )}
         {coinFlip && (
-          <span
-            title="Coin flip with a bench player"
-            className="absolute -left-1.5 -top-1.5 z-[3] flex h-[18px] w-[18px] items-center justify-center rounded-full border-2 border-[#10241A] bg-violet font-mono text-[8px] font-bold text-base"
-          >
-            ½
+          <span title="Coin flip with a bench player" className={`${badge} -left-[1.8cqw] -top-[0.3cqw] bg-violet text-[#160F26]`}>
+            &frac12;
           </span>
         )}
       </span>
 
       {/* Name + points tag */}
-      <span className="mt-2 block w-full rounded-[2px] bg-base/85 px-0.5 py-0.5 backdrop-blur-sm">
-        <span className="block truncate text-center font-body text-[9px] font-medium leading-tight text-ink-100 sm:text-[10px]">
+      <span
+        className={`mt-[1.8cqw] block w-full rounded-[3px] border px-[0.5cqw] py-[0.45cqw] backdrop-blur-sm transition-colors duration-200 ${
+          isActive
+            ? "border-gold/70 bg-base/90"
+            : player.is_captain
+              ? "border-gold/35 bg-base/85"
+              : "border-white/[0.06] bg-base/80 group-hover:border-white/20"
+        }`}
+      >
+        <span className="block truncate text-center font-body text-[clamp(8px,2.5cqw,11px)] font-medium leading-tight text-ink-100">
           {player.name}
         </span>
         <span
-          className={`block text-center font-mono text-[9px] leading-tight ${
-            player.predicted_points >= 5 ? "text-pts" : player.predicted_points >= 4 ? "text-gold" : "text-ink-300"
+          className={`block text-center font-mono text-[clamp(8px,2.3cqw,10px)] leading-tight tabular-nums ${
+            pts >= 5 ? "text-pts" : pts >= 4 ? "text-gold" : "text-ink-300"
           }`}
         >
-          {player.predicted_points.toFixed(1)}
+          {pts.toFixed(1)}
         </span>
       </span>
     </button>
@@ -226,7 +229,7 @@ export default function PitchView({
 
   return (
     <div>
-      <div className="relative mx-auto aspect-[3/4] w-full max-w-md overflow-hidden rounded-[3px] border border-line shadow-panel">
+      <div className="relative mx-auto aspect-[3/4] w-full max-w-md overflow-hidden rounded-[3px] border border-line shadow-panel [container-type:inline-size]">
         {/* Turf: a night-match green with mown stripes */}
         <div className="absolute inset-0 bg-[linear-gradient(175deg,#173A27_0%,#11301F_45%,#0B2016_100%)]" />
         <div
@@ -282,15 +285,7 @@ export default function PitchView({
         <div className="mx-auto mt-4 max-w-md animate-rise rounded-[3px] border border-line bg-surface p-4 shadow-panel">
           <div className="flex items-start justify-between gap-3">
             <div className="flex items-center gap-3">
-              <span
-                className="flex h-9 w-9 flex-none items-center justify-center rounded-full font-display text-[10px]"
-                style={{
-                  background: kitFor(active.team).shirt,
-                  color: kitFor(active.team).trim,
-                }}
-              >
-                {kitFor(active.team).abbr}
-              </span>
+              <Crest team={active.team} className="h-10 w-10 flex-none drop-shadow-[0_3px_4px_rgba(0,0,0,0.6)]" />
               <div>
                 <p className="font-display text-lg tracking-tight text-ink-100">
                   {active.name}
@@ -298,10 +293,10 @@ export default function PitchView({
                 <p className="font-mono text-[11px] text-ink-400">
                   {active.team} &middot; {active.position}
                   {active.is_captain && (
-                    <span className="text-pts"> &middot; captain (2&times;)</span>
+                    <span className="text-gold"> &middot; captain (2&times;)</span>
                   )}
                   {active.is_vice_captain && (
-                    <span className="text-warn"> &middot; vice</span>
+                    <span className="text-gold/80"> &middot; vice-captain</span>
                   )}
                 </p>
               </div>

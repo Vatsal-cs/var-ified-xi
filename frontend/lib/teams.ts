@@ -1,9 +1,10 @@
 // File: teams.ts
 // Path: var-ified-xi/frontend/lib/teams.ts
 //
-// Club kit colours, so a player on the pitch reads as *someone* rather than
-// as an anonymous grey disc. Shirt is the primary colour, trim is what sits
-// on top of it (text, the ring around the badge).
+// Club kit colours and crests, so a player on the pitch reads as *someone*
+// rather than as an anonymous grey disc. Shirt is the primary colour, trim is
+// what sits on top of it (text, the ring around the badge); code names the
+// club's crest on the Premier League's image server.
 //
 // Keys match the `team` strings the backend emits, which are FPL's own short
 // names. Anything unrecognised falls back to a neutral slate, so a promoted
@@ -16,38 +17,40 @@ export interface Kit {
   trim: string;
   /** Short badge text, 3 letters. */
   abbr: string;
+  /** The club's Premier League code (FPL's teams[].code), which names its crest. */
+  code?: number;
 }
 
 const KITS: Record<string, Kit> = {
-  Arsenal: { shirt: "#EF0107", trim: "#FFFFFF", abbr: "ARS" },
-  "Aston Villa": { shirt: "#95BFE5", trim: "#670E36", abbr: "AVL" },
-  Bournemouth: { shirt: "#DA291C", trim: "#000000", abbr: "BOU" },
-  Brentford: { shirt: "#E30613", trim: "#FFFFFF", abbr: "BRE" },
-  Brighton: { shirt: "#0057B8", trim: "#FFCD00", abbr: "BHA" },
-  Burnley: { shirt: "#6C1D45", trim: "#99D6EA", abbr: "BUR" },
-  Chelsea: { shirt: "#034694", trim: "#FFFFFF", abbr: "CHE" },
-  "Coventry City": { shirt: "#78D0F3", trim: "#1B1B1B", abbr: "COV" },
-  "Crystal Palace": { shirt: "#1B458F", trim: "#C4122E", abbr: "CRY" },
-  Everton: { shirt: "#003399", trim: "#FFFFFF", abbr: "EVE" },
-  Fulham: { shirt: "#FFFFFF", trim: "#000000", abbr: "FUL" },
-  "Hull City": { shirt: "#F18A01", trim: "#000000", abbr: "HUL" },
-  "Ipswich Town": { shirt: "#3A64A3", trim: "#FFFFFF", abbr: "IPS" },
-  Leeds: { shirt: "#FFFFFF", trim: "#1D428A", abbr: "LEE" },
-  Leicester: { shirt: "#003090", trim: "#FDBE11", abbr: "LEI" },
-  Liverpool: { shirt: "#C8102E", trim: "#F6EB61", abbr: "LIV" },
-  Luton: { shirt: "#F78F1E", trim: "#002D62", abbr: "LUT" },
-  "Man City": { shirt: "#6CABDD", trim: "#1C2C5B", abbr: "MCI" },
-  "Man Utd": { shirt: "#DA291C", trim: "#FBE122", abbr: "MUN" },
-  Newcastle: { shirt: "#241F20", trim: "#FFFFFF", abbr: "NEW" },
-  Norwich: { shirt: "#FFF200", trim: "#00A650", abbr: "NOR" },
-  "Nott'm Forest": { shirt: "#DD0000", trim: "#FFFFFF", abbr: "NFO" },
-  Sheffield: { shirt: "#EE2737", trim: "#FFFFFF", abbr: "SHU" },
-  Southampton: { shirt: "#D71920", trim: "#FFFFFF", abbr: "SOU" },
-  Spurs: { shirt: "#FFFFFF", trim: "#132257", abbr: "TOT" },
-  Sunderland: { shirt: "#EB172B", trim: "#FFFFFF", abbr: "SUN" },
-  Watford: { shirt: "#FBEE23", trim: "#ED2127", abbr: "WAT" },
-  "West Ham": { shirt: "#7A263A", trim: "#1BB1E7", abbr: "WHU" },
-  Wolves: { shirt: "#FDB913", trim: "#231F20", abbr: "WOL" },
+  Arsenal: { shirt: "#EF0107", trim: "#FFFFFF", abbr: "ARS", code: 3 },
+  "Aston Villa": { shirt: "#95BFE5", trim: "#670E36", abbr: "AVL", code: 7 },
+  Bournemouth: { shirt: "#DA291C", trim: "#000000", abbr: "BOU", code: 91 },
+  Brentford: { shirt: "#E30613", trim: "#FFFFFF", abbr: "BRE", code: 94 },
+  Brighton: { shirt: "#0057B8", trim: "#FFCD00", abbr: "BHA", code: 36 },
+  Burnley: { shirt: "#6C1D45", trim: "#99D6EA", abbr: "BUR", code: 90 },
+  Chelsea: { shirt: "#034694", trim: "#FFFFFF", abbr: "CHE", code: 8 },
+  "Coventry City": { shirt: "#78D0F3", trim: "#1B1B1B", abbr: "COV", code: 9 },
+  "Crystal Palace": { shirt: "#1B458F", trim: "#C4122E", abbr: "CRY", code: 31 },
+  Everton: { shirt: "#003399", trim: "#FFFFFF", abbr: "EVE", code: 11 },
+  Fulham: { shirt: "#FFFFFF", trim: "#000000", abbr: "FUL", code: 54 },
+  "Hull City": { shirt: "#F18A01", trim: "#000000", abbr: "HUL", code: 88 },
+  "Ipswich Town": { shirt: "#3A64A3", trim: "#FFFFFF", abbr: "IPS", code: 40 },
+  Leeds: { shirt: "#FFFFFF", trim: "#1D428A", abbr: "LEE", code: 2 },
+  Leicester: { shirt: "#003090", trim: "#FDBE11", abbr: "LEI", code: 13 },
+  Liverpool: { shirt: "#C8102E", trim: "#F6EB61", abbr: "LIV", code: 14 },
+  Luton: { shirt: "#F78F1E", trim: "#002D62", abbr: "LUT", code: 102 },
+  "Man City": { shirt: "#6CABDD", trim: "#1C2C5B", abbr: "MCI", code: 43 },
+  "Man Utd": { shirt: "#DA291C", trim: "#FBE122", abbr: "MUN", code: 1 },
+  Newcastle: { shirt: "#241F20", trim: "#FFFFFF", abbr: "NEW", code: 4 },
+  Norwich: { shirt: "#FFF200", trim: "#00A650", abbr: "NOR", code: 45 },
+  "Nott'm Forest": { shirt: "#DD0000", trim: "#FFFFFF", abbr: "NFO", code: 17 },
+  Sheffield: { shirt: "#EE2737", trim: "#FFFFFF", abbr: "SHU", code: 49 },
+  Southampton: { shirt: "#D71920", trim: "#FFFFFF", abbr: "SOU", code: 20 },
+  Spurs: { shirt: "#FFFFFF", trim: "#132257", abbr: "TOT", code: 6 },
+  Sunderland: { shirt: "#EB172B", trim: "#FFFFFF", abbr: "SUN", code: 56 },
+  Watford: { shirt: "#FBEE23", trim: "#ED2127", abbr: "WAT", code: 57 },
+  "West Ham": { shirt: "#7A263A", trim: "#1BB1E7", abbr: "WHU", code: 21 },
+  Wolves: { shirt: "#FDB913", trim: "#231F20", abbr: "WOL", code: 39 },
 };
 
 const FALLBACK: Kit = { shirt: "#4A5A52", trim: "#F2F4F0", abbr: "—" };
@@ -60,6 +63,18 @@ export function kitFor(team: string | undefined): Kit {
     (k) => k.toLowerCase().startsWith(team.toLowerCase().slice(0, 4))
   );
   return loose ? KITS[loose] : { ...FALLBACK, abbr: team.slice(0, 3).toUpperCase() };
+}
+
+/** The club crest, from the Premier League's own image server: an SVG, then
+ *  a PNG of the same badge if that fails. Empty for a club without a code,
+ *  which then shows its kit colours instead (components/Crest.tsx). */
+export function crestUrls(team: string | undefined): string[] {
+  const code = kitFor(team).code;
+  if (!code) return [];
+  return [
+    `https://resources.premierleague.com/premierleague25/badges/${code}.svg`,
+    `https://resources.premierleague.com/premierleague/badges/100/t${code}@x2.png`,
+  ];
 }
 
 /** White-ish shirts need a darker outline or they vanish on a dark pitch. */

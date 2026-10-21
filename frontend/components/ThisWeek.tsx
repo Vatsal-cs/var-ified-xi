@@ -6,6 +6,7 @@
 
 import type { LineupCheck, OptimizedTeam, PickCheck, Player, PlannedWeek } from "@/lib/types";
 import { kitFor } from "@/lib/teams";
+import Crest from "@/components/Crest";
 import { Term } from "./ui";
 import CaptainOdds from "./CaptainOdds";
 import TeamNews from "./TeamNews";
@@ -79,11 +80,19 @@ function SwapCard({
         style={{ background: kit.shirt }}
         aria-hidden
       />
-      <p className={`label ${isOut ? "text-risk/80" : "text-pts/80"}`}>
-        {isOut ? "Out" : "In"}
-      </p>
+      <div className="flex items-start justify-between gap-2">
+        <p className={`label ${isOut ? "text-risk/80" : "text-pts/80"}`}>
+          {isOut ? "Out" : "In"}
+        </p>
+        <Crest
+          team={team}
+          className={`-mr-0.5 -mt-1 h-7 w-7 flex-none drop-shadow-[0_4px_6px_rgba(0,0,0,0.6)] sm:h-9 sm:w-9 ${
+            isOut ? "opacity-45 grayscale" : ""
+          }`}
+        />
+      </div>
       <p
-        className={`mt-1.5 font-display text-[26px] leading-[1.05] ${
+        className={`mt-0.5 break-words font-display text-[22px] leading-[1.05] sm:text-[26px] ${
           isOut ? "text-ink-300" : "text-ink-100"
         }`}
       >

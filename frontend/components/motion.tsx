@@ -94,24 +94,89 @@ function parts(ms: number) {
   return { d: Math.floor(s / 86400), h: Math.floor((s % 86400) / 3600), m: Math.floor((s % 3600) / 60), s: s % 60 };
 }
 
-/** Time left to the deadline, ticking; turns amber inside 24 hours and red
- *  inside 3. Hidden until it has a deadline in the future. */
-export function Countdown({ deadline }: { deadline?: string | null }) {
+const WEEK = 7 * 86400e3;
+
+const TONES = {
+  calm: { text: "text-gold", dot: "bg-gold", bar: "from-gold/40 via-gold/80 to-gold" },
+  warn: { text: "text-warn", dot: "bg-warn", bar: "from-gold/60 via-warn/80 to-warn" },
+  risk: { text: "text-risk", dot: "bg-risk", bar: "from-warn/70 via-risk/80 to-risk" },
+};
+
+const pad = (n: number) => String(n).padStart(2, "0");
+
+/** The deadline as a strip across the header, on every screen size: the
+ *  gameweek, its time where you are, and the time left down to the second.
+ *  Gold, amber inside 24 hours, red and pulsing inside 3; a hairline under
+ *  it fills as the week runs out. Renders its frame on the server and the
+ *  clock once mounted, so the local time never mismatches. */
+export function DeadlineBar({ deadline, gameweek }: { deadline?: string | null; gameweek?: number | null }) {
   const [now, setNow] = useState<number | null>(null);
   useEffect(() => {
     setNow(Date.now());
     const id = setInterval(() => setNow(Date.now()), 1000);
     return () => clearInterval(id);
   }, []);
-  if (!deadline || now === null) return null;
-  const left = new Date(deadline).getTime() - now;
-  if (!(left > 0)) return null;
-  const { d, h, m, s } = parts(left);
-  const tone = left < 3 * 3600e3 ? "border-risk/50 text-risk" : left < 24 * 3600e3 ? "border-warn/50 text-warn" : "border-line-strong text-ink-200";
-  const text = d > 0 ? `${d}d ${h}h ${String(m).padStart(2, "0")}m` : `${h}h ${String(m).padStart(2, "0")}m ${String(s).padStart(2, "0")}s`;
+  if (!deadline) return null;
+  const at = new Date(deadline);
+  const left = now === null ? null : at.getTime() - now;
+  const passed = left !== null && left <= 0;
+  const tone = left === null || passed ? TONES.calm : left < 3 * 3600e3 ? TONES.risk : left < 24 * 3600e3 ? TONES.warn : TONES.calm;
+  const { d, h, m, s } = parts(left ?? 0);
+  const segs: [number, string][] = d > 0 ? [[d, "d"], [h, "h"], [m, "m"], [s, "s"]] : [[h, "h"], [m, "m"], [s, "s"]];
+  const filled = left === null ? 0 : Math.min(1, Math.max(0, 1 - left / WEEK)) * 100;
+
   return (
-    <span className={`pill tabular-nums ${tone}`} title={`Deadline ${new Date(deadline).toLocaleString()}`}>
-      <span className="text-ink-400">Deadline</span> {text}
-    </span>
+    <div className="relative border-t border-line" role="timer" aria-label={`Gameweek ${gameweek ?? ""} deadline`}>
+      <div className="mx-auto flex max-w-6xl items-center gap-3 px-5 py-2">
+        <span className="flex min-w-0 items-center gap-2 font-mono text-[10px]">
+          <span
+            className={`h-1.5 w-1.5 flex-none rounded-full ${tone.dot} ${tone.text} ${tone === TONES.risk ? "animate-pulseDot" : ""}`}
+            style={{ boxShadow: "0 0 10px currentColor" }}
+          />
+          <span className="whitespace-nowrap uppercase tracking-[0.18em] text-ink-200">
+            GW {gameweek ?? "—"} deadline
+          </span>
+          {now !== null && (
+            <span className="truncate text-ink-500">
+              <span className="sm:hidden">
+                {at.toLocaleString(undefined, { weekday: "short", hour: "numeric", minute: "2-digit" })}
+              </span>
+              <span className="hidden sm:inline">
+                {at.toLocaleString(undefined, { weekday: "short", day: "numeric", month: "short" })} &middot;{" "}
+                {at.toLocaleString(undefined, { hour: "numeric", minute: "2-digit" })}
+              </span>
+            </span>
+          )}
+        </span>
+
+        <span className="ml-auto flex flex-none items-baseline font-mono tabular-nums">
+          {left === null ? (
+            <span className="text-[18px] leading-none text-ink-500 sm:text-[21px]">--:--</span>
+          ) : passed ? (
+            <span className="text-[11px] uppercase tracking-[0.16em] text-ink-400">Passed &middot; plan updates soon</span>
+          ) : (
+            segs.map(([v, unit]) => (
+              <span key={unit} className="flex items-baseline">
+                <span
+                  key={unit === "s" ? v : undefined}
+                  className={`inline-block text-[18px] font-medium leading-none sm:text-[21px] ${tone.text} ${
+                    unit === "s" ? "animate-tick" : ""
+                  }`}
+                >
+                  {pad(v)}
+                </span>
+                <span className={`ml-[2px] text-[9px] uppercase text-ink-500 ${unit === "s" ? "" : "mr-[7px]"}`}>{unit}</span>
+              </span>
+            ))
+          )}
+        </span>
+      </div>
+      <div aria-hidden className="absolute inset-x-0 bottom-0 h-[2px] bg-white/[0.04]">
+        <div
+          className={`h-full bg-gradient-to-r ${tone.bar} transition-[width] duration-1000 ease-linear`}
+          style={{ width: `${filled}%`, boxShadow: "0 0 8px rgba(224,166,74,0.45)" }}
+        />
+      </div>
+    </div>
   );
 }

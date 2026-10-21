@@ -3,6 +3,7 @@
 
 import type { Player } from "@/lib/types";
 import { kitFor } from "@/lib/teams";
+import Crest from "@/components/Crest";
 import { headToHead, pct, swapTarget } from "@/lib/odds";
 import { Term } from "./ui";
 
@@ -52,6 +53,7 @@ export default function BenchStrip({
                 aria-hidden
               />
               <span className="ml-0.5 font-mono text-[10px] text-ink-500">{i + 1}</span>
+              <Crest team={p.team} className="h-8 w-8 flex-none drop-shadow-[0_3px_4px_rgba(0,0,0,0.55)]" />
               <div className="min-w-0 flex-1">
                 <p className="truncate font-body text-[13px] font-medium text-ink-100">
                   {p.name}

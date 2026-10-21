@@ -124,6 +124,11 @@ module.exports = {
           "0%": { backgroundPosition: "0% 50%" },
           "100%": { backgroundPosition: "200% 50%" },
         },
+        // The seconds digit dropping into place each tick.
+        tick: {
+          "0%": { transform: "translateY(-30%)", opacity: "0.5" },
+          "100%": { transform: "translateY(0)", opacity: "1" },
+        },
         drift: {
           "0%": { transform: "translate3d(0,0,0) scale(1)" },
           "50%": { transform: "translate3d(6vw,4vh,0) scale(1.12)" },
@@ -145,6 +150,7 @@ module.exports = {
         coin: "coin 1.4s cubic-bezier(0.45,0,0.2,1) both",
         glow: "glow 3.2s ease-in-out infinite",
         shimmer: "shimmer 7s linear infinite",
+        tick: "tick 0.32s cubic-bezier(0.22,1,0.36,1) both",
         drift: "drift 38s ease-in-out infinite alternate",
       },
     },
