@@ -42,9 +42,8 @@ OVERRIDES_PATH = BACKEND_ROOT / "overrides.json"
 # Team-news reader (data_engine/team_news.py)
 # ---------------------------------------------------------------------------
 # An AI model with web search reads the latest team news for the clubs that
-# matter to you: Gemini 2.5 Flash with Google Search (free; GEMINI_API_KEY), or
-# Claude (paid; ANTHROPIC_API_KEY) — GitHub Actions secrets in the cloud. Off
-# without either. "Out" and "doubtful" calls lower the projection like an FPL flag
+# matter to you: Gemini 2.5 Flash with Google Search (free; GEMINI_API_KEY, a
+# GitHub Actions secret in the cloud). Off without it. "Out" and "doubtful" calls lower the projection like an FPL flag
 # would (TEAM_NEWS_ADJUST), only when worse than FPL's own flag and sourced
 # from the last few days; "rotation risk" is shown, never applied. Untestable
 # on past seasons (no archived press conferences), so every call is logged to
@@ -58,8 +57,6 @@ TEAM_NEWS_ADJUST = True
 # Flash-Lite first: it barely "thinks" by default, so it answers in seconds;
 # 3.8 Flash (asked to think little) is the fallback.
 TEAM_NEWS_GEMINI_MODELS = ["gemini-3.5-flash-lite", "gemini-3.8-flash"]
-TEAM_NEWS_MODEL = "claude-sonnet-5-5"         # used instead only if ANTHROPIC_API_KEY is set and Gemini's isn't
-TEAM_NEWS_MAX_SEARCHES = 5          # per call; a call covers up to 4 clubs
 TEAM_NEWS_WINDOW_HOURS = 48         # only read the news this close to a deadline
 TEAM_NEWS_TTL_HOURS = 3             # reuse a result this fresh instead of paying again
 TEAM_NEWS_PATH = DATA_DIR / "team_news.json"

@@ -224,11 +224,11 @@ class TeamNews(unittest.TestCase):
 
     def test_gemini_is_preferred_and_free(self):
         team_news._gemini_model[0] = None
-        with mock.patch.dict("os.environ", {"GEMINI_API_KEY": "g", "ANTHROPIC_API_KEY": "a"}, clear=True):
+        with mock.patch.dict("os.environ", {"GEMINI_API_KEY": "g"}, clear=True):
             self.assertEqual(team_news.provider(), "gemini")
             self.assertEqual(team_news.model_name(), config.TEAM_NEWS_GEMINI_MODELS[0])
-        with mock.patch.dict("os.environ", {"ANTHROPIC_API_KEY": "a"}, clear=True):
-            self.assertEqual(team_news.provider(), "claude")
+        with mock.patch.dict("os.environ", {}, clear=True):
+            self.assertIsNone(team_news.provider())
 
     def _ok(self, text):
         r = mock.Mock(status_code=200)

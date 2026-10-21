@@ -7,10 +7,10 @@ Reads the latest team news before FPL does.
 FPL's injury flags are the model's only view of who's fit, and they lag:
 they're updated by hand, often hours after a manager's press conference, and
 they never say "fit but likely to be benched". This asks an AI model with web
-search — Google's Gemini 2.5 Flash with Google Search, free, or Claude if
-that key is set instead — to read the news for the clubs that matter to you — your squad, the
-players the plan wants to buy, the Wildcard squad — and report each player
-as out, doubtful, rotation risk or expected to start, with a source.
+search — Google's Gemini 2.5 Flash with Google Search, free — to read the
+news for the clubs that matter to you — your squad, the players the plan
+wants to buy, the Wildcard squad — and report each player as out, doubtful,
+rotation risk or expected to start, with a source.
 
 What it changes, deliberately narrow:
   * "out" and "doubtful" feed the projection the same way an FPL flag would
@@ -24,10 +24,10 @@ judged live: every call it makes is saved with the source, for checking
 against who actually played (research/2026-10-team-news).
 
 Needs GEMINI_API_KEY (free from aistudio.google.com: Gemini 2.5 Flash with
-Google Search grounding is free up to 500 requests a day; a run uses ~4) or
-ANTHROPIC_API_KEY (paid, ~$0.30-1 a run). Without either, nothing runs and
-the dashboard says so. Runs only when a deadline is close
-(TEAM_NEWS_WINDOW_HOURS) and reuses a fresh result for TEAM_NEWS_TTL_HOURS.
+Google Search grounding is free up to 500 requests a day; a run uses ~4).
+Without it, nothing runs and the dashboard says so. Runs only when a deadline
+is close (TEAM_NEWS_WINDOW_HOURS) and reuses a fresh result for
+TEAM_NEWS_TTL_HOURS.
 """
 
 import json
@@ -47,23 +47,9 @@ import config
 
 logger = logging.getLogger(__name__)
 
-API_URL = "https://api.anthropic.com/v1/messages"
 STATUSES = ("out", "doubtful", "rotation_risk", "expected_to_start", "no_news")
 APPLIED = ("out", "doubtful")
 CLUBS_PER_CALL = 3
-
-SYSTEM = """You check Premier League team news for Fantasy Premier League managers.
-Use web search to find the most recent news: manager press conferences, club
-injury updates, suspensions, and reputable outlets (BBC Sport, Sky Sports, The
-Athletic, the Guardian, premierleague.com, club websites). Only use news
-published in the last 7 days. Never guess: if you find nothing recent about a
-player, his status is "no_news". Statuses:
-  out               - ruled out of this match (injury, illness, suspension, not in squad)
-  doubtful          - a genuine fitness or availability doubt for this match
-  rotation_risk     - fit, but credible reporting says he may be benched or rested
-  expected_to_start - fit and expected to start
-  no_news           - nothing recent found
-Reply with one JSON object in a ```json block and nothing after it."""
 
 
 def _now():
@@ -74,13 +60,8 @@ GEMINI_URL = "https://generativelanguage.googleapis.com/v1beta/models/{model}:ge
 
 
 def provider() -> str | None:
-    """Which model reads the news: Gemini when its (free) key is set, else
-    Claude when its key is, else none."""
-    if os.environ.get("GEMINI_API_KEY"):
-        return "gemini"
-    if os.environ.get("ANTHROPIC_API_KEY"):
-        return "claude"
-    return None
+    """Which model reads the news: Gemini when its (free) key is set, else none."""
+    return "gemini" if os.environ.get("GEMINI_API_KEY") else None
 
 
 _gemini_model = [None]          # the free model that answered this run
@@ -89,26 +70,11 @@ _gemini_model = [None]          # the free model that answered this run
 def model_name() -> str | None:
     if provider() == "gemini":
         return _gemini_model[0] or config.TEAM_NEWS_GEMINI_MODELS[0]
-    return config.TEAM_NEWS_MODEL if provider() == "claude" else None
+    return None
 
 
 def enabled() -> bool:
     return provider() is not None and config.TEAM_NEWS_ENABLED
-
-
-def _prompt(clubs: list, gameweek: int, deadline: str) -> str:
-    lines = [f"Today is {_now():%A %d %B %Y, %H:%M} UTC. Gameweek {gameweek} deadline: {deadline}.",
-             "Find the latest team news for each club below, ahead of its match. Report on",
-             "every listed player, and add any other player at these clubs who is ruled out.", ""]
-    for c in clubs:
-        lines.append(f"- {c['club']} ({c['fixture']}):")
-        lines += [f"    {p['name']} (id {p['player_id']}, {p['position']})" for p in c["players"]]
-    lines += ["", "JSON shape:",
-              '{"players": [{"player_id": <id from the list, or null>, "name": "...", "club": "...",',
-              '  "status": "out|doubtful|rotation_risk|expected_to_start|no_news",',
-              '  "start_chance": <0-100, your estimate he starts>, "reason": "<= 120 chars",',
-              '  "source_url": "https://...", "source_date": "YYYY-MM-DD"}]}']
-    return "\n".join(lines)
 
 
 def _host(url: str) -> str:
@@ -299,25 +265,6 @@ def _cite(items: list, raw: str, index: dict) -> list:
     return items
 
 
-def _call(prompt: str) -> str:
-    """One Messages API call with web search; returns the final text. Follows
-    pause_turn (a long search turn the API hands back to be continued)."""
-    headers = {"x-api-key": os.environ["ANTHROPIC_API_KEY"], "anthropic-version": "2023-06-01",
-               "content-type": "application/json"}
-    messages = [{"role": "user", "content": prompt}]
-    body = {"model": config.TEAM_NEWS_MODEL, "max_tokens": 4096, "system": SYSTEM,
-            "tools": [{"type": "web_search_20260209", "name": "web_search",
-                       "max_uses": config.TEAM_NEWS_MAX_SEARCHES}]}
-    for _ in range(4):
-        r = requests.post(API_URL, headers=headers, json={**body, "messages": messages}, timeout=300)
-        r.raise_for_status()
-        msg = r.json()
-        if msg.get("stop_reason") != "pause_turn":
-            return "".join(b.get("text", "") for b in msg["content"] if b.get("type") == "text")
-        messages = messages + [{"role": "assistant", "content": msg["content"]}]
-    raise RuntimeError("team news: search turn never finished")
-
-
 def _json_from(text: str) -> dict:
     """The first complete JSON value in a reply (fenced or not); a bare list
     is read as the players."""
@@ -365,25 +312,21 @@ def fetch(clubs: list, gameweek: int, deadline: str) -> dict:
     """clubs: [{"club", "fixture", "players": [{player_id, name, position}]}]."""
     known = {p["player_id"] for c in clubs for p in c["players"]}
     items, errors = [], []
-    use = provider()
     for i in range(0, len(clubs), CLUBS_PER_CALL):
         chunk = clubs[i:i + CLUBS_PER_CALL]
         try:
-            if use == "gemini":
-                numbered, index = {}, {}
-                for ci, c in enumerate(chunk):
-                    hs = headlines(c["club"])
-                    numbered[c["club"]] = [(f"{chr(65 + ci)}{k + 1}", h) for k, h in enumerate(hs)]
-                    index.update(dict(numbered[c["club"]]))
-                raw = _call_gemini(_prompt_headlines(chunk, gameweek, deadline, numbered))
-                try:
-                    items += _cite(parse(raw, known), raw, index)
-                except ValueError:
-                    logger.warning("Team news reply not readable; it began: %r", raw[:300])
-                    raise
-                time.sleep(5)                            # stay inside the free per-minute limit
-            else:
-                items += parse(_call(_prompt(chunk, gameweek, deadline)), known)
+            numbered, index = {}, {}
+            for ci, c in enumerate(chunk):
+                hs = headlines(c["club"])
+                numbered[c["club"]] = [(f"{chr(65 + ci)}{k + 1}", h) for k, h in enumerate(hs)]
+                index.update(dict(numbered[c["club"]]))
+            raw = _call_gemini(_prompt_headlines(chunk, gameweek, deadline, numbered))
+            try:
+                items += _cite(parse(raw, known), raw, index)
+            except ValueError:
+                logger.warning("Team news reply not readable; it began: %r", raw[:300])
+                raise
+            time.sleep(5)                                # stay inside the free per-minute limit
         except Exception as e:                       # one club group failing isn't fatal
             errors.append(f"{', '.join(c['club'] for c in chunk)}: {e}")
             logger.warning("Team news for %s failed: %s", [c["club"] for c in chunk], e)

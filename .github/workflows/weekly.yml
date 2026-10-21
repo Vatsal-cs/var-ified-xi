@@ -73,9 +73,8 @@ jobs:
         env:
           FPL_TEAM_ID: ${{ vars.FPL_TEAM_ID }}
           # Optional: turns on the team-news reader (data_engine/team_news.py).
-          # Gemini's key is free (aistudio.google.com); Claude's is the paid option.
+          # Gemini's key is free (aistudio.google.com).
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         run: python main.py
 
       - name: Commit the refreshed squad
