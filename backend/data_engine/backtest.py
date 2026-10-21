@@ -506,7 +506,8 @@ VARIANTS = {
     ),
     "team_rotation": Variant(
         name="team_rotation",
-        description="production plus each club's rotation rate: starters changed per "
+        description="NO DETECTABLE EFFECT (Oct 2026, 5 seeds): -19 [-80, +43]. "
+                    "Production plus each club's rotation rate: starters changed per "
                     "match, averaged over its last five (research/2026-10-rotation-calibration)",
         fit=lambda df: train_model.train_models(df, save=False),
         predict=_bundle_predict,
@@ -514,7 +515,8 @@ VARIANTS = {
     ),
     "calibrated": Variant(
         name="calibrated",
-        description="production with points-if-60+ mapped to what players projected at that "
+        description="NO DETECTABLE EFFECT (Oct 2026, 5 seeds): -29 [-123, +69]. "
+                    "Production with points-if-60+ mapped to what players projected at that "
                     "level really scored, curve fitted on the other season "
                     "(research/2026-10-rotation-calibration)",
         fit=lambda df: train_model.train_models(df, save=False),
@@ -522,7 +524,8 @@ VARIANTS = {
     ),
     "lagged_market_replace": Variant(
         name="lagged_market_replace",
-        description="lagged_ratings with the stale FPL ratings REPLACED by ratings built from "
+        description="NO DETECTABLE EFFECT (Oct 2026, 5 seeds): -28 [-128, +75]. "
+                    "lagged_ratings with the stale FPL ratings REPLACED by ratings built from "
                     "betting odds, updated after every match (research/2026-10-market-replace)",
         fit=lambda df: train_model.train_models(df, save=False),
         predict=_bundle_predict,

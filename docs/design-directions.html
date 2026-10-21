@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Design directions</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Barlow+Condensed:wght@500;700;800&family=Caveat:wght@500;700&family=IBM+Plex+Mono:wght@400;500;600&family=Libre+Caslon+Text:ital,wght@0,400;0,700;1,400&family=Permanent+Marker&display=swap" rel="stylesheet">
+<style>
+  :root { --page: #e9e6df; --ink: #1b1a17; }
+  @media (prefers-color-scheme: dark) { :root { --page: #161513; --ink: #ece7dd; } }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--page); color: var(--ink); font: 15px/1.5 system-ui, sans-serif; padding: 28px 16px 60px; }
+  .wrap { max-width: 980px; margin: 0 auto; }
+  .tag { font: 600 12px/1 "IBM Plex Mono", monospace; letter-spacing: .14em; text-transform: uppercase; opacity: .65; margin: 40px 0 6px; }
+  h2 { margin: 0 0 4px; font: 700 26px/1.1 "Barlow Condensed", sans-serif; letter-spacing: .01em; }
+  .sub { margin: 0 0 14px; opacity: .75; max-width: 70ch; }
+  .frame { border-radius: 14px; overflow: hidden; box-shadow: 0 1px 0 rgba(0,0,0,.08), 0 18px 40px -24px rgba(0,0,0,.45); }
+
+  /* ---------- 1. VAR ROOM ---------- */
+  .var { background: #0c0f12; color: #d9e2e8; font-family: "IBM Plex Mono", monospace; padding: 0 0 18px;
+         background-image: repeating-linear-gradient(0deg, rgba(255,255,255,.018) 0 1px, transparent 1px 3px); }
+  .var .bar { display: flex; justify-content: space-between; align-items: center; padding: 10px 18px; border-bottom: 1px solid #1f2830; font-size: 11px; letter-spacing: .12em; color: #7f8f9b; }
+  .var .rec { color: #ff4d3d; } .var .rec::before { content: "●"; margin-right: 6px; }
+  .var .grid { display: grid; grid-template-columns: 1.35fr 1fr; gap: 12px; padding: 14px 18px 0; }
+  .var .screen { border: 1px solid #22303a; background: #0f151a; position: relative; padding: 14px 16px; }
+  .var .screen .cam { position: absolute; top: 8px; right: 10px; font-size: 10px; color: #5d6d78; letter-spacing: .12em; }
+  .var .label { font-size: 10px; letter-spacing: .18em; color: #6f8290; }
+  .var .verdict { display: inline-block; margin-top: 10px; border: 2px solid #b6ff3b; color: #b6ff3b; padding: 4px 10px; font: 800 13px/1.2 "Barlow Condensed", sans-serif; letter-spacing: .2em; transform: rotate(-2deg); }
+  .var .big { font: 800 44px/0.95 "Barlow Condensed", sans-serif; letter-spacing: .01em; color: #f1f5f7; margin: 8px 0 6px; text-transform: uppercase; }
+  .var .swap { display: flex; align-items: center; gap: 10px; font: 700 22px/1 "Barlow Condensed", sans-serif; text-transform: uppercase; }
+  .var .out { color: #ff6b5d; text-decoration: line-through; text-decoration-thickness: 2px; }
+  .var .in { color: #b6ff3b; }
+  .var .tc { color: #5d6d78; font-size: 11px; margin-top: 12px; }
+  .var .lower { margin: 12px 18px 0; display: grid; grid-template-columns: auto 1fr auto; align-items: stretch; border: 1px solid #22303a; }
+  .var .lower .k { background: #b6ff3b; color: #0c0f12; font: 800 16px/1 "Barlow Condensed", sans-serif; letter-spacing: .12em; padding: 12px 14px; display: flex; align-items: center; }
+  .var .lower .v { padding: 10px 14px; font: 700 20px/1.1 "Barlow Condensed", sans-serif; text-transform: uppercase; color: #f1f5f7; }
+  .var .lower .v small { display: block; font: 400 11px/1.4 "IBM Plex Mono", monospace; color: #7f8f9b; text-transform: none; }
+  .var .lower .n { padding: 10px 16px; font: 800 30px/1 "Barlow Condensed"; color: #b6ff3b; border-left: 1px solid #22303a; display: flex; align-items: center; }
+  .var .log { font-size: 12px; line-height: 1.8; }
+  .var .log b { color: #ffb02e; font-weight: 600; }
+  .var .pitch { display: grid; gap: 7px; }
+  .var .row { display: flex; justify-content: center; gap: 6px; }
+  .var .p { min-width: 58px; text-align: center; border: 1px solid #2a3944; padding: 4px 4px; font-size: 10px; color: #c7d3db; }
+  .var .p em { display: block; font-style: normal; color: #b6ff3b; font-size: 11px; }
+  .var .p.c { border-color: #b6ff3b; }
+
+  /* ---------- 2. MATCHDAY PROGRAMME ---------- */
+  .prog { background: #f3ecdc; color: #17140f; font-family: "Libre Caslon Text", serif; padding: 22px 26px 26px;
+          background-image: radial-gradient(rgba(23,20,15,.06) 1px, transparent 1.2px); background-size: 6px 6px; }
+  .prog .mast { display: flex; justify-content: space-between; align-items: baseline; border-bottom: 3px double #17140f; padding-bottom: 8px; }
+  .prog .mast .name { font: 400 34px/1 "Anton", sans-serif; letter-spacing: .02em; }
+  .prog .mast .name span { color: #c8102e; }
+  .prog .mast .meta { font: 600 11px/1.3 "IBM Plex Mono", monospace; letter-spacing: .12em; text-align: right; text-transform: uppercase; }
+  .prog .cols { display: grid; grid-template-columns: 1.5fr 1fr; gap: 22px; margin-top: 16px; }
+  .prog .kicker { font: 700 11px/1 "IBM Plex Mono", monospace; letter-spacing: .2em; color: #c8102e; text-transform: uppercase; }
+  .prog .head { font: 400 54px/0.92 "Anton", sans-serif; text-transform: uppercase; margin: 8px 0 10px; }
+  .prog .deck { font-style: italic; font-size: 16px; line-height: 1.5; margin: 0 0 12px; }
+  .prog .body { font-size: 14px; line-height: 1.65; column-count: 2; column-gap: 18px; text-align: justify; }
+  .prog .body::first-letter { font: 400 44px/0.8 "Anton"; float: left; margin: 4px 6px 0 0; color: #c8102e; }
+  .prog .ticket { border: 2px dashed #17140f; padding: 12px 14px; margin-bottom: 14px; position: relative; background: #fbf6ea; }
+  .prog .ticket .t { font: 700 11px/1 "IBM Plex Mono"; letter-spacing: .18em; text-transform: uppercase; color: #c8102e; }
+  .prog .ticket .cap { font: 400 38px/1 "Anton"; text-transform: uppercase; margin-top: 6px; }
+  .prog .ticket .stub { position: absolute; right: 12px; top: 12px; font: 400 26px/1 "Anton"; color: #c8102e; }
+  .prog .sheet { font: 500 13px/1.85 "IBM Plex Mono", monospace; border-top: 2px solid #17140f; padding-top: 8px; }
+  .prog .sheet div { display: flex; justify-content: space-between; border-bottom: 1px dotted rgba(23,20,15,.35); }
+  .prog .sheet .no { color: #c8102e; width: 24px; }
+  .prog .stamp { display: inline-block; margin-top: 12px; border: 3px solid #c8102e; color: #c8102e; font: 400 16px/1 "Anton"; letter-spacing: .12em; padding: 6px 10px; transform: rotate(-4deg); opacity: .85; }
+
+  /* ---------- 3. TACTICS BOARD ---------- */
+  .board { background: #23382c; color: #eef0e6; padding: 22px 24px 26px; position: relative;
+           background-image: radial-gradient(ellipse at 30% 20%, rgba(255,255,255,.06), transparent 60%), repeating-linear-gradient(115deg, rgba(255,255,255,.012) 0 2px, transparent 2px 7px);
+           border: 14px solid #6b4a2f; border-radius: 14px; }
+  .board .chalk { font-family: "Caveat", cursive; }
+  .board h3 { margin: 0; font: 700 40px/1 "Caveat", cursive; color: #fdfcf3; }
+  .board .gw { font: 500 20px/1 "Caveat"; color: #c9d6c0; }
+  .board .layout { display: grid; grid-template-columns: 1.3fr 1fr; gap: 18px; margin-top: 10px; }
+  .board .field { position: relative; height: 330px; border: 2px solid rgba(255,255,255,.55); border-radius: 4px; }
+  .board .field::before { content: ""; position: absolute; left: 0; right: 0; top: 50%; border-top: 2px solid rgba(255,255,255,.45); }
+  .board .field::after { content: ""; position: absolute; left: 50%; top: 50%; width: 70px; height: 70px; margin: -35px 0 0 -35px; border: 2px solid rgba(255,255,255,.45); border-radius: 50%; }
+  .board .mag { position: absolute; transform: translate(-50%,-50%); text-align: center; z-index: 2; }
+  .board .mag i { display: block; width: 30px; height: 30px; margin: 0 auto; border-radius: 50%; background: #e8e3cf; color: #23382c; font: 700 13px/30px "Barlow Condensed"; font-style: normal; box-shadow: 0 2px 0 rgba(0,0,0,.35); }
+  .board .mag.c i { background: #f2c94c; } .board .mag.n i { background: #ff7b6b; }
+  .board .mag span { display: block; margin-top: 2px; font: 700 15px/1 "Caveat"; color: #fdfcf3; white-space: nowrap; }
+  .board .note { background: #fff27a; color: #2d2a12; padding: 12px 12px 14px; transform: rotate(-1.5deg); box-shadow: 0 6px 12px -6px rgba(0,0,0,.6); font: 500 19px/1.2 "Caveat"; margin-bottom: 14px; }
+  .board .note.pink { background: #ffb3c7; transform: rotate(1.5deg); }
+  .board .note b { font-family: "Permanent Marker", cursive; font-weight: 400; font-size: 18px; }
+  .board .arrow { font: 400 28px/1.1 "Permanent Marker", cursive; color: #fdfcf3; margin: 6px 0 4px; }
+  .board .arrow s { color: #ff7b6b; text-decoration-thickness: 3px; }
+  .board .arrow u { color: #b9f18c; text-decoration: none; border-bottom: 3px solid #b9f18c; }
+  .board .scrawl { font: 500 22px/1.25 "Caveat"; color: #dfe8d6; }
+
+  .pick { margin-top: 10px; font-size: 14px; opacity: .8; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="tag">Direction 1</div>
+  <h2>The VAR room</h2>
+  <p class="sub">The site is the VAR booth. Camera-angle panels, broadcast lower-thirds, timecodes, and every decision arrives as a review with a verdict stamp. Lime "decision" green on near-black.</p>
+  <div class="frame var">
+    <div class="bar"><span>VAR-IFIED XI · REVIEW BOOTH</span><span class="rec">LIVE · GW08 · DEADLINE FRI 23 OCT 17:30</span></div>
+    <div class="grid">
+      <div class="screen">
+        <span class="cam">CAM 1 · TRANSFER</span>
+        <div class="label">REVIEW 08/01 · ONE FREE TRANSFER</div>
+        <div class="big">Check complete</div>
+        <div class="swap"><span class="out">Semenyo</span><span style="color:#5d6d78">→</span><span class="in">Rogers</span></div>
+        <div class="verdict">DECISION: MAKE IT</div>
+        <div class="tc">00:08:41:12 · £8.3M OUT · £8.0M IN · +5.1 PROJ</div>
+      </div>
+      <div class="screen">
+        <span class="cam">CAM 2 · LINE-UP</span>
+        <div class="label">ON-FIELD XI · 5-3-2</div>
+        <div class="pitch" style="margin-top:12px">
+          <div class="row"><div class="p c">HAALAND<em>C · 5.4</em></div><div class="p">THIAGO<em>4.8</em></div></div>
+          <div class="row"><div class="p">ROGERS<em>5.1</em></div><div class="p">XHAKA<em>4.3</em></div><div class="p">BARNES<em>4.0</em></div></div>
+          <div class="row"><div class="p">CALAFIORI<em>5.0</em></div><div class="p">MURILLO<em>4.5</em></div><div class="p">KONSA<em>4.4</em></div></div>
+          <div class="row"><div class="p">RAYA<em>4.8</em></div></div>
+        </div>
+      </div>
+      <div class="screen log" style="grid-column: 1 / -1">
+        <span class="cam">INCIDENT LOG</span>
+        <div><b>17:02</b> HAALAND — UNSPECIFIED INJURY · 75% · ARMBAND STANDS</div>
+        <div><b>16:40</b> SEMENYO — KNEE · 75% · SOLD IN REVIEW 08/01</div>
+        <div><b>09:15</b> SÁVIO — MUSCULAR · OUT UNTIL 7 NOV · BENCH 4</div>
+      </div>
+    </div>
+    <div class="lower"><div class="k">CAPTAIN</div><div class="v">Erling Haaland<small>Vice Rogers · beats the field 54% of the time</small></div><div class="n">55.6</div></div>
+  </div>
+
+  <div class="tag">Direction 2</div>
+  <h2>The matchday programme</h2>
+  <p class="sub">A printed football programme from the 90s. Cream paper, halftone dots, a red spot colour, newspaper columns, a numbered team sheet, and the captain on a ticket stub. Feels like a collectible, not an app.</p>
+  <div class="frame prog">
+    <div class="mast"><div class="name">VAR<span>·</span>IFIED XI</div><div class="meta">Official programme · Issue 08<br>Fri 23 October · 17:30 deadline</div></div>
+    <div class="cols">
+      <div>
+        <div class="kicker">The manager's notes</div>
+        <div class="head">Out goes Semenyo, in comes Rogers</div>
+        <p class="deck">One free transfer, one knee doubt, and a captain who's still the safest bet in the division.</p>
+        <div class="body">Semenyo carries a knee problem into the weekend, flagged 75%, and Rogers arrives at £8.0m projecting 5.1. Sávio's muscle injury keeps him out until November; he drops to the end of the bench and leaves next week. Haaland keeps the armband despite his own flag: three in four managers own him, and the crowd rarely misses a fitness story.</div>
+        <div class="stamp">Projected 55.6</div>
+      </div>
+      <div>
+        <div class="ticket"><div class="t">Admit one · captain</div><div class="cap">Haaland</div><div class="stub">C</div><div style="font: 500 12px/1.4 'IBM Plex Mono'; margin-top:6px">Vice: Rogers · 5.4 projected</div></div>
+        <div class="sheet">
+          <div><span class="no">1</span><span>Raya</span><span>4.8</span></div>
+          <div><span class="no">2</span><span>Calafiori</span><span>5.0</span></div>
+          <div><span class="no">3</span><span>Murillo</span><span>4.5</span></div>
+          <div><span class="no">4</span><span>Konsa</span><span>4.4</span></div>
+          <div><span class="no">5</span><span>Mukiele</span><span>4.2</span></div>
+          <div><span class="no">7</span><span>Rogers</span><span>5.1</span></div>
+          <div><span class="no">9</span><span>Haaland (c)</span><span>5.4</span></div>
+          <div><span class="no">10</span><span>Thiago</span><span>4.8</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tag">Direction 3</div>
+  <h2>The tactics board</h2>
+  <p class="sub">The manager's chalkboard in the dressing room. Players are magnets on the pitch, transfers are chalk arrows, team news is sticky notes, and the numbers are scrawled in chalk. Playful and hands-on.</p>
+  <div class="frame board">
+    <h3>Gameweek 8 — one change</h3>
+    <div class="gw">deadline Friday 5:30pm · 1 free transfer · £0.4m in the bank</div>
+    <div class="layout">
+      <div class="field">
+        <div class="mag c" style="left:38%;top:14%"><i>9</i><span>Haaland (C)</span></div>
+        <div class="mag" style="left:62%;top:14%"><i>10</i><span>Thiago</span></div>
+        <div class="mag" style="left:25%;top:38%"><i>7</i><span>Rogers</span></div>
+        <div class="mag" style="left:50%;top:38%"><i>8</i><span>Xhaka</span></div>
+        <div class="mag" style="left:75%;top:38%"><i>11</i><span>Barnes</span></div>
+        <div class="mag" style="left:14%;top:64%"><i>3</i><span>Calafiori</span></div>
+        <div class="mag" style="left:32%;top:64%"><i>5</i><span>Murillo</span></div>
+        <div class="mag" style="left:50%;top:64%"><i>4</i><span>Konsa</span></div>
+        <div class="mag" style="left:68%;top:64%"><i>2</i><span>Mukiele</span></div>
+        <div class="mag" style="left:86%;top:64%"><i>6</i><span>Botman</span></div>
+        <div class="mag" style="left:50%;top:88%"><i>1</i><span>Raya</span></div>
+      </div>
+      <div>
+        <div class="arrow"><s>Semenyo</s> → <u>Rogers</u></div>
+        <div class="scrawl">+5.1 next week · knee says sell</div>
+        <div class="note" style="margin-top:14px"><b>Haaland 75%</b><br>"unspecified" — keep the armband, check Friday's presser</div>
+        <div class="note pink"><b>Sávio OUT</b><br>muscle, back 7 Nov · bench 4, sell next week</div>
+        <div class="scrawl">coin flip: Konsa or Barnes? 50/50</div>
+        <div class="scrawl" style="font-size:30px;color:#f2c94c;margin-top:6px">55.6 pts</div>
+      </div>
+    </div>
+  </div>
+
+  <p class="pick">Pick one, mix two (for example the VAR room's layout with the programme's typography), or tell me what you don't like.</p>
+</div>
+</body>
+</html>

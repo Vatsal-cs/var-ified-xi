@@ -811,6 +811,9 @@ Stage 2 — CONDITIONAL POINTS  (XGBoost regressor)
             <tr><td>Training on stale team ratings, as the live model plays on them (new)</td><td class="num">—</td><td class="num">−14 [−85, +58] on 2025-26 · stale ratings themselves cost ~93 a season</td><td>no detectable effect — not used</td></tr>
             <tr><td>Early-season tilt toward points per match played (GW1-10) (new)</td><td class="num">—</td><td class="num">−17.6 [−45, +9] · −11 and −7 by season, 3 of 10 runs</td><td>no detectable effect, behind in both — not used</td></tr>
             <tr><td>Ownership as an input, actually filled in for training (it was 0 everywhere) (new)</td><td class="num">—</td><td class="num"><strong>+122</strong> [+26, +216] · ahead in both, 8 of 10 runs · held back <strong>+65 and +14</strong></td><td class="ok"><strong>shipped</strong></td></tr>
+            <tr><td>Club rotation rate as an input (new)</td><td class="num">—</td><td class="num">−19 [−80, +43] · +12 and −31 by season</td><td>no detectable effect — not used</td></tr>
+            <tr><td>Points-if-60+ calibrated to what players at each level really scored (new)</td><td class="num">—</td><td class="num">−29 [−123, +69] · +6 and −35 by season</td><td>no detectable effect — not used</td></tr>
+            <tr><td>Stale ratings replaced by odds-based ratings, as live (new)</td><td class="num">—</td><td class="num">−28 [−128, +75] · +14 and −42 by season</td><td>no detectable effect — not used</td></tr>
             <tr><td>Split populations vs starters-only for both stages</td><td class="num">+7</td><td class="num">starters-only <strong>+56</strong> [+11, +103] on the tuning seasons — then +18 and −17 on the held-back seasons</td><td class="no"><strong>unconfirmed</strong>: split populations stay</td></tr>
             <tr><td>Backtest from GW2, not GW8</td><td class="num">—</td><td class="num">—</td><td>kept: a coverage fix, not a points claim</td></tr>
           </tbody>

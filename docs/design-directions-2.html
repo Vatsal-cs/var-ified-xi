@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>More design directions</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;800&family=Bungee&family=DotGothic16&family=IBM+Plex+Mono:wght@400;600&family=Lilita+One&family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+<style>
+  :root { --page: #e9e6df; --ink: #1b1a17; }
+  @media (prefers-color-scheme: dark) { :root { --page: #161513; --ink: #ece7dd; } }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--page); color: var(--ink); font: 15px/1.5 system-ui, sans-serif; padding: 28px 16px 60px; }
+  .wrap { max-width: 980px; margin: 0 auto; }
+  .tag { font: 600 12px/1 "IBM Plex Mono", monospace; letter-spacing: .14em; text-transform: uppercase; opacity: .65; margin: 40px 0 6px; }
+  h2 { margin: 0 0 4px; font: 800 26px/1.1 "Barlow Condensed", sans-serif; }
+  .sub { margin: 0 0 14px; opacity: .75; max-width: 72ch; }
+  .frame { border-radius: 14px; overflow: hidden; box-shadow: 0 18px 40px -24px rgba(0,0,0,.5); }
+
+  /* ---------- 4. FOURTH OFFICIAL / LED SCOREBOARD ---------- */
+  .led { background: #050505; padding: 22px; color: #ffb000; font-family: "DotGothic16", monospace; }
+  .led .board { background: #0d0d0d; border: 6px solid #1c1c1c; border-radius: 10px; padding: 18px;
+                background-image: radial-gradient(rgba(255,176,0,.07) 1.1px, transparent 1.4px); background-size: 7px 7px; }
+  .led .top { display: flex; justify-content: space-between; font-size: 16px; letter-spacing: .12em; color: #ffcf6a; }
+  .led .subboard { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 16px 0; }
+  .led .num { border: 4px solid #222; border-radius: 10px; padding: 12px 14px; background: #080808; text-align: center; }
+  .led .num .lab { font-size: 15px; letter-spacing: .3em; }
+  .led .num .n { font: 400 84px/1 "DotGothic16"; letter-spacing: .04em; }
+  .led .num .who { font-size: 22px; letter-spacing: .12em; }
+  .led .out { color: #ff3b30; } .led .in { color: #34e36b; }
+  .led .ticker { border-top: 2px solid #222; padding-top: 10px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; font-size: 18px; }
+  .led .ticker div span { display: block; font-size: 13px; color: #a8781f; letter-spacing: .2em; }
+  .led .scroll { margin-top: 12px; font-size: 18px; color: #ffcf6a; white-space: nowrap; overflow: hidden; border-top: 2px solid #222; padding-top: 8px; }
+
+  /* ---------- 5. PANINI STICKER ALBUM ---------- */
+  .album { background: #f6f1e3; padding: 22px 24px 26px; color: #1d2340; font-family: "Lilita One", sans-serif; }
+  .album .ttl { display: flex; justify-content: space-between; align-items: center; }
+  .album .ttl h3 { margin: 0; font: 400 34px/1 "Bungee", sans-serif; color: #e63946; letter-spacing: .02em; }
+  .album .ttl .pg { font: 400 16px/1 "Lilita One"; background: #1d2340; color: #f6f1e3; padding: 8px 12px; border-radius: 6px; }
+  .album .grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-top: 16px; }
+  .album .st { background: #fff; border-radius: 8px; padding: 6px; box-shadow: 0 3px 0 #d8cfb4, 0 8px 14px -10px rgba(0,0,0,.4); transform: rotate(var(--r, 0deg)); }
+  .album .st .ph { height: 74px; border-radius: 5px; display: flex; align-items: flex-end; justify-content: center; font: 400 30px/1 "Bungee"; color: rgba(255,255,255,.92); padding-bottom: 6px; }
+  .album .st .nm { font-size: 15px; text-align: center; margin-top: 5px; color: #1d2340; }
+  .album .st .xp { font: 400 12px/1 "IBM Plex Mono"; text-align: center; color: #6b6f86; margin-top: 2px; }
+  .album .st.foil { background: linear-gradient(120deg, #fff6c9, #ffd86b 40%, #fff3b0 55%, #f6c94b); }
+  .album .st.empty { background: transparent; border: 2px dashed #b9b29b; box-shadow: none; display: flex; flex-direction: column; justify-content: center; align-items: center; color: #9a937b; min-height: 120px; font-size: 14px; text-align: center; padding: 8px; }
+  .album .pack { margin-top: 18px; display: flex; align-items: center; gap: 16px; background: #1d2340; color: #f6f1e3; padding: 14px 18px; border-radius: 10px; }
+  .album .pack .p { font: 400 18px/1.2 "Bungee"; color: #ffd86b; }
+  .album .pack .t { font: 400 16px/1.35 "Lilita One"; }
+
+  /* ---------- 6. RETRO MANAGER GAME ---------- */
+  .game { background: #1a1c2c; color: #f4f4f4; font-family: "VT323", monospace; padding: 0; image-rendering: pixelated; }
+  .game .menu { display: flex; gap: 0; background: #29366f; font: 400 10px/1 "Press Start 2P"; }
+  .game .menu div { padding: 10px 12px; } .game .menu .on { background: #ffcd75; color: #1a1c2c; }
+  .game .body { display: grid; grid-template-columns: 1.1fr 1fr; gap: 0; }
+  .game .left { padding: 14px 16px; border-right: 4px solid #333c57; }
+  .game .right { padding: 14px 16px; }
+  .game .h { font: 400 12px/1.4 "Press Start 2P"; color: #ffcd75; margin-bottom: 10px; }
+  .game table { width: 100%; border-collapse: collapse; font-size: 22px; }
+  .game td { padding: 1px 4px; } .game tr:nth-child(odd) td { background: #262b44; }
+  .game .pos { color: #73eff7; width: 44px; } .game .cap { color: #ffcd75; }
+  .game .msg { border: 4px solid #f4f4f4; padding: 10px 12px; font-size: 22px; line-height: 1.15; background: #333c57; box-shadow: 6px 6px 0 #0f1020; }
+  .game .msg .from { font: 400 10px/1.4 "Press Start 2P"; color: #a7f070; margin-bottom: 6px; }
+  .game .btns { display: flex; gap: 10px; margin-top: 12px; font: 400 10px/1 "Press Start 2P"; }
+  .game .btns div { padding: 10px 12px; border: 3px solid #f4f4f4; } .game .btns .yes { background: #38b764; } .game .btns .no { background: #b13e53; }
+  .game .bar { margin-top: 14px; font: 400 10px/1.6 "Press Start 2P"; color: #94b0c2; }
+  .game .meter { height: 14px; background: #333c57; border: 3px solid #f4f4f4; margin-top: 4px; }
+  .game .meter i { display: block; height: 100%; background: #a7f070; width: 72%; }
+
+  /* ---------- 7. BONUS: THERMAL RECEIPT ---------- */
+  .rcpt-wrap { background: #2a2826; padding: 26px 0; display: flex; justify-content: center; }
+  .rcpt { width: 340px; background: #fbfaf6; color: #1b1b1b; font: 400 14px/1.45 "IBM Plex Mono", monospace; padding: 18px 20px 26px;
+          -webkit-mask: radial-gradient(circle 6px at 50% 100%, transparent 98%, #000) 0 0 / 14px 100% repeat-x; mask: radial-gradient(circle 6px at 50% 100%, transparent 98%, #000) 0 0 / 14px 100% repeat-x; }
+  .rcpt .c { text-align: center; } .rcpt hr { border: 0; border-top: 1px dashed #1b1b1b; margin: 10px 0; }
+  .rcpt .row { display: flex; justify-content: space-between; } .rcpt .big { font-size: 22px; font-weight: 600; }
+  .rcpt .bar { height: 40px; margin-top: 10px; background: repeating-linear-gradient(90deg, #1b1b1b 0 2px, transparent 2px 4px, #1b1b1b 4px 5px, transparent 5px 8px, #1b1b1b 8px 11px, transparent 11px 12px); }
+  .pick { margin-top: 14px; font-size: 14px; opacity: .8; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="tag">Direction 4</div>
+  <h2>The fourth official's board</h2>
+  <p class="sub">Every transfer is shown on the touchline substitution board: red number out, green number in. The whole site runs on stadium LED dot-matrix: scoreboards, a scrolling team-news ticker, numbers that flip like a real board.</p>
+  <div class="frame led">
+    <div class="board">
+      <div class="top"><span>VAR-IFIED XI</span><span>GW08 · FRI 17:30</span></div>
+      <div class="subboard">
+        <div class="num"><div class="lab out">OUT</div><div class="n out">24</div><div class="who out">SEMENYO</div></div>
+        <div class="num"><div class="lab in">IN</div><div class="n in">11</div><div class="who in">ROGERS</div></div>
+      </div>
+      <div class="ticker">
+        <div><span>CAPTAIN</span>HAALAND 5.4</div>
+        <div><span>PROJECTED</span>55.6 PTS</div>
+        <div><span>BANK</span>£0.4M · 1 FT</div>
+      </div>
+      <div class="scroll">▶ HAALAND 75% UNSPECIFIED INJURY ▶ SÁVIO OUT UNTIL 7 NOV ▶ SEMENYO 75% KNEE ▶ KONSA OR BARNES: COIN FLIP</div>
+    </div>
+  </div>
+
+  <div class="tag">Direction 5</div>
+  <h2>The sticker album</h2>
+  <p class="sub">Your squad is a Panini album page. Each player is a sticker, the captain is the shiny foil one, empty slots show who to sign, and every transfer is "opening a pack". Bright, collectible, nothing like a dashboard.</p>
+  <div class="frame album">
+    <div class="ttl"><h3>VAR-IFIED XI</h3><div class="pg">Gameweek 8 · page 1 of 2</div></div>
+    <div class="grid">
+      <div class="st foil" style="--r:-2deg"><div class="ph" style="background:#6cabdd">9</div><div class="nm">Haaland ★</div><div class="xp">captain · 5.4</div></div>
+      <div class="st" style="--r:1.5deg"><div class="ph" style="background:#e30613">10</div><div class="nm">Thiago</div><div class="xp">4.8</div></div>
+      <div class="st empty" style="--r:-1deg">Sticker 7 missing<br><span style="color:#e63946">open pack: Rogers</span></div>
+      <div class="st" style="--r:2deg"><div class="ph" style="background:#eb172b">8</div><div class="nm">Xhaka</div><div class="xp">4.3</div></div>
+      <div class="st" style="--r:-1.5deg"><div class="ph" style="background:#241f20">11</div><div class="nm">Barnes</div><div class="xp">4.0</div></div>
+      <div class="st" style="--r:1deg"><div class="ph" style="background:#ef0107">3</div><div class="nm">Calafiori</div><div class="xp">5.0</div></div>
+      <div class="st" style="--r:-2deg"><div class="ph" style="background:#dd0000">5</div><div class="nm">Murillo</div><div class="xp">4.5</div></div>
+      <div class="st" style="--r:1.5deg"><div class="ph" style="background:#ef0107">4</div><div class="nm">Konsa</div><div class="xp">4.4</div></div>
+      <div class="st" style="--r:-1deg"><div class="ph" style="background:#eb172b">2</div><div class="nm">Mukiele</div><div class="xp">4.2</div></div>
+      <div class="st" style="--r:2deg"><div class="ph" style="background:#ef0107">1</div><div class="nm">Raya</div><div class="xp">4.8</div></div>
+    </div>
+    <div class="pack"><div class="p">Swap Semenyo</div><div class="t">One free swap this week. Trade the injured Semenyo sticker for Rogers: +5.1 projected.</div></div>
+  </div>
+
+  <div class="tag">Direction 6</div>
+  <h2>The retro manager game</h2>
+  <p class="sub">A 90s football management game on a CRT. Pixel fonts, a menu bar, your squad as a team sheet, and decisions arrive as messages from your assistant manager with YES / NO buttons. Like playing Championship Manager '97.</p>
+  <div class="frame game">
+    <div class="menu"><div class="on">INBOX</div><div>SQUAD</div><div>TACTICS</div><div>TRANSFERS</div><div>LEAGUE</div></div>
+    <div class="body">
+      <div class="left">
+        <div class="h">FIRST TEAM · GW08</div>
+        <table>
+          <tr><td class="pos">GK</td><td>RAYA</td><td style="text-align:right">4.8</td></tr>
+          <tr><td class="pos">DEF</td><td>CALAFIORI</td><td style="text-align:right">5.0</td></tr>
+          <tr><td class="pos">DEF</td><td>MURILLO</td><td style="text-align:right">4.5</td></tr>
+          <tr><td class="pos">DEF</td><td>KONSA</td><td style="text-align:right">4.4</td></tr>
+          <tr><td class="pos">MID</td><td>ROGERS</td><td style="text-align:right">5.1</td></tr>
+          <tr><td class="pos">MID</td><td>XHAKA</td><td style="text-align:right">4.3</td></tr>
+          <tr><td class="pos">FWD</td><td class="cap">HAALAND (C)</td><td style="text-align:right">5.4</td></tr>
+          <tr><td class="pos">FWD</td><td>THIAGO</td><td style="text-align:right">4.8</td></tr>
+        </table>
+        <div class="bar">SQUAD STRENGTH</div><div class="meter"><i></i></div>
+      </div>
+      <div class="right">
+        <div class="h">INBOX (3 NEW)</div>
+        <div class="msg"><div class="from">FROM: ASSISTANT MANAGER</div>Gaffer, Semenyo's knee is 75%. I'd sell him for Rogers (£8.0M, 5.1 projected). Shall I do it?</div>
+        <div class="btns"><div class="yes">YES</div><div class="no">NO</div></div>
+        <div class="bar" style="margin-top:16px">▸ PHYSIO: SÁVIO OUT UNTIL 7 NOV<br>▸ PHYSIO: HAALAND 75%, KEEP ARMBAND</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tag">Bonus</div>
+  <h2>The receipt</h2>
+  <p class="sub">Each gameweek's decision printed as a till receipt: itemised transfers, the captain, a total, and a barcode. Could be a single page on its own (shareable with your league) or the style for the whole site.</p>
+  <div class="frame rcpt-wrap">
+    <div class="rcpt">
+      <div class="c big">VAR-IFIED XI</div>
+      <div class="c">GAMEWEEK 08 · FRI 23 OCT</div>
+      <hr>
+      <div class="row"><span>SELL SEMENYO</span><span>+£8.3M</span></div>
+      <div class="row"><span>BUY ROGERS</span><span>-£8.0M</span></div>
+      <div class="row"><span>TRANSFERS USED</span><span>1 / 1</span></div>
+      <hr>
+      <div class="row"><span>CAPTAIN</span><span>HAALAND</span></div>
+      <div class="row"><span>VICE</span><span>ROGERS</span></div>
+      <div class="row"><span>BENCH</span><span>VERB/BARR/CHER/SAV</span></div>
+      <hr>
+      <div class="row big"><span>PROJECTED</span><span>55.6</span></div>
+      <div class="row"><span>BANK</span><span>£0.4M</span></div>
+      <hr>
+      <div class="c">** HAALAND 75% · CHECK FRIDAY **</div>
+      <div class="bar"></div>
+      <div class="c" style="margin-top:6px">THANK YOU FOR TRUSTING THE MODEL</div>
+    </div>
+  </div>
+
+  <p class="pick">Say a number, or a mix (for example the VAR room plus the fourth official's board for transfers).</p>
+</div>
+</body>
+</html>
