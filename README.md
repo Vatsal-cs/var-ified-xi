@@ -2,78 +2,133 @@
 
 # VAR-ified XI
 
-**Machine-checked. Math-approved. Your FPL squad, reviewed.**
+**A Fantasy Premier League engine that has to prove every change before it ships.**
 
-A Fantasy Premier League engine that predicts every player's points with XGBoost, solves for the best transfer under the real rules with a Mixed-Integer Linear Program — and refuses to ship anything that can't prove it scores more points.
+It predicts every player's points, plans transfers, lineup and captain six gameweeks ahead under FPL's real rules, and re-plans itself before every deadline.
 
-[![Python](https://img.shields.io/badge/Python-3.12-3776AB?style=flat-square&logo=python&logoColor=white)](https://python.org)
-[![XGBoost](https://img.shields.io/badge/XGBoost-ML-EB1834?style=flat-square)](https://xgboost.ai)
-[![PuLP](https://img.shields.io/badge/PuLP-MILP_Solver-2E8B57?style=flat-square)](https://coin-or.github.io/pulp/)
-[![Next.js](https://img.shields.io/badge/Next.js-16-black?style=flat-square&logo=next.js&logoColor=white)](https://nextjs.org)
-[![Tailwind](https://img.shields.io/badge/Tailwind-CSS-06B6D4?style=flat-square&logo=tailwindcss&logoColor=white)](https://tailwindcss.com)
-[![Vercel](https://img.shields.io/badge/Deployed_on-Vercel-black?style=flat-square&logo=vercel)](https://vercel.com)
+[**Live dashboard →**](https://var-ified-xi.vercel.app) &nbsp;·&nbsp; [How it works](https://var-ified-xi.vercel.app/how) &nbsp;·&nbsp; [Project handbook](docs/HANDBOOK.md)
 
-[Live dashboard](https://var-ified-xi.vercel.app) · [Report a bug](https://github.com/Vatsal-cs/var-ified-xi/issues)
+![Python](https://img.shields.io/badge/Python-3776AB?style=flat-square&logo=python&logoColor=white)
+![XGBoost](https://img.shields.io/badge/XGBoost-EB1834?style=flat-square)
+![PuLP](https://img.shields.io/badge/PuLP_(MILP)-2E8B57?style=flat-square)
+![Next.js](https://img.shields.io/badge/Next.js-000000?style=flat-square&logo=nextdotjs&logoColor=white)
+![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=flat-square&logo=typescript&logoColor=white)
+![GitHub Actions](https://img.shields.io/badge/GitHub_Actions-2088FF?style=flat-square&logo=githubactions&logoColor=white)
+![Vercel](https://img.shields.io/badge/Vercel-000000?style=flat-square&logo=vercel&logoColor=white)
 
 </div>
 
 ---
 
-## What this actually does
+## At a glance
 
-Most "FPL AI" projects sort players by points-per-million and call it a day. This one treats FPL as two separate problems, because it is two separate problems.
+| Number | What it means |
+|---|---|
+| **+15%** | more points per gameweek than picking by recent form — 64.6 vs 57.7 and 61.7 vs 51.9 across two replayed seasons |
+| **~87,000** | real gameweek results the model learns from |
+| **6 gameweeks** | of transfers, lineups and captains planned at once by a mixed-integer solver |
+| **24 studies** | run on the model, 22 of them pre-registered: the pass/fail rule committed before the first result |
+| **101 tests** | guarding FPL's rules, both test harnesses, the planner and the team-news reader |
+| **$0 a month** | free public data, a free AI model, GitHub Actions and Vercel |
 
-**Prediction** — how many points will this player score? **Decision** — given what I already own, my bank and my free transfers, what should I actually do? A perfect predictor paired with a bad decision rule loses to a mediocre predictor paired with a good one, because the decision rule is the part that touches your team.
+---
 
-So there are two models and two test harnesses, and neither can flatter the other.
+## Why I built it
 
-### 1 · Prediction — two models, not one
+I play FPL in a mini-league with friends, and most "FPL AI" tools stop at sorting players by points per million. That answers the wrong question. The real one is: *given the team I already own, my bank and my free transfers, what should I do this week — and what does that do to the next five weeks?*
 
-Rotation risk is the biggest source of error in fantasy football, and a flat regressor smears it together with quality. A player projected at 2.0 might be a certain starter who is mediocre, or a brilliant player who might not feature. Those demand opposite decisions.
+So VAR-ified XI is two separate pieces that can't flatter each other: a **model** that predicts points, and a **solver** that makes the decision. And it runs on one rule: **nothing ships because it sounds smart. A change ships when it scores more real points, by more than the noise.**
+
+---
+
+## What it does
+
+- **Makes this week's call** — the transfer (or none), whether a −4 hit is worth it, the starting XI, the bench order and the captain
+- **Plans six weeks ahead** under every real rule: £100m budget, 2/5/5/3 squad, legal formations, max three per club, free transfers banked up to five, −4 per extra
+- **Thinks in probabilities, not single numbers** — each player's likely range, chance of a haul, and head-to-heads like *"Rogers beats Haaland 52%"*
+- **Flags coin flips** — bench players who'd outscore a starter 40–60% of the time, so close calls look close
+- **Plans chips** — Triple Captain, Bench Boost and Free Hit valued in every week and placed before they expire
+- **Reads your mini-league** — what the managers ahead of you own, and which chips they've already burned
+- **Reads team news** — a free AI model reads the week's headlines and has to cite the one behind every call; each call is scored after the gameweek
+- **Runs itself** — GitHub Actions checks every four hours, re-plans before each deadline and redeploys the site
+
+---
+
+## How it works
+
+```mermaid
+flowchart LR
+    A["FPL API<br/>players, prices, fixtures"] --> D
+    B["Three past seasons<br/>~87k gameweek rows"] --> D
+    C["ESPN fixtures<br/>+ news headlines"] --> D
+    D["Features<br/>form, fixtures, minutes,<br/>ownership, rest"] --> E["Two-stage XGBoost<br/>will he play? × points if he does"]
+    E --> F["Points distributions<br/>range, haul odds, head-to-heads"]
+    E --> G["MILP planner<br/>6 gameweeks, real FPL rules"]
+    F --> H[("optimized_team.json")]
+    G --> H
+    H --> I["Next.js dashboard<br/>on Vercel"]
+    J["GitHub Actions<br/>every 4 hours"] -. runs .-> D
+```
+
+**1 · Data.** Live players, prices, fixtures and match histories come from FPL's public API. Three past seasons come from the open [vaastav archive](https://github.com/vaastav/Fantasy-Premier-League), built through the exact same feature code so training and live rows look alike. Cup, European and international fixtures come from ESPN's public feed, and injury flags are used as FPL published them *before* each deadline.
+
+**2 · Prediction — two models, not one.** Rotation is the biggest source of error in FPL, and a single regressor blurs it into quality: a 2-point projection could be a nailed-on average player or a star who might not play. Those need opposite decisions, so the model is split:
 
 ```
 Stage 1   minutes classifier   P(didn't play) · P(cameo) · P(60+ mins)
 Stage 2   points regressor     E[points | played 60+]
 
-          xP = P(full) × E[pts|full] + P(cameo) × cameo_avg[position]
+          xP = P(60+) × E[points | 60+]  +  P(cameo) × cameo average for his position
 ```
 
-Trained on this season plus three past ones — about 87,000 real gameweek results. Five copies are trained with different random seeds and their projections averaged, so one unlucky seed can't swing the picks.
+Five copies trained on different random seeds are averaged, which lifted agreement between their starting XIs from 75–78% to 86–88% at no cost in points.
 
-### 2 · Decision — a solver, not a heuristic
+**3 · Decision — a solver, not a heuristic.** A PuLP/CBC mixed-integer linear program picks the squad, starting XI, captain and transfers across six gameweeks at once, under every constraint above. The answer is *optimal given the predictions* — not a top-N sort.
 
-A PuLP/CBC Mixed-Integer Linear Program solves the 15-man squad, the starting XI, the captain and the transfers across **six gameweeks at once**, under every real constraint: £100.0m budget, 2/5/5/3 quota, legal formation, max 3 per club, one free transfer a week (bank up to five), −4 per extra.
-
-The answer is *provably optimal given the predictions*. Not a top-N sort.
-
-### Two modes
-
-| Command | Answers |
-|---|---|
-| `python main.py` | "What's the best possible squad?" — GW1, a wildcard, a fresh start |
-| `python main.py --team-id 1234567` | "Given the team I own, what should I change?" — every other week. Reads your public team, works out your bank, sell prices and free transfers, plans six gameweeks ahead |
+**4 · Delivery.** The whole contract between the Python engine and the dashboard is one JSON file. There's no server, database or paid API: GitHub Actions writes the file and commits it, and Vercel redeploys.
 
 ---
 
-## Nothing ships on intuition
+## How I know it works
 
-A change ships when it scores more **realized** points — and when that gain is bigger than the noise. Ideas that lose stay in the codebase as named, re-runnable variants with their exact numbers, so a rejected idea can never quietly return as a fresh insight.
+### Against the obvious baselines
 
-### How big is the noise?
+| | points per gameweek (2024-25 / 2025-26) |
+|---|---|
+| `naive_form` — no model, each player's last-5 average | 57.7 / 51.9 |
+| **This model** (mean of 5 seeds) | **64.6 / 61.7** |
+| `hindsight` — optimised on what actually happened, unreachable | 149.0 / 154.6 |
 
-Changing *nothing* but XGBoost's random seed moves a two-season backtest by up to **175 points**, with accuracy identical to three decimals. The solver turns tiny prediction differences into different squads. The old rule — "score more in every season, on one run" — passed a change that does nothing **half the time**.
+### The noise problem
 
-So every comparison now runs on several seeds and reports a paired, block-bootstrapped 95% interval, with the verdict rule written down before the run:
+Changing *nothing* but XGBoost's random seed moves a two-season backtest by up to **175 points**, with accuracy identical to three decimals — the solver turns tiny prediction differences into different squads. My first rule ("score more in every season, on one run") would have passed a change that does nothing **half the time**.
+
+So every comparison now runs on five seeds and reports a paired, block-bootstrapped 95% confidence interval, with the verdict rule written down before the run:
 
 | Verdict | Rule |
 |---|---|
 | **better** | pooled interval above zero *and* ahead in every season |
 | **worse** | pooled interval below zero *and* behind in every season |
-| **no detectable effect** | anything else — the harness can't tell, which is not the same as "rejected" |
+| **no detectable effect** | anything else — the harness can't tell, which isn't the same as "rejected" |
 
-Changes are chosen on 2024-25 and 2025-26. 2022-23 and 2023-24 are held back: a change that comes out **better** is run on them **once**, against a criterion written down first, and ships only if it keeps its sign.
+Changes are tuned on 2024-25 and 2025-26. Two more seasons, 2022-23 and 2023-24, are **held back**: a change that comes out *better* is run on them once, and ships only if it keeps its sign.
 
-### The evidence ledger, re-measured
+### Selected results
+
+| Change | Result (points, 95% CI) | Verdict |
+|---|---|---|
+| A model at all, vs last-5 average | **+614** [+361, +876] | ✅ better |
+| Ownership as an input (it was silently 0 in training) | **+122** [+26, +216] · held back +65 and +14 | ✅ shipped |
+| Cup, European and international matches as inputs | **+87** [+13, +159] · held back +43 and +11 | ✅ shipped |
+| Average five models trained on different seeds | XIs agree 86–88% (was 75–78%) · points +25 [−37, +92] | ✅ shipped |
+| Train both stages on established starters only | +56 on the tuning seasons, then +18 and −17 held back | ⚠️ not confirmed — stays off |
+| Team strength from recent xG instead of FPL's ratings | −153 [−276, −24] in 2025-26 | ❌ worse |
+
+The starters-only result is why the held-back seasons exist: it beat production by 56 points and would have shipped on a looser rule — then it failed to keep its sign on seasons it was never tuned on.
+
+<details>
+<summary><b>The full evidence ledger — every experiment, re-measured</b></summary>
+<br>
 
 Every verdict below was first decided on **one seed**. The October 2026 audit re-ran the biggest claims on the corrected harness — 5 seeds per season for the backtest, 3 for the simulator — and most of them didn't survive as stated:
 
@@ -106,8 +161,6 @@ Every verdict below was first decided on **one seed**. The October 2026 audit re
 | Form in European, cup and international games, second look (new) | — | stopped at step 1: misses +0.04 [−0.21, +0.29] for players who scored there; strong or weak opponents alike | no signal — not built |
 | Split training populations, vs starters-only for both stages | +7 | starters-only **+56** [+11, +103] on the tuning seasons — then +18 and −17 on the held-back seasons | ⚠️ **unconfirmed**: split populations stay |
 
-The one **better** on the tuning seasons was a surprise: training *both* stages on established starters only — the setting this project had rejected — beat production by 56 points, ahead in both seasons. Under the rule written before the run, it then had to keep its sign on the two held-back seasons. It didn't: +18 in 2022-23, −17 in 2023-24. It stays off. That's exactly what the held-back seasons are for — without them, production would have switched models on a result that doesn't generalise.
-
 Not re-measured, and every one of them sits inside the ±146-point band that changing only the seed produces — so treat each as **unproven either way**, not as settled:
 
 | Idea | One-seed result | Reasoning at the time |
@@ -120,8 +173,6 @@ Not re-measured, and every one of them sits inside the ±146-point band that cha
 | Single flat regressor | −53 | smears rotation risk into quality |
 | Differential tilt toward unowned players | ≈0 | points-neutral; buys rank variance only |
 
-### What the audit found was being measured
-
 The re-measurement only means something because the harnesses were fixed first. Each fix was checked for moving totals in the direction it should — a fix that moves them the wrong way points at a bug in the fix:
 
 | Fix | Expected | Measured |
@@ -132,23 +183,11 @@ The re-measurement only means something because the harnesses were fixed first. 
 | Each season's own transfer rules | correct counts | unit tests; first-week accrual reproduces a real team |
 | Simulator runs production's own decision code | identical live output | identical recommendation before and after |
 
-The injury-flag check caught a real bug on its way through: the 2025-26 snapshots list hundreds of fit players as "available, 0% chance", which zeroed their projections until it was cleaned out.
+> FPL's own published xP looked like an obvious extra yardstick, but a squad built from the archived values scores ~99/GW — two thirds of perfect hindsight, which no pre-deadline forecast achieves. Those values are recorded after lineups are known. The comparison was dropped rather than left in looking authoritative.
 
-### Bracketed so the numbers mean something
+</details>
 
-| | points per gameweek (2024-25 / 2025-26) |
-|---|---|
-| `naive_form` — no model, just each player's last-5 average | 57.7 / 51.9 |
-| **This model** (mean of 5 seeds) | **64.6 / 61.7** |
-| `hindsight` — optimise on what actually happened, unreachable | 149.0 / 154.6 |
-
-Roughly **+15% over having no model at all** — the clearest result in the project.
-
-> FPL's own published xP looked like an obvious third yardstick, but a squad built from the archived values scores ~99/GW — two thirds of perfect hindsight, which no pre-deadline forecast achieves. Those values are recorded after lineups are known. The comparison was dropped rather than left in looking authoritative.
-
----
-
-## Two harnesses, two questions
+### Two harnesses, two questions
 
 | | `backtest.py` | `season_sim.py` |
 |---|---|---|
@@ -158,15 +197,40 @@ Roughly **+15% over having no model at all** — the clearest result in the proj
 | **Prices** | As they were | Move, with half-the-rise selling |
 | **Use for** | Model and feature changes | Anything in the transfer planner |
 
-Both replay seasons gameweek by gameweek, training only on data strictly before the week being predicted, then score the chosen team against what actually happened — autosubs and captain-to-vice fallback included. Both see the injury flags FPL published **before** each deadline (from 2024-25, when snapshots begin), and both predict a double-gameweek player **per match**.
-
-`season_sim.py` runs **the exact decision code the dashboard runs** (`planner.py`) and trains **one model per gameweek, handed identically to every policy**, so any difference in score is the decision rule and nothing else. Form, price and injury news are frozen at the deadline; fixture context is not, because the fixture list really is published months ahead.
-
-> **Audited October 2026.** The harnesses used to play a different game from production: a 2-transfer bank in seasons that allowed 5, a decision procedure production never ran, future prices leaking into multi-week projections, double-gameweek players projected for one match and scored for two, and no injury data. All fixed, each behind a test, with the old behaviour kept as `--legacy-*` flags for one cycle. The old-harness mode reproduces the earlier numbers exactly, so the before/after is like for like.
+Both replay seasons week by week, training only on data from *before* the week being predicted, then score the chosen team against what actually happened — autosubs and captain-to-vice fallback included. `season_sim.py` runs **the exact decision code the dashboard runs** (`planner.py`), so any difference between policies is the decision rule and nothing else.
 
 ---
 
-## Quickstart
+## Bugs worth telling
+
+The most useful things this project taught me came from bugs that never crashed anything.
+
+- **The age leak.** FPL's history stores every player's age as 26, so only *live* rows had real ages — and the trees learned to use age to tell players apart. Henderson, 36, jumped from 2.4 to 5.1 projected points. No backtest could ever see it, because every replayed season was all 26s. Age is now off, so live runs match what was tested.
+- **The feature that was always zero.** Ownership was a model input, but in training it was 0 on every row, so the model could never learn from it. Filled in properly, it was worth **+122 points**.
+- **The harness was playing a different game.** An audit found the backtest banking 2 transfers in seasons that allowed 5, leaking future prices into projections, projecting double-gameweek players once but scoring them twice, and ignoring injury news. Each fix landed behind a test, with the old mode kept so earlier numbers still reproduce exactly.
+- **Hundreds of fit players at 0%.** The 2025-26 injury snapshots list many fit players as "available, 0% chance", which quietly zeroed their projections until it was cleaned out.
+- **Matches that hadn't happened yet.** Once a gameweek starts, FPL's API reports zero-minute rows for fixtures that haven't kicked off — they read like benchings. Rows now count only once their fixture has finished.
+- **A benchmark too good to be true.** FPL's archived expected points built squads scoring two thirds of perfect hindsight, because they're recorded after lineups are known. I dropped the comparison instead of leaving it in looking authoritative.
+
+---
+
+## Engineering
+
+| Workflow | When | What it does |
+|---|---|---|
+| `weekly.yml` | Every 4 hours | Exits in seconds unless a deadline is within ~30 hours; otherwise fetches, retrains, re-solves, reads the news and commits — which redeploys the site |
+| `news-check.yml` | Manual | A one-minute check that the team-news reader works |
+| `simulate.yml` | Manual | Runs a season-long policy race in the cloud and posts the result table |
+
+- **Tests.** 101 unit tests cover each season's transfer rules, both harnesses, the planner, chip timing, the deadline gate, Wildcard/Free Hit handling and the news parser.
+- **Team news with guardrails.** Within 48 hours of a deadline, Google News and BBC Sport headlines are read by a free Gemini model. A call only counts if it cites a headline that names the player; "out" and "doubt" can lower a projection, while "rotation" stays display-only until it's been right 60% of the time over 30 checked calls.
+- **Your chip team.** FPL hides a Wildcard or Free Hit team until the deadline, so `backend/overrides.json` can hold the team you've set; the dashboard shows it and keeps re-checking it, suggesting any change worth a point or more.
+- **Run now.** The dashboard can trigger a fresh run through a server-side route with a scoped token, limited to one run at a time, 10 minutes apart and 6 a day.
+- **Free by design.** Every dependency is a free tier: FPL's public API, ESPN's public feed, Gemini's free tier in a project with no billing, GitHub Actions and Vercel.
+
+---
+
+## Run it yourself
 
 ```bash
 git clone https://github.com/Vatsal-cs/var-ified-xi.git
@@ -176,11 +240,11 @@ python3 -m venv venv
 source venv/bin/activate          # Windows: venv\Scripts\activate
 pip install -r requirements.txt
 
-python main.py                    # best possible squad
-python main.py --team-id 1234567  # transfer plan for your real team
+python main.py                    # best possible squad from scratch
+python main.py --team-id 1234567  # a transfer plan for your real FPL team
 ```
 
-Takes 5–15 minutes, most of it fetching ~660 player histories. Writes `optimized_team.json` into `backend/data/output/` and `frontend/public/`.
+A run takes 5–15 minutes, mostly fetching ~660 player histories, and writes `optimized_team.json` to `backend/data/output/` and `frontend/public/`.
 
 ```bash
 cd ../frontend
@@ -188,9 +252,11 @@ npm install
 npm run dev                       # localhost:3000
 ```
 
-**Deploy free:** push to GitHub → import into [Vercel](https://vercel.com) → set **Root Directory** to `frontend`.
+**Deploy for free:** push to GitHub, import the repo into [Vercel](https://vercel.com) with **Root Directory** set to `frontend`, and set `FPL_TEAM_ID` as a repository variable so the scheduled run plans for your team. Add a `GEMINI_API_KEY` secret (free from aistudio.google.com) to turn on team news.
 
-### Testing a change
+<details>
+<summary><b>Testing a change</b></summary>
+<br>
 
 ```bash
 # model / feature changes — five seeds, results kept as JSON
@@ -211,102 +277,48 @@ python -m data_engine.season_sim --augment --policies production \
 python -m data_engine.evaluation bt.json more.json --reference production
 ```
 
-Seasons can run as separate processes and be pooled afterwards (`--seasons 2025-26 --prior-seasons 2024-25` is one season exactly as `--augment` would run it). A backtest season takes ~6 minutes per seed; a simulator season 20 minutes to 2 hours, because some weeks' solves hit the solver's time limit. The **Season simulation** GitHub Action runs the simulator in the cloud.
+A backtest season takes ~6 minutes per seed; a simulator season 20 minutes to 2 hours. Seasons can run as separate processes and be pooled afterwards.
+
+</details>
 
 ---
 
-## Architecture
-
-```
-┌──────────────────────────────┐          ┌───────────────────────────┐
-│  Local data engine (Python)  │          │   Vercel (free, static)   │
-│                              │   JSON   │                           │
-│  FPL API ─→ features ─→      │  ──────► │  reads optimized_team.json│
-│  XGBoost ─→ PuLP MILP ─→     │          │  ─→ renders the dashboard │
-│  optimized_team.json         │          │                           │
-└──────────────────────────────┘          └───────────────────────────┘
-```
-
-No backend hosting, no database, no paid API. One JSON file is the entire contract between the two halves.
+## Project structure
 
 ```
 var-ified-xi/
 ├── backend/
-│   ├── main.py                      # entrypoint — orchestrates everything
-│   ├── config.py                    # every rule, weight and verdict
-│   ├── check_deadline.py            # lets the scheduled job exit early
+│   ├── main.py                      # entrypoint: fetch → features → model → solver → JSON
+│   ├── config.py                    # every rule, weight and switch, with its test result
+│   ├── check_deadline.py            # lets the scheduled run exit early
 │   ├── wildcard.py                  # is a Wildcard worth it this week, and which squad
-│   └── data_engine/
-│       ├── fetch_data.py            # FPL API client
-│       ├── feature_engineering.py   # rolling form, fixture context
-│       ├── historical_data.py       # past seasons for training
-│       ├── train_model.py           # the two-stage model
-│       ├── optimizer.py             # fresh-squad MILP
-│       ├── transfer_optimizer.py    # multi-gameweek transfer MILP
-│       ├── planner.py               # the weekly decision — shared by main.py and season_sim
-│       ├── rules.py                 # each season's transfer rules (caps, top-ups)
-│       ├── entry_data.py            # your real team, from public endpoints
-│       ├── rivals.py                # mini-league ownership + chip ledger
-│       ├── chips.py                 # chip windows, expiry, double/blank detection
-│       ├── injury_log.py            # repeat fitness flags across runs
-│       ├── availability_data.py     # pre-deadline injury flags for past seasons
-│       ├── horizon_availability.py  # return dates for later weeks (tested, off)
-│       ├── backtest.py              # harness 1 — prediction quality
-│       ├── season_sim.py            # harness 2 — decision quality
-│       └── evaluation.py            # multi-seed verdicts with confidence intervals
-│
-└── frontend/
-    ├── app/                         # pages + layout
-    ├── components/                  # PitchView, LeagueView, ThisWeek…
-    ├── lib/                         # types, data loading, club kits
-    └── public/optimized_team.json   # written by the backend
+│   ├── overrides.json               # your own captain, or a Wildcard/Free Hit team FPL hides
+│   ├── data_engine/
+│   │   ├── fetch_data.py            # FPL API client
+│   │   ├── feature_engineering.py   # rolling form, fixture and player context
+│   │   ├── historical_data.py       # past seasons for training
+│   │   ├── train_model.py           # the two-stage model
+│   │   ├── distributions.py         # full points distributions and head-to-heads
+│   │   ├── optimizer.py             # fresh-squad MILP
+│   │   ├── transfer_optimizer.py    # six-week transfer MILP
+│   │   ├── planner.py               # the weekly decision, shared with the simulator
+│   │   ├── chip_planner.py          # best week for each chip
+│   │   ├── rules.py                 # each season's transfer rules
+│   │   ├── entry_data.py            # your real team, from public endpoints
+│   │   ├── rivals.py                # mini-league ownership and chips
+│   │   ├── other_matches.py         # cup, European and international fixtures
+│   │   ├── team_news.py             # headline reader and its scored record
+│   │   ├── backtest.py              # harness 1: prediction quality
+│   │   ├── season_sim.py            # harness 2: decision quality
+│   │   └── evaluation.py            # multi-seed verdicts with confidence intervals
+│   ├── research/                    # one folder per study: pre-registration, code, results
+│   └── tests/                       # 101 unit tests
+├── frontend/
+│   ├── app/                         # This week · Plan & chips · League · Other games · How it works
+│   ├── components/                  # pitch, captain odds, coin flips, team news…
+│   └── public/optimized_team.json   # written by the backend
+└── docs/HANDBOOK.md                 # the full technical write-up
 ```
-
----
-
-## What the dashboard shows
-
-| Section | Answers |
-|---|---|
-| **This week** | The transfer to make, whether a hit is worth it, who to captain — with the armband as head-to-heads ("Henderson beats Haaland 40%") and the team news for your players |
-| **Chip watch** | Every chip you hold placed in its best week up to the chip deadline, with and without a Wildcard now; says "watching, nothing yet" explicitly, so silence never reads as broken |
-| **Your league** | What the managers *ahead of you* own, what you're missing, who's already burned which chips |
-| **The squad** | The pitch in club colours; tap anyone for their chance of each band of score and fixture run. Each bench player shows how often he'd outscore the starter he'd replace — a "coin flip" between 40% and 60% |
-| **The plan** | All six gameweeks of moves this week's decision belongs to |
-| **How it works** | The five pipeline stages in plain language |
-
-### Probabilities, chip plan, team news
-
-- **Probabilities.** Every player gets a full points distribution: the model's chance he plays, plus — for the points if he plays — how players projected the same way actually scored across two past seasons. Checked on a season it wasn't fitted on: the likely range holds the real score 85–93% of the time and "chance of 10+" lands within 2 points. Head-to-heads came out overconfident and are recalibrated by one fitted number ([research/2026-10-distributions](backend/research/2026-10-distributions/README.md)).
-- **Chip plan** (`chip_planner.py`). Triple Captain, Bench Boost and Free Hit valued in every week to the chip deadline — the captain again, the bench, the best one-week XI your budget buys minus your own — from the squad you'd hold that week, then placed together, one per week. Weeks past the transfer plan's horizon hold its last squad, so they're marked rough.
-- **Team news** (`team_news.py`). Within 48 hours of a deadline, the last six days of Google News and BBC Sport headlines for your squad's clubs, this week's buys and the Wildcard squad are read by a free Gemini model, which must cite the headline behind each call. "Out" and "doubt" calls worse than FPL's own flag lower the projection the way an FPL flag would; "rotation" is shown only. It can't be backtested (there are no archived press conferences), so every call is logged with its source and judged live. Needs a `GEMINI_API_KEY` repository secret — free from aistudio.google.com in a project with no billing, so it can't cost anything (the free models can't search the web, which is why the headlines are fetched here). Only calls citing one of those headlines, and a headline that names the player, can change a projection. After every gameweek each call is scored against who actually played (`team_news.judge`, from `data/team_news_calls.json`) and the record is shown with the news; rotation calls can only start moving projections once 30 have been checked at 60%+ right (research/2026-10-team-news). `news-check.yml` runs a one-minute check.
-
-The league view is deliberately **not** an optimizer input. Tilting the solver toward players your rivals don't own was built and tested: it's roughly points-neutral, buying rank variance at the cost of expected points. That's the right trade when you're behind and the wrong one when you're ahead — a judgement about your situation, not one a solver should make quietly for you.
-
----
-
-## Automation
-
-| Workflow | When | Does |
-|---|---|---|
-| `weekly.yml` | Every 4 hours | Exits in seconds unless a deadline is within ~30h; otherwise refreshes, retrains, re-solves, commits — triggering a Vercel redeploy |
-| `simulate.yml` | Manual | Runs a policy race in the cloud, result table in the run summary |
-
-Set `FPL_TEAM_ID` as a repository variable for transfer plans instead of fresh squads.
-
-**Your Wildcard or Free Hit team.** FPL keeps a chip's transfers private until the deadline, so until then every refresh would plan from last week's squad. Put the team you've set in `backend/overrides.json` under `"team"` (gameweek, chip, bank, the 15 FPL ids in FPL order — XI first, then the bench in substitution order — and the armband). The dashboard then shows that team and lineup, and each refresh re-checks it: a squad change the model would still make (worth 1+ point over the planning window, free until the deadline), or a different XI or captain, appears at the top of *This week*. It's ignored once the deadline passes and FPL's public data catches up.
-
-**Run now.** The dashboard header has a *Run now* button. It starts `weekly.yml` with `force` on — latest FPL data, retrain, re-solve — and reloads the page when the redeployed site has the new numbers, about 6 minutes later. With no setup it reads *Run on GitHub*: it opens the workflow's page, where **Run workflow** starts the run, and the dashboard tab reloads itself when the new deploy lands. For one-tap runs, add a Vercel environment variable `GITHUB_TOKEN`: a fine-grained GitHub token with **Actions: Read and write** on this repository only. The token stays on the server (`app/api/refresh`). Because the site is public, clicks are limited to one run at a time, 10 minutes between manual runs, and 6 a day.
-
----
-
-## Full documentation
-
-**[📘 Read the project handbook →](docs/HANDBOOK.md)**
-
-Thirteen sections covering the data layer, the train/predict window asymmetry, the two-stage model, both optimizers, the harness trap that voided three tests, the complete evidence ledger, every config knob, and the honest limits.
-
-Also available as a styled standalone page — [`docs/handbook.html`](docs/handbook.html), open it in any browser, no server needed.
 
 ---
 
@@ -314,34 +326,31 @@ Also available as a styled standalone page — [`docs/handbook.html`](docs/handb
 
 | Layer | Tools |
 |---|---|
-| Data | FPL public API (free, no auth), vaastav archive |
-| ML | XGBoost, scikit-learn, pandas |
-| Optimization | PuLP (CBC solver) |
+| Data | FPL public API, vaastav archive, ESPN public feed, Google News and BBC Sport headlines |
+| Modelling | XGBoost, scikit-learn, pandas, NumPy |
+| Optimisation | PuLP with the CBC solver |
+| Team news | Gemini (free tier) |
 | Frontend | Next.js 16, React 19, TypeScript, Tailwind CSS |
-| Hosting | Vercel + GitHub Actions (free tiers) |
+| Infrastructure | GitHub Actions, Vercel |
 
 ---
 
 ## Honest limits
 
 - **It can't manufacture an 80-point week.** Only 2.1% of player-weeks score 10+. What's achievable is moving the *expectation* from ~52 to ~60.
-- **Close start/bench calls are close to coin flips.** When two players' projections differ by under a point, the higher one outscores the other only 52–57% of the time in a given week (2024-26, ties left out), and 75% even at a 3-point gap. The edge shows over a season, not in every week.
-- **It sees cup, European and international games only through ESPN's public feed** (unofficial; if it breaks, those inputs fall back to neutral values and the dashboard section goes quiet).
-- **It can't see team news beyond FPL's own flags.** It reads the injury and suspension flags FPL publishes, not the press conference that hasn't reached them yet.
-- **The season simulator is noisy.** The same policy finishes 100–240 points apart on different model seeds, so it can't resolve planner changes much under ~100 points. Most planner verdicts read "no detectable effect" for that reason.
-- **An injured or suspended flag is treated as lasting the whole six-week horizon.** (A doubt only counts for the next week.) That looks wrong — about half of suspended players play the following week — but a version using FPL's return dates and measured return curves was built and tested, and it changed only 11 of 222 weekly decisions with no detectable effect. It's in the code, switched off.
-- **Neither harness plays chips**, so both totals sit below a real season. They're comparative yardsticks, not predictions.
+- **Close start/bench calls really are close.** When two projections differ by under a point, the higher one outscores the other only 52–57% of the time; the edge shows over a season, not every week.
+- **Team news comes from headlines, not press conferences**, and can't be backtested — which is why it's judged live and kept on a short leash.
+- **The season simulator is noisy.** The same policy finishes 100–240 points apart on different seeds, so it can't resolve planner changes much smaller than ~100 points.
+- **Neither harness plays chips**, so both totals sit below a real season. They're yardsticks for comparison, not forecasts.
 
----
-
-## Disclaimer
-
-Not affiliated with the Premier League, Fantasy Premier League, or the Premier League's official VAR system. Predictions are model estimates, not guarantees — your mini-league rivals have been warned regardless.
+For the full story — the train/predict window asymmetry, every config knob and the open questions — read the **[project handbook](docs/HANDBOOK.md)**.
 
 ---
 
 <div align="center">
 
-Built by [Vatsal](https://github.com/Vatsal-cs) to beat the group chat.
+Built by [Vatsal Jain](https://github.com/Vatsal-cs) to beat the group chat.
+
+<sub>Not affiliated with the Premier League, Fantasy Premier League or the real VAR. Projections are estimates, not guarantees.</sub>
 
 </div>
