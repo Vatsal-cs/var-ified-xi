@@ -1,12 +1,13 @@
 // File: page.tsx
 // Path: var-ified-xi/frontend/app/page.tsx
 //
-// This week: the decision that's due, beside the dressing room it produces —
-// the XI on the pitch and the bench on its rail — then the smaller calls.
+// This week: the decision that's due, staged as a shirt swap; then the
+// dressing room it produces — the XI on a floodlit pitch, the bench on its
+// rail, the armband and the close calls — then the team news.
 
 import { getTeamData, deriveFormation } from "@/lib/getTeamData";
 import PageShell, { NoData } from "@/components/PageShell";
-import ThisWeek, { Armband, ThisWeekNotes } from "@/components/ThisWeek";
+import ThisWeek, { Armband, CloseCalls, NewsDesk } from "@/components/ThisWeek";
 import PitchView from "@/components/PitchView";
 import BenchStrip from "@/components/BenchStrip";
 import { coinFlips } from "@/lib/odds";
@@ -29,33 +30,17 @@ export default function Home() {
 
   return (
     <PageShell team={team}>
-      <div className="grid items-start gap-12 lg:grid-cols-[1fr_1fr] lg:gap-14">
-        {/* The decision that's due, and the armband */}
-        <div className="space-y-10">
-          <ThisWeek team={team} />
-          <Armband team={team} />
-        </div>
+      {/* The decision that's due */}
+      <ThisWeek team={team} />
 
-        {/* The squad it produces */}
-        <section id="squad" aria-label={title} className="scroll-mt-32 animate-rise" style={{ animationDelay: "0.1s" }}>
-          <div className="mb-3 flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
-            <h2 className="heading">
-              {title} <span className="text-ink-400">&middot; {formation}</span>
-            </h2>
-            <p className="text-[13px] text-ink-400">
-              <span className="font-semibold text-ink-100">{team.predicted_total_points.toFixed(1)}</span> pts
-              projected
-            </p>
+      {/* The squad it produces */}
+      <section id="squad" aria-label={title} className="scroll-mt-32">
+        <div className="mb-6 flex flex-wrap items-end justify-between gap-x-6 gap-y-2 border-t border-line pt-8">
+          <div>
+            <p className="kicker">{formation} &middot; {team.predicted_total_points.toFixed(1)} pts projected</p>
+            <h2 className="headline mt-2 text-[40px] sm:text-[52px]">{title}</h2>
           </div>
-          <PitchView startingXi={team.starting_xi} coinFlipIds={flipIds} />
-          <div className="mt-7">
-            <BenchStrip
-              bench={team.bench}
-              startingXi={team.starting_xi}
-              scale={team.odds_calibration?.pair_logit_scale ?? 1}
-            />
-          </div>
-          <p className="mt-4 text-[12.5px] text-ink-500">
+          <p className="max-w-[40ch] text-[14px] text-ink-400">
             {isPlan ? (
               <>Squad value &pound;{team.budget_used_m.toFixed(1)}m</>
             ) : (
@@ -63,12 +48,30 @@ export default function Home() {
                 Budget used &pound;{team.budget_used_m.toFixed(1)}m of &pound;{team.budget_total_m.toFixed(1)}m
               </>
             )}{" "}
-            &middot; planned {team.horizon_gws} gameweeks ahead
+            &middot; planned {team.horizon_gws} gameweeks ahead. Tap a shirt for the player&apos;s full projection.
           </p>
-        </section>
-      </div>
+        </div>
+        <div className="grid items-start gap-12 lg:grid-cols-[1.2fr_1fr] lg:gap-14">
+          <div>
+            <PitchView startingXi={team.starting_xi} coinFlipIds={flipIds} />
+            <div className="mt-8">
+              <BenchStrip
+                bench={team.bench}
+                startingXi={team.starting_xi}
+                scale={team.odds_calibration?.pair_logit_scale ?? 1}
+              />
+            </div>
+          </div>
+          <div className="space-y-10">
+            <Armband team={team} />
+            <CloseCalls team={team} />
+          </div>
+        </div>
+      </section>
 
-      <ThisWeekNotes team={team} />
+      <section className="border-t border-line pt-8">
+        <NewsDesk team={team} />
+      </section>
     </PageShell>
   );
 }

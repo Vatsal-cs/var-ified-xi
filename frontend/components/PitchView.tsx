@@ -15,7 +15,29 @@ import { goalkeeperKit, kitFor } from "@/lib/teams";
 import { pct } from "@/lib/odds";
 
 const ROW_ORDER: Player["position"][] = ["FWD", "MID", "DEF", "GK"];
-const ROW_Y: Record<Player["position"], number> = { FWD: 13, MID: 37.5, DEF: 62, GK: 86.5 };
+// Where each line stands on the turf, from the far touchline (0) to the near one (1).
+const ROW_Y: Record<Player["position"], number> = { FWD: 0.15, MID: 0.39, DEF: 0.63, GK: 0.87 };
+
+// The broadcast camera. The turf is tipped back TILT degrees about its near
+// edge and seen with a perspective of PERSPECTIVE pitch-widths, so the far end
+// narrows and the shirts there shrink. Lengths are in pitch widths.
+const TILT = 18;
+const PERSPECTIVE = 2;
+const TURF_H = 1.2; // the turf is taller than the frame, so tipped back it fills it
+const FRAME_H = 1.04;
+const SIN = Math.sin((TILT * Math.PI) / 180);
+const COS = Math.cos((TILT * Math.PI) / 180);
+
+/** A point on the turf, in % of the frame, and how much nearer shirts grow. */
+function project(xPct: number, row: number) {
+  const h = (1 - row) * TURF_H; // height above the near touchline, before the tilt
+  const scale = PERSPECTIVE / (PERSPECTIVE + h * SIN);
+  return {
+    x: 50 + (xPct - 50) * scale,
+    y: ((FRAME_H - h * COS * scale) / FRAME_H) * 100,
+    scale,
+  };
+}
 const HANG_ORDER: Player["position"][] = ["GK", "DEF", "MID", "FWD"];
 
 /** The colour of the floodlit pool under a shirt: the shirt itself, or its
@@ -107,6 +129,7 @@ function PlayerShirt({
   player,
   x,
   y,
+  scale = 1,
   order,
   isActive,
   coinFlip,
@@ -115,6 +138,8 @@ function PlayerShirt({
   player: Player;
   x: number;
   y: number;
+  /** Nearer the camera is bigger: the perspective's scale at this spot. */
+  scale?: number;
   /** Position in the hanging sequence: the keeper first, the forwards last. */
   order: number;
   isActive: boolean;
@@ -124,7 +149,7 @@ function PlayerShirt({
   const pts = player.predicted_points;
   // The two upper rows open their quick look downwards, so it never runs off
   // the top of the pitch; the lower rows open upwards.
-  const below = y < 50;
+  const below = y < 52;
   return (
     <button
       type="button"
@@ -137,7 +162,7 @@ function PlayerShirt({
       // text setting can't swell the shirts into each other: five across sit
       // 16.7% apart and each takes at most 16%.
       className="group absolute z-10 w-[16cqw] -translate-x-1/2 -translate-y-1/2 hover:z-30 focus:outline-none focus-visible:z-30"
-      style={{ left: `${x}%`, top: `${y}%` }}
+      style={{ left: `${x}%`, top: `${y}%`, scale: String(scale) }}
     >
       <span
         className="shirt-hang flex animate-hang flex-col items-center"
@@ -165,13 +190,13 @@ function PlayerShirt({
           {/* Floodlight: a pool of the club's colour on the grass below */}
           <span
             aria-hidden
-            className="absolute left-1/2 top-[88%] h-[3.2cqw] w-[115%] -translate-x-1/2 rounded-[50%] opacity-60 blur-[6px] transition-opacity duration-300 group-hover:opacity-90"
+            className="absolute left-1/2 top-[80%] z-0 h-[3.6cqw] w-[105%] -translate-x-1/2 rounded-[50%] opacity-55 blur-[7px] transition-opacity duration-300 group-hover:opacity-90"
             style={{ background: poolColour(player.team, player.position === "GK") }}
           />
           {player.is_captain && (
             <span
               aria-hidden
-              className="absolute -inset-[2.5cqw] rounded-full bg-[radial-gradient(circle,rgba(227,169,60,0.45),transparent_65%)]"
+              className="absolute -inset-[2.5cqw] z-0 rounded-full bg-[radial-gradient(circle,rgba(227,169,60,0.45),transparent_65%)]"
             />
           )}
           <Shirt
@@ -182,7 +207,7 @@ function PlayerShirt({
             captain={player.is_captain}
             vice={player.is_vice_captain}
             armbandDelay={1.5}
-            className={`block w-[min(15cqw,76px)] drop-shadow-[0_6px_6px_rgba(0,0,0,0.3)] transition-transform duration-300 ${
+            className={`relative z-[1] block w-[min(15cqw,76px)] drop-shadow-[0_6px_6px_rgba(0,0,0,0.3)] transition-transform duration-300 ${
               isActive ? "scale-110" : ""
             }`}
           />
@@ -196,7 +221,7 @@ function PlayerShirt({
           )}
         </span>
         <span
-          className={`-mt-[0.8cqw] max-w-full truncate rounded-md px-[1.4cqw] py-px text-[clamp(9px,2.5cqw,12px)] font-semibold leading-snug transition-colors duration-300 ${
+          className={`relative z-[2] -mt-[0.8cqw] max-w-full truncate rounded-md px-[1.4cqw] py-px text-[clamp(9px,2.5cqw,12px)] font-semibold leading-snug shadow-[0_2px_6px_rgba(0,0,0,0.35)] transition-colors duration-300 ${
             isActive ? "bg-gold text-[#2A1A00]" : "bg-plate text-plate-text"
           }`}
         >
@@ -222,41 +247,46 @@ export default function PitchView({
   );
 
   const placed = ROW_ORDER.flatMap((pos) =>
-    rows[pos].map((p, i) => ({
-      player: p,
-      x: (100 / (rows[pos].length + 1)) * (i + 1),
-      y: ROW_Y[pos],
-    }))
+    rows[pos].map((p, i) => {
+      const at = project((100 / (rows[pos].length + 1)) * (i + 1), ROW_Y[pos]);
+      return { player: p, x: at.x, y: at.y, scale: at.scale / project(50, ROW_Y.GK).scale };
+    })
   );
 
   return (
     <div>
-      <div className="relative mx-auto aspect-[1/1.04] w-full rounded-lg bg-[repeating-linear-gradient(180deg,rgb(var(--c-grass))_0_12.5%,rgb(var(--c-grass-dark))_12.5%_25%)] transition-colors duration-300 [container-type:inline-size]">
-        {/* Floodlights in the four corners, and the shadow at the edges */}
-        <div
-          aria-hidden
-          className="absolute inset-0 rounded-lg bg-[radial-gradient(55%_40%_at_0%_0%,rgba(255,244,214,0.16),transparent_70%),radial-gradient(55%_40%_at_100%_0%,rgba(255,244,214,0.16),transparent_70%),radial-gradient(55%_40%_at_0%_100%,rgba(214,232,255,0.1),transparent_70%),radial-gradient(55%_40%_at_100%_100%,rgba(214,232,255,0.1),transparent_70%)]"
-        />
-        <div aria-hidden className="absolute inset-0 rounded-lg shadow-[inset_0_0_70px_rgba(0,0,0,0.45)]" />
-        {/* Chalk markings */}
-        <svg className="pointer-events-none absolute inset-0 h-full w-full" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden>
-          <g fill="none" stroke="var(--chalk)" strokeWidth="1.2" vectorEffect="non-scaling-stroke">
-            <rect x="2.5" y="2" width="95" height="96" rx="1" vectorEffect="non-scaling-stroke" />
-            <line x1="2.5" y1="50" x2="97.5" y2="50" vectorEffect="non-scaling-stroke" />
-            <ellipse cx="50" cy="50" rx="12" ry="11.5" vectorEffect="non-scaling-stroke" />
-            <rect x="26" y="2" width="48" height="14" vectorEffect="non-scaling-stroke" />
-            <rect x="38" y="2" width="24" height="5.5" vectorEffect="non-scaling-stroke" />
-            <rect x="26" y="84" width="48" height="14" vectorEffect="non-scaling-stroke" />
-            <rect x="38" y="92.5" width="24" height="5.5" vectorEffect="non-scaling-stroke" />
-          </g>
-        </svg>
+      <div className="relative mx-auto aspect-[1/1.04] w-full [container-type:inline-size]">
+        {/* The turf, tipped back like a broadcast camera's view */}
+        <div aria-hidden className="absolute inset-0 [perspective-origin:50%_100%] [perspective:200cqw]">
+          <div
+            className="absolute inset-x-0 bottom-0 h-[115.4%] origin-bottom overflow-hidden rounded-lg bg-[repeating-linear-gradient(180deg,rgb(var(--c-grass))_0_8.33%,rgb(var(--c-grass-dark))_8.33%_16.66%)] shadow-[0_30px_60px_-30px_rgba(0,0,0,0.8)] transition-colors duration-300"
+            style={{ transform: `rotateX(${TILT}deg)` }}
+          >
+            {/* Floodlights in the four corners, and the shadow at the edges */}
+            <div className="absolute inset-0 bg-[radial-gradient(55%_40%_at_0%_0%,rgba(255,244,214,0.16),transparent_70%),radial-gradient(55%_40%_at_100%_0%,rgba(255,244,214,0.16),transparent_70%),radial-gradient(55%_40%_at_0%_100%,rgba(214,232,255,0.1),transparent_70%),radial-gradient(55%_40%_at_100%_100%,rgba(214,232,255,0.1),transparent_70%)]" />
+            <div className="absolute inset-0 shadow-[inset_0_0_80px_rgba(0,0,0,0.5)]" />
+            {/* Chalk markings */}
+            <svg className="absolute inset-0 h-full w-full" viewBox="0 0 100 100" preserveAspectRatio="none">
+              <g fill="none" stroke="var(--chalk)" strokeWidth="1.4" vectorEffect="non-scaling-stroke">
+                <rect x="3" y="2.5" width="94" height="95" rx="1" vectorEffect="non-scaling-stroke" />
+                <line x1="3" y1="50" x2="97" y2="50" vectorEffect="non-scaling-stroke" />
+                <ellipse cx="50" cy="50" rx="13" ry="10.8" vectorEffect="non-scaling-stroke" />
+                <rect x="25" y="2.5" width="50" height="13" vectorEffect="non-scaling-stroke" />
+                <rect x="38" y="2.5" width="24" height="5" vectorEffect="non-scaling-stroke" />
+                <rect x="25" y="84.5" width="50" height="13" vectorEffect="non-scaling-stroke" />
+                <rect x="38" y="92.5" width="24" height="5" vectorEffect="non-scaling-stroke" />
+              </g>
+            </svg>
+          </div>
+        </div>
 
-        {placed.map(({ player, x, y }) => (
+        {placed.map(({ player, x, y, scale }) => (
           <PlayerShirt
             key={player.player_id}
             player={player}
             x={x}
             y={y}
+            scale={scale}
             order={hangIndex.get(player.player_id) ?? 0}
             isActive={active?.player_id === player.player_id}
             coinFlip={coinFlipIds.includes(player.player_id)}

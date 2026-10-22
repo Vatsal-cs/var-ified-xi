@@ -3,8 +3,9 @@
 //
 // The one thing you came here for: the decision to make before this week's
 // deadline, said in a sentence and drawn as a shirt swap on the kit-room rail.
-// No card around it — it's the page's headline. <ThisWeekNotes> holds the
-// smaller calls that go with it: the armband, close calls and team news.
+// No card around it — it's the page's headline, with the swap staged beside
+// it. <Armband>, <CloseCalls> and <NewsDesk> are the smaller calls that go
+// with it.
 
 import type { LineupCheck, OptimizedTeam, PickCheck, Player, PlannedWeek, TransferMove } from "@/lib/types";
 import Crest from "@/components/Crest";
@@ -32,36 +33,51 @@ function activeChip(team: OptimizedTeam): string | null {
 const and = (names: string[]) =>
   names.length <= 1 ? names.join("") : `${names.slice(0, -1).join(", ")} and ${names[names.length - 1]}`;
 
-/** One shirt on the swap rail. */
+/** One shirt on the swap rail, lit red going out and green coming in. */
 function SwapShirt({ move, tone, uid }: { move?: TransferMove; tone: "out" | "in"; uid: string }) {
   const isOut = tone === "out";
   const price = isOut ? move?.sell_price_m : move?.cost_m;
+  const light = isOut ? "236,90,70" : "70,205,125";
   return (
     <div
       className={`shirt-hang relative isolate flex flex-col items-center text-center ${
-        isOut ? "-translate-x-1.5 -rotate-[7deg] opacity-50 grayscale animate-outgo" : "animate-income"
+        isOut ? "-translate-x-1.5 -rotate-[7deg] animate-outgo" : "animate-income"
       }`}
       style={{ animationDelay: isOut ? "0.5s" : "0.9s" }}
     >
-      <Hanger className="relative z-[1] -mb-1.5 w-[72px] sm:w-[88px]" />
-      {!isOut && (
-        <span
-          aria-hidden
-          className="pointer-events-none absolute left-1/2 top-2 -z-10 h-[190px] w-[200px] -translate-x-1/2 bg-[radial-gradient(ellipse_50%_55%_at_50%_45%,rgba(255,255,255,0.16),transparent_70%)] sm:w-[240px]"
-        />
-      )}
+      {/* The light this shirt stands in */}
+      <span
+        aria-hidden
+        className="pointer-events-none absolute left-1/2 top-0 -z-10 h-[230px] w-[230px] -translate-x-1/2 sm:h-[260px] sm:w-[270px]"
+        style={{ background: `radial-gradient(ellipse 50% 52% at 50% 46%, rgba(${light},${isOut ? 0.26 : 0.32}), transparent 70%)` }}
+      />
+      <Hanger className="relative z-[1] -mb-2 w-[84px] sm:w-[100px]" />
       <Shirt
         team={move?.team}
         number={(move?.predicted_points ?? 0).toFixed(1)}
         uid={uid}
-        className="h-[104px] w-[104px] drop-shadow-[0_12px_14px_rgba(0,0,0,0.22)] sm:h-[132px] sm:w-[132px]"
+        className={`relative z-[1] h-[124px] w-[124px] drop-shadow-[0_14px_16px_rgba(0,0,0,0.3)] sm:h-[156px] sm:w-[156px] ${
+          isOut ? "opacity-60 grayscale" : ""
+        }`}
       />
-      <p className="mt-2 flex items-center justify-center gap-1.5 text-[16px] font-semibold tracking-[-0.01em] text-ink-100 sm:text-[17px]">
+      <span
+        aria-hidden
+        className="-mt-3 h-3 w-[110px] rounded-[50%] blur-[6px]"
+        style={{ background: `rgba(${light},0.55)` }}
+      />
+      <p className="mt-2 flex items-center justify-center gap-1.5 text-[17px] font-semibold tracking-[-0.01em] text-ink-100 sm:text-[18px]">
         <Crest team={move?.team} className="h-[18px] w-[18px] flex-none" />
         <span className={isOut ? "line-through decoration-risk decoration-2" : ""}>{move?.name ?? "—"}</span>
       </p>
-      <p className="text-[12.5px] text-ink-400">
-        {isOut ? "Out" : "In"} &middot; {price != null ? `£${price.toFixed(1)}m` : "—"}
+      <p className="mt-1 flex items-center gap-2 text-[12.5px] text-ink-400">
+        <span
+          className={`rounded px-1.5 py-px font-display text-[12px] font-extrabold uppercase tracking-[0.08em] text-white ${
+            isOut ? "bg-risk" : "bg-pts"
+          }`}
+        >
+          {isOut ? "Out" : "In"}
+        </span>
+        {price != null ? `£${price.toFixed(1)}m` : "—"}
       </p>
     </div>
   );
@@ -74,12 +90,12 @@ function SwapRail({ week }: { week: PlannedWeek }) {
       {week.transfers_out.map((out, i) => {
         const inn = week.transfers_in[i];
         return (
-          <div key={out.player_id} className="relative grid max-w-[520px] grid-cols-[1fr_44px_1fr] items-end pt-1">
-            <span aria-hidden className="absolute inset-x-3 top-1 h-[3px] rounded-full bg-ink-500/45" />
+          <div key={out.player_id} className="relative grid grid-cols-[1fr_48px_1fr] items-end pt-1">
+            <span aria-hidden className="absolute inset-x-3 top-1 h-[3px] rounded-full bg-ink-500/45 shadow-[0_1px_0_rgba(255,255,255,0.06)]" />
             <SwapShirt move={out} tone="out" uid={`out-${out.player_id}`} />
             <span
               aria-hidden
-              className="mb-14 animate-pop self-center justify-self-center text-[22px] text-ink-400"
+              className="mb-20 animate-pop self-center justify-self-center font-display text-[30px] font-extrabold text-ink-400"
               style={{ animationDelay: "1.5s" }}
             >
               &rarr;
@@ -144,7 +160,13 @@ function LockedCheck({ check, chip }: { check?: LineupCheck | null; chip: string
       </div>
     );
   }
-  return null;
+  return (
+    <div className="flex flex-col items-center py-6 text-center">
+      <Hanger className="w-24" />
+      <p className="mt-4 font-display text-[26px] font-extrabold uppercase text-ink-100">The model agrees</p>
+      <p className="mt-1 max-w-[32ch] text-[14px] text-ink-400">Same XI, same armband, nothing worth changing. It stays free until the deadline if the news turns.</p>
+    </div>
+  );
 }
 
 /** The headline and its one-sentence case. */
@@ -225,7 +247,8 @@ export default function ThisWeek({ team }: { team: OptimizedTeam }) {
         ];
 
   return (
-    <section id="week" className="scroll-mt-32">
+    <section id="week" className="grid scroll-mt-32 items-center gap-10 lg:grid-cols-[1.05fr_1fr] lg:gap-14">
+      <div>
       <p className="flex animate-rise flex-wrap items-baseline gap-x-3 gap-y-1">
         <span className="kicker">Gameweek {team.gameweek}</span>
         {team.team && (
@@ -262,19 +285,6 @@ export default function ThisWeek({ team }: { team: OptimizedTeam }) {
         </p>
       ))}
 
-      {chip ? (
-        <div className="mt-6">
-          <LockedCheck check={team.lineup_check} chip={chip} />
-        </div>
-      ) : (
-        week &&
-        week.transfers_out.length > 0 && (
-          <div className="mt-8">
-            <SwapRail week={week} />
-          </div>
-        )
-      )}
-
       {hit?.worth_it && !chip && (
         <div className="callout mt-6 border-warn">
           <p className="text-[14px] font-semibold text-warn">
@@ -302,6 +312,22 @@ export default function ThisWeek({ team }: { team: OptimizedTeam }) {
       )}
 
       <Figures items={numbers} className="mt-8" />
+      </div>
+
+      {/* The stage: the swap itself, lit */}
+      <div className="relative">
+        {chip ? (
+          <LockedCheck check={team.lineup_check} chip={chip} />
+        ) : week && week.transfers_out.length > 0 ? (
+          <SwapRail week={week} />
+        ) : (
+          <div className="flex flex-col items-center py-6 text-center">
+            <Hanger className="w-24" />
+            <p className="mt-4 font-display text-[26px] font-extrabold uppercase text-ink-100">Nothing to change</p>
+            <p className="mt-1 max-w-[30ch] text-[14px] text-ink-400">The free transfer rolls over to next week.</p>
+          </div>
+        )}
+      </div>
     </section>
   );
 }
@@ -360,19 +386,22 @@ export function Armband({ team }: { team: OptimizedTeam }) {
   );
 }
 
-/** The smaller calls that go with the decision, side by side under it. */
-export function ThisWeekNotes({ team }: { team: OptimizedTeam }) {
-  const scale = team.odds_calibration?.pair_logit_scale ?? 1;
+/** Starters and bench players too close to call. */
+export function CloseCalls({ team }: { team: OptimizedTeam }) {
   return (
-    <section aria-label="This week's smaller calls" className="grid gap-10 border-t border-line pt-8 md:grid-cols-2 md:gap-0">
-      <div className="md:pr-10">
-        <h2 className="heading mb-4">Close calls</h2>
-        <CoinFlips xi={team.starting_xi} bench={team.bench} scale={scale} />
-      </div>
-      <div className="md:border-l md:border-line md:pl-10">
-        <h2 className="heading mb-4">Team news</h2>
-        <TeamNews news={team.team_news} />
-      </div>
+    <section aria-label="Close calls" className="border-t border-line pt-7">
+      <h2 className="heading mb-4">Close calls</h2>
+      <CoinFlips xi={team.starting_xi} bench={team.bench} scale={team.odds_calibration?.pair_logit_scale ?? 1} />
+    </section>
+  );
+}
+
+/** What the news reader found, and its record. */
+export function NewsDesk({ team }: { team: OptimizedTeam }) {
+  return (
+    <section aria-label="Team news" className="max-w-3xl">
+      <h2 className="heading mb-4">Team news</h2>
+      <TeamNews news={team.team_news} />
     </section>
   );
 }

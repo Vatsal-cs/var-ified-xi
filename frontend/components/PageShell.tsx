@@ -30,18 +30,29 @@ export default function PageShell({
   return (
     <div id="top" className="relative overflow-x-clip">
       <SiteHeader team={team} pages={pagesFor(team)} />
-      {/* Chalk markings behind the top of the page: a centre circle and the
-          halfway line, drawn faintly enough to read as the ground underfoot. */}
-      <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-[820px] overflow-hidden">
-        <svg
-          viewBox="0 0 800 800"
-          fill="none"
-          className="absolute -right-[260px] top-[-120px] h-[640px] w-[640px] sm:-right-[160px] sm:h-[800px] sm:w-[800px]"
+      {/* The ground: a floodlit pitch at night (or in daylight) laid out in
+          perspective below a horizon, its mown bands narrowing into the
+          distance. Fixed, so the page scrolls over it like a camera pan. */}
+      <div aria-hidden className="pointer-events-none fixed inset-0 z-0 overflow-hidden [perspective-origin:50%_0%] [perspective:900px]">
+        <div
+          className="absolute left-1/2 top-[52vh] h-[80vh] w-[260vw] origin-top"
+          style={{
+            transform: "translateX(-50%) rotateX(62deg)",
+            backgroundImage:
+              "repeating-linear-gradient(180deg, var(--turf-a) 0 9vh, var(--turf-b) 9vh 18vh)",
+          }}
         >
-          <circle cx="400" cy="400" r="330" stroke="var(--pitch-line)" strokeWidth="2.5" />
-          <circle cx="400" cy="400" r="7" fill="var(--pitch-line)" />
-        </svg>
-        <span className="absolute inset-x-0 top-[200px] h-[2.5px] bg-[var(--pitch-line)] sm:top-[280px]" />
+          <svg className="absolute inset-0 h-full w-full" viewBox="0 0 1000 400" preserveAspectRatio="none" fill="none">
+            <g stroke="var(--pitch-line)" strokeWidth="3" vectorEffect="non-scaling-stroke">
+              <line x1="500" y1="0" x2="500" y2="400" vectorEffect="non-scaling-stroke" />
+              <ellipse cx="500" cy="120" rx="46" ry="70" vectorEffect="non-scaling-stroke" />
+              <line x1="0" y1="2" x2="1000" y2="2" vectorEffect="non-scaling-stroke" />
+            </g>
+          </svg>
+        </div>
+        {/* Haze where the pitch meets the dark, and the edges falling off */}
+        <div className="absolute inset-x-0 top-[44vh] h-[22vh] bg-[linear-gradient(180deg,rgb(var(--c-base))_0%,rgb(var(--c-base)/0.6)_45%,transparent_100%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(120%_80%_at_50%_100%,transparent_40%,rgb(var(--c-base)/0.85)_100%)]" />
       </div>
       <main className="relative mx-auto max-w-6xl space-y-14 px-4 py-8 pb-24 sm:space-y-20 sm:px-6 sm:py-12">
         {children}

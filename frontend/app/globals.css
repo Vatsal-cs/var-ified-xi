@@ -40,7 +40,9 @@
   --shadow-raised: 0 2px 4px rgba(0, 0, 0, 0.06), 0 18px 40px -18px rgba(0, 0, 0, 0.25);
   --chalk: rgba(255, 255, 255, 0.34);
   --hanger: rgba(21, 23, 27, 0.32);
-  --pitch-line: rgba(21, 23, 27, 0.06);
+  --pitch-line: rgba(21, 23, 27, 0.07);
+  --turf-a: rgba(46, 125, 74, 0.07);
+  --turf-b: rgba(46, 125, 74, 0.13);
   --wash: rgba(255, 255, 255, 0.55);
   --grain: 0.22;
 }
@@ -75,7 +77,9 @@
   --shadow-raised: 0 2px 4px rgba(0, 0, 0, 0.35), 0 20px 44px -18px rgba(0, 0, 0, 0.75);
   --chalk: rgba(255, 255, 255, 0.18);
   --hanger: rgba(242, 240, 236, 0.32);
-  --pitch-line: rgba(255, 255, 255, 0.055);
+  --pitch-line: rgba(255, 255, 255, 0.07);
+  --turf-a: rgba(60, 150, 95, 0.05);
+  --turf-b: rgba(60, 150, 95, 0.1);
   --wash: rgba(255, 255, 255, 0.045);
   --grain: 0.32;
 }
