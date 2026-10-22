@@ -12,6 +12,7 @@ import Link from "next/link";
 import type { LeagueView as LeagueViewData, Player, RivalOwnership } from "@/lib/types";
 import Shirt from "./Shirt";
 import { ChipToken, chipName, Term } from "./ui";
+import { OnView } from "./motion";
 
 function Owners({ owned, of, tone }: { owned: number; of: number; tone: string }) {
   return (
@@ -99,7 +100,9 @@ export default function LeagueView({ league, players = [] }: { league: LeagueVie
                 track them rather than catch them.
               </p>
             ) : (
-              <ShirtGrid items={differentials} of={rivals_ahead} tone="bg-pts" players={players} prefix="diff" />
+              <OnView>
+                <ShirtGrid items={differentials} of={rivals_ahead} tone="bg-pts" players={players} prefix="diff" />
+              </OnView>
             )}
           </section>
 
@@ -114,7 +117,9 @@ export default function LeagueView({ league, players = [] }: { league: LeagueVie
                 You own every player that half or more of the managers ahead of you hold. No standing exposure.
               </p>
             ) : (
-              <ShirtGrid items={template_gaps} of={rivals_ahead} tone="bg-risk" players={players} prefix="gap" />
+              <OnView>
+                <ShirtGrid items={template_gaps} of={rivals_ahead} tone="bg-risk" players={players} prefix="gap" />
+              </OnView>
             )}
           </section>
         </div>

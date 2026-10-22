@@ -14,7 +14,7 @@ import { Figures, Term } from "./ui";
 import CaptainOdds from "./CaptainOdds";
 import TeamNews from "./TeamNews";
 import CoinFlips from "./CoinFlips";
-import { CountUp } from "./motion";
+import { CountUp, OnView } from "./motion";
 import { pct } from "@/lib/odds";
 
 const CHIP_LABEL: Record<string, string> = { wildcard: "Wildcard", freehit: "Free Hit" };
@@ -314,8 +314,9 @@ export default function ThisWeek({ team }: { team: OptimizedTeam }) {
       <Figures items={numbers} className="mt-8" />
       </div>
 
-      {/* The stage: the swap itself, lit */}
-      <div className="relative">
+      {/* The stage: the swap itself, lit. On a phone it's below the fold, so it
+          waits to be scrolled to before the shirts swing. */}
+      <OnView className="relative">
         {chip ? (
           <LockedCheck check={team.lineup_check} chip={chip} />
         ) : week && week.transfers_out.length > 0 ? (
@@ -327,7 +328,7 @@ export default function ThisWeek({ team }: { team: OptimizedTeam }) {
             <p className="mt-1 max-w-[30ch] text-[14px] text-ink-400">The free transfer rolls over to next week.</p>
           </div>
         )}
-      </div>
+      </OnView>
     </section>
   );
 }
@@ -349,7 +350,7 @@ function Captain({ team }: { team: OptimizedTeam }) {
           uid={`cap-${cap.player_id}`}
           goalkeeper={cap.position === "GK"}
           captain
-          armbandDelay={2.2}
+          armbandDelay={0.7}
           className="h-[88px] w-[88px] flex-none drop-shadow-[0_8px_10px_rgba(0,0,0,0.25)]"
         />
         <div className="min-w-0">

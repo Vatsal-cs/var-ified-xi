@@ -13,11 +13,13 @@ import { useEffect, useRef, useState, type ReactNode } from "react";
 const reduced = () =>
   typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-/** Fades and lifts its children in the first time they scroll into view. */
+/** Fades and lifts its children in the first time they scroll into view.
+ *  Any animation inside (shirts being hung, bars filling) waits until then. */
 export function Reveal({ children, className = "" }: { children: ReactNode; className?: string }) {
   const ref = useRef<HTMLDivElement>(null);
   useEffect(() => {
     document.documentElement.classList.add("js-reveal");
+    (window as unknown as { __vxReveal?: boolean }).__vxReveal = true;
     const el = ref.current;
     if (!el) return;
     const io = new IntersectionObserver(
@@ -36,6 +38,38 @@ export function Reveal({ children, className = "" }: { children: ReactNode; clas
   }, []);
   return (
     <div ref={ref} className={`reveal ${className}`}>
+      {children}
+    </div>
+  );
+}
+
+/** Holds every animation inside it — shirts swinging onto their pegs, the
+ *  armband going on, bars filling — until it scrolls into view, then plays
+ *  them from the start. Unlike <Reveal> it doesn't fade the block itself.
+ *  The paused state is CSS (globals.css), so without JavaScript nothing waits. */
+export function OnView({ children, className = "" }: { children: ReactNode; className?: string }) {
+  const ref = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    document.documentElement.classList.add("js-reveal");
+    (window as unknown as { __vxReveal?: boolean }).__vxReveal = true;
+    const el = ref.current;
+    if (!el) return;
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) {
+          if (e.isIntersecting) {
+            e.target.classList.add("is-in");
+            io.unobserve(e.target);
+          }
+        }
+      },
+      { rootMargin: "0px 0px -6% 0px", threshold: 0.08 }
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+  return (
+    <div ref={ref} className={`on-view ${className}`}>
       {children}
     </div>
   );
@@ -99,7 +133,7 @@ export function DeadlineChip({ deadline, gameweek }: { deadline?: string | null;
         GW{gameweek ?? "—"}
       </span>
       <span
-        className={`flex items-center gap-[3px] px-2.5 font-display text-[20px] font-extrabold leading-none tabular-nums ${
+        className={`flex items-center gap-[3px] px-2 font-display text-[18px] font-extrabold leading-none tabular-nums sm:px-2.5 sm:text-[20px] ${
           urgent ? "animate-pulseDot" : ""
         }`}
         style={{ color: lit }}

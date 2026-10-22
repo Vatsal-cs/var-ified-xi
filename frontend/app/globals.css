@@ -41,8 +41,14 @@
   --chalk: rgba(255, 255, 255, 0.34);
   --hanger: rgba(21, 23, 27, 0.32);
   --pitch-line: rgba(21, 23, 27, 0.07);
-  --turf-a: rgba(46, 125, 74, 0.07);
-  --turf-b: rgba(46, 125, 74, 0.13);
+  --turf-a: rgba(46, 125, 74, 0.06);
+  --turf-b: rgba(46, 125, 74, 0.095);
+  --sky-glow: rgba(255, 255, 255, 0.65);
+  --beam: rgba(255, 255, 255, 0);
+  --lamp: rgba(21, 23, 27, 0.2);
+  --lamp-glow: none;
+  --lamp-frame: rgba(21, 23, 27, 0.08);
+  --mist: rgba(255, 255, 255, 0.45);
   --wash: rgba(255, 255, 255, 0.55);
   --grain: 0.22;
 }
@@ -78,8 +84,14 @@
   --chalk: rgba(255, 255, 255, 0.18);
   --hanger: rgba(242, 240, 236, 0.32);
   --pitch-line: rgba(255, 255, 255, 0.07);
-  --turf-a: rgba(60, 150, 95, 0.05);
-  --turf-b: rgba(60, 150, 95, 0.1);
+  --turf-a: rgba(60, 150, 95, 0.055);
+  --turf-b: rgba(60, 150, 95, 0.095);
+  --sky-glow: rgba(150, 180, 220, 0.11);
+  --beam: rgba(255, 246, 222, 0.07);
+  --lamp: #fff4d6;
+  --lamp-glow: 0 0 8px rgba(255, 244, 214, 0.9);
+  --lamp-frame: rgba(255, 255, 255, 0.07);
+  --mist: rgba(170, 205, 190, 0.07);
   --wash: rgba(255, 255, 255, 0.045);
   --grain: 0.32;
 }
@@ -191,6 +203,12 @@ body > * {
 .js-reveal .reveal.is-in {
   opacity: 1;
   transform: none;
+}
+/* Animations inside a block that hasn't scrolled into view yet wait at their
+   first frame, delays included, and play from the start when it arrives. */
+.js-reveal .reveal:not(.is-in) *,
+.js-reveal .on-view:not(.is-in) * {
+  animation-play-state: paused !important;
 }
 
 /* Shirts pivot from the peg they hang on. */

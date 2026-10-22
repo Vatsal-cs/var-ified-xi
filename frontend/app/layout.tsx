@@ -27,9 +27,11 @@ export const metadata: Metadata = {
     "An FPL engine that predicts every player's points and solves for the best transfer to make this week — under the real rules. Reviewed weekly.",
 };
 
-// Runs before the first paint, so the page never flashes the wrong theme:
-// the visitor's saved choice, otherwise their device's setting.
-const THEME_SCRIPT = `(function(){try{var t=localStorage.getItem('vx-theme');if(t!=='light'&&t!=='dark'){t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'}document.documentElement.dataset.theme=t}catch(e){document.documentElement.dataset.theme='light'}})()`;
+// Runs before the first paint, so the page never flashes the wrong theme (the
+// visitor's saved choice, otherwise their device's setting), and so blocks
+// below the fold start with their animations held until they scroll into view
+// (components/motion.tsx). If the app never hydrates, nothing stays held.
+const THEME_SCRIPT = `(function(){var d=document.documentElement;try{var t=localStorage.getItem('vx-theme');if(t!=='light'&&t!=='dark'){t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'}d.dataset.theme=t}catch(e){d.dataset.theme='light'}d.classList.add('js-reveal');setTimeout(function(){if(!window.__vxReveal)d.classList.remove('js-reveal')},4000)})()`;
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (

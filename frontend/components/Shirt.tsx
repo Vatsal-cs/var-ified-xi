@@ -19,9 +19,6 @@ const COLLAR_BACK = "M44 12 C50 16.5 70 16.5 76 12";
 const SLEEVES = "M20 22 L8 40 L22 50 L32 43 L34 24 Z M100 22 L112 40 L98 50 L88 43 L86 24 Z";
 const CUFFS = "M8 40 L22 50 M112 40 L98 50";
 
-/** The shirt outline, for marks that want the silhouette alone. */
-export const SHIRT_PATH = BODY;
-
 // The captain's armband: a band round the left sleeve, parallel to its cuff,
 // clipped to the sleeve so it wraps the arm rather than floating on it.
 const LEFT_SLEEVE = "M100 22 L112 40 L98 50 L88 43 L86 24 Z";

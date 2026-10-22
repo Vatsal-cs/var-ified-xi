@@ -39,7 +39,7 @@ export default function CaptainOdds({ odds, players = [] }: { odds: Odds[]; play
               <span className="relative block h-2 overflow-hidden rounded-full bg-ink-500/20" aria-hidden>
                 <span
                   className="absolute inset-y-0 left-0 origin-left animate-grow rounded-full bg-ink-100"
-                  style={{ width: `${b * 100}%`, animationDelay: `${1.4 + i * 0.12}s` }}
+                  style={{ width: `${b * 100}%`, animationDelay: `${0.35 + i * 0.12}s` }}
                 />
                 <span className="absolute inset-y-0 left-1/2 w-0.5 bg-base" />
               </span>

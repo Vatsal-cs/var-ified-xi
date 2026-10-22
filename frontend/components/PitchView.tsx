@@ -214,7 +214,7 @@ function PlayerShirt({
           {coinFlip && (
             <span
               title="Coin flip with a bench player"
-              className="absolute -left-[1cqw] top-[18%] grid h-[min(4.6cqw,20px)] w-[min(4.6cqw,20px)] place-items-center rounded-md bg-violet text-[clamp(8px,2.4cqw,11px)] font-bold text-white shadow"
+              className="absolute -left-[1cqw] top-[18%] z-[3] grid h-[min(4.6cqw,20px)] w-[min(4.6cqw,20px)] place-items-center rounded-md bg-violet text-[clamp(8px,2.4cqw,11px)] font-bold text-white shadow-[0_2px_6px_rgba(0,0,0,0.4)] ring-2 ring-[#1B4326]"
             >
               &frac12;
             </span>

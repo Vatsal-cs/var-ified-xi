@@ -165,11 +165,11 @@ export default function RefreshButton({ generatedAt }: { generatedAt: string }) 
     busy
       ? "cursor-default border-pts/40 text-pts"
       : "border-line-strong text-ink-200 hover:border-gold/50 hover:text-gold"
-  }`;
+  } h-9 justify-center px-2.5 sm:px-3`;
   const icon = busy ? (
     <span className="h-1.5 w-1.5 animate-pulseDot rounded-full bg-pts" />
   ) : (
-    <svg aria-hidden viewBox="0 0 16 16" className="h-2.5 w-2.5 fill-none stroke-current" strokeWidth="1.8">
+    <svg aria-hidden viewBox="0 0 16 16" className="h-3.5 w-3.5 fill-none stroke-current sm:h-2.5 sm:w-2.5" strokeWidth="1.8">
       <path d="M13.5 8a5.5 5.5 0 1 1-1.6-3.9M13.5 2.5v3h-3" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   );
@@ -186,9 +186,10 @@ export default function RefreshButton({ generatedAt }: { generatedAt: string }) 
         aria-live="polite"
         title='Opens the workflow on GitHub: press "Run workflow" there. This page reloads itself when the new data is live, about 7 minutes later.'
         className={className}
+        aria-label={label}
       >
         {icon}
-        {label}
+        <span className="hidden sm:inline">{label}</span>
       </a>
     );
   }
@@ -201,9 +202,11 @@ export default function RefreshButton({ generatedAt }: { generatedAt: string }) 
       aria-live="polite"
       title="Run the model on the latest FPL data. Takes about 6 minutes, then the page reloads."
       className={className}
+      aria-label={label}
     >
       {icon}
-      {label}
+      {/* On a phone the button is just its icon, unless a run is under way */}
+      <span className={busy ? "" : "hidden sm:inline"}>{label}</span>
     </button>
   );
 }

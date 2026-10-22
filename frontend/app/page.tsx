@@ -11,6 +11,7 @@ import ThisWeek, { Armband, CloseCalls, NewsDesk } from "@/components/ThisWeek";
 import PitchView from "@/components/PitchView";
 import BenchStrip from "@/components/BenchStrip";
 import { coinFlips } from "@/lib/odds";
+import { OnView } from "@/components/motion";
 
 export default function Home() {
   const team = getTeamData();
@@ -52,19 +53,26 @@ export default function Home() {
           </p>
         </div>
         <div className="grid items-start gap-12 lg:grid-cols-[1.2fr_1fr] lg:gap-14">
+          {/* Each block plays its animations when it scrolls into view */}
           <div>
-            <PitchView startingXi={team.starting_xi} coinFlipIds={flipIds} />
-            <div className="mt-8">
+            <OnView>
+              <PitchView startingXi={team.starting_xi} coinFlipIds={flipIds} />
+            </OnView>
+            <OnView className="mt-8">
               <BenchStrip
                 bench={team.bench}
                 startingXi={team.starting_xi}
                 scale={team.odds_calibration?.pair_logit_scale ?? 1}
               />
-            </div>
+            </OnView>
           </div>
           <div className="space-y-10">
-            <Armband team={team} />
-            <CloseCalls team={team} />
+            <OnView>
+              <Armband team={team} />
+            </OnView>
+            <OnView>
+              <CloseCalls team={team} />
+            </OnView>
           </div>
         </div>
       </section>

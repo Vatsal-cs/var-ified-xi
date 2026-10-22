@@ -44,7 +44,7 @@ export default function BenchStrip({
             <li key={p.player_id} className="flex min-w-0 flex-col items-center text-center">
               <span
                 className="shirt-hang flex animate-hang flex-col items-center"
-                style={{ animationDelay: `${1.2 + i * 0.08}s` }}
+                style={{ animationDelay: `${0.15 + i * 0.08}s` }}
               >
                 <Hanger className="relative z-[1] -mb-1 w-11" />
                 <Shirt

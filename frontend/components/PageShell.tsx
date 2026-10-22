@@ -9,6 +9,61 @@
 import type { OptimizedTeam } from "@/lib/types";
 import SiteHeader, { type NavPage } from "./SiteHeader";
 
+/** A bank of floodlights high in a corner, throwing its beam across the
+ *  ground. Lit at night; in daylight the lamps are off and there's no beam. */
+function Floodlight({ side }: { side: "left" | "right" }) {
+  const left = side === "left";
+  return (
+    <div className={`absolute top-[11vh] hidden lg:block ${left ? "left-[2.5vw]" : "right-[2.5vw]"}`}>
+      <div
+        className="absolute top-4 h-[85vh] w-[44vw]"
+        style={{
+          [left ? "left" : "right"]: "10px",
+          background: "linear-gradient(180deg, var(--beam), transparent 78%)",
+          clipPath: left ? "polygon(0 0, 7% 0, 100% 100%, 38% 100%)" : "polygon(93% 0, 100% 0, 62% 100%, 0 100%)",
+        }}
+      />
+      <div
+        className="relative grid grid-cols-4 gap-[3px] rounded-[3px] bg-[var(--lamp-frame)] p-[4px]"
+        style={{ transform: `rotate(${left ? 9 : -9}deg)` }}
+      >
+        {Array.from({ length: 12 }, (_, i) => (
+          <span key={i} className="h-[7px] w-[7px] rounded-full bg-[var(--lamp)] shadow-[var(--lamp-glow)]" />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/** The ground behind every page: a stadium. Floodlights in the top corners,
+ *  their light in the sky over the stand, and the pitch laid out in
+ *  perspective below the horizon, its mown bands widening towards you. Fixed,
+ *  so the page scrolls over it like a camera pan. */
+function Stadium() {
+  return (
+    <div aria-hidden className="pointer-events-none fixed inset-0 z-0 overflow-hidden">
+      {/* The sky over the stand, lit from below */}
+      <div className="absolute inset-0 bg-[radial-gradient(90%_42%_at_50%_30%,var(--sky-glow),transparent_72%)]" />
+      <Floodlight side="left" />
+      <Floodlight side="right" />
+      {/* The pitch */}
+      <div className="absolute inset-x-0 bottom-0 top-[13vh] [perspective-origin:50%_0%] [perspective:700px] lg:top-[30vh]">
+        <div
+          className="absolute left-1/2 top-0 h-[700px] w-[400vw] origin-top"
+          style={{
+            transform: "translateX(-50%) rotateX(64deg)",
+            backgroundImage: "repeating-linear-gradient(180deg, var(--turf-a) 0 56px, var(--turf-b) 56px 112px)",
+          }}
+        >
+        </div>
+      </div>
+      {/* Mist where the pitch meets the stand, and the corners falling into shadow */}
+      <div className="absolute inset-x-0 top-[6vh] h-[16vh] bg-[linear-gradient(180deg,transparent,var(--mist)_50%,transparent)] lg:top-[22vh] lg:h-[18vh]" />
+      <div className="absolute inset-0 bg-[radial-gradient(140%_95%_at_50%_42%,transparent_55%,rgb(var(--c-base)/0.85)_100%)]" />
+    </div>
+  );
+}
+
 export function pagesFor(team: OptimizedTeam): NavPage[] {
   const pages: NavPage[] = [
     { href: "/", label: "This week" },
@@ -30,30 +85,7 @@ export default function PageShell({
   return (
     <div id="top" className="relative overflow-x-clip">
       <SiteHeader team={team} pages={pagesFor(team)} />
-      {/* The ground: a floodlit pitch at night (or in daylight) laid out in
-          perspective below a horizon, its mown bands narrowing into the
-          distance. Fixed, so the page scrolls over it like a camera pan. */}
-      <div aria-hidden className="pointer-events-none fixed inset-0 z-0 overflow-hidden [perspective-origin:50%_0%] [perspective:900px]">
-        <div
-          className="absolute left-1/2 top-[52vh] h-[80vh] w-[260vw] origin-top"
-          style={{
-            transform: "translateX(-50%) rotateX(62deg)",
-            backgroundImage:
-              "repeating-linear-gradient(180deg, var(--turf-a) 0 9vh, var(--turf-b) 9vh 18vh)",
-          }}
-        >
-          <svg className="absolute inset-0 h-full w-full" viewBox="0 0 1000 400" preserveAspectRatio="none" fill="none">
-            <g stroke="var(--pitch-line)" strokeWidth="3" vectorEffect="non-scaling-stroke">
-              <line x1="500" y1="0" x2="500" y2="400" vectorEffect="non-scaling-stroke" />
-              <ellipse cx="500" cy="120" rx="46" ry="70" vectorEffect="non-scaling-stroke" />
-              <line x1="0" y1="2" x2="1000" y2="2" vectorEffect="non-scaling-stroke" />
-            </g>
-          </svg>
-        </div>
-        {/* Haze where the pitch meets the dark, and the edges falling off */}
-        <div className="absolute inset-x-0 top-[44vh] h-[22vh] bg-[linear-gradient(180deg,rgb(var(--c-base))_0%,rgb(var(--c-base)/0.6)_45%,transparent_100%)]" />
-        <div className="absolute inset-0 bg-[radial-gradient(120%_80%_at_50%_100%,transparent_40%,rgb(var(--c-base)/0.85)_100%)]" />
-      </div>
+      <Stadium />
       <main className="relative mx-auto max-w-6xl space-y-14 px-4 py-8 pb-24 sm:space-y-20 sm:px-6 sm:py-12">
         {children}
         <footer className="border-t border-line pt-8 text-center text-[12.5px] text-ink-500">
