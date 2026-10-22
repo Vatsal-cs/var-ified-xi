@@ -111,6 +111,9 @@ function PlayerShirt({
   onSelect: () => void;
 }) {
   const pts = player.predicted_points;
+  // The two upper rows open their quick look downwards, so it never runs off
+  // the top of the pitch; the lower rows open upwards.
+  const below = y < 50;
   return (
     <button
       type="button"
@@ -122,7 +125,7 @@ function PlayerShirt({
       // Sized in cqw, a share of the pitch's own width, so a phone's larger
       // text setting can't swell the shirts into each other: five across sit
       // 16.7% apart and each takes at most 16%.
-      className="group absolute z-10 w-[16cqw] -translate-x-1/2 -translate-y-1/2 focus:outline-none"
+      className="group absolute z-10 w-[16cqw] -translate-x-1/2 -translate-y-1/2 hover:z-30 focus:outline-none focus-visible:z-30"
       style={{ left: `${x}%`, top: `${y}%` }}
     >
       <span
@@ -130,7 +133,7 @@ function PlayerShirt({
         style={{ animationDelay: `${0.35 + order * 0.07}s` }}
       >
         {/* Quick look on hover (desktop) */}
-        <span className="pointer-events-none absolute bottom-[calc(100%-4px)] left-1/2 z-20 hidden w-44 -translate-x-1/2 translate-y-1.5 rounded-xl border border-line bg-surface p-3 text-left opacity-0 shadow-raised transition-all duration-200 group-hover:translate-y-0 group-hover:opacity-100 md:block">
+        <span className={`pointer-events-none absolute left-1/2 z-20 hidden w-44 -translate-x-1/2 rounded-lg border border-line-strong bg-surface p-3 text-left opacity-0 shadow-raised transition-all duration-200 group-hover:translate-y-0 group-hover:opacity-100 md:block ${below ? "top-[calc(100%+4px)] -translate-y-1.5" : "bottom-[calc(100%-4px)] translate-y-1.5"}`}>
           <span className="flex items-center gap-1.5 text-[13.5px] font-semibold text-ink-100">
             <Crest team={player.team} className="h-4 w-4" />
             {player.name}
@@ -205,7 +208,7 @@ export default function PitchView({
 
   return (
     <div>
-      <div className="relative mx-auto aspect-[1/1.04] w-full overflow-hidden rounded-2xl bg-[repeating-linear-gradient(180deg,rgb(var(--c-grass))_0_12.5%,rgb(var(--c-grass-dark))_12.5%_25%)] transition-colors duration-300 [container-type:inline-size]">
+      <div className="relative mx-auto aspect-[1/1.04] w-full rounded-lg bg-[repeating-linear-gradient(180deg,rgb(var(--c-grass))_0_12.5%,rgb(var(--c-grass-dark))_12.5%_25%)] transition-colors duration-300 [container-type:inline-size]">
         {/* Chalk markings */}
         <svg className="pointer-events-none absolute inset-0 h-full w-full" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden>
           <g fill="none" stroke="var(--chalk)" strokeWidth="1.2" vectorEffect="non-scaling-stroke">
@@ -234,7 +237,7 @@ export default function PitchView({
       </div>
 
       {active ? (
-        <div className="mx-auto mt-4 animate-rise rounded-2xl border border-line bg-surface p-4 shadow-panel">
+        <div className="mt-5 animate-rise border-t border-line pt-4">
           <div className="flex items-start justify-between gap-3">
             <div className="flex items-center gap-3">
               <Crest team={active.team} className="h-10 w-10 flex-none" />
@@ -249,24 +252,24 @@ export default function PitchView({
             </div>
             <button
               onClick={() => setActive(null)}
-              className="rounded-lg px-2 py-1 text-xs text-ink-400 transition-colors hover:bg-surface-raised hover:text-ink-100"
+              className="px-1 py-1 text-[13px] text-ink-400 underline-offset-2 transition-colors hover:text-ink-100 hover:underline"
             >
               Close
             </button>
           </div>
 
-          <div className="mt-4 grid grid-cols-3 gap-2.5">
+          <dl className="mt-4 flex">
             {[
               { label: "Projected", value: active.predicted_points.toFixed(1), tone: "text-pts" },
               { label: "Price", value: `£${active.now_cost_m.toFixed(1)}m`, tone: "text-ink-100" },
               { label: "Starts", value: `${Math.round(active.start_probability * 100)}%`, tone: "text-ink-100" },
-            ].map((s) => (
-              <div key={s.label} className="rounded-xl bg-surface-raised p-2.5">
-                <p className="label">{s.label}</p>
-                <p className={`mt-0.5 font-kit text-[22px] font-bold tabular-nums ${s.tone}`}>{s.value}</p>
+            ].map((s, i) => (
+              <div key={s.label} className={`pr-6 ${i > 0 ? "border-l border-line pl-6" : ""}`}>
+                <dt className="text-[12px] text-ink-400">{s.label}</dt>
+                <dd className={`font-kit text-[24px] font-bold leading-tight tabular-nums ${s.tone}`}>{s.value}</dd>
               </div>
             ))}
-          </div>
+          </dl>
 
           {active.dist && <Spread dist={active.dist} />}
           <FixtureRun xpByGw={active.xp_by_gw} />

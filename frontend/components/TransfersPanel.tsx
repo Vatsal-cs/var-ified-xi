@@ -37,14 +37,14 @@ export default function TransfersPanel({ weeks }: { weeks: PlannedWeek[] }) {
   if (rest.length === 0) return null;
 
   return (
-    <div className="panel overflow-hidden">
+    <div className="border-y border-line">
       <ul className="divide-y divide-line">
         {rest.map((week, w) => {
           const moves = week.transfers_out.map((o, i) => ({ out: o, in: week.transfers_in[i] }));
           return (
             <li
               key={week.gameweek}
-              className="grid animate-rise grid-cols-[52px_1fr_auto] items-center gap-x-3 px-4 py-3"
+              className="grid animate-rise grid-cols-[52px_1fr_auto] items-center gap-x-3 py-3"
               style={{ animationDelay: `${w * 0.06}s` }}
             >
               <span className="text-[12px] font-semibold tabular-nums text-ink-400">GW{week.gameweek}</span>
@@ -71,7 +71,7 @@ export default function TransfersPanel({ weeks }: { weeks: PlannedWeek[] }) {
           );
         })}
       </ul>
-      <p className="border-t border-line px-4 py-2.5 text-xs text-ink-500">
+      <p className="border-t border-line py-2.5 text-xs text-ink-500">
         Provisional. These weeks assume today&apos;s form and prices, and are re-solved from scratch every
         run — act only on the gameweek that&apos;s due.
       </p>

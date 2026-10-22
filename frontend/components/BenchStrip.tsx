@@ -32,13 +32,13 @@ export default function BenchStrip({
 }) {
   return (
     <div>
-      <p className="label mb-2">
+      <p className="mb-3 text-[15px] font-semibold text-ink-100">
         <Term explain="If a starter doesn't play, FPL automatically subs in the first bench player who did — in this order. The reserve keeper can only ever replace the keeper. 'Beats X' is how often he'd outscore the starter he'd most plausibly replace (ties left out); between 40% and 60% the start/bench call is a coin flip.">
-          Bench &middot; in substitution order
+          The bench <span className="font-normal text-ink-400">&middot; in substitution order</span>
         </Term>
       </p>
-      <div className="relative rounded-2xl bg-surface-raised px-2 pb-3 pt-3.5">
-        <span aria-hidden className="absolute inset-x-5 top-3 h-[3px] rounded-full bg-ink-500/40" />
+      <div className="relative pt-1">
+        <span aria-hidden className="absolute inset-x-3 top-1 h-[3px] rounded-full bg-ink-500/45" />
         <ol className="grid grid-cols-4 gap-1">
           {bench.map((p, i) => (
             <li key={p.player_id} className="flex min-w-0 flex-col items-center text-center">

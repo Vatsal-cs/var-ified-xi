@@ -35,8 +35,8 @@ export default function OtherMatches({ view }: { view: OtherMatchesView }) {
     );
   }
   return (
-    <div className="grid gap-4 lg:grid-cols-2">
-      <div className="panel p-4">
+    <div className="grid gap-10 lg:grid-cols-2">
+      <div className="border-t border-line pt-5">
         <p className="label mb-3">Midweek club games</p>
         {view.clubs.length ? (
           <ul className="space-y-3">
@@ -59,7 +59,7 @@ export default function OtherMatches({ view }: { view: OtherMatchesView }) {
           <p className="font-body text-sm text-ink-300">No cup or European games for your clubs.</p>
         )}
       </div>
-      <div className="panel p-4">
+      <div className="border-t border-line pt-5">
         <p className="label mb-3">International duty</p>
         {view.international.length ? (
           <ul className="space-y-3">

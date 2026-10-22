@@ -94,16 +94,22 @@ body {
 }
 
 @layer components {
-  /* A card: a calm surface on the stone or charcoal page. */
+  /* No cards. Content sits on the page itself; a block is marked off by
+     hairline rules above and below, the way a printed page divides a column.
+     The most important block gets a heavier rule on top. */
   .panel {
-    @apply rounded-2xl border border-line bg-surface shadow-panel transition-colors duration-300;
+    @apply border-y border-line;
   }
   .panel-raised {
-    @apply rounded-2xl border border-line-strong bg-surface-raised shadow-raised;
+    @apply border-y border-line-strong;
   }
-  /* The most important card on a page: same card, slightly lifted. */
   .panel-lead {
-    @apply rounded-2xl border border-line-strong bg-surface shadow-raised transition-colors duration-300;
+    @apply border-t-2 border-ink-100;
+  }
+  /* A note in the margin: a coloured line down the left, no box. Give it a
+     tone with border-warn / border-violet / border-pts. */
+  .callout {
+    @apply border-l-2 border-line-strong pl-4;
   }
 
   .label {

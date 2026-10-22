@@ -54,10 +54,10 @@ const STAGES = [
 
 export default function PipelineExplainer() {
   return (
-    <div className="panel divide-y divide-line overflow-hidden">
+    <div className="divide-y divide-line border-y border-line">
       {STAGES.map((s) => (
         <details key={s.n} className="group">
-          <summary className="flex cursor-pointer list-none items-center gap-4 px-5 py-4 marker:content-none hover:bg-surface-raised/40">
+          <summary className="flex cursor-pointer list-none items-center gap-4 py-4 marker:content-none">
             <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-line tabular-nums text-xs text-ink-400">
               {s.n}
             </span>
@@ -67,11 +67,11 @@ export default function PipelineExplainer() {
               </span>
               <span className="block font-body text-[13px] text-ink-400">{s.summary}</span>
             </span>
-            <span className="tabular-nums text-ink-500 transition-transform group-open:rotate-45">
+            <span className="text-[18px] text-ink-400 transition-transform group-open:rotate-45">
               +
             </span>
           </summary>
-          <div className="space-y-3 px-5 pb-5 pl-16 font-body text-[15px] leading-relaxed text-ink-300">
+          <div className="max-w-[68ch] space-y-3 pb-5 pl-11 font-body text-[15px] leading-relaxed text-ink-300">
             {s.body.map((para, i) => (
               <p key={i}>{para}</p>
             ))}

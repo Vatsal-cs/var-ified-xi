@@ -49,7 +49,7 @@ export default function LeagueView({ league }: { league: LeagueViewData }) {
       ) : (
         <div className="grid gap-4 md:grid-cols-2">
           {/* What can gain you places */}
-          <div className="panel p-5">
+          <div className="border-t border-line pt-5">
             <h3 className="label mb-3">Your differentials</h3>
             {differentials.length === 0 ? (
               <p className="prose-note">
@@ -90,7 +90,7 @@ export default function LeagueView({ league }: { league: LeagueViewData }) {
           </div>
 
           {/* What can cost you places */}
-          <div className="panel p-5">
+          <div className="border-t border-line pt-5">
             <h3 className="label mb-3">Template you&apos;re missing</h3>
             {template_gaps.length === 0 ? (
               <p className="prose-note">
@@ -134,7 +134,7 @@ export default function LeagueView({ league }: { league: LeagueViewData }) {
             Chips played this half (GW{win.start}–{win.end})
           </Term>
         </h3>
-        <div className="panel overflow-x-auto p-5">
+        <div className="overflow-x-auto border-t border-line pt-5">
           <table className="w-full min-w-[420px] text-left">
             <thead>
               <tr className="border-b border-line">

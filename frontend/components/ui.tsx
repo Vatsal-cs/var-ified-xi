@@ -60,7 +60,7 @@ export function Term({ children, explain }: { children: ReactNode; explain: stri
 /** A boxed aside for a concept worth spelling out where it's first used. */
 export function InfoNote({ title, children }: { title?: string; children: ReactNode }) {
   return (
-    <div className="rounded-xl border border-line bg-surface-raised p-4">
+    <div className="callout">
       {title && (
         <p className="label mb-1">
           {title}
@@ -85,7 +85,7 @@ export function Stat({
 }) {
   const t: Tone | null = tone === "accent" ? "pts" : tone === "default" ? null : tone;
   return (
-    <div className="panel p-4">
+    <div className="border-t border-line pt-3">
       <p className="label">{label}</p>
       <p className={`mt-1.5 stat ${t ? TONE_TEXT[t] : ""}`}>{value}</p>
       {sub && <p className="mt-1.5 text-xs text-ink-400">{sub}</p>}

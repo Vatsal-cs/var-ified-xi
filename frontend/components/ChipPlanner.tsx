@@ -34,7 +34,7 @@ export default function ChipPlanner({ plan }: { plan: ChipPlan }) {
   return (
     <div className="mt-5">
       {plan.scenarios.length > 1 && (
-        <div role="tablist" className="mb-4 inline-flex rounded-xl border border-line p-0.5">
+        <div role="tablist" className="mb-4 inline-flex rounded-lg border border-line p-0.5">
           {plan.scenarios.map((s) => (
             <button
               key={s.key}

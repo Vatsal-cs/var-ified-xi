@@ -19,7 +19,7 @@ export default function CaptainOdds({ odds, players = [] }: { odds: Odds[]; play
 
   return (
     <div>
-      <p className="label">
+      <p className="text-[14px] font-medium text-ink-100">
         <Term explain="Each player's full points distribution, built from how players projected like him actually scored over two past seasons. 'Beats' is how often he'd outscore the captain, ties left out.">
           Could anyone outscore {cap.name}?
         </Term>

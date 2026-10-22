@@ -94,7 +94,7 @@ export function DeadlineChip({ deadline, gameweek }: { deadline?: string | null;
       role="timer"
       aria-label={`Gameweek ${gameweek ?? ""} deadline`}
       title={now === null ? undefined : `Deadline ${at.toLocaleString(undefined, { weekday: "long", hour: "numeric", minute: "2-digit" })}`}
-      className="flex items-center gap-2 rounded-xl border border-line bg-surface px-2.5 py-1.5 text-[13px] text-ink-400 shadow-panel sm:px-3"
+      className="flex items-center gap-2 rounded-lg border border-line px-2.5 py-1.5 text-[13px] text-ink-400 sm:px-3"
     >
       <span className={`h-[7px] w-[7px] flex-none rounded-full ${dot}`} />
       <span className="hidden whitespace-nowrap sm:inline">GW {gameweek ?? "—"} deadline</span>
@@ -140,7 +140,7 @@ export function ThemeToggle() {
       type="button"
       onClick={flip}
       aria-label={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
-      className="grid h-9 w-9 flex-none place-items-center rounded-xl border border-line bg-surface text-ink-100 shadow-panel transition-colors hover:border-line-strong"
+      className="grid h-9 w-9 flex-none place-items-center rounded-lg border border-line text-ink-100 transition-colors hover:border-line-strong"
     >
       {theme === "dark" ? (
         <svg viewBox="0 0 24 24" className="h-[17px] w-[17px]" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">

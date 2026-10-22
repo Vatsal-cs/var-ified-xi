@@ -67,7 +67,7 @@ function Record({ record }: { record?: NewsRecord | null }) {
   if (!record) return null;
   if (record.gameweeks.length === 0) {
     return (
-      <p className="mt-2 border-t border-line pt-2 tabular-nums text-[10.5px] text-ink-500">
+      <p className="mt-3 text-[12px] leading-relaxed text-ink-500">
         Record: every call is scored against who actually played once the gameweek ends.
       </p>
     );
@@ -82,7 +82,7 @@ function Record({ record }: { record?: NewsRecord | null }) {
   const rate = rot.calls ? rot.correct / rot.calls : 0;
   const live = rot.calls >= bar.calls && rate >= bar.rate;
   return (
-    <div className="mt-2 border-t border-line pt-2 tabular-nums text-[10.5px] text-ink-500">
+    <div className="mt-3 text-[12px] leading-relaxed text-ink-500">
       <p>
         Record since GW{record.gameweeks[0]}:{" "}
         {parts.length ? parts.join(" · ") : "no out, doubt or rotation calls checked yet"}
@@ -101,11 +101,11 @@ export default function TeamNews({ news }: { news?: TeamNewsView }) {
   if (!news.fetched_at) {
     return (
       <div>
-        <p className="tabular-nums text-[11px] text-ink-500">
-          Team news reader:{" "}
+        <p className="text-[13px] leading-relaxed text-ink-400">
+          The reader{" "}
           {news.enabled
             ? "reads the news within 48 hours of the deadline."
-            : "off. It needs a free Gemini key (aistudio.google.com, a project with no billing) saved as the GEMINI_API_KEY secret in the GitHub repo."}
+            : "is off. It needs a free Gemini key (aistudio.google.com, a project with no billing) saved as the GEMINI_API_KEY secret in the GitHub repo."}
         </p>
         <Record record={news.record} />
       </div>
@@ -116,13 +116,13 @@ export default function TeamNews({ news }: { news?: TeamNewsView }) {
   const quiet = news.items.filter((i) => !flagged.includes(i));
 
   return (
-    <div className="rounded-xl border border-line bg-surface-raised/50 p-3.5">
-      <p className="label">
+    <div>
+      <p className="text-[12.5px] text-ink-400">
         <Term explain="The last six days of headlines for each of your clubs (Google News and BBC Sport) are read by a free AI model (Gemini), for your squad, this week's buys and the Wildcard squad. Every call cites one of those headlines. 'Out' and 'doubt' calls worse than FPL's own flag lower the projection as an FPL flag would. 'Rotation' is shown only — line-up predictions are guesses.">
-          Team news
+          Headlines read
         </Term>{" "}
-        &mdash; read <Ago iso={news.fetched_at} />
-        {news.model && <span className="normal-case tracking-normal text-ink-500"> by {news.model}</span>}
+        <Ago iso={news.fetched_at} />
+        {news.model && <span className="text-ink-500"> by {news.model}</span>}
       </p>
       {flagged.length ? (
         <ul className="mt-1 divide-y divide-line">

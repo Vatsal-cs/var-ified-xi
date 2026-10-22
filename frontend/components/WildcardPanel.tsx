@@ -48,7 +48,7 @@ export default function WildcardPanel({ option }: { option: WildcardOption }) {
   const checked = new Set(checks.map((c) => c.player_id));
 
   return (
-    <div className={worth ? "panel-lead p-5" : "panel p-5"}>
+    <div className={worth ? "panel-lead pt-5" : "border-t border-line pt-5"}>
       <p className={`label ${worth ? "text-gold" : "text-ink-500"}`}>
         Wildcard check &middot; GW{option.gameweek}
       </p>
@@ -106,7 +106,7 @@ export default function WildcardPanel({ option }: { option: WildcardOption }) {
  *  cost of leaving each out — the call stays yours. */
 function SecondLook({ checks }: { checks: PickCheck[] }) {
   return (
-    <div className="mt-5 rounded-xl border border-warn/30 bg-warn/[0.04] p-4">
+    <div className="callout mt-6 border-warn">
       <p className="label">Worth a second look</p>
       <ul className="mt-2 space-y-2.5">
         {checks.map((c) => (

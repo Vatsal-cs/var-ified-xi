@@ -27,7 +27,7 @@ function ExpiryPanel({ expiry, plan }: { expiry: ChipExpiry; plan?: ChipPlan }) 
   const best = Object.fromEntries(best_weeks.map((b) => [b.chip, b]));
 
   return (
-    <div className={urgent ? "panel-lead p-5" : "panel p-5"}>
+    <div className={urgent ? "panel-lead pt-5" : "border-t border-line pt-5"}>
       <p className={`label ${urgent ? "text-risk" : "text-gold"}`}>
         Use them or lose them &middot; deadline GW{deadline_gw}
       </p>
@@ -106,7 +106,7 @@ export default function ChipAdvice({
           {advice.map((a) => (
             <div
               key={`${a.chip}-${a.gameweek}`}
-              className="rounded-xl border border-warn/40 bg-warn/[0.06] p-4"
+              className="callout border-warn"
             >
               <p className="label text-warn">
                 GW{a.gameweek} &middot; {CHIP_LABEL[a.chip]}
@@ -118,7 +118,7 @@ export default function ChipAdvice({
       ) : (
         // Nothing on the calendar yet — say so explicitly, so it never reads
         // as "this feature doesn't work".
-        <div className="panel p-4">
+        <div className="callout">
           <p className="font-body text-sm text-ink-300">
             {next ? (
               <>
