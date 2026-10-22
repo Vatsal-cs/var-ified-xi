@@ -14,6 +14,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { OptimizedTeam } from "@/lib/types";
 import RefreshButton from "@/components/RefreshButton";
+import { SHIRT_PATH } from "@/components/Shirt";
 import { DeadlineChip, ThemeToggle } from "@/components/motion";
 
 /** One page of the site, as the nav lists it (components/PageShell.tsx). */
@@ -28,10 +29,7 @@ export default function SiteHeader({ team, pages }: { team: OptimizedTeam; pages
         <Link href="/" className="flex items-center gap-2 [grid-area:brand]">
           <span className="grid h-8 w-8 flex-none place-items-center rounded-lg bg-ink-100">
             <svg viewBox="0 0 120 120" className="h-7 w-7" aria-hidden>
-              <path
-                d="M38 14 C44 18 50 20 60 20 C70 20 76 18 82 14 L104 26 C107 28 108 31 107 34 L99 52 C98 55 95 56 92 55 L86 52 L86 108 C86 111 84 113 81 113 L39 113 C36 113 34 111 34 108 L34 52 L28 55 C25 56 22 55 21 52 L13 34 C12 31 13 28 16 26 Z"
-                fill="rgb(var(--c-base))"
-              />
+              <path d={SHIRT_PATH} fill="rgb(var(--c-base))" />
               <text x="60" y="86" textAnchor="middle" className="font-kit" fontWeight="700" fontSize="40" fill="rgb(var(--c-ink-100))">
                 XI
               </text>

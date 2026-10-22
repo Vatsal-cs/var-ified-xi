@@ -8,7 +8,7 @@ import { getTeamData } from "@/lib/getTeamData";
 import PageShell, { NoData } from "@/components/PageShell";
 import PipelineExplainer from "@/components/PipelineExplainer";
 import Glossary from "@/components/Glossary";
-import { Section } from "@/components/ui";
+import { PageIntro, Section } from "@/components/ui";
 
 export const metadata: Metadata = { title: "How it works — VAR-ified XI" };
 
@@ -18,23 +18,20 @@ export default function HowPage() {
 
   return (
     <PageShell team={team}>
-      <Section
-        id="how"
-        tone="sky"
-        eyebrow="Under the hood"
-        title="How this was decided"
-        lede="Five stages, run in order, every time the engine runs. Expand any stage for the real mechanics."
-      >
-        <PipelineExplainer />
-      </Section>
+      <PageIntro
+        kicker="Under the hood"
+        title="How it works"
+        sub="Five stages, run in order before every deadline. Open any stage for the real mechanics."
+        figures={[
+          { label: "Training rows", value: "~87k" },
+          { label: "Planned ahead", value: `${team.horizon_gws} GWs` },
+          { label: "Models averaged", value: 5 },
+          { label: "Running cost", value: "$0" },
+        ]}
+      />
+      <PipelineExplainer />
 
-      <Section
-        id="faq"
-        tone="violet"
-        eyebrow="Good to know"
-        title="Questions you might have"
-        lede="Straight answers to what this page tends to raise."
-      >
+      <Section id="faq" title="Questions you might have">
         <Glossary />
       </Section>
     </PageShell>

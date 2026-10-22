@@ -8,13 +8,19 @@
 
 import { crestUrls, goalkeeperKit, kitFor } from "@/lib/teams";
 
+// The outline, with a round neck cut out of it.
 const BODY =
-  "M38 14 C44 18 50 20 60 20 C70 20 76 18 82 14 L104 26 C107 28 108 31 107 34 L99 52 C98 55 95 56 92 55 " +
-  "L86 52 L86 108 C86 111 84 113 81 113 L39 113 C36 113 34 111 34 108 L34 52 L28 55 C25 56 22 55 21 52 " +
-  "L13 34 C12 31 13 28 16 26 Z";
-const SLEEVES =
-  "M38 14 L16 26 C13 28 12 31 13 34 L21 52 C22 55 25 56 28 55 L34 52 L34 24 Z " +
-  "M82 14 L104 26 C107 28 108 31 107 34 L99 52 C98 55 95 56 92 55 L86 52 L86 24 Z";
+  "M44 12 L20 22 L8 40 L22 50 L32 43 L32 106 Q32 110 36 110 L84 110 Q88 110 88 106 L88 43 L98 50 " +
+  "L112 40 L100 22 L76 12 C72 19 66 22 60 22 C54 22 48 19 44 12 Z";
+// The inside of the back of the shirt, seen through the neck.
+const NECK_INSIDE = "M44 12 C50 16.5 70 16.5 76 12 C72 19 66 22 60 22 C54 22 48 19 44 12 Z";
+const COLLAR_FRONT = "M44 12 C48 19 54 22 60 22 C66 22 72 19 76 12";
+const COLLAR_BACK = "M44 12 C50 16.5 70 16.5 76 12";
+const SLEEVES = "M20 22 L8 40 L22 50 L32 43 L34 24 Z M100 22 L112 40 L98 50 L88 43 L86 24 Z";
+const CUFFS = "M8 40 L22 50 M112 40 L98 50";
+
+/** The shirt outline, for marks that want the silhouette alone. */
+export const SHIRT_PATH = BODY;
 
 export default function Shirt({
   team,
@@ -62,20 +68,23 @@ export default function Shirt({
         )}
       </defs>
 
+      <path d={NECK_INSIDE} fill={kit.shirt} />
+      <path d={NECK_INSIDE} fill="rgba(0,0,0,0.45)" />
       <path d={BODY} fill={striped ? `url(#stripe-${id})` : kit.shirt} />
       {kit.sleeve && <path d={SLEEVES} fill={kit.sleeve} clipPath={`url(#clip-${id})`} />}
       {/* Fabric light: brighter shoulders, a darker hem */}
       <rect width="120" height="120" fill={`url(#light-${id})`} clipPath={`url(#clip-${id})`} />
-      <path d="M46 15.5 C50 23 70 23 74 15.5" fill="none" stroke={edge} strokeWidth="3.2" strokeLinecap="round" />
-      <path d="M13 34 L21 52 M107 34 L99 52" stroke={kit.sleeve ? kit.shirt : edge} strokeWidth="3.4" strokeLinecap="round" />
-      <path d={BODY} fill="none" stroke="rgba(0,0,0,0.19)" strokeWidth="1" />
+      <path d={COLLAR_BACK} fill="none" stroke={edge} strokeWidth="2" strokeLinecap="round" opacity="0.9" />
+      <path d={COLLAR_FRONT} fill="none" stroke={edge} strokeWidth="3.4" strokeLinecap="round" />
+      <path d={CUFFS} stroke={kit.sleeve ? kit.shirt : edge} strokeWidth="3.6" strokeLinecap="round" />
+      <path d={BODY} fill="none" stroke="rgba(0,0,0,0.2)" strokeWidth="1" strokeLinejoin="round" />
 
-      {crest && <image href={crest} x="65" y="29" width="13" height="13" />}
+      {crest && <image href={crest} x="65" y="29" width="12" height="12" />}
 
-      {striped && <rect x="44" y="64" width="32" height="30" rx="5" fill="#fff" />}
+      {striped && <rect x="44" y="62" width="32" height="30" rx="5" fill="#fff" />}
       <text
         x="60"
-        y="88"
+        y="86"
         textAnchor="middle"
         className="font-kit"
         fontWeight="700"
@@ -87,22 +96,22 @@ export default function Shirt({
       </text>
 
       {(captain || vice) && (
-        <g transform="rotate(-62 99 40)">
+        <g transform="rotate(-34 101 33)">
           <g className="armband animate-pop" style={{ animationDelay: `${armbandDelay}s` }}>
             <rect
-              x="88"
-              y="34.5"
-              width="22"
-              height="11"
+              x="91"
+              y="28.5"
+              width="20"
+              height="9"
               rx="2"
               fill={captain ? "#E3A93C" : "#15171B"}
               stroke="rgba(0,0,0,0.25)"
             />
             <text
-              x="99"
-              y="43.4"
+              x="101"
+              y="35.6"
               textAnchor="middle"
-              fontSize="9"
+              fontSize="7.5"
               fontWeight="800"
               fill={captain ? "#2A1A00" : "#F2F0EC"}
               className="font-body"

@@ -6,7 +6,7 @@
 
 import { getTeamData, deriveFormation } from "@/lib/getTeamData";
 import PageShell, { NoData } from "@/components/PageShell";
-import ThisWeek, { ThisWeekNotes } from "@/components/ThisWeek";
+import ThisWeek, { Armband, ThisWeekNotes } from "@/components/ThisWeek";
 import PitchView from "@/components/PitchView";
 import BenchStrip from "@/components/BenchStrip";
 import { coinFlips } from "@/lib/odds";
@@ -30,8 +30,11 @@ export default function Home() {
   return (
     <PageShell team={team}>
       <div className="grid items-start gap-12 lg:grid-cols-[1fr_1fr] lg:gap-14">
-        {/* The decision that's due */}
-        <ThisWeek team={team} />
+        {/* The decision that's due, and the armband */}
+        <div className="space-y-10">
+          <ThisWeek team={team} />
+          <Armband team={team} />
+        </div>
 
         {/* The squad it produces */}
         <section id="squad" aria-label={title} className="scroll-mt-32 animate-rise" style={{ animationDelay: "0.1s" }}>

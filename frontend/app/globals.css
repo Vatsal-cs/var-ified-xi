@@ -112,8 +112,10 @@ body {
     @apply border-l-2 border-line-strong pl-4;
   }
 
+  /* Small print that names a thing. Sentence case: the tracked-out capitals
+     every dashboard template uses are exactly what made this look generic. */
   .label {
-    @apply font-body text-[11.5px] font-medium uppercase tracking-[0.08em] text-ink-400;
+    @apply font-body text-[12.5px] font-medium text-ink-400;
   }
   .stat {
     @apply font-kit text-[30px] font-bold leading-none tabular-nums text-ink-100;

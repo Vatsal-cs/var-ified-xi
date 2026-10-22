@@ -5,22 +5,60 @@
 // your players' international matches, over the planning window (backend
 // other_matches.py, from ESPN's public feed). A midweek game before a
 // gameweek is a rotation risk; a long-haul international trip is a tiredness
-// one. Dates in UTC, like FPL's deadlines.
+// one. Shown as one fixture list in date order. Dates in UTC, like FPL's
+// deadlines.
 
 import type { OtherMatch, OtherMatchesView } from "@/lib/types";
 import Crest from "./Crest";
 
-const DAY = new Intl.DateTimeFormat("en-GB", { weekday: "short", day: "numeric", month: "short", timeZone: "UTC" });
+const DAY = new Intl.DateTimeFormat("en-GB", { weekday: "short", timeZone: "UTC" });
+const DATE = new Intl.DateTimeFormat("en-GB", { day: "numeric", month: "short", timeZone: "UTC" });
 
-function Game({ m }: { m: OtherMatch }) {
+/** Each competition's colour, so the list reads at a glance. */
+const COMP: { match: RegExp; short: string; colour: string }[] = [
+  { match: /champions/i, short: "Champions League", colour: "#2F5DB8" },
+  { match: /europa/i, short: "Europa League", colour: "#E8711A" },
+  { match: /conference/i, short: "Conference League", colour: "#22A065" },
+  { match: /league cup|carabao|efl/i, short: "League Cup", colour: "#8A7E6E" },
+  { match: /fa cup/i, short: "FA Cup", colour: "#C8341F" },
+  { match: /nations/i, short: "Nations League", colour: "#7A5CD6" },
+  { match: /qualif|world cup/i, short: "Qualifier", colour: "#0E8A92" },
+  { match: /friendl/i, short: "Friendly", colour: "#9A968F" },
+];
+
+function comp(name: string) {
+  return COMP.find((c) => c.match.test(name)) ?? { short: name, colour: "#9A968F" };
+}
+
+type Row = { m: OtherMatch; who: React.ReactNode; crest?: string; key: string };
+
+function Fixture({ row }: { row: Row }) {
+  const c = comp(row.m.competition);
+  const d = new Date(row.m.date);
   return (
-    <li className="flex flex-wrap items-baseline gap-x-2 tabular-nums text-[11.5px]">
-      <span className="w-[88px] flex-none text-ink-400">{DAY.format(new Date(m.date))}</span>
-      <span className="text-ink-200">
-        {m.home ? "v" : "at"} {m.opponent ?? "—"}
+    <li className="grid grid-cols-[52px_1fr] gap-4 border-b border-line py-3 sm:grid-cols-[64px_1fr_190px] sm:items-center">
+      <span className="leading-tight">
+        <span className="block text-[12px] text-ink-400">{DAY.format(d)}</span>
+        <span className="block text-[15px] font-semibold tabular-nums text-ink-100">{DATE.format(d)}</span>
       </span>
-      <span className="text-ink-500">{m.competition}</span>
-      {m.far && <span className="text-warn">long trip</span>}
+      <span className="min-w-0">
+        <span className="flex items-center gap-2 text-[14.5px] text-ink-100">
+          {row.crest && <Crest team={row.crest} className="h-5 w-5 flex-none" />}
+          <span className="truncate">
+            {row.who} <span className="text-ink-400">{row.m.home ? "v" : "at"}</span> {row.m.opponent ?? "—"}
+          </span>
+        </span>
+        <span className="mt-1 flex items-center gap-1.5 text-[12.5px] text-ink-400 sm:hidden">
+          <span className="h-2 w-2 rounded-full" style={{ background: c.colour }} />
+          {c.short}
+          {row.m.far && <span className="font-semibold text-warn">&middot; long trip</span>}
+        </span>
+      </span>
+      <span className="hidden items-center gap-2 text-[13px] text-ink-300 sm:flex">
+        <span className="h-2 w-2 flex-none rounded-full" style={{ background: c.colour }} />
+        <span className="truncate">{c.short}</span>
+        {row.m.far && <span className="font-semibold text-warn">long trip</span>}
+      </span>
     </li>
   );
 }
@@ -28,59 +66,70 @@ function Game({ m }: { m: OtherMatch }) {
 export default function OtherMatches({ view }: { view: OtherMatchesView }) {
   if (!view.clubs.length && !view.international.length) {
     return (
-      <p className="font-body text-sm text-ink-300">
-        None of your players&apos; clubs play a cup or European game, and none of your players
-        has international duty, before the end of the planning window.
+      <p className="prose-note">
+        None of your players&apos; clubs play a cup or European game, and none of your players has international
+        duty, before the end of the planning window.
       </p>
     );
   }
+  const clubRows: Row[] = view.clubs
+    .flatMap((c) =>
+      c.matches.map((m) => ({
+        m,
+        crest: c.club,
+        key: `${c.club}-${m.date}`,
+        who: (
+          <>
+            <span className="font-semibold">{c.club}</span>{" "}
+            <span className="text-[12.5px] text-ink-400">({c.players.join(", ")})</span>
+          </>
+        ),
+      }))
+    )
+    .sort((a, b) => a.m.date.localeCompare(b.m.date));
+  const intlRows: Row[] = view.international
+    .flatMap((p) =>
+      p.matches.map((m) => ({
+        m,
+        key: `${p.player_id}-${m.date}`,
+        who: (
+          <>
+            <span className="font-semibold">{p.name}</span>{" "}
+            <span className="text-[12.5px] text-ink-400">for {p.nation}</span>
+          </>
+        ),
+      }))
+    )
+    .sort((a, b) => a.m.date.localeCompare(b.m.date));
+
   return (
-    <div className="grid gap-10 lg:grid-cols-2">
-      <div className="border-t border-line pt-5">
-        <p className="label mb-3">Midweek club games</p>
-        {view.clubs.length ? (
-          <ul className="space-y-3">
-            {view.clubs.map((c) => (
-              <li key={c.club}>
-                <p className="flex flex-wrap items-center gap-x-1.5 font-body text-sm text-ink-100">
-                  <Crest team={c.club} className="h-5 w-5 flex-none" />
-                  <span className="font-medium">{c.club}</span>
-                  <span className="ml-2 tabular-nums text-[11px] text-ink-500">{c.players.join(", ")}</span>
-                </p>
-                <ul className="mt-1 space-y-0.5">
-                  {c.matches.map((m) => (
-                    <Game key={m.date + m.competition} m={m} />
-                  ))}
-                </ul>
-              </li>
+    <div className="space-y-12">
+      <section>
+        <h3 className="text-[17px] font-semibold text-ink-100">Midweek club games</h3>
+        <p className="mb-3 mt-1 text-[14px] text-ink-400">A tie before a gameweek is a rotation risk.</p>
+        {clubRows.length ? (
+          <ul className="border-t border-line">
+            {clubRows.map((r) => (
+              <Fixture key={r.key} row={r} />
             ))}
           </ul>
         ) : (
-          <p className="font-body text-sm text-ink-300">No cup or European games for your clubs.</p>
+          <p className="prose-note">No cup or European games for your clubs.</p>
         )}
-      </div>
-      <div className="border-t border-line pt-5">
-        <p className="label mb-3">International duty</p>
-        {view.international.length ? (
-          <ul className="space-y-3">
-            {view.international.map((p) => (
-              <li key={p.player_id}>
-                <p className="font-body text-sm text-ink-100">
-                  <span className="font-medium">{p.name}</span>
-                  <span className="ml-2 tabular-nums text-[11px] text-ink-500">{p.nation}</span>
-                </p>
-                <ul className="mt-1 space-y-0.5">
-                  {p.matches.map((m) => (
-                    <Game key={m.date + m.competition} m={m} />
-                  ))}
-                </ul>
-              </li>
+      </section>
+      <section>
+        <h3 className="text-[17px] font-semibold text-ink-100">International duty</h3>
+        <p className="mb-3 mt-1 text-[14px] text-ink-400">A long trip home means tired legs the weekend after.</p>
+        {intlRows.length ? (
+          <ul className="border-t border-line">
+            {intlRows.map((r) => (
+              <Fixture key={r.key} row={r} />
             ))}
           </ul>
         ) : (
-          <p className="font-body text-sm text-ink-300">No international games in this window.</p>
+          <p className="prose-note">No international games in this window.</p>
         )}
-      </div>
+      </section>
     </div>
   );
 }

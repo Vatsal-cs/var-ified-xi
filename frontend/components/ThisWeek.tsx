@@ -9,7 +9,7 @@
 import type { LineupCheck, OptimizedTeam, PickCheck, Player, PlannedWeek, TransferMove } from "@/lib/types";
 import Crest from "@/components/Crest";
 import Shirt, { Hanger } from "@/components/Shirt";
-import { Term } from "./ui";
+import { Figures, Term } from "./ui";
 import CaptainOdds from "./CaptainOdds";
 import TeamNews from "./TeamNews";
 import CoinFlips from "./CoinFlips";
@@ -290,24 +290,12 @@ export default function ThisWeek({ team }: { team: OptimizedTeam }) {
         </div>
       )}
 
-      <dl className="mt-8 grid grid-cols-2 gap-y-5 border-t border-line pt-5 sm:flex">
-        {numbers.map((n, i) => (
-          <div
-            key={n.label}
-            className={`sm:pr-8 ${i % 2 === 1 ? "border-l border-line pl-5" : ""} ${
-              i > 0 ? "sm:border-l sm:border-line sm:pl-8" : ""
-            }`}
-          >
-            <dt className="text-[12.5px] text-ink-400">{n.label}</dt>
-            <dd className="mt-0.5 font-kit text-[30px] font-bold leading-none tabular-nums text-ink-100">{n.value}</dd>
-          </div>
-        ))}
-      </dl>
+      <Figures items={numbers} className="mt-8" />
     </section>
   );
 }
 
-/** The captain: crest, name, his week in numbers, and the armband. */
+/** The captain in his shirt, armband on, and his week in numbers. */
 function Captain({ team }: { team: OptimizedTeam }) {
   const cap = named(team, team.captain_id);
   const vice = named(team, team.vice_captain_id);
@@ -317,22 +305,24 @@ function Captain({ team }: { team: OptimizedTeam }) {
   const haul = team.captain_odds?.find((o) => o.player_id === cap.player_id)?.p_haul;
   return (
     <div>
-      <div className="flex items-center gap-3">
-        <Crest team={cap.team} className="h-10 w-10 flex-none" />
-        <div className="min-w-0 flex-1">
-          <p className="text-[20px] font-semibold tracking-[-0.02em] text-ink-100">{cap.name}</p>
-          <p className="text-[13px] text-ink-400">
-            {cap.predicted_points.toFixed(1)} pts{haul != null && <> &middot; {pct(haul)} chance of 10+</>}
-            {vice && <> &middot; vice {vice.name}</>}
+      <div className="flex items-center gap-4">
+        <Shirt
+          team={cap.team}
+          number={cap.predicted_points.toFixed(1)}
+          uid={`cap-${cap.player_id}`}
+          goalkeeper={cap.position === "GK"}
+          captain
+          armbandDelay={2.2}
+          className="h-[88px] w-[88px] flex-none drop-shadow-[0_8px_10px_rgba(0,0,0,0.25)]"
+        />
+        <div className="min-w-0">
+          <p className="text-[22px] font-semibold leading-tight tracking-[-0.02em] text-ink-100">{cap.name}</p>
+          <p className="mt-0.5 text-[13px] leading-snug text-ink-400">
+            {cap.team}
+            {haul != null && <> &middot; {pct(haul)} chance of 10+</>}
           </p>
+          {vice && <p className="text-[13px] text-ink-400">Vice-captain {vice.name}</p>}
         </div>
-        <span
-          aria-hidden
-          className="grid h-8 w-8 flex-none -rotate-[8deg] animate-pop place-items-center rounded-md bg-[#E3A93C] text-[14px] font-extrabold text-[#2A1A00]"
-          style={{ animationDelay: "2.1s" }}
-        >
-          C
-        </span>
       </div>
       {override && modelCap && modelCap.player_id !== cap.player_id && (
         <p className="mt-2 text-[12.5px] text-ink-400">
@@ -344,26 +334,31 @@ function Captain({ team }: { team: OptimizedTeam }) {
   );
 }
 
+/** The armband: the captain in his shirt and who could outscore him. Sits
+ *  under the decision, beside the pitch. */
+export function Armband({ team }: { team: OptimizedTeam }) {
+  const players = [...team.starting_xi, ...team.bench];
+  return (
+    <section aria-label="The armband" className="border-t border-line pt-7">
+      <h2 className="mb-4 text-[15px] font-semibold text-ink-100">The armband</h2>
+      <div className="grid gap-6 sm:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] sm:gap-8">
+        <Captain team={team} />
+        {team.captain_odds && <CaptainOdds odds={team.captain_odds} players={players} />}
+      </div>
+    </section>
+  );
+}
+
 /** The smaller calls that go with the decision, side by side under it. */
 export function ThisWeekNotes({ team }: { team: OptimizedTeam }) {
   const scale = team.odds_calibration?.pair_logit_scale ?? 1;
-  const players = [...team.starting_xi, ...team.bench];
   return (
-    <section aria-label="This week's smaller calls" className="grid gap-10 border-t border-line pt-8 md:grid-cols-3 md:gap-0">
-      <div className="md:pr-8">
-        <h2 className="mb-4 text-[15px] font-semibold text-ink-100">The armband</h2>
-        <Captain team={team} />
-        {team.captain_odds && (
-          <div className="mt-5">
-            <CaptainOdds odds={team.captain_odds} players={players} />
-          </div>
-        )}
-      </div>
-      <div className="md:border-l md:border-line md:px-8">
+    <section aria-label="This week's smaller calls" className="grid gap-10 border-t border-line pt-8 md:grid-cols-2 md:gap-0">
+      <div className="md:pr-10">
         <h2 className="mb-4 text-[15px] font-semibold text-ink-100">Close calls</h2>
         <CoinFlips xi={team.starting_xi} bench={team.bench} scale={scale} />
       </div>
-      <div className="md:border-l md:border-line md:pl-8">
+      <div className="md:border-l md:border-line md:pl-10">
         <h2 className="mb-4 text-[15px] font-semibold text-ink-100">Team news</h2>
         <TeamNews news={team.team_news} />
       </div>

@@ -34,17 +34,95 @@ export function Section({
   return (
     <Reveal>
       <section id={id} aria-labelledby={id ? `${id}-h` : undefined} className="scroll-mt-32">
-        {eyebrow && <p className={`label mb-2 ${TONE_TEXT[tone]}`}>{eyebrow}</p>}
+        {eyebrow && <p className={`mb-1.5 text-[13px] font-semibold ${TONE_TEXT[tone]}`}>{eyebrow}</p>}
         <h2
           id={id ? `${id}-h` : undefined}
-          className="max-w-3xl text-[26px] font-semibold leading-tight tracking-[-0.025em] text-ink-100 sm:text-[32px]"
+          className="max-w-3xl text-[24px] font-semibold leading-tight tracking-[-0.025em] text-ink-100 sm:text-[28px]"
         >
           {title}
         </h2>
-        {lede && <p className="mt-2 max-w-[62ch] prose-note">{lede}</p>}
+        {lede && <p className="mt-2 max-w-[60ch] text-[15px] leading-relaxed text-ink-300">{lede}</p>}
         <div className="mt-6">{children}</div>
       </section>
     </Reveal>
+  );
+}
+
+/** The top of a page: what it is in a few words, one sentence, and its key
+ *  numbers in a ruled row. Every page opens the same way. */
+export function PageIntro({
+  kicker,
+  title,
+  sub,
+  figures = [],
+}: {
+  kicker?: ReactNode;
+  title: string;
+  sub?: ReactNode;
+  figures?: { label: string; value: ReactNode; tone?: string }[];
+}) {
+  return (
+    <header className="animate-rise">
+      {kicker && <p className="text-[13px] font-semibold text-gold">{kicker}</p>}
+      <h1 className="mt-1.5 text-[36px] font-semibold leading-[1.04] tracking-[-0.035em] text-ink-100 sm:text-[48px]">
+        {title}
+      </h1>
+      {sub && <p className="mt-3 max-w-[56ch] text-[16px] leading-relaxed text-ink-300">{sub}</p>}
+      {figures.length > 0 && <Figures items={figures} className="mt-7" />}
+    </header>
+  );
+}
+
+/** Numbers in one ruled row (two by two on a phone): label over figure,
+ *  divided by hairlines. No tiles. */
+export function Figures({
+  items,
+  className = "",
+}: {
+  items: { label: string; value: ReactNode; tone?: string }[];
+  className?: string;
+}) {
+  return (
+    <dl className={`grid grid-cols-2 gap-y-5 border-t border-line pt-5 sm:flex ${className}`}>
+      {items.map((n, i) => (
+        <div
+          key={n.label}
+          className={`sm:pr-8 ${i % 2 === 1 ? "border-l border-line pl-5" : ""} ${
+            i > 0 ? "sm:border-l sm:border-line sm:pl-8" : ""
+          }`}
+        >
+          <dt className="text-[12.5px] text-ink-400">{n.label}</dt>
+          <dd className={`mt-0.5 font-kit text-[30px] font-bold leading-none tabular-nums ${n.tone ?? "text-ink-100"}`}>
+            {n.value}
+          </dd>
+        </div>
+      ))}
+    </dl>
+  );
+}
+
+/** A chip, drawn like the round tokens in the FPL app. */
+const CHIP_STYLE: Record<string, { short: string; name: string; bg: string; fg: string }> = {
+  "3xc": { short: "TC", name: "Triple Captain", bg: "#E3A93C", fg: "#2A1A00" },
+  bboost: { short: "BB", name: "Bench Boost", bg: "#2E9D6A", fg: "#FFFFFF" },
+  freehit: { short: "FH", name: "Free Hit", bg: "#7A5CD6", fg: "#FFFFFF" },
+  wildcard: { short: "WC", name: "Wildcard", bg: "#D2553E", fg: "#FFFFFF" },
+};
+
+export function chipName(chip: string): string {
+  return CHIP_STYLE[chip]?.name ?? chip;
+}
+
+export function ChipToken({ chip, size = 28, className = "" }: { chip: string; size?: number; className?: string }) {
+  const c = CHIP_STYLE[chip] ?? { short: chip.slice(0, 2).toUpperCase(), name: chip, bg: "#777", fg: "#fff" };
+  return (
+    <span
+      title={c.name}
+      className={`inline-grid flex-none place-items-center rounded-full font-kit font-bold leading-none shadow-[inset_0_-2px_0_rgba(0,0,0,0.18)] ${className}`}
+      style={{ width: size, height: size, background: c.bg, color: c.fg, fontSize: Math.round(size * 0.42) }}
+    >
+      {c.short}
+    </span>
   );
 }
 

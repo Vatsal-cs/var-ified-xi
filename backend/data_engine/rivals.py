@@ -105,6 +105,8 @@ def build_league_view(entry_id: int, bootstrap: dict, gameweek: int) -> dict:
         last_played = max(1, gameweek - 1)
         names = {p["id"]: p["web_name"] for p in bootstrap["elements"]}
         costs = {p["id"]: p["now_cost"] / 10 for p in bootstrap["elements"]}
+        team_names = {t["id"]: t["name"] for t in bootstrap.get("teams", [])}
+        clubs = {e["id"]: team_names.get(e["team"]) for e in bootstrap["elements"]}
 
         me = next((r for r in rows if r["entry"] == entry_id), None)
         my_rank = me["rank"] if me else None
@@ -143,13 +145,13 @@ def build_league_view(entry_id: int, bootstrap: dict, gameweek: int) -> dict:
             return (counts.get(pid, 0) / n) if n else 0.0
 
         differentials = sorted(
-            [{"player_id": pid, "name": names.get(pid), "cost_m": costs.get(pid),
+            [{"player_id": pid, "name": names.get(pid), "team": clubs.get(pid), "cost_m": costs.get(pid),
               "owned_by": counts.get(pid, 0), "share": round(share(pid), 3)}
              for pid in mine if share(pid) <= DIFFERENTIAL_THRESHOLD],
             key=lambda d: d["share"],
         )
         template_gaps = sorted(
-            [{"player_id": pid, "name": names.get(pid), "cost_m": costs.get(pid),
+            [{"player_id": pid, "name": names.get(pid), "team": clubs.get(pid), "cost_m": costs.get(pid),
               "owned_by": c, "share": round(share(pid), 3)}
              for pid, c in counts.items()
              if pid not in mine and share(pid) >= TEMPLATE_THRESHOLD],

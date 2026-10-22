@@ -8,7 +8,7 @@
 
 import type { Player } from "@/lib/types";
 import { coinFlips, pct } from "@/lib/odds";
-import Crest from "./Crest";
+import Shirt from "./Shirt";
 import { Term } from "./ui";
 
 export default function CoinFlips({
@@ -31,27 +31,45 @@ export default function CoinFlips({
   }
   return (
     <div>
-      <ul className="space-y-3">
+      <ul className="space-y-5">
         {flips.map((f) => (
-          <li key={f.sub.player_id} className="text-[14px]">
-            <p className="flex flex-wrap items-center gap-x-1.5">
-              <Crest team={f.starter.team} className="h-4 w-4 flex-none" />
-              <span className="font-medium text-ink-100">{f.starter.name}</span>
-              <span className="text-ink-500">or</span>
-              <Crest team={f.sub.team} className="h-4 w-4 flex-none" />
-              <span className="font-medium text-ink-100">{f.sub.name}</span>
-            </p>
-            <p className="mt-0.5 text-[12.5px] text-ink-400">
-              starting {f.starter.predicted_points.toFixed(1)} &middot; bench {f.sub.predicted_points.toFixed(1)}{" "}
-              &middot;{" "}
-              <span className="font-semibold tabular-nums text-violet">
-                {pct(1 - f.p)} / {pct(f.p)}
-              </span>
-            </p>
+          <li key={f.sub.player_id}>
+            <div className="grid grid-cols-[40px_1fr_40px] items-center gap-3">
+              <Shirt
+                team={f.starter.team}
+                number={f.starter.predicted_points.toFixed(1)}
+                uid={`flip-s-${f.sub.player_id}-${f.starter.player_id}`}
+                goalkeeper={f.starter.position === "GK"}
+                className="h-10 w-10"
+              />
+              <div>
+                <div className="flex justify-between text-[13px]">
+                  <span className="font-medium text-ink-100">{f.starter.name}</span>
+                  <span className="font-medium text-ink-100">{f.sub.name}</span>
+                </div>
+                <div className="mt-1 flex h-2 overflow-hidden rounded-full" aria-hidden>
+                  <span className="bg-ink-100" style={{ width: `${(1 - f.p) * 100}%` }} />
+                  <span className="bg-violet" style={{ width: `${f.p * 100}%` }} />
+                </div>
+                <div className="mt-1 flex justify-between text-[12px] tabular-nums text-ink-400">
+                  <span>starts &middot; {pct(1 - f.p)}</span>
+                  <span>
+                    {pct(f.p)} &middot; <span className="text-violet">bench</span>
+                  </span>
+                </div>
+              </div>
+              <Shirt
+                team={f.sub.team}
+                number={f.sub.predicted_points.toFixed(1)}
+                uid={`flip-b-${f.sub.player_id}-${f.starter.player_id}`}
+                goalkeeper={f.sub.position === "GK"}
+                className="h-10 w-10"
+              />
+            </div>
           </li>
         ))}
       </ul>
-      <p className="mt-3 text-[12.5px] leading-relaxed text-ink-500">
+      <p className="mt-4 text-[12.5px] leading-relaxed text-ink-500">
         <Term explain="A bench player and a starter he could replace, each with a 40-60% chance of outscoring the other (ties left out). Over thousands of past calls, the higher projection won only 52% of the time when the two were within half a point.">
           Too close to call
         </Term>{" "}

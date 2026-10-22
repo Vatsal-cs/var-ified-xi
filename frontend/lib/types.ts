@@ -245,6 +245,8 @@ export interface TeamInfo {
 export interface RivalOwnership {
   player_id: number;
   name: string;
+  /** His club (absent in files written before it was added). */
+  team?: string;
   cost_m: number;
   owned_by: number;
   /** 0-1, as a share of the rivals ahead of you. */

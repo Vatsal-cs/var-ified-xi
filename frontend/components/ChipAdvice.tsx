@@ -13,6 +13,7 @@
 
 import type { ChipExpiry, ChipPlan, ChipSuggestion, ChipWatch } from "@/lib/types";
 import ChipPlanner from "./ChipPlanner";
+import { ChipToken } from "./ui";
 
 const CHIP_LABEL: Record<ChipSuggestion["chip"], string> = {
   bboost: "Bench Boost",
@@ -27,18 +28,21 @@ function ExpiryPanel({ expiry, plan }: { expiry: ChipExpiry; plan?: ChipPlan }) 
   const best = Object.fromEntries(best_weeks.map((b) => [b.chip, b]));
 
   return (
-    <div className={urgent ? "panel-lead pt-5" : "border-t border-line pt-5"}>
-      <p className={`label ${urgent ? "text-risk" : "text-gold"}`}>
-        Use them or lose them &middot; deadline GW{deadline_gw}
-      </p>
-      <p className="mt-2 text-[24px] font-semibold leading-tight tracking-[-0.02em] text-ink-100">
-        {chips_left.length} chip{chips_left.length === 1 ? "" : "s"} left, {gameweeks_left}{" "}
-        gameweek{gameweeks_left === 1 ? "" : "s"} to play {chips_left.length === 1 ? "it" : "them"}
-      </p>
-      <p className="mt-2 max-w-[62ch] font-body text-sm leading-relaxed text-ink-300">
-        FPL gives two sets of chips a season. This set can&apos;t be carried past the GW
-        {deadline_gw} deadline — an unplayed chip is lost, not saved — and only one chip can
-        be played per gameweek.
+    <div>
+      <div className="flex flex-wrap items-center gap-3">
+        <span className="flex -space-x-1.5">
+          {chips_left.map((c) => (
+            <ChipToken key={c} chip={c} size={32} className="ring-2 ring-base" />
+          ))}
+        </span>
+        <p className="text-[22px] font-semibold leading-tight tracking-[-0.02em] text-ink-100">
+          {chips_left.length} chip{chips_left.length === 1 ? "" : "s"} left, {gameweeks_left} gameweek
+          {gameweeks_left === 1 ? "" : "s"} to play {chips_left.length === 1 ? "it" : "them"}
+        </p>
+      </div>
+      <p className={`mt-2 max-w-[62ch] text-[14px] leading-relaxed ${urgent ? "text-risk" : "text-ink-300"}`}>
+        This set expires at the GW{deadline_gw} deadline — an unplayed chip is lost, not saved — and only one
+        chip can be played a week.
         {urgent
           ? " You're now at the point where every remaining week needs a chip."
           : " Waiting for a double gameweek is fine only if one is confirmed before then."}
