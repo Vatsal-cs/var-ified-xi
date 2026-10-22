@@ -11,11 +11,22 @@ import { useState } from "react";
 import type { Player, PointsDist } from "@/lib/types";
 import Crest from "@/components/Crest";
 import Shirt from "@/components/Shirt";
+import { goalkeeperKit, kitFor } from "@/lib/teams";
 import { pct } from "@/lib/odds";
 
 const ROW_ORDER: Player["position"][] = ["FWD", "MID", "DEF", "GK"];
 const ROW_Y: Record<Player["position"], number> = { FWD: 13, MID: 37.5, DEF: 62, GK: 86.5 };
 const HANG_ORDER: Player["position"][] = ["GK", "DEF", "MID", "FWD"];
+
+/** The colour of the floodlit pool under a shirt: the shirt itself, or its
+ *  trim when the shirt is too dark to glow on night-time grass. */
+function poolColour(team: string, goalkeeper: boolean) {
+  const kit = goalkeeper ? goalkeeperKit(team) : kitFor(team);
+  const hex = kit.shirt.replace("#", "");
+  const [r, g, b] = [0, 2, 4].map((i) => parseInt(hex.slice(i, i + 2), 16) / 255);
+  const lum = 0.2126 * r + 0.7152 * g + 0.0722 * b;
+  return lum < 0.12 ? (kit.stripe ?? kit.trim) : kit.shirt;
+}
 
 function groupByRow(xi: Player[]) {
   const rows: Record<Player["position"], Player[]> = { GK: [], DEF: [], MID: [], FWD: [] };
@@ -151,6 +162,18 @@ function PlayerShirt({
         </span>
 
         <span className="relative block transition-transform duration-300 group-hover:-translate-y-1 group-hover:-rotate-3">
+          {/* Floodlight: a pool of the club's colour on the grass below */}
+          <span
+            aria-hidden
+            className="absolute left-1/2 top-[88%] h-[3.2cqw] w-[115%] -translate-x-1/2 rounded-[50%] opacity-60 blur-[6px] transition-opacity duration-300 group-hover:opacity-90"
+            style={{ background: poolColour(player.team, player.position === "GK") }}
+          />
+          {player.is_captain && (
+            <span
+              aria-hidden
+              className="absolute -inset-[2.5cqw] rounded-full bg-[radial-gradient(circle,rgba(227,169,60,0.45),transparent_65%)]"
+            />
+          )}
           <Shirt
             team={player.team}
             number={pts.toFixed(1)}
@@ -209,6 +232,12 @@ export default function PitchView({
   return (
     <div>
       <div className="relative mx-auto aspect-[1/1.04] w-full rounded-lg bg-[repeating-linear-gradient(180deg,rgb(var(--c-grass))_0_12.5%,rgb(var(--c-grass-dark))_12.5%_25%)] transition-colors duration-300 [container-type:inline-size]">
+        {/* Floodlights in the four corners, and the shadow at the edges */}
+        <div
+          aria-hidden
+          className="absolute inset-0 rounded-lg bg-[radial-gradient(55%_40%_at_0%_0%,rgba(255,244,214,0.16),transparent_70%),radial-gradient(55%_40%_at_100%_0%,rgba(255,244,214,0.16),transparent_70%),radial-gradient(55%_40%_at_0%_100%,rgba(214,232,255,0.1),transparent_70%),radial-gradient(55%_40%_at_100%_100%,rgba(214,232,255,0.1),transparent_70%)]"
+        />
+        <div aria-hidden className="absolute inset-0 rounded-lg shadow-[inset_0_0_70px_rgba(0,0,0,0.45)]" />
         {/* Chalk markings */}
         <svg className="pointer-events-none absolute inset-0 h-full w-full" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden>
           <g fill="none" stroke="var(--chalk)" strokeWidth="1.2" vectorEffect="non-scaling-stroke">

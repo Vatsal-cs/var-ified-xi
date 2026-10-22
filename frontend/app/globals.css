@@ -40,8 +40,9 @@
   --shadow-raised: 0 2px 4px rgba(0, 0, 0, 0.06), 0 18px 40px -18px rgba(0, 0, 0, 0.25);
   --chalk: rgba(255, 255, 255, 0.34);
   --hanger: rgba(21, 23, 27, 0.32);
-  --mow: rgba(21, 23, 27, 0.016);
   --pitch-line: rgba(21, 23, 27, 0.06);
+  --wash: rgba(255, 255, 255, 0.55);
+  --grain: 0.22;
 }
 
 [data-theme="dark"] {
@@ -74,19 +75,36 @@
   --shadow-raised: 0 2px 4px rgba(0, 0, 0, 0.35), 0 20px 44px -18px rgba(0, 0, 0, 0.75);
   --chalk: rgba(255, 255, 255, 0.18);
   --hanger: rgba(242, 240, 236, 0.32);
-  --mow: rgba(255, 255, 255, 0.014);
   --pitch-line: rgba(255, 255, 255, 0.055);
+  --wash: rgba(255, 255, 255, 0.045);
+  --grain: 0.32;
 }
 
 html {
   scroll-behavior: smooth;
 }
 
-/* The page is a pitch at night or in daylight: wide mown bands, so faint
-   they read as texture rather than stripes. */
+/* Floodlights from above: one soft wash over the top of the page, and a fine
+   grain across everything so large flat areas read as a surface, not as
+   empty pixels. No bands, no blobs. */
 body {
   transition: background-color 0.35s, color 0.35s;
-  background-image: repeating-linear-gradient(180deg, var(--mow) 0 160px, transparent 160px 320px);
+  background-image: radial-gradient(ellipse 90% 520px at 50% -80px, var(--wash), transparent 75%);
+  background-repeat: no-repeat;
+}
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: var(--grain);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)' opacity='0.35'/%3E%3C/svg%3E");
+  mix-blend-mode: overlay;
+}
+body > * {
+  position: relative;
+  z-index: 1;
 }
 
 ::selection {

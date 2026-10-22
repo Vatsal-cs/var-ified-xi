@@ -14,7 +14,7 @@ import Crest from "./Crest";
 const STATUS: Record<NewsStatus, { label: string; tone: string }> = {
   out: { label: "Out", tone: "border-risk/40 text-risk" },
   doubtful: { label: "Doubt", tone: "border-warn/40 text-warn" },
-  rotation_risk: { label: "Rotation", tone: "border-gold/40 text-gold" },
+  rotation_risk: { label: "Rotation", tone: "border-violet/40 text-violet" },
   expected_to_start: { label: "Starts", tone: "border-pts/35 text-pts" },
   no_news: { label: "No news", tone: "border-line text-ink-500" },
 };
@@ -61,37 +61,86 @@ function Row({ item, applied }: { item: NewsItem; applied?: { chance: number; fp
 }
 
 /** How the reader's calls turned out, scored after each gameweek
- *  (research/2026-10-team-news). Rotation calls only start moving
- *  projections once enough of them have been checked and right. */
+ *  (research/2026-10-team-news), drawn as bars. Rotation calls only start
+ *  moving projections once enough of them have been checked and right. */
 function Record({ record }: { record?: NewsRecord | null }) {
   if (!record) return null;
-  if (record.gameweeks.length === 0) {
-    return (
-      <p className="mt-3 text-[12px] leading-relaxed text-ink-500">
-        Record: every call is scored against who actually played once the gameweek ends.
-      </p>
-    );
-  }
-  const part = (s: NewsStatus, label: string) => {
-    const r = record.by_status[s];
-    return r && r.calls > 0 ? `${label} ${r.correct}/${r.calls} right` : null;
-  };
-  const parts = [part("out", "out"), part("doubtful", "doubt"), part("rotation_risk", "rotation")].filter(Boolean);
-  const rot = record.by_status.rotation_risk;
+  const rows: { s: NewsStatus; label: string }[] = [
+    { s: "out", label: "Out calls" },
+    { s: "doubtful", label: "Doubts" },
+    { s: "rotation_risk", label: "Rotation" },
+  ];
+  const rot = record.by_status.rotation_risk ?? { calls: 0, correct: 0 };
   const bar = record.rotation_bar;
   const rate = rot.calls ? rot.correct / rot.calls : 0;
   const live = rot.calls >= bar.calls && rate >= bar.rate;
   return (
-    <div className="mt-3 text-[12px] leading-relaxed text-ink-500">
-      <p>
-        Record since GW{record.gameweeks[0]}:{" "}
-        {parts.length ? parts.join(" · ") : "no out, doubt or rotation calls checked yet"}
+    <div className="mt-6">
+      <p className="text-[13px] font-semibold text-ink-200">
+        The reader&apos;s record
+        {record.gameweeks.length > 0 && <span className="font-normal text-ink-400"> &middot; since GW{record.gameweeks[0]}</span>}
       </p>
-      <p className="mt-0.5">
-        Rotation calls can start moving projections only once {bar.calls} have been checked at{" "}
-        {Math.round(bar.rate * 100)}%+ right
-        {live ? " — reached." : ` — ${rot.calls} checked so far${rot.calls ? `, ${Math.round(rate * 100)}% right` : ""}.`}
-      </p>
+      <ul className="mt-2.5 space-y-2.5">
+        {rows.map(({ s, label }) => {
+          const r = record.by_status[s] ?? { calls: 0, correct: 0 };
+          const share = r.calls ? r.correct / r.calls : 0;
+          return (
+            <li key={s} className="grid grid-cols-[84px_1fr_88px] items-center gap-3 text-[13px]">
+              <span className="text-ink-300">{label}</span>
+              <span className="relative h-1.5 overflow-hidden rounded-full bg-ink-500/20">
+                <span className="absolute inset-y-0 left-0 rounded-full bg-pts" style={{ width: `${share * 100}%` }} />
+              </span>
+              <span className="text-right tabular-nums text-ink-400">
+                {r.calls ? `${r.correct}/${r.calls} right` : "none yet"}
+              </span>
+            </li>
+          );
+        })}
+      </ul>
+      <div className="mt-4">
+        <div className="flex justify-between text-[12.5px] text-ink-400">
+          <span>Rotation calls checked</span>
+          <span className="tabular-nums">
+            {rot.calls} of {bar.calls}
+          </span>
+        </div>
+        <span className="relative mt-1.5 block h-1.5 overflow-hidden rounded-full bg-ink-500/20">
+          <span
+            className="absolute inset-y-0 left-0 rounded-full bg-violet"
+            style={{ width: `${Math.min(1, rot.calls / bar.calls) * 100}%` }}
+          />
+        </span>
+        <p className="mt-1.5 text-[12px] leading-relaxed text-ink-500">
+          {live
+            ? "Reached: rotation calls now move projections."
+            : `Rotation calls are shown, not used, until ${bar.calls} have been checked at ${Math.round(bar.rate * 100)}%+ right.`}
+        </p>
+      </div>
+    </div>
+  );
+}
+
+/** Before the first read of the week: when it happens and what it does. */
+function Waiting({ enabled }: { enabled: boolean }) {
+  return (
+    <div className="flex items-start gap-3.5">
+      <span className="grid h-10 w-10 flex-none place-items-center rounded-md bg-ink-100 text-[rgb(var(--c-base))]">
+        <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+          <path d="M4 5h13v14a2 2 0 0 0 2 2H6a2 2 0 0 1-2-2z" />
+          <path d="M17 9h3v10a2 2 0 0 1-2 2" />
+          <path d="M7.5 9h6M7.5 12.5h6M7.5 16h4" />
+        </svg>
+      </span>
+      <div>
+        <p className="text-[15px] font-medium text-ink-100">
+          {enabled ? "Reads the news 48 hours before the deadline" : "The reader is off"}
+        </p>
+        <p className="mt-0.5 text-[13px] leading-relaxed text-ink-400">
+          {enabled
+            ? "Google News and BBC Sport headlines for your clubs, read by a free AI model that has to cite a headline for every call."
+            : "It needs a free Gemini key (aistudio.google.com, a project with no billing) saved as the GEMINI_API_KEY secret in the GitHub repo."}
+        </p>
+      </div>
     </div>
   );
 }
@@ -101,12 +150,7 @@ export default function TeamNews({ news }: { news?: TeamNewsView }) {
   if (!news.fetched_at) {
     return (
       <div>
-        <p className="text-[13px] leading-relaxed text-ink-400">
-          The reader{" "}
-          {news.enabled
-            ? "reads the news within 48 hours of the deadline."
-            : "is off. It needs a free Gemini key (aistudio.google.com, a project with no billing) saved as the GEMINI_API_KEY secret in the GitHub repo."}
-        </p>
+        <Waiting enabled={news.enabled} />
         <Record record={news.record} />
       </div>
     );

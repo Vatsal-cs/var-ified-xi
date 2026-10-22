@@ -38,12 +38,18 @@ function SwapShirt({ move, tone, uid }: { move?: TransferMove; tone: "out" | "in
   const price = isOut ? move?.sell_price_m : move?.cost_m;
   return (
     <div
-      className={`shirt-hang flex flex-col items-center text-center ${
+      className={`shirt-hang relative isolate flex flex-col items-center text-center ${
         isOut ? "-translate-x-1.5 -rotate-[7deg] opacity-50 grayscale animate-outgo" : "animate-income"
       }`}
       style={{ animationDelay: isOut ? "0.5s" : "0.9s" }}
     >
       <Hanger className="relative z-[1] -mb-1.5 w-[72px] sm:w-[88px]" />
+      {!isOut && (
+        <span
+          aria-hidden
+          className="pointer-events-none absolute left-1/2 top-2 -z-10 h-[190px] w-[200px] -translate-x-1/2 bg-[radial-gradient(ellipse_50%_55%_at_50%_45%,rgba(255,255,255,0.16),transparent_70%)] sm:w-[240px]"
+        />
+      )}
       <Shirt
         team={move?.team}
         number={(move?.predicted_points ?? 0).toFixed(1)}
