@@ -1,12 +1,13 @@
 {
- "gameweek": 7,
- "fetched_at": "2026-10-16T22:36:01.734769+00:00",
+ "gameweek": 8,
+ "fetched_at": "2026-10-22T14:39:33.421505+00:00",
  "model": "gemini-3.5-flash-lite",
- "prompt_version": 2,
+ "prompt_version": 3,
  "clubs": [
   "Arsenal",
   "Brentford",
   "Brighton",
+  "Chelsea",
   "Everton",
   "Man City",
   "Newcastle",
@@ -19,12 +20,12 @@
    "player_id": 1,
    "name": "David Raya Mart\u00edn",
    "club": "Arsenal",
-   "status": "no_news",
-   "start_chance": null,
-   "reason": "No news in the headlines",
-   "source_url": null,
-   "source_date": null,
-   "source_title": null
+   "status": "expected_to_start",
+   "start_chance": 100,
+   "reason": "David Raya is praised in headlines as the best keeper in the world right now.",
+   "source_url": "https://www.bbc.co.uk/sport/videos/cjy56q79xdneo?at_medium=RSS&at_campaign=rss",
+   "source_date": "2026-10-22",
+   "source_title": "David Raya 'best keeper in the world right now'"
   },
   {
    "player_id": 8,
@@ -32,7 +33,7 @@
    "club": "Arsenal",
    "status": "no_news",
    "start_chance": null,
-   "reason": "No news in the headlines",
+   "reason": "No recent news mentions this player in the headlines.",
    "source_url": null,
    "source_date": null,
    "source_title": null
@@ -43,7 +44,7 @@
    "club": "Arsenal",
    "status": "no_news",
    "start_chance": null,
-   "reason": "No news in the headlines",
+   "reason": "No recent news mentions this player in the headlines.",
    "source_url": null,
    "source_date": null,
    "source_title": null
@@ -54,7 +55,7 @@
    "club": "Brentford",
    "status": "no_news",
    "start_chance": null,
-   "reason": "No news in the headlines",
+   "reason": "No recent news mentions this player in the headlines.",
    "source_url": null,
    "source_date": null,
    "source_title": null
@@ -65,7 +66,18 @@
    "club": "Brighton",
    "status": "no_news",
    "start_chance": null,
-   "reason": "No news in the headlines",
+   "reason": "No recent news mentions this player in the headlines.",
+   "source_url": null,
+   "source_date": null,
+   "source_title": null
+  },
+  {
+   "player_id": 40,
+   "name": "Morgan Rogers",
+   "club": "Chelsea",
+   "status": "no_news",
+   "start_chance": null,
+   "reason": "No news in headlines regarding injury or status.",
    "source_url": null,
    "source_date": null,
    "source_title": null
@@ -76,7 +88,7 @@
    "club": "Everton",
    "status": "no_news",
    "start_chance": null,
-   "reason": "No specific news mentions this player.",
+   "reason": "No news in headlines regarding injury or status.",
    "source_url": null,
    "source_date": null,
    "source_title": null
@@ -85,34 +97,34 @@
    "player_id": 397,
    "name": "Antoine Semenyo",
    "club": "Man City",
-   "status": "no_news",
-   "start_chance": null,
-   "reason": "No specific news mentions this player.",
-   "source_url": null,
-   "source_date": null,
-   "source_title": null
+   "status": "out",
+   "start_chance": 0,
+   "reason": "Out for the match against Aston Villa.",
+   "source_url": "https://news.google.com/rss/articles/CBMidkFVX3lxTE51NVBJQk9pMkN0dWFobGRqSWpkeHByQXFwT2hXZVB0aC1WYi1nckY3OUdQa25yWDAwRUZONWhUWE1BUi13QUQzQ0NCTlF2S1pyY056eFBLcU04TXNXMEc4bExXY2V4UjV6aFNpbXJwQ2I1LTZudnc?oc=5",
+   "source_date": "2026-10-21",
+   "source_title": "Man City Injury News vs Aston Villa: Semenyo Out, O\u2019Reilly and Nunes Doubts - The False 9"
   },
   {
    "player_id": 399,
    "name": "Rayan Cherki",
    "club": "Man City",
-   "status": "no_news",
-   "start_chance": null,
-   "reason": "Headline notes he could drop out but does not confirm status.",
-   "source_url": "https://news.google.com/rss/articles/CBMif0FVX3lxTFBtdTVWS2xLWmtRUUtDaGJHSTA4MzktU2ZMS0J4dGhFeFJ5SmxzQThkQmZkMWFINS1pNm5HVTNqb190bXhyeEFDRHY3M1AyRXRCcDN1YlNlNUlHeHN6WkxTcEtvcFhmTzVsbGhMWVpybko1VzdKcWtLU3FES1ZBVDQ?oc=5",
-   "source_date": "2026-10-15",
-   "source_title": "Man City Team News vs Ipswich: Foden Back, Cherki Could Drop Out - The False 9"
+   "status": "expected_to_start",
+   "start_chance": 100,
+   "reason": "Praised by manager Maresca as one of the best in his position.",
+   "source_url": "https://news.google.com/rss/articles/CBMingFBVV95cUxQd2FoT2k5M1NWRUszX1RKZkJVcjNtdGZtTXBYYmdHX0hBUWVoUWowWWczVUIzWWExcERiMU0tX2U5RTVNN2JQYjdJUTJZSXYxRHo0czRudTVoNWtqVjNVYVJFT1FvU283TVBvckloUmpzcnR6dHpMUDItaElFZHpQTWRPeU5tVGl5SGhQUlZsNUNfcU52Wi1UUWhtVTdlQQ?oc=5",
+   "source_date": "2026-10-22",
+   "source_title": "Cherki is one of the best in the right position, says Maresca - Manchester City FC"
   },
   {
    "player_id": 411,
    "name": "Erling Haaland",
    "club": "Man City",
-   "status": "no_news",
-   "start_chance": null,
-   "reason": "Mentioned regarding an injury scare and needing rest, but not ruled out.",
-   "source_url": "https://news.google.com/rss/articles/CBMijgFBVV95cUxNeEE2M2RZaXFqSXFaQVcxTGhBODZkNE96NV90bXRLY21wek5JbmtKYzFTeWhOOV94dXdYRDYzb3dNbDJXeWRGOWFvUXItLWZCdEc5eG0tQXFpWDJibFdOYy11S00yQVpSSE1wYU5FczBaTkJjSUZLWm42Smx0OTdVY01jaElTX0RoSnQzN0FB?oc=5",
-   "source_date": "2026-10-16",
-   "source_title": "Will Erling Haaland start against Ipswich? Latest Man City team news after injury scare - Yahoo Sports"
+   "status": "expected_to_start",
+   "start_chance": 100,
+   "reason": "Maresca confirms Haaland is 100 per cent available for Villa trip.",
+   "source_url": "https://news.google.com/rss/articles/CBMingFBVV95cUxPamtuOHBqejVRWWx5Q1ZwbHppdEJ6eWVCeEtHSmZDaWNlM0hiOF9zdVlvQzN6UHd2M0w3SklBYW5pNnlZUTAzR01wa09CbHBfOFZoaXl5MWRhZ3VuN1h1MW11Z21SWjE3Q3M3eGlBMFZ3N0VYQS02WGNhbTFIOEJJa2RwM09ndFNrT1pzZkhDc2JTYnlURmJEMzJ1VUJWUQ?oc=5",
+   "source_date": "2026-10-22",
+   "source_title": "Maresca says Haaland is 100% available for Villa trip - Manchester City FC"
   },
   {
    "player_id": 453,
@@ -120,7 +132,7 @@
    "club": "Newcastle",
    "status": "no_news",
    "start_chance": null,
-   "reason": "No specific news mentions this player.",
+   "reason": "No news in the headlines for this player.",
    "source_url": null,
    "source_date": null,
    "source_title": null
@@ -131,7 +143,7 @@
    "club": "Newcastle",
    "status": "no_news",
    "start_chance": null,
-   "reason": "No specific news mentions this player.",
+   "reason": "No news in the headlines regarding an injury or status.",
    "source_url": null,
    "source_date": null,
    "source_title": null
@@ -142,7 +154,7 @@
    "club": "Nott'm Forest",
    "status": "no_news",
    "start_chance": null,
-   "reason": "No news in the headlines.",
+   "reason": "No news in the headlines for this player.",
    "source_url": null,
    "source_date": null,
    "source_title": null
@@ -153,33 +165,13 @@
    "club": "Spurs",
    "status": "no_news",
    "start_chance": null,
-   "reason": "No news in the headlines.",
-   "source_url": null,
-   "source_date": null,
-   "source_title": null
-  },
-  {
-   "player_id": 544,
-   "name": "Granit Xhaka",
-   "club": "Sunderland",
-   "status": "no_news",
-   "start_chance": null,
-   "reason": "No news in the headlines.",
-   "source_url": null,
-   "source_date": null,
-   "source_title": null
-  },
-  {
-   "player_id": 533,
-   "name": "Nordi Mukiele",
-   "club": "Sunderland",
-   "status": "no_news",
-   "start_chance": null,
-   "reason": "No news in the headlines.",
+   "reason": "Headlines mention Savio but provide no specific status or injury update.",
    "source_url": null,
    "source_date": null,
    "source_title": null
   }
  ],
- "errors": []
+ "errors": [
+  "Sunderland: 503 Server Error: Service Unavailable for url: https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent"
+ ]
 }

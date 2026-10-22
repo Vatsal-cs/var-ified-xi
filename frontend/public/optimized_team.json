@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-20T23:02:03.777549+00:00",
+  "generated_at": "2026-10-22T14:39:47.981756+00:00",
   "gameweek": 8,
   "deadline": "2026-10-23T17:30:00Z",
   "horizon_gws": 6,
@@ -442,11 +442,11 @@
       "team": "Sunderland",
       "now_cost_m": 5.4,
       "predicted_points": 4.31,
-      "horizon_points": 17.78,
+      "horizon_points": 17.77,
       "xp_by_gw": {
         "8": 4.31,
         "9": 5.17,
-        "10": 3.82,
+        "10": 3.81,
         "11": 3.88,
         "12": 4.74,
         "13": 3.29
@@ -749,14 +749,14 @@
       "team": "Everton",
       "now_cost_m": 5.7,
       "predicted_points": 2.9,
-      "horizon_points": 15.9,
+      "horizon_points": 15.91,
       "xp_by_gw": {
         "8": 2.9,
         "9": 3.9,
         "10": 4.68,
         "11": 3.86,
         "12": 4.2,
-        "13": 3.93
+        "13": 3.94
       },
       "start_probability": 0.9,
       "is_captain": false,
@@ -770,12 +770,12 @@
         "p_haul": 0.029,
         "pmf": [
           0.0559,
-          0.1282,
-          0.5348,
+          0.1283,
+          0.5349,
           0.0001,
           0.0171,
           0.0612,
-          0.0303,
+          0.0302,
           0.0463,
           0.0466,
           0.0503,
@@ -785,7 +785,7 @@
           0.0029,
           0.0,
           0.0,
-          0.0034,
+          0.0033,
           0.0,
           0.0,
           0.0,
@@ -944,6 +944,7 @@
       {
         "player_id": 544,
         "name": "Xhaka",
+        "team": "Sunderland",
         "cost_m": 5.4,
         "owned_by": 0,
         "share": 0.0
@@ -951,6 +952,7 @@
       {
         "player_id": 453,
         "name": "Barnes",
+        "team": "Newcastle",
         "cost_m": 6.1,
         "owned_by": 0,
         "share": 0.0
@@ -958,6 +960,7 @@
       {
         "player_id": 447,
         "name": "Botman",
+        "team": "Newcastle",
         "cost_m": 5.0,
         "owned_by": 0,
         "share": 0.0
@@ -965,6 +968,7 @@
       {
         "player_id": 106,
         "name": "Thiago",
+        "team": "Brentford",
         "cost_m": 7.8,
         "owned_by": 0,
         "share": 0.0
@@ -972,6 +976,7 @@
       {
         "player_id": 397,
         "name": "Semenyo",
+        "team": "Man City",
         "cost_m": 8.3,
         "owned_by": 0,
         "share": 0.0
@@ -979,6 +984,7 @@
       {
         "player_id": 533,
         "name": "Mukiele",
+        "team": "Sunderland",
         "cost_m": 5.4,
         "owned_by": 0,
         "share": 0.0
@@ -986,6 +992,7 @@
       {
         "player_id": 249,
         "name": "Barry",
+        "team": "Everton",
         "cost_m": 5.7,
         "owned_by": 1,
         "share": 0.167
@@ -993,6 +1000,7 @@
       {
         "player_id": 1,
         "name": "Raya",
+        "team": "Arsenal",
         "cost_m": 6.1,
         "owned_by": 2,
         "share": 0.333
@@ -1000,6 +1008,7 @@
       {
         "player_id": 31,
         "name": "Konsa",
+        "team": "Arsenal",
         "cost_m": 4.6,
         "owned_by": 2,
         "share": 0.333
@@ -1009,6 +1018,7 @@
       {
         "player_id": 165,
         "name": "Jo\u00e3o Pedro",
+        "team": "Chelsea",
         "cost_m": 7.9,
         "owned_by": 4,
         "share": 0.667
@@ -1016,6 +1026,7 @@
       {
         "player_id": 115,
         "name": "De Cuyper",
+        "team": "Brighton",
         "cost_m": 5.3,
         "owned_by": 3,
         "share": 0.5
@@ -1023,6 +1034,7 @@
       {
         "player_id": 12,
         "name": "Saka",
+        "team": "Arsenal",
         "cost_m": 9.6,
         "owned_by": 3,
         "share": 0.5
@@ -1315,13 +1327,13 @@
           {
             "chip": "freehit",
             "gameweek": 14,
-            "value": 7.0,
+            "value": 6.8,
             "player": null,
             "firm": false,
             "now": false
           }
         ],
-        "total": 31.1,
+        "total": 30.9,
         "weeks": [
           {
             "gameweek": 8,
@@ -1354,7 +1366,7 @@
             "3xc": 6.1,
             "3xc_player": "Haaland",
             "bboost": 13.7,
-            "freehit": 4.4,
+            "freehit": 3.4,
             "xi_points": 55.9,
             "firm": true,
             "fixtures": {
@@ -1367,7 +1379,7 @@
             "3xc": 7.1,
             "3xc_player": "Haaland",
             "bboost": 15.2,
-            "freehit": 2.8,
+            "freehit": 2.7,
             "xi_points": 59.2,
             "firm": true,
             "fixtures": {
@@ -1394,7 +1406,7 @@
             "3xc_player": "Haaland",
             "bboost": 13.0,
             "freehit": 1.6,
-            "xi_points": 55.9,
+            "xi_points": 55.8,
             "firm": true,
             "fixtures": {
               "doubles": 0,
@@ -1406,7 +1418,7 @@
             "3xc": 5.3,
             "3xc_player": "Haaland",
             "bboost": 13.1,
-            "freehit": 7.0,
+            "freehit": 6.8,
             "xi_points": 53.5,
             "firm": false,
             "fixtures": {
@@ -1419,7 +1431,7 @@
             "3xc": 5.5,
             "3xc_player": "Haaland",
             "bboost": 13.6,
-            "freehit": 2.6,
+            "freehit": 2.5,
             "xi_points": 53.1,
             "firm": false,
             "fixtures": {
@@ -1432,7 +1444,7 @@
             "3xc": 8.6,
             "3xc_player": "Haaland",
             "bboost": 15.1,
-            "freehit": 2.0,
+            "freehit": 1.9,
             "xi_points": 62.0,
             "firm": false,
             "fixtures": {
@@ -1471,7 +1483,7 @@
             "3xc": 7.4,
             "3xc_player": "Haaland",
             "bboost": 15.5,
-            "freehit": 2.3,
+            "freehit": 1.4,
             "xi_points": 63.2,
             "firm": false,
             "fixtures": {
@@ -1487,8 +1499,166 @@
   },
   "team_news": {
     "enabled": true,
-    "items": [],
+    "fetched_at": "2026-10-22T14:39:33.421505+00:00",
+    "model": "gemini-3.5-flash-lite",
+    "items": [
+      {
+        "player_id": 397,
+        "name": "Antoine Semenyo",
+        "club": "Man City",
+        "status": "out",
+        "start_chance": 0,
+        "reason": "Out for the match against Aston Villa.",
+        "source_url": "https://news.google.com/rss/articles/CBMidkFVX3lxTE51NVBJQk9pMkN0dWFobGRqSWpkeHByQXFwT2hXZVB0aC1WYi1nckY3OUdQa25yWDAwRUZONWhUWE1BUi13QUQzQ0NCTlF2S1pyY056eFBLcU04TXNXMEc4bExXY2V4UjV6aFNpbXJwQ2I1LTZudnc?oc=5",
+        "source_date": "2026-10-21",
+        "source_title": "Man City Injury News vs Aston Villa: Semenyo Out, O\u2019Reilly and Nunes Doubts - The False 9"
+      },
+      {
+        "player_id": 1,
+        "name": "David Raya Mart\u00edn",
+        "club": "Arsenal",
+        "status": "expected_to_start",
+        "start_chance": 100,
+        "reason": "David Raya is praised in headlines as the best keeper in the world right now.",
+        "source_url": "https://www.bbc.co.uk/sport/videos/cjy56q79xdneo?at_medium=RSS&at_campaign=rss",
+        "source_date": "2026-10-22",
+        "source_title": "David Raya 'best keeper in the world right now'"
+      },
+      {
+        "player_id": 411,
+        "name": "Erling Haaland",
+        "club": "Man City",
+        "status": "expected_to_start",
+        "start_chance": 100,
+        "reason": "Maresca confirms Haaland is 100 per cent available for Villa trip.",
+        "source_url": "https://news.google.com/rss/articles/CBMingFBVV95cUxPamtuOHBqejVRWWx5Q1ZwbHppdEJ6eWVCeEtHSmZDaWNlM0hiOF9zdVlvQzN6UHd2M0w3SklBYW5pNnlZUTAzR01wa09CbHBfOFZoaXl5MWRhZ3VuN1h1MW11Z21SWjE3Q3M3eGlBMFZ3N0VYQS02WGNhbTFIOEJJa2RwM09ndFNrT1pzZkhDc2JTYnlURmJEMzJ1VUJWUQ?oc=5",
+        "source_date": "2026-10-22",
+        "source_title": "Maresca says Haaland is 100% available for Villa trip - Manchester City FC"
+      },
+      {
+        "player_id": 399,
+        "name": "Rayan Cherki",
+        "club": "Man City",
+        "status": "expected_to_start",
+        "start_chance": 100,
+        "reason": "Praised by manager Maresca as one of the best in his position.",
+        "source_url": "https://news.google.com/rss/articles/CBMingFBVV95cUxQd2FoT2k5M1NWRUszX1RKZkJVcjNtdGZtTXBYYmdHX0hBUWVoUWowWWczVUIzWWExcERiMU0tX2U5RTVNN2JQYjdJUTJZSXYxRHo0czRudTVoNWtqVjNVYVJFT1FvU283TVBvckloUmpzcnR6dHpMUDItaElFZHpQTWRPeU5tVGl5SGhQUlZsNUNfcU52Wi1UUWhtVTdlQQ?oc=5",
+        "source_date": "2026-10-22",
+        "source_title": "Cherki is one of the best in the right position, says Maresca - Manchester City FC"
+      },
+      {
+        "player_id": 109,
+        "name": "Bart Verbruggen",
+        "club": "Brighton",
+        "status": "no_news",
+        "start_chance": null,
+        "reason": "No recent news mentions this player in the headlines.",
+        "source_url": null,
+        "source_date": null,
+        "source_title": null
+      },
+      {
+        "player_id": 31,
+        "name": "Ezri Konsa Ngoyo",
+        "club": "Arsenal",
+        "status": "no_news",
+        "start_chance": null,
+        "reason": "No recent news mentions this player in the headlines.",
+        "source_url": null,
+        "source_date": null,
+        "source_title": null
+      },
+      {
+        "player_id": 453,
+        "name": "Harvey Barnes",
+        "club": "Newcastle",
+        "status": "no_news",
+        "start_chance": null,
+        "reason": "No news in the headlines for this player.",
+        "source_url": null,
+        "source_date": null,
+        "source_title": null
+      },
+      {
+        "player_id": 106,
+        "name": "Igor Thiago Nascimento Rodrigues",
+        "club": "Brentford",
+        "status": "no_news",
+        "start_chance": null,
+        "reason": "No recent news mentions this player in the headlines.",
+        "source_url": null,
+        "source_date": null,
+        "source_title": null
+      },
+      {
+        "player_id": 40,
+        "name": "Morgan Rogers",
+        "club": "Chelsea",
+        "status": "no_news",
+        "start_chance": null,
+        "reason": "No news in headlines regarding injury or status.",
+        "source_url": null,
+        "source_date": null,
+        "source_title": null
+      },
+      {
+        "player_id": 472,
+        "name": "Murillo Costa dos Santos",
+        "club": "Nott'm Forest",
+        "status": "no_news",
+        "start_chance": null,
+        "reason": "No news in the headlines for this player.",
+        "source_url": null,
+        "source_date": null,
+        "source_title": null
+      },
+      {
+        "player_id": 8,
+        "name": "Riccardo Calafiori",
+        "club": "Arsenal",
+        "status": "no_news",
+        "start_chance": null,
+        "reason": "No recent news mentions this player in the headlines.",
+        "source_url": null,
+        "source_date": null,
+        "source_title": null
+      },
+      {
+        "player_id": 447,
+        "name": "Sven Botman",
+        "club": "Newcastle",
+        "status": "no_news",
+        "start_chance": null,
+        "reason": "No news in the headlines regarding an injury or status.",
+        "source_url": null,
+        "source_date": null,
+        "source_title": null
+      },
+      {
+        "player_id": 403,
+        "name": "S\u00e1vio Moreira de Oliveira",
+        "club": "Spurs",
+        "status": "no_news",
+        "start_chance": null,
+        "reason": "Headlines mention Savio but provide no specific status or injury update.",
+        "source_url": null,
+        "source_date": null,
+        "source_title": null
+      },
+      {
+        "player_id": 249,
+        "name": "Thierno Barry",
+        "club": "Everton",
+        "status": "no_news",
+        "start_chance": null,
+        "reason": "No news in headlines regarding injury or status.",
+        "source_url": null,
+        "source_date": null,
+        "source_title": null
+      }
+    ],
     "applied": [],
+    "errors": 1,
     "record": {
       "gameweeks": [
         7
@@ -1523,19 +1693,12 @@
     }
   },
   "other_matches": {
-    "from": "2026-10-20T23:02:03.713673",
+    "from": "2026-10-22T14:39:47.840983",
     "to": "2026-12-05T11:00:00",
     "clubs": [
       {
         "club": "Arsenal",
         "matches": [
-          {
-            "date": "2026-10-21T19:00:00+00:00",
-            "competition": "Champions League",
-            "opponent": "Bayern Munich",
-            "home": false,
-            "far": false
-          },
           {
             "date": "2026-10-27T20:00:00+00:00",
             "competition": "League Cup",
@@ -2183,7 +2346,7 @@
         "hits": 0,
         "hit_cost": 0,
         "bank_m": 1.4,
-        "predicted_points": 55.9,
+        "predicted_points": 55.89,
         "captain_id": 411
       },
       {
@@ -2252,8 +2415,8 @@
           {
             "player_id": 362,
             "name": "Jacquet",
-            "cost_m": 5.0,
-            "predicted_points": 4.46,
+            "cost_m": 5.1,
+            "predicted_points": 4.43,
             "position": "DEF",
             "team": "Liverpool"
           }
@@ -2272,8 +2435,8 @@
         "free_transfers": 1,
         "hits": 0,
         "hit_cost": 0,
-        "bank_m": 0.4,
-        "predicted_points": 55.85,
+        "bank_m": 0.3,
+        "predicted_points": 55.83,
         "captain_id": 411
       }
     ]
