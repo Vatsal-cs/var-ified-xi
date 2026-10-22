@@ -9,6 +9,7 @@
 import type { NewsItem, NewsRecord, NewsStatus, TeamNewsView } from "@/lib/types";
 import { Term } from "./ui";
 import Ago from "./Ago";
+import Crest from "./Crest";
 
 const STATUS: Record<NewsStatus, { label: string; tone: string }> = {
   out: { label: "Out", tone: "border-risk/40 text-risk" },
@@ -32,12 +33,13 @@ function Row({ item, applied }: { item: NewsItem; applied?: { chance: number; fp
     <li className="flex items-start gap-3 py-2.5">
       <span className={`pill mt-0.5 w-[74px] flex-none justify-center ${s.tone}`}>{s.label}</span>
       <div className="min-w-0 flex-1">
-        <p className="font-body text-sm text-ink-100">
+        <p className="flex items-center gap-1.5 font-body text-sm text-ink-100">
+          <Crest team={item.club} className="h-4 w-4 flex-none" />
           <span className="font-medium">{item.name}</span>
-          <span className="ml-1.5 font-mono text-[11px] text-ink-500">{item.club}</span>
+          <span className="ml-1.5 tabular-nums text-[11px] text-ink-500">{item.club}</span>
         </p>
         {item.reason && <p className="mt-0.5 font-body text-[13px] leading-snug text-ink-300">{item.reason}</p>}
-        <p className="mt-1 font-mono text-[10.5px] text-ink-500">
+        <p className="mt-1 tabular-nums text-[10.5px] text-ink-500">
           {item.source_url ? (
             <a href={item.source_url} target="_blank" rel="noopener noreferrer" className="underline decoration-line-strong underline-offset-2 hover:text-ink-300">
               {item.source_title ?? host(item.source_url)}
@@ -65,7 +67,7 @@ function Record({ record }: { record?: NewsRecord | null }) {
   if (!record) return null;
   if (record.gameweeks.length === 0) {
     return (
-      <p className="mt-2 border-t border-line pt-2 font-mono text-[10.5px] text-ink-500">
+      <p className="mt-2 border-t border-line pt-2 tabular-nums text-[10.5px] text-ink-500">
         Record: every call is scored against who actually played once the gameweek ends.
       </p>
     );
@@ -80,7 +82,7 @@ function Record({ record }: { record?: NewsRecord | null }) {
   const rate = rot.calls ? rot.correct / rot.calls : 0;
   const live = rot.calls >= bar.calls && rate >= bar.rate;
   return (
-    <div className="mt-2 border-t border-line pt-2 font-mono text-[10.5px] text-ink-500">
+    <div className="mt-2 border-t border-line pt-2 tabular-nums text-[10.5px] text-ink-500">
       <p>
         Record since GW{record.gameweeks[0]}:{" "}
         {parts.length ? parts.join(" · ") : "no out, doubt or rotation calls checked yet"}
@@ -99,7 +101,7 @@ export default function TeamNews({ news }: { news?: TeamNewsView }) {
   if (!news.fetched_at) {
     return (
       <div>
-        <p className="font-mono text-[11px] text-ink-500">
+        <p className="tabular-nums text-[11px] text-ink-500">
           Team news reader:{" "}
           {news.enabled
             ? "reads the news within 48 hours of the deadline."
@@ -114,7 +116,7 @@ export default function TeamNews({ news }: { news?: TeamNewsView }) {
   const quiet = news.items.filter((i) => !flagged.includes(i));
 
   return (
-    <div className="rounded-[2px] border border-line bg-surface-raised/50 p-3.5">
+    <div className="rounded-xl border border-line bg-surface-raised/50 p-3.5">
       <p className="label">
         <Term explain="The last six days of headlines for each of your clubs (Google News and BBC Sport) are read by a free AI model (Gemini), for your squad, this week's buys and the Wildcard squad. Every call cites one of those headlines. 'Out' and 'doubt' calls worse than FPL's own flag lower the projection as an FPL flag would. 'Rotation' is shown only — line-up predictions are guesses.">
           Team news
@@ -133,7 +135,7 @@ export default function TeamNews({ news }: { news?: TeamNewsView }) {
       )}
       {quiet.length > 0 && (
         <details className="mt-2 group">
-          <summary className="cursor-pointer font-mono text-[11px] text-ink-400 hover:text-ink-200">
+          <summary className="cursor-pointer tabular-nums text-[11px] text-ink-400 hover:text-ink-200">
             {quiet.length} more: expected to start or no news
           </summary>
           <ul className="mt-1 divide-y divide-line">
@@ -144,7 +146,7 @@ export default function TeamNews({ news }: { news?: TeamNewsView }) {
         </details>
       )}
       {!!news.errors && (
-        <p className="mt-2 font-mono text-[10.5px] text-ink-500">
+        <p className="mt-2 tabular-nums text-[10.5px] text-ink-500">
           {news.errors} club group{news.errors === 1 ? "" : "s"} couldn&apos;t be read this run.
         </p>
       )}

@@ -28,10 +28,10 @@ function ExpiryPanel({ expiry, plan }: { expiry: ChipExpiry; plan?: ChipPlan }) 
 
   return (
     <div className={urgent ? "panel-lead p-5" : "panel p-5"}>
-      <p className={`font-mono text-[10px] uppercase tracking-[0.24em] ${urgent ? "text-risk" : "text-gold"}`}>
+      <p className={`label ${urgent ? "text-risk" : "text-gold"}`}>
         Use them or lose them &middot; deadline GW{deadline_gw}
       </p>
-      <p className="mt-2 font-display text-[28px] leading-tight text-ink-100">
+      <p className="mt-2 text-[24px] font-semibold leading-tight tracking-[-0.02em] text-ink-100">
         {chips_left.length} chip{chips_left.length === 1 ? "" : "s"} left, {gameweeks_left}{" "}
         gameweek{gameweeks_left === 1 ? "" : "s"} to play {chips_left.length === 1 ? "it" : "them"}
       </p>
@@ -54,7 +54,7 @@ function ExpiryPanel({ expiry, plan }: { expiry: ChipExpiry; plan?: ChipPlan }) 
             return (
               <li key={chip} className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 py-2.5">
                 <span className="font-body text-sm font-medium text-ink-100">{CHIP_LABEL[chip]}</span>
-                <span className="font-mono text-[11.5px] text-ink-300">
+                <span className="tabular-nums text-[11.5px] text-ink-300">
                   {b ? (
                     <>
                       best week in sight <span className="text-ink-100">GW{b.gameweek}</span>
@@ -70,7 +70,7 @@ function ExpiryPanel({ expiry, plan }: { expiry: ChipExpiry; plan?: ChipPlan }) 
           })}
         </ul>
         {visible_through_gw && visible_through_gw < deadline_gw && (
-          <p className="mt-3 font-mono text-[11px] text-ink-500">
+          <p className="mt-3 tabular-nums text-[11px] text-ink-500">
             Projections reach GW{visible_through_gw}; weeks after that come into view as the
             season moves. Triple Captain adds one more copy of the captain&apos;s projection;
             Bench Boost adds the bench&apos;s.
@@ -106,9 +106,9 @@ export default function ChipAdvice({
           {advice.map((a) => (
             <div
               key={`${a.chip}-${a.gameweek}`}
-              className="rounded-[2px] border border-warn/40 bg-warn/[0.06] p-4"
+              className="rounded-xl border border-warn/40 bg-warn/[0.06] p-4"
             >
-              <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-warn">
+              <p className="label text-warn">
                 GW{a.gameweek} &middot; {CHIP_LABEL[a.chip]}
               </p>
               <p className="mt-1.5 font-body text-sm text-ink-200">{a.reason}</p>

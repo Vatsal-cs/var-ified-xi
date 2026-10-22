@@ -2,32 +2,20 @@
 // Path: var-ified-xi/frontend/app/layout.tsx
 
 import type { Metadata } from "next";
-import { Instrument_Serif, Inter_Tight, JetBrains_Mono } from "next/font/google";
+import { Barlow_Semi_Condensed, Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
-// A high-contrast editorial serif. Football's best print — matchday
-// programmes, Wisden, Rothmans — was always set in serif, and it is the
-// single thing that stops a stats site looking like a dashboard template.
-const display = Instrument_Serif({
-  subsets: ["latin"],
-  weight: ["400"],
-  style: ["normal", "italic"],
-  variable: "--font-display",
-});
+// Clean and modern for everything you read.
+const sans = Geist({ subsets: ["latin"], variable: "--font-sans" });
 
-// Tighter and more drawn than plain Inter, which keeps captions and running
-// copy from reading as default-UI.
-const body = Inter_Tight({
-  subsets: ["latin"],
-  weight: ["400", "500", "600"],
-  variable: "--font-body",
-});
+// Tabular figures for the small measurements.
+const mono = Geist_Mono({ subsets: ["latin"], variable: "--font-mono" });
 
-// Every number here is a measurement, and measurements line up.
-const mono = JetBrains_Mono({
+// The shirt-number face: condensed, bold, sporty.
+const kit = Barlow_Semi_Condensed({
   subsets: ["latin"],
-  weight: ["400", "500", "700"],
-  variable: "--font-mono",
+  weight: ["600", "700"],
+  variable: "--font-kit",
 });
 
 export const metadata: Metadata = {
@@ -36,20 +24,21 @@ export const metadata: Metadata = {
     "An FPL engine that predicts every player's points and solves for the best transfer to make this week — under the real rules. Reviewed weekly.",
 };
 
+// Runs before the first paint, so the page never flashes the wrong theme:
+// the visitor's saved choice, otherwise their device's setting.
+const THEME_SCRIPT = `(function(){try{var t=localStorage.getItem('vx-theme');if(t!=='light'&&t!=='dark'){t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'}document.documentElement.dataset.theme=t}catch(e){document.documentElement.dataset.theme='light'}})()`;
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html
       lang="en"
-      className={`${display.variable} ${body.variable} ${mono.variable}`}
+      suppressHydrationWarning
+      className={`${sans.variable} ${mono.variable} ${kit.variable}`}
     >
-      <body className="min-h-screen bg-base font-body text-ink-200 antialiased">
-        <div aria-hidden className="aurora">
-          <span className="animate-drift" style={{ background: "#E0A64A", left: "-15vmax", top: "-20vmax" }} />
-          <span className="animate-drift" style={{ background: "#A48BE0", right: "-20vmax", top: "20vh", animationDelay: "-12s" }} />
-          <span className="animate-drift" style={{ background: "#3E9C8C", left: "10vw", bottom: "-30vmax", animationDelay: "-24s" }} />
-        </div>
-        {children}
-      </body>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }} />
+      </head>
+      <body className="min-h-screen bg-base font-body text-ink-200 antialiased">{children}</body>
     </html>
   );
 }

@@ -34,14 +34,14 @@ export default function ChipPlanner({ plan }: { plan: ChipPlan }) {
   return (
     <div className="mt-5">
       {plan.scenarios.length > 1 && (
-        <div role="tablist" className="mb-4 inline-flex rounded-[2px] border border-line p-0.5">
+        <div role="tablist" className="mb-4 inline-flex rounded-xl border border-line p-0.5">
           {plan.scenarios.map((s) => (
             <button
               key={s.key}
               role="tab"
               aria-selected={s.key === key}
               onClick={() => setKey(s.key)}
-              className={`rounded-[2px] px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.14em] transition-colors ${
+              className={`rounded-lg px-3 py-1.5 label transition-colors ${
                 s.key === key ? "bg-gold/15 text-gold" : "text-ink-400 hover:text-ink-200"
               }`}
             >
@@ -60,7 +60,7 @@ export default function ChipPlanner({ plan }: { plan: ChipPlan }) {
                 <span className="pill ml-2 border-gold/50 py-0.5 text-gold">play this week</span>
               )}
             </span>
-            <span className="font-mono text-[11.5px] text-ink-300">
+            <span className="tabular-nums text-[11.5px] text-ink-300">
               <span className="text-ink-100">GW{p.gameweek}</span>
               {p.player && <> &middot; {p.player}</>}{" "}
               <span className="text-pts">+{p.value.toFixed(1)} pts</span>
@@ -69,16 +69,16 @@ export default function ChipPlanner({ plan }: { plan: ChipPlan }) {
           </li>
         ))}
       </ul>
-      <p className="mt-2 font-mono text-[11px] text-ink-500">
+      <p className="mt-2 tabular-nums text-[11px] text-ink-500">
         Together +{sc.total.toFixed(1)} projected points.{" "}
         {sc.plan.map((p) => `${SHORT[p.chip]} adds ${WHAT[p.chip]}`).join("; ")}.
       </p>
 
       <details className="mt-4">
-        <summary className="cursor-pointer font-mono text-[11px] text-ink-400 hover:text-ink-200">
+        <summary className="cursor-pointer tabular-nums text-[11px] text-ink-400 hover:text-ink-200">
           Every week, every chip
         </summary>
-        <table className="mt-2 w-full font-mono text-[11.5px] tabular-nums">
+        <table className="mt-2 w-full tabular-nums text-[11.5px] ">
           <thead>
             <tr className="text-left text-ink-500">
               <th className="py-1.5 font-normal">GW</th>
@@ -105,7 +105,7 @@ export default function ChipPlanner({ plan }: { plan: ChipPlan }) {
                   const pick = chosen.get(`${w.gameweek}:${c}`);
                   return (
                     <td key={c} className="py-1.5 text-right">
-                      <span className={pick ? "rounded-[2px] bg-gold/15 px-1.5 py-0.5 text-gold" : ""}>
+                      <span className={pick ? "rounded-lg bg-gold/15 px-1.5 py-0.5 text-gold" : ""}>
                         {v == null ? "—" : v.toFixed(1)}
                       </span>
                     </td>

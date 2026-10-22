@@ -5,8 +5,73 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
+/* Kit room colours. Light is a warm stone, dark a charcoal; the pitch gets
+   darker grass at night. RGB triplets so Tailwind's /opacity modifiers work
+   (tailwind.config.js). The theme is set on <html data-theme> before paint
+   (app/layout.tsx), from the visitor's choice or their device. */
+:root,
+[data-theme="light"] {
+  color-scheme: light;
+  --c-base: 237 234 228;
+  --c-surface: 248 246 242;
+  --c-raised: 241 238 232;
+  --c-sunk: 230 226 218;
+  --c-line: rgba(21, 23, 27, 0.1);
+  --c-line-strong: rgba(21, 23, 27, 0.18);
+  --c-gold: 185 129 32;
+  --c-gold-deep: 150 102 20;
+  --c-gold-wash: rgba(185, 129, 32, 0.1);
+  --c-pts: 46 125 74;
+  --c-violet: 111 85 194;
+  --c-sky: 47 120 168;
+  --c-coral: 194 90 60;
+  --c-warn: 168 116 15;
+  --c-risk: 200 52 31;
+  --c-grass: 47 106 61;
+  --c-grass-dark: 43 98 56;
+  --c-plate: 21 23 27;
+  --c-plate-text: 255 255 255;
+  --c-ink-100: 21 23 27;
+  --c-ink-200: 43 46 51;
+  --c-ink-300: 85 82 77;
+  --c-ink-400: 109 105 99;
+  --c-ink-500: 142 138 131;
+  --shadow-panel: 0 1px 2px rgba(0, 0, 0, 0.05), 0 8px 24px -12px rgba(0, 0, 0, 0.15);
+  --shadow-raised: 0 2px 4px rgba(0, 0, 0, 0.06), 0 18px 40px -18px rgba(0, 0, 0, 0.25);
+  --chalk: rgba(255, 255, 255, 0.34);
+  --hanger: rgba(21, 23, 27, 0.32);
+}
+
+[data-theme="dark"] {
   color-scheme: dark;
+  --c-base: 14 15 17;
+  --c-surface: 22 23 26;
+  --c-raised: 28 29 33;
+  --c-sunk: 10 11 12;
+  --c-line: rgba(242, 240, 236, 0.09);
+  --c-line-strong: rgba(242, 240, 236, 0.17);
+  --c-gold: 227 169 60;
+  --c-gold-deep: 196 140 40;
+  --c-gold-wash: rgba(227, 169, 60, 0.1);
+  --c-pts: 98 196 132;
+  --c-violet: 164 139 224;
+  --c-sky: 125 183 216;
+  --c-coral: 229 138 111;
+  --c-warn: 217 164 65;
+  --c-risk: 236 106 85;
+  --c-grass: 30 74 42;
+  --c-grass-dark: 27 67 38;
+  --c-plate: 242 240 236;
+  --c-plate-text: 17 17 17;
+  --c-ink-100: 242 240 236;
+  --c-ink-200: 217 214 208;
+  --c-ink-300: 169 165 158;
+  --c-ink-400: 134 130 123;
+  --c-ink-500: 102 99 94;
+  --shadow-panel: 0 1px 2px rgba(0, 0, 0, 0.3), 0 12px 30px -14px rgba(0, 0, 0, 0.6);
+  --shadow-raised: 0 2px 4px rgba(0, 0, 0, 0.35), 0 20px 44px -18px rgba(0, 0, 0, 0.75);
+  --chalk: rgba(255, 255, 255, 0.18);
+  --hanger: rgba(242, 240, 236, 0.32);
 }
 
 html {
@@ -14,99 +79,38 @@ html {
 }
 
 body {
-  background: #0b0a09;
-  position: relative;
-}
-
-/* Film grain. The one texture on the page — it stops large flat areas of
-   near-black looking like dead pixels, the way uncoated stock stops a printed
-   page looking plastic. Fixed and non-interactive so it reads as the surface
-   rather than as content. */
-body::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none;
-  opacity: 0.4;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='0.42'/%3E%3C/svg%3E");
-}
-
-/* Aurora: three slow, heavily blurred pools of the site's accents behind
-   everything, so the near-black has colour in it without anything on top
-   competing with the content. Fixed, non-interactive, off for reduced motion. */
-.aurora {
-  position: fixed !important;
-  inset: 0;
-  z-index: 0 !important;
-  pointer-events: none;
-  overflow: hidden;
-}
-.aurora span {
-  position: absolute;
-  width: 55vmax;
-  height: 55vmax;
-  border-radius: 50%;
-  filter: blur(90px);
-  opacity: 0.16;
-  will-change: transform;
-}
-
-.text-gradient-gold {
-  background: linear-gradient(100deg, #f2ede4 0%, #f2ede4 35%, #f2c27b 70%, #e0a64a 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-}
-
-/* Everything the reader touches sits above the grain. */
-body > * {
-  position: relative;
-  z-index: 1;
+  transition: background-color 0.35s, color 0.35s;
 }
 
 ::selection {
-  background: #e0a64a;
-  color: #0b0a09;
+  background: rgb(var(--c-gold));
+  color: rgb(var(--c-base));
 }
 
 :focus-visible {
-  outline: 1.5px solid #e0a64a;
+  outline: 2px solid rgb(var(--c-gold));
   outline-offset: 3px;
-  border-radius: 2px;
+  border-radius: 4px;
 }
 
 @layer components {
-  /* A panel, not a card: a flat warm surface separated by a hairline. Small
-     radius on purpose — the big soft corners everything else has are what
-     make a page look like a component library. */
+  /* A card: a calm surface on the stone or charcoal page. */
   .panel {
-    @apply rounded-[3px] border border-line bg-surface shadow-panel;
+    @apply rounded-2xl border border-line bg-surface shadow-panel transition-colors duration-300;
   }
   .panel-raised {
-    @apply rounded-[3px] border border-line-strong bg-surface-raised shadow-raised;
+    @apply rounded-2xl border border-line-strong bg-surface-raised shadow-raised;
   }
-  /* The single most important thing on a screen. A gold rule along the top
-     edge, nothing more. */
+  /* The most important card on a page: same card, slightly lifted. */
   .panel-lead {
-    @apply relative rounded-[3px] border border-line bg-surface shadow-raised;
-  }
-  .panel-lead::before {
-    content: "";
-    position: absolute;
-    inset-inline: -1px;
-    top: -1px;
-    height: 2px;
-    background: linear-gradient(90deg, #e0a64a, #f2c27b, #a48be0, #7db7d8, #8fbf7a, #e0a64a);
-    background-size: 200% 100%;
-    animation: shimmer 7s linear infinite;
+    @apply rounded-2xl border border-line-strong bg-surface shadow-raised transition-colors duration-300;
   }
 
   .label {
-    @apply font-mono text-[10px] font-medium uppercase tracking-[0.22em] text-ink-500;
+    @apply font-body text-[11.5px] font-medium uppercase tracking-[0.08em] text-ink-400;
   }
   .stat {
-    @apply font-display text-[34px] font-normal leading-none tabular-nums text-ink-100;
+    @apply font-kit text-[30px] font-bold leading-none tabular-nums text-ink-100;
   }
   .prose-note {
     @apply font-body text-[15px] leading-[1.65] text-ink-300;
@@ -115,10 +119,8 @@ body > * {
     @apply cursor-help border-b border-dotted border-ink-400 text-ink-200;
   }
   .pill {
-    @apply inline-flex items-center gap-1.5 rounded-[2px] border border-line px-2 py-1 font-mono text-[10px] uppercase tracking-[0.16em];
+    @apply inline-flex items-center gap-1.5 whitespace-nowrap rounded-lg border border-line px-2.5 py-1 font-body text-[12px] font-medium;
   }
-
-  /* A rule with a word on it — the programme's way of starting a section. */
   .eyebrow-rule {
     @apply flex items-center gap-3;
   }
@@ -126,11 +128,11 @@ body > * {
     content: "";
     flex: 1;
     height: 1px;
-    background: rgba(240, 235, 226, 0.11);
+    background: var(--c-line);
   }
 }
 
-/* Sections arrive as they scroll into view (components/Reveal.tsx). The
+/* Sections arrive as they scroll into view (components/motion.tsx). The
    hidden state only applies once JavaScript has marked the page, so nothing
    stays invisible without it. */
 .js-reveal .reveal {
@@ -143,9 +145,14 @@ body > * {
   transform: none;
 }
 
-/* A soft spotlight that follows the pointer across the lead panel. */
-.spotlight {
-  background: radial-gradient(420px circle at var(--mx, 30%) var(--my, 0%), rgba(224, 166, 74, 0.07), transparent 60%);
+/* Shirts pivot from the peg they hang on. */
+.shirt-hang {
+  transform-origin: 50% 0;
+}
+/* The armband grows from its own centre, inside the sleeve's rotation. */
+.armband {
+  transform-box: fill-box;
+  transform-origin: center;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -170,10 +177,8 @@ body > * {
   height: 10px;
 }
 *::-webkit-scrollbar-thumb {
-  background: rgba(240, 235, 226, 0.14);
-}
-*::-webkit-scrollbar-thumb:hover {
-  background: rgba(240, 235, 226, 0.24);
+  background: var(--c-line-strong);
+  border-radius: 10px;
 }
 *::-webkit-scrollbar-track {
   background: transparent;

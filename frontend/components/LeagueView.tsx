@@ -64,7 +64,7 @@ export default function LeagueView({ league }: { league: LeagueViewData }) {
                       <span className="font-body text-sm font-medium text-ink-100">
                         {d.name}
                       </span>
-                      <span className="font-mono text-[11px] tabular-nums text-ink-400">
+                      <span className="tabular-nums text-[11px]  text-ink-400">
                         £{d.cost_m?.toFixed(1)}m &middot;{" "}
                         <span className={d.owned_by === 0 ? "text-pts" : "text-ink-300"}>
                           {d.owned_by}/{rivals_ahead}
@@ -105,7 +105,7 @@ export default function LeagueView({ league }: { league: LeagueViewData }) {
                       <span className="font-body text-sm font-medium text-ink-100">
                         {t.name}
                       </span>
-                      <span className="font-mono text-[11px] tabular-nums text-warn">
+                      <span className="tabular-nums text-[11px]  text-warn">
                         £{t.cost_m?.toFixed(1)}m &middot; {pct(t.share)}
                       </span>
                     </div>
@@ -152,14 +152,14 @@ export default function LeagueView({ league }: { league: LeagueViewData }) {
                     r.is_you ? "bg-gold-wash" : ""
                   }`}
                 >
-                  <td className="py-2 pr-3 font-mono text-[11px] text-ink-500">{r.rank}</td>
+                  <td className="py-2 pr-3 tabular-nums text-[11px] text-ink-500">{r.rank}</td>
                   <td className={`py-2 pr-3 font-body text-sm ${r.is_you ? "font-semibold text-ink-100" : "text-ink-300"}`}>
                     {r.is_you ? "You" : r.name}
                   </td>
-                  <td className="py-2 pr-3 text-right font-mono text-[12px] tabular-nums text-ink-200">
+                  <td className="py-2 pr-3 text-right tabular-nums text-[12px]  text-ink-200">
                     {r.total}
                   </td>
-                  <td className="py-2 font-mono text-[11px]">
+                  <td className="py-2 tabular-nums text-[11px]">
                     {r.chips.filter((c) => inWindow(c.gameweek)).length === 0 ? (
                       <span className="text-ink-500">none yet</span>
                     ) : (

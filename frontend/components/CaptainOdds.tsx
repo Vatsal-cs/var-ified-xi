@@ -1,60 +1,55 @@
 // File: CaptainOdds.tsx
 // Path: var-ified-xi/frontend/components/CaptainOdds.tsx
 //
-// The armband as head-to-heads: the captain, then the XI's next three best
-// projections, each with how often he'd outscore the captain this week and
-// his chance of a 10+ week. Head-to-heads are recalibrated on two past
-// seasons (backend research/2026-10-distributions); the 10+ chance and the
-// likely range needed no correction.
+// The armband as head-to-heads: the captain's likely range, then the XI's next
+// three best projections, each with how often he'd outscore the captain this
+// week. Head-to-heads are recalibrated on two past seasons (backend
+// research/2026-10-distributions); the 10+ chance and the likely range needed
+// no correction.
 
-import type { CaptainOdds as Odds } from "@/lib/types";
+import type { CaptainOdds as Odds, Player } from "@/lib/types";
 import { pct } from "@/lib/odds";
+import Crest from "./Crest";
 import { Term } from "./ui";
 
-export default function CaptainOdds({ odds }: { odds: Odds[] }) {
+export default function CaptainOdds({ odds, players = [] }: { odds: Odds[]; players?: Player[] }) {
   if (odds.length < 2) return null;
   const [cap, ...others] = odds;
+  const club = (id: number) => players.find((p) => p.player_id === id)?.team;
 
   return (
-    <div className="rounded-[2px] border border-line bg-surface-raised/50 p-3.5">
+    <div>
       <p className="label">
         <Term explain="Each player's full points distribution, built from how players projected like him actually scored over two past seasons. 'Beats' is how often he'd outscore the captain, ties left out.">
-          The armband, head to head
+          Could anyone outscore {cap.name}?
         </Term>
       </p>
-      <p className="mt-2 font-mono text-[12px] text-ink-200">
-        <span className="text-gold">{cap.name} (C)</span>
-        <span className="text-ink-400">
-          {" "}
-          &middot; likely {cap.p10}&ndash;{cap.p90} &middot; 10+ {pct(cap.p_haul)} &middot; doubled{" "}
-          {cap.p10 * 2}&ndash;{cap.p90 * 2}
-        </span>
+      <p className="mt-1 text-[12.5px] text-ink-400">
+        {cap.name} likely scores {cap.p10}&ndash;{cap.p90}, doubled {cap.p10 * 2}&ndash;{cap.p90 * 2} with the
+        armband.
       </p>
-      <ul className="mt-3 max-w-md space-y-2.5">
+      <ul className="mt-3 space-y-2.5">
         {others.map((o, i) => {
           const b = o.beats_captain ?? 0;
           return (
-            <li key={o.player_id}>
-              <div className="flex items-baseline justify-between gap-3 font-mono">
-                <span className="truncate text-[12px] text-ink-100">{o.name}</span>
-                <span className="flex-none text-[11px] tabular-nums text-ink-300">
-                  beats {cap.name} {pct(b)}
-                </span>
-              </div>
-              <span className="relative mt-1 block h-1.5 rounded-full bg-line" aria-hidden>
-                <span className="absolute inset-y-[-2px] left-1/2 w-px bg-ink-400" />
+            <li key={o.player_id} className="grid grid-cols-[18px_88px_1fr_40px] items-center gap-2.5 text-[13.5px]">
+              <Crest team={club(o.player_id)} className="h-[18px] w-[18px]" />
+              <span className="truncate text-ink-100">{o.name}</span>
+              <span className="relative block h-[7px] overflow-hidden rounded-full bg-surface-raised" aria-hidden>
                 <span
-                  className="block h-full origin-left animate-grow rounded-full bg-gradient-to-r from-violet/40 to-violet/80"
-                  style={{ width: `${b * 100}%`, animationDelay: `${0.3 + i * 0.12}s` }}
+                  className="absolute inset-y-0 left-0 origin-left animate-grow rounded-full bg-ink-100"
+                  style={{ width: `${b * 100}%`, animationDelay: `${1.4 + i * 0.12}s` }}
                 />
+                <span className="absolute inset-y-0 left-1/2 w-0.5 bg-surface" />
               </span>
+              <span className="text-right font-semibold tabular-nums text-ink-100">{pct(b)}</span>
             </li>
           );
         })}
       </ul>
-      <p className="mt-2.5 font-body text-xs leading-relaxed text-ink-400">
-        Left of the centre line, {cap.name} is the better bet. Nobody here is a sure thing in a
-        single week; the armband goes to the highest projection because that wins over a season.
+      <p className="mt-2 text-[12px] text-ink-500">
+        The gap in the middle of each bar is a coin flip. Nobody here is a sure thing in one week; the
+        armband goes to the highest projection because that wins over a season.
       </p>
     </div>
   );

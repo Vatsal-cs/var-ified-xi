@@ -8,13 +8,13 @@
 // one. Dates in UTC, like FPL's deadlines.
 
 import type { OtherMatch, OtherMatchesView } from "@/lib/types";
-import { kitFor } from "@/lib/teams";
+import Crest from "./Crest";
 
 const DAY = new Intl.DateTimeFormat("en-GB", { weekday: "short", day: "numeric", month: "short", timeZone: "UTC" });
 
 function Game({ m }: { m: OtherMatch }) {
   return (
-    <li className="flex flex-wrap items-baseline gap-x-2 font-mono text-[11.5px]">
+    <li className="flex flex-wrap items-baseline gap-x-2 tabular-nums text-[11.5px]">
       <span className="w-[88px] flex-none text-ink-400">{DAY.format(new Date(m.date))}</span>
       <span className="text-ink-200">
         {m.home ? "v" : "at"} {m.opponent ?? "—"}
@@ -41,11 +41,11 @@ export default function OtherMatches({ view }: { view: OtherMatchesView }) {
         {view.clubs.length ? (
           <ul className="space-y-3">
             {view.clubs.map((c) => (
-              <li key={c.club} className="relative pl-3">
-                <span className="absolute inset-y-0.5 left-0 w-[3px] rounded-full" style={{ background: kitFor(c.club).shirt }} aria-hidden />
-                <p className="font-body text-sm text-ink-100">
+              <li key={c.club}>
+                <p className="flex flex-wrap items-center gap-x-1.5 font-body text-sm text-ink-100">
+                  <Crest team={c.club} className="h-5 w-5 flex-none" />
                   <span className="font-medium">{c.club}</span>
-                  <span className="ml-2 font-mono text-[11px] text-ink-500">{c.players.join(", ")}</span>
+                  <span className="ml-2 tabular-nums text-[11px] text-ink-500">{c.players.join(", ")}</span>
                 </p>
                 <ul className="mt-1 space-y-0.5">
                   {c.matches.map((m) => (
@@ -67,7 +67,7 @@ export default function OtherMatches({ view }: { view: OtherMatchesView }) {
               <li key={p.player_id}>
                 <p className="font-body text-sm text-ink-100">
                   <span className="font-medium">{p.name}</span>
-                  <span className="ml-2 font-mono text-[11px] text-ink-500">{p.nation}</span>
+                  <span className="ml-2 tabular-nums text-[11px] text-ink-500">{p.nation}</span>
                 </p>
                 <ul className="mt-1 space-y-0.5">
                   {p.matches.map((m) => (

@@ -1,112 +1,84 @@
 /** @type {import('tailwindcss').Config} */
 //
-// "Programme" — the palette of good football print rather than of a dashboard.
+// "Kit room" — the dressing room rather than the dashboard.
 //
-// Warm near-black instead of blue-black, bone instead of white, and ONE accent:
-// a brass gold that appears on perhaps five things per screen. No gradients, no
-// glass, no glow. Hierarchy is carried by type size, weight and whitespace,
-// which is what actually makes a page look expensive — colour spent everywhere
-// is colour that says nothing.
-//
-// Semantic colours are muted on purpose. A sage green reads as "good" without
-// the page turning into a set of traffic lights, and it sits with the gold
-// instead of fighting it.
+// Every colour is a CSS variable (app/globals.css) so the same classes serve a
+// warm stone light mode and a charcoal dark mode. Most are RGB triplets, which
+// keeps Tailwind's opacity modifiers working (`bg-risk/10`, `text-pts/80`).
+// One accent, a kit-room gold, plus muted semantics for gains, losses and
+// chances. No glows, no gradients: the shirts and crests carry the colour.
+const rgb = (v) => `rgb(var(${v}) / <alpha-value>)`;
+
 module.exports = {
   content: ["./app/**/*.{js,ts,jsx,tsx}", "./components/**/*.{js,ts,jsx,tsx}"],
   theme: {
     extend: {
       colors: {
-        // Warm blacks. The red bias is slight but it is what stops this
-        // reading as default dark mode.
-        base: "#0B0A09",
+        base: rgb("--c-base"),
         surface: {
-          DEFAULT: "#131110",
-          raised: "#1B1816",
-          sunk: "#080706",
+          DEFAULT: rgb("--c-surface"),
+          raised: rgb("--c-raised"),
+          sunk: rgb("--c-sunk"),
         },
         line: {
-          DEFAULT: "rgba(240,235,226,0.11)",
-          strong: "rgba(240,235,226,0.2)",
+          DEFAULT: "var(--c-line)",
+          strong: "var(--c-line-strong)",
         },
-        // The only accent. Brass, not neon.
         gold: {
-          DEFAULT: "#E0A64A",
-          deep: "#B8832F",
-          wash: "rgba(224,166,74,0.10)",
+          DEFAULT: rgb("--c-gold"),
+          deep: rgb("--c-gold-deep"),
+          wash: "var(--c-gold-wash)",
         },
-        // Semantics, deliberately muted to sit beside the gold.
-        pts: "#8FBF7A", // gains, points, good
-        // Two more accents, used sparingly: chances and probabilities (violet),
-        // information and fixtures (sky). Muted like the rest, never neon.
-        violet: "#A48BE0",
-        sky: "#7DB7D8",
-        coral: "#E58A6F",
-        warn: "#D9A441", // caution, chips
-        risk: "#C96A5C", // exposure, sold, loss
+        pts: rgb("--c-pts"), // gains, points, good
+        violet: rgb("--c-violet"), // chances and probabilities
+        sky: rgb("--c-sky"), // information and fixtures
+        coral: rgb("--c-coral"),
+        warn: rgb("--c-warn"), // caution, chips
+        risk: rgb("--c-risk"), // exposure, sold, loss
+        grass: {
+          DEFAULT: rgb("--c-grass"),
+          dark: rgb("--c-grass-dark"),
+        },
+        plate: {
+          DEFAULT: rgb("--c-plate"),
+          text: rgb("--c-plate-text"),
+        },
         ink: {
-          100: "#F2EDE4", // bone — headings
-          200: "#D9D2C6", // body
-          300: "#A8A093", // secondary
-          400: "#7D766B", // captions
-          500: "#5C564E", // faint labels
+          100: rgb("--c-ink-100"), // headings
+          200: rgb("--c-ink-200"), // body
+          300: rgb("--c-ink-300"), // secondary
+          400: rgb("--c-ink-400"), // captions
+          500: rgb("--c-ink-500"), // faint labels
         },
       },
       fontFamily: {
-        display: ["var(--font-display)", "Georgia", "serif"],
-        body: ["var(--font-body)", "system-ui", "sans-serif"],
+        display: ["var(--font-sans)", "system-ui", "sans-serif"],
+        body: ["var(--font-sans)", "system-ui", "sans-serif"],
         mono: ["var(--font-mono)", "ui-monospace", "monospace"],
+        // Shirt numbers and big figures: a condensed sports numeral.
+        kit: ["var(--font-kit)", "var(--font-sans)", "sans-serif"],
       },
       boxShadow: {
-        panel: "0 1px 0 rgba(240,235,226,0.04) inset",
-        raised: "0 24px 60px -40px rgba(0,0,0,0.9)",
+        panel: "var(--shadow-panel)",
+        raised: "var(--shadow-raised)",
       },
       keyframes: {
         rise: {
-          "0%": { transform: "translateY(8px)", opacity: "0" },
+          "0%": { transform: "translateY(10px)", opacity: "0" },
           "100%": { transform: "translateY(0)", opacity: "1" },
         },
         pulseDot: {
           "0%, 100%": { opacity: "1" },
-          "50%": { opacity: "0.25" },
+          "50%": { opacity: "0.3" },
         },
         // The VAR mark drawing itself: strokes with pathLength="1".
         draw: {
           "0%": { strokeDashoffset: "1" },
           "100%": { strokeDashoffset: "0" },
         },
-        // A review line sweeping across a panel once, left to right.
-        scan: {
-          "0%": { transform: "translateX(-10%)", opacity: "0" },
-          "12%": { opacity: "1" },
-          "88%": { opacity: "1" },
-          "100%": { transform: "translateX(1000%)", opacity: "0" },
-        },
-        stamp: {
-          "0%": { transform: "scale(1.8) rotate(-12deg)", opacity: "0" },
-          "60%": { transform: "scale(0.94) rotate(-5deg)", opacity: "1" },
-          "100%": { transform: "scale(1) rotate(-6deg)", opacity: "1" },
-        },
-        fromLeft: {
-          "0%": { transform: "translateX(-18px)", opacity: "0" },
-          "100%": { transform: "translateX(0)", opacity: "1" },
-        },
-        fromRight: {
-          "0%": { transform: "translateX(18px)", opacity: "0" },
-          "100%": { transform: "translateX(0)", opacity: "1" },
-        },
         strike: {
           "0%": { transform: "scaleX(0)" },
           "100%": { transform: "scaleX(1)" },
-        },
-        dropIn: {
-          "0%": { transform: "translate(-50%, -80%) scale(0.8)", opacity: "0" },
-          "70%": { transform: "translate(-50%, -48%) scale(1.04)", opacity: "1" },
-          "100%": { transform: "translate(-50%, -50%) scale(1)", opacity: "1" },
-        },
-        ring: {
-          "0%": { boxShadow: "0 0 0 0 rgba(224,166,74,0.55)" },
-          "70%": { boxShadow: "0 0 0 10px rgba(224,166,74,0)" },
-          "100%": { boxShadow: "0 0 0 0 rgba(224,166,74,0)" },
         },
         grow: {
           "0%": { transform: "scaleX(0)" },
@@ -116,42 +88,49 @@ module.exports = {
           "0%": { transform: "rotateY(0deg)" },
           "100%": { transform: "rotateY(1080deg)" },
         },
-        glow: {
-          "0%, 100%": { opacity: "0.35" },
-          "50%": { opacity: "0.7" },
+        // A shirt dropping onto its peg and swinging to rest. Pivots on its
+        // top edge (origin-top), like something hung up.
+        hang: {
+          "0%": { opacity: "0", transform: "translateY(-26px) rotate(-12deg)" },
+          "45%": { opacity: "1", transform: "translateY(2px) rotate(6deg)" },
+          "70%": { transform: "rotate(-3deg)" },
+          "88%": { transform: "rotate(1deg)" },
+          "100%": { opacity: "1", transform: "none" },
         },
-        shimmer: {
-          "0%": { backgroundPosition: "0% 50%" },
-          "100%": { backgroundPosition: "200% 50%" },
+        // The shirt swap: the old shirt is taken down, the new one swings on.
+        outgo: {
+          "0%": { opacity: "0", transform: "translateY(-14px)", filter: "none" },
+          "25%": { opacity: "1", transform: "none", filter: "none" },
+        },
+        income: {
+          "0%": { opacity: "0", transform: "translateX(70px) rotate(14deg)" },
+          "55%": { opacity: "1", transform: "translateX(-4px) rotate(-5deg)" },
+          "75%": { transform: "rotate(2.5deg)" },
+          "100%": { opacity: "1", transform: "none" },
+        },
+        pop: {
+          "0%": { opacity: "0", transform: "scale(.6)" },
+          "70%": { opacity: "1", transform: "scale(1.12)" },
+          "100%": { opacity: "1", transform: "scale(1)" },
         },
         // The seconds digit dropping into place each tick.
         tick: {
-          "0%": { transform: "translateY(-30%)", opacity: "0.5" },
+          "0%": { transform: "translateY(-35%)", opacity: "0.3" },
           "100%": { transform: "translateY(0)", opacity: "1" },
-        },
-        drift: {
-          "0%": { transform: "translate3d(0,0,0) scale(1)" },
-          "50%": { transform: "translate3d(6vw,4vh,0) scale(1.12)" },
-          "100%": { transform: "translate3d(-4vw,-2vh,0) scale(0.95)" },
         },
       },
       animation: {
-        rise: "rise 0.45s cubic-bezier(0.22,1,0.36,1) forwards",
-        pulseDot: "pulseDot 2.4s ease-in-out infinite",
+        rise: "rise 0.6s cubic-bezier(0.2,0.8,0.2,1) both",
+        pulseDot: "pulseDot 2s ease-in-out infinite",
         draw: "draw 1.1s cubic-bezier(0.65,0,0.35,1) forwards",
-        scan: "scan 1.6s cubic-bezier(0.45,0,0.2,1) 0.25s both",
-        stamp: "stamp 0.55s cubic-bezier(0.22,1,0.36,1) both",
-        fromLeft: "fromLeft 0.55s cubic-bezier(0.22,1,0.36,1) both",
-        fromRight: "fromRight 0.55s cubic-bezier(0.22,1,0.36,1) both",
         strike: "strike 0.45s cubic-bezier(0.65,0,0.35,1) both",
-        dropIn: "dropIn 0.6s cubic-bezier(0.22,1,0.36,1) both",
-        ring: "ring 2.2s cubic-bezier(0.22,1,0.36,1) infinite",
-        grow: "grow 0.9s cubic-bezier(0.22,1,0.36,1) both",
+        grow: "grow 1.1s cubic-bezier(0.2,0.8,0.2,1) both",
         coin: "coin 1.4s cubic-bezier(0.45,0,0.2,1) both",
-        glow: "glow 3.2s ease-in-out infinite",
-        shimmer: "shimmer 7s linear infinite",
-        tick: "tick 0.32s cubic-bezier(0.22,1,0.36,1) both",
-        drift: "drift 38s ease-in-out infinite alternate",
+        hang: "hang 1s cubic-bezier(0.25,0.9,0.3,1.2) both",
+        outgo: "outgo 1.3s cubic-bezier(0.3,0.7,0.3,1) both",
+        income: "income 1.4s cubic-bezier(0.2,0.9,0.25,1) both",
+        pop: "pop 0.5s cubic-bezier(0.3,1.5,0.5,1) both",
+        tick: "tick 0.35s cubic-bezier(0.2,0.8,0.2,1) both",
       },
     },
   },

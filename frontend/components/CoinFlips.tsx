@@ -8,6 +8,7 @@
 
 import type { Player } from "@/lib/types";
 import { coinFlips, pct } from "@/lib/odds";
+import Crest from "./Crest";
 import { Term } from "./ui";
 
 export default function CoinFlips({
@@ -22,11 +23,11 @@ export default function CoinFlips({
   const flips = coinFlips(xi, bench, scale);
   if (flips.length === 0) return null;
   return (
-    <div className="rounded-[2px] border border-violet/30 bg-violet/[0.06] p-3.5">
+    <div className="rounded-xl border border-violet/30 bg-violet/[0.06] p-4">
       <p className="label flex items-center gap-2 text-violet">
         <span
           aria-hidden
-          className="inline-flex h-4 w-4 animate-coin items-center justify-center rounded-full border border-gold/70 bg-gold/20 text-[8px] text-gold [transform-style:preserve-3d]"
+          className="inline-flex h-4 w-4 animate-coin items-center justify-center rounded-full border border-violet/70 bg-violet/15 text-[8px] text-violet [transform-style:preserve-3d]"
         >
           ½
         </span>
@@ -36,19 +37,21 @@ export default function CoinFlips({
       </p>
       <ul className="mt-2 space-y-1.5">
         {flips.map((f) => (
-          <li key={f.sub.player_id} className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5 font-mono text-sm">
-            <span className="text-ink-100">{f.starter.name}</span>
-            <span className="text-[11px] text-ink-500">starting, {f.starter.predicted_points.toFixed(1)}</span>
+          <li key={f.sub.player_id} className="flex flex-wrap items-center gap-x-2 gap-y-0.5 text-sm">
+            <Crest team={f.starter.team} className="h-4 w-4 flex-none" />
+            <span className="font-medium text-ink-100">{f.starter.name}</span>
+            <span className="text-[12px] text-ink-400">starting, {f.starter.predicted_points.toFixed(1)}</span>
             <span className="text-ink-500">or</span>
-            <span className="text-ink-100">{f.sub.name}</span>
-            <span className="text-[11px] text-ink-500">bench, {f.sub.predicted_points.toFixed(1)}</span>
-            <span className="text-[11px] text-violet">
+            <Crest team={f.sub.team} className="h-4 w-4 flex-none" />
+            <span className="font-medium text-ink-100">{f.sub.name}</span>
+            <span className="text-[12px] text-ink-400">bench, {f.sub.predicted_points.toFixed(1)}</span>
+            <span className="text-[12px] font-semibold tabular-nums text-violet">
               {pct(1 - f.p)} / {pct(f.p)}
             </span>
           </li>
         ))}
       </ul>
-      <p className="mt-2 font-body text-xs text-ink-300">
+      <p className="mt-2 text-xs text-ink-300">
         Too close to call on the numbers. Check the last refresh before the deadline: a
         rotation or injury hint settles it.
       </p>

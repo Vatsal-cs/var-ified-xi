@@ -7,28 +7,28 @@
 // the picks, which come from the model's own projections.
 
 import type { PickCheck, WildcardOption, WildcardPlayer } from "@/lib/types";
-import { kitFor } from "@/lib/teams";
+import Crest from "./Crest";
 
 const ORDER: Record<string, number> = { GK: 0, DEF: 1, MID: 2, FWD: 3 };
 
 function Row({ p, captain, vice, ahead, check }: { p: WildcardPlayer; captain: boolean; vice: boolean; ahead: number; check?: boolean }) {
-  const kit = kitFor(p.team);
   const differential = ahead > 0 && p.owned_by_ahead === 0;
   return (
     <li className="flex items-baseline gap-3 py-2">
-      <span className="w-8 flex-none font-mono text-[10px] uppercase tracking-[0.16em] text-ink-500">{p.position}</span>
+      <span className="w-8 flex-none label text-ink-500">{p.position}</span>
       <span className="min-w-0 flex-1">
+        <Crest team={p.team} className="mr-1.5 inline h-4 w-4 align-[-3px]" />
         <span className="font-body text-sm text-ink-100">{p.name}</span>
-        {captain && <span className="ml-1.5 font-mono text-[10px] text-gold">C</span>}
-        {vice && <span className="ml-1.5 font-mono text-[10px] text-ink-400">V</span>}
-        <span className="ml-2 font-mono text-[11px] text-ink-500">{kit.abbr} &middot; £{p.cost_m.toFixed(1)}m</span>
+        {captain && <span className="ml-1.5 tabular-nums text-[10px] text-gold">C</span>}
+        {vice && <span className="ml-1.5 tabular-nums text-[10px] text-ink-400">V</span>}
+        <span className="ml-2 tabular-nums text-[11px] text-ink-500">£{p.cost_m.toFixed(1)}m</span>
         <span className="ml-2 inline-flex gap-1.5 align-middle">
-          {p.new && <span className="rounded-[2px] border border-pts/40 px-1 font-mono text-[9.5px] uppercase tracking-wider text-pts">in</span>}
-          {differential && <span className="rounded-[2px] border border-gold/40 px-1 font-mono text-[9.5px] uppercase tracking-wider text-gold">differential</span>}
-          {check && <span className="rounded-[2px] border border-warn/40 px-1 font-mono text-[9.5px] uppercase tracking-wider text-warn">check</span>}
+          {p.new && <span className="rounded-md border border-pts/40 px-1.5 text-[10.5px] font-semibold uppercase tracking-wide text-pts">in</span>}
+          {differential && <span className="rounded-md border border-gold/40 px-1.5 text-[10.5px] font-semibold uppercase tracking-wide text-gold">differential</span>}
+          {check && <span className="rounded-md border border-warn/40 px-1.5 text-[10.5px] font-semibold uppercase tracking-wide text-warn">check</span>}
         </span>
       </span>
-      <span className="flex-none text-right font-mono text-[11.5px] tabular-nums text-ink-300">
+      <span className="flex-none text-right tabular-nums text-[11.5px]  text-ink-300">
         {p.predicted_points.toFixed(1)}
         <span className="ml-2 text-ink-500">{p.horizon_points.toFixed(1)}</span>
       </span>
@@ -49,10 +49,10 @@ export default function WildcardPanel({ option }: { option: WildcardOption }) {
 
   return (
     <div className={worth ? "panel-lead p-5" : "panel p-5"}>
-      <p className={`font-mono text-[10px] uppercase tracking-[0.24em] ${worth ? "text-gold" : "text-ink-500"}`}>
+      <p className={`label ${worth ? "text-gold" : "text-ink-500"}`}>
         Wildcard check &middot; GW{option.gameweek}
       </p>
-      <p className="mt-2 font-display text-[28px] leading-tight text-ink-100">
+      <p className="mt-2 text-[24px] font-semibold leading-tight tracking-[-0.02em] text-ink-100">
         {worth ? "+" : ""}
         {option.gain_six_weeks.toFixed(1)} points over six weeks
       </p>
@@ -86,7 +86,7 @@ export default function WildcardPanel({ option }: { option: WildcardOption }) {
                    check={checked.has(p.player_id)} />
             ))}
           </ul>
-          <p className="mt-3 font-mono text-[11px] leading-relaxed text-ink-500">
+          <p className="mt-3 tabular-nums text-[11px] leading-relaxed text-ink-500">
             &ldquo;In&rdquo; = a new signing. Columns: next gameweek, then six weeks.{" "}
             {option.rivals_ahead > 0 && (
               <>{differentials} of 15 are players none of the {option.rivals_ahead}{" "}managers ahead of you start
@@ -106,7 +106,7 @@ export default function WildcardPanel({ option }: { option: WildcardOption }) {
  *  cost of leaving each out — the call stays yours. */
 function SecondLook({ checks }: { checks: PickCheck[] }) {
   return (
-    <div className="mt-5 rounded-[2px] border border-warn/30 bg-warn/[0.04] p-4">
+    <div className="mt-5 rounded-xl border border-warn/30 bg-warn/[0.04] p-4">
       <p className="label">Worth a second look</p>
       <ul className="mt-2 space-y-2.5">
         {checks.map((c) => (
@@ -114,17 +114,17 @@ function SecondLook({ checks }: { checks: PickCheck[] }) {
             <span className="font-medium text-ink-100">{c.name}</span>
             <span className="text-ink-300"> &mdash; {c.flags.join("; ")}.</span>
             {c.drop_cost != null && (
-              <span className="block font-mono text-[11px] text-ink-400">
+              <span className="block tabular-nums text-[11px] text-ink-400">
                 leaving him out costs {c.drop_cost.toFixed(1)} pts over six weeks
                 {c.replacement && c.replacement.length > 0 && <> &middot; the squad brings in {c.replacement.join(", ")}</>}
               </span>
             )}
             {c.alternatives && c.alternatives.length > 0 && (
               <div className="mt-1.5">
-                <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-ink-500">Could pick instead</span>
+                <span className="label text-ink-500">Could pick instead</span>
                 <ul className="mt-1 space-y-1">
                   {c.alternatives.map((a) => (
-                    <li key={a.player_id} className="flex flex-wrap items-baseline gap-x-2 font-mono text-[11.5px]">
+                    <li key={a.player_id} className="flex flex-wrap items-baseline gap-x-2 tabular-nums text-[11.5px]">
                       <span className="text-ink-100">{a.name}</span>
                       <span className="text-ink-500">{a.team} &middot; &pound;{a.cost_m.toFixed(1)}m</span>
                       <span className="text-ink-300">
