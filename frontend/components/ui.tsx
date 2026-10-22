@@ -34,10 +34,10 @@ export function Section({
   return (
     <Reveal>
       <section id={id} aria-labelledby={id ? `${id}-h` : undefined} className="scroll-mt-32">
-        {eyebrow && <p className={`mb-1.5 text-[13px] font-semibold ${TONE_TEXT[tone]}`}>{eyebrow}</p>}
+        {eyebrow && <p className={`kicker mb-2 ${TONE_TEXT[tone]}`}>{eyebrow}</p>}
         <h2
           id={id ? `${id}-h` : undefined}
-          className="max-w-3xl text-[24px] font-semibold leading-tight tracking-[-0.025em] text-ink-100 sm:text-[28px]"
+          className="headline max-w-3xl text-[34px] sm:text-[42px]"
         >
           {title}
         </h2>
@@ -63,11 +63,11 @@ export function PageIntro({
 }) {
   return (
     <header className="animate-rise">
-      {kicker && <p className="text-[13px] font-semibold text-gold">{kicker}</p>}
-      <h1 className="mt-1.5 text-[36px] font-semibold leading-[1.04] tracking-[-0.035em] text-ink-100 sm:text-[48px]">
+      {kicker && <p className="kicker">{kicker}</p>}
+      <h1 className="headline mt-3 text-[54px] sm:text-[84px]">
         {title}
       </h1>
-      {sub && <p className="mt-3 max-w-[56ch] text-[16px] leading-relaxed text-ink-300">{sub}</p>}
+      {sub && <p className="mt-4 max-w-[56ch] text-[17px] leading-relaxed text-ink-300">{sub}</p>}
       {figures.length > 0 && <Figures items={figures} className="mt-7" />}
     </header>
   );
@@ -87,12 +87,12 @@ export function Figures({
       {items.map((n, i) => (
         <div
           key={n.label}
-          className={`sm:pr-8 ${i % 2 === 1 ? "border-l border-line pl-5" : ""} ${
-            i > 0 ? "sm:border-l sm:border-line sm:pl-8" : ""
+          className={`sm:pr-6 lg:pr-7 ${i % 2 === 1 ? "border-l border-line pl-5" : ""} ${
+            i > 0 ? "sm:border-l sm:border-line sm:pl-6 lg:pl-7" : ""
           }`}
         >
-          <dt className="text-[12.5px] text-ink-400">{n.label}</dt>
-          <dd className={`mt-0.5 font-kit text-[30px] font-bold leading-none tabular-nums ${n.tone ?? "text-ink-100"}`}>
+          <dt className="whitespace-nowrap text-[12.5px] text-ink-400">{n.label}</dt>
+          <dd className={`mt-1 whitespace-nowrap font-display text-[38px] font-extrabold leading-none tabular-nums ${n.tone ?? "text-ink-100"}`}>
             {n.value}
           </dd>
         </div>

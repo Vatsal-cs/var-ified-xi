@@ -32,9 +32,9 @@ export default function BenchStrip({
 }) {
   return (
     <div>
-      <p className="mb-3 text-[15px] font-semibold text-ink-100">
+      <p className="heading mb-3">
         <Term explain="If a starter doesn't play, FPL automatically subs in the first bench player who did — in this order. The reserve keeper can only ever replace the keeper. 'Beats X' is how often he'd outscore the starter he'd most plausibly replace (ties left out); between 40% and 60% the start/bench call is a coin flip.">
-          The bench <span className="font-normal text-ink-400">&middot; in substitution order</span>
+          The bench <span className="text-ink-400">&middot; in sub order</span>
         </Term>
       </p>
       <div className="relative pt-1">

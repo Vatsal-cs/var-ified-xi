@@ -58,11 +58,11 @@ export default function PipelineExplainer() {
       {STAGES.map((s) => (
         <details key={s.n} className="group">
           <summary className="flex cursor-pointer list-none items-center gap-4 py-5 marker:content-none">
-            <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-ink-100 font-kit text-[17px] font-bold text-[rgb(var(--c-base))]">
+            <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-ink-100 font-display text-[19px] font-extrabold text-[rgb(var(--c-base))]">
               {s.n}
             </span>
             <span className="flex-1">
-              <span className="block text-[17px] font-semibold tracking-tight text-ink-100">
+              <span className="block font-display text-[22px] font-extrabold uppercase leading-tight tracking-[0.01em] text-ink-100">
                 {s.title}
               </span>
               <span className="block text-[14px] text-ink-400">{s.summary}</span>

@@ -39,8 +39,8 @@ export default function Home() {
         {/* The squad it produces */}
         <section id="squad" aria-label={title} className="scroll-mt-32 animate-rise" style={{ animationDelay: "0.1s" }}>
           <div className="mb-3 flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
-            <h2 className="text-[15px] font-semibold text-ink-100">
-              {title} <span className="font-normal text-ink-400">&middot; {formation}</span>
+            <h2 className="heading">
+              {title} <span className="text-ink-400">&middot; {formation}</span>
             </h2>
             <p className="text-[13px] text-ink-400">
               <span className="font-semibold text-ink-100">{team.predicted_total_points.toFixed(1)}</span> pts

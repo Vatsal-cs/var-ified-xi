@@ -40,6 +40,8 @@
   --shadow-raised: 0 2px 4px rgba(0, 0, 0, 0.06), 0 18px 40px -18px rgba(0, 0, 0, 0.25);
   --chalk: rgba(255, 255, 255, 0.34);
   --hanger: rgba(21, 23, 27, 0.32);
+  --mow: rgba(21, 23, 27, 0.016);
+  --pitch-line: rgba(21, 23, 27, 0.06);
 }
 
 [data-theme="dark"] {
@@ -72,14 +74,19 @@
   --shadow-raised: 0 2px 4px rgba(0, 0, 0, 0.35), 0 20px 44px -18px rgba(0, 0, 0, 0.75);
   --chalk: rgba(255, 255, 255, 0.18);
   --hanger: rgba(242, 240, 236, 0.32);
+  --mow: rgba(255, 255, 255, 0.014);
+  --pitch-line: rgba(255, 255, 255, 0.055);
 }
 
 html {
   scroll-behavior: smooth;
 }
 
+/* The page is a pitch at night or in daylight: wide mown bands, so faint
+   they read as texture rather than stripes. */
 body {
   transition: background-color 0.35s, color 0.35s;
+  background-image: repeating-linear-gradient(180deg, var(--mow) 0 160px, transparent 160px 320px);
 }
 
 ::selection {
@@ -114,6 +121,17 @@ body {
 
   /* Small print that names a thing. Sentence case: the tracked-out capitals
      every dashboard template uses are exactly what made this look generic. */
+  /* Stadium signage: condensed capitals for headlines and section names. */
+  .headline {
+    @apply font-display font-extrabold uppercase leading-[0.9] tracking-[-0.005em] text-ink-100;
+  }
+  .kicker {
+    @apply font-display text-[15px] font-bold uppercase tracking-[0.1em] text-gold;
+  }
+  .heading {
+    @apply font-display text-[20px] font-extrabold uppercase tracking-[0.02em] text-ink-100;
+  }
+
   .label {
     @apply font-body text-[12.5px] font-medium text-ink-400;
   }
@@ -127,7 +145,7 @@ body {
     @apply cursor-help border-b border-dotted border-ink-400 text-ink-200;
   }
   .pill {
-    @apply inline-flex items-center gap-1.5 whitespace-nowrap rounded-lg border border-line px-2.5 py-1 font-body text-[12px] font-medium;
+    @apply inline-flex items-center gap-1.5 whitespace-nowrap rounded-md border border-line px-2.5 py-1 font-display text-[13.5px] font-bold uppercase tracking-[0.05em];
   }
   .eyebrow-rule {
     @apply flex items-center gap-3;

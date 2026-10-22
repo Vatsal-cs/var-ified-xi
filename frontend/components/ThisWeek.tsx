@@ -220,29 +220,34 @@ export default function ThisWeek({ team }: { team: OptimizedTeam }) {
 
   return (
     <section id="week" className="scroll-mt-32">
-      <p className="animate-rise text-[13px] text-ink-400">
-        <span className="font-semibold text-gold">Gameweek {team.gameweek}</span>
+      <p className="flex animate-rise flex-wrap items-baseline gap-x-3 gap-y-1">
+        <span className="kicker">Gameweek {team.gameweek}</span>
         {team.team && (
-          <>
-            {" "}
-            &middot; {team.team.name} &middot;{" "}
+          <span className="text-[13.5px] text-ink-400">
+            {team.team.name} &middot;{" "}
             {chip ? `${chip} active` : `${team.team.free_transfers} free transfer${team.team.free_transfers === 1 ? "" : "s"}`}{" "}
             &middot; &pound;{team.team.bank_m.toFixed(1)}m in the bank
-          </>
+          </span>
         )}
       </p>
       <h1
-        className="mt-2 animate-rise text-[38px] font-semibold leading-[1.02] tracking-[-0.035em] text-ink-100 sm:text-[52px]"
+        className="headline mt-3 animate-rise text-[52px] sm:text-[86px]"
         style={{ animationDelay: "0.05s" }}
       >
         {/* One sentence per line: "Sell Semenyo." / "Buy Rogers." */}
-        {headline.split(/(?<=\.) /).map((line, i) => (
-          <span key={i} className="block">
-            {line}
-          </span>
-        ))}
+        {headline.split(/(?<=\.) /).map((line, i) =>
+          line.startsWith("Buy ") ? (
+            <span key={i} className="block">
+              Buy <span className="text-gold">{line.slice(4)}</span>
+            </span>
+          ) : (
+            <span key={i} className="block">
+              {line}
+            </span>
+          )
+        )}
       </h1>
-      <p className="mt-3 max-w-[46ch] animate-rise text-[16px] leading-relaxed text-ink-300" style={{ animationDelay: "0.1s" }}>
+      <p className="mt-4 max-w-[46ch] animate-rise text-[17px] leading-relaxed text-ink-300" style={{ animationDelay: "0.1s" }}>
         {lede}
       </p>
       {checks.map((c) => (
@@ -316,7 +321,7 @@ function Captain({ team }: { team: OptimizedTeam }) {
           className="h-[88px] w-[88px] flex-none drop-shadow-[0_8px_10px_rgba(0,0,0,0.25)]"
         />
         <div className="min-w-0">
-          <p className="text-[22px] font-semibold leading-tight tracking-[-0.02em] text-ink-100">{cap.name}</p>
+          <p className="font-display text-[30px] font-extrabold uppercase leading-none text-ink-100">{cap.name}</p>
           <p className="mt-0.5 text-[13px] leading-snug text-ink-400">
             {cap.team}
             {haul != null && <> &middot; {pct(haul)} chance of 10+</>}
@@ -340,7 +345,7 @@ export function Armband({ team }: { team: OptimizedTeam }) {
   const players = [...team.starting_xi, ...team.bench];
   return (
     <section aria-label="The armband" className="border-t border-line pt-7">
-      <h2 className="mb-4 text-[15px] font-semibold text-ink-100">The armband</h2>
+      <h2 className="heading mb-4">The armband</h2>
       <div className="grid gap-6 sm:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] sm:gap-8">
         <Captain team={team} />
         {team.captain_odds && <CaptainOdds odds={team.captain_odds} players={players} />}
@@ -355,11 +360,11 @@ export function ThisWeekNotes({ team }: { team: OptimizedTeam }) {
   return (
     <section aria-label="This week's smaller calls" className="grid gap-10 border-t border-line pt-8 md:grid-cols-2 md:gap-0">
       <div className="md:pr-10">
-        <h2 className="mb-4 text-[15px] font-semibold text-ink-100">Close calls</h2>
+        <h2 className="heading mb-4">Close calls</h2>
         <CoinFlips xi={team.starting_xi} bench={team.bench} scale={scale} />
       </div>
       <div className="md:border-l md:border-line md:pl-10">
-        <h2 className="mb-4 text-[15px] font-semibold text-ink-100">Team news</h2>
+        <h2 className="heading mb-4">Team news</h2>
         <TeamNews news={team.team_news} />
       </div>
     </section>

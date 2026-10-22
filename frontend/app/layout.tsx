@@ -2,11 +2,14 @@
 // Path: var-ified-xi/frontend/app/layout.tsx
 
 import type { Metadata } from "next";
-import { Barlow_Semi_Condensed, Geist, Geist_Mono } from "next/font/google";
+import { Barlow_Semi_Condensed, Big_Shoulders, Geist_Mono, Schibsted_Grotesk } from "next/font/google";
 import "./globals.css";
 
-// Clean and modern for everything you read.
-const sans = Geist({ subsets: ["latin"], variable: "--font-sans" });
+// Headlines and big figures: condensed, heavy, stadium signage.
+const display = Big_Shoulders({ subsets: ["latin"], weight: ["700", "800", "900"], variable: "--font-display" });
+
+// Everything you read: a newspaper grotesk with some character.
+const sans = Schibsted_Grotesk({ subsets: ["latin"], variable: "--font-sans" });
 
 // Tabular figures for the small measurements.
 const mono = Geist_Mono({ subsets: ["latin"], variable: "--font-mono" });
@@ -33,7 +36,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html
       lang="en"
       suppressHydrationWarning
-      className={`${sans.variable} ${mono.variable} ${kit.variable}`}
+      className={`${display.variable} ${sans.variable} ${mono.variable} ${kit.variable}`}
     >
       <head>
         <script dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }} />

@@ -35,7 +35,7 @@ function ExpiryPanel({ expiry, plan }: { expiry: ChipExpiry; plan?: ChipPlan }) 
             <ChipToken key={c} chip={c} size={32} className="ring-2 ring-base" />
           ))}
         </span>
-        <p className="text-[22px] font-semibold leading-tight tracking-[-0.02em] text-ink-100">
+        <p className="font-display text-[28px] font-extrabold uppercase leading-none text-ink-100">
           {chips_left.length} chip{chips_left.length === 1 ? "" : "s"} left, {gameweeks_left} gameweek
           {gameweeks_left === 1 ? "" : "s"} to play {chips_left.length === 1 ? "it" : "them"}
         </p>

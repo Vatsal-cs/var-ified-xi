@@ -28,11 +28,24 @@ export default function PageShell({
   children: React.ReactNode;
 }) {
   return (
-    <div id="top">
+    <div id="top" className="relative overflow-x-clip">
       <SiteHeader team={team} pages={pagesFor(team)} />
-      <main className="mx-auto max-w-6xl space-y-14 px-4 py-6 pb-24 sm:space-y-16 sm:px-6 sm:py-8">
+      {/* Chalk markings behind the top of the page: a centre circle and the
+          halfway line, drawn faintly enough to read as the ground underfoot. */}
+      <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-[820px] overflow-hidden">
+        <svg
+          viewBox="0 0 800 800"
+          fill="none"
+          className="absolute -right-[260px] top-[-120px] h-[640px] w-[640px] sm:-right-[160px] sm:h-[800px] sm:w-[800px]"
+        >
+          <circle cx="400" cy="400" r="330" stroke="var(--pitch-line)" strokeWidth="2.5" />
+          <circle cx="400" cy="400" r="7" fill="var(--pitch-line)" />
+        </svg>
+        <span className="absolute inset-x-0 top-[200px] h-[2.5px] bg-[var(--pitch-line)] sm:top-[280px]" />
+      </div>
+      <main className="relative mx-auto max-w-6xl space-y-14 px-4 py-8 pb-24 sm:space-y-20 sm:px-6 sm:py-12">
         {children}
-        <footer className="border-t border-line pt-8 text-center text-[12px] text-ink-500">
+        <footer className="border-t border-line pt-8 text-center text-[12.5px] text-ink-500">
           VAR-ified XI — built on the free FPL API. Not affiliated with the Premier
           League or Fantasy Premier League. Projections are estimates, not
           guarantees.

@@ -105,7 +105,7 @@ export default function OtherMatches({ view }: { view: OtherMatchesView }) {
   return (
     <div className="space-y-12">
       <section>
-        <h3 className="text-[17px] font-semibold text-ink-100">Midweek club games</h3>
+        <h3 className="heading">Midweek club games</h3>
         <p className="mb-3 mt-1 text-[14px] text-ink-400">A tie before a gameweek is a rotation risk.</p>
         {clubRows.length ? (
           <ul className="border-t border-line">
@@ -118,7 +118,7 @@ export default function OtherMatches({ view }: { view: OtherMatchesView }) {
         )}
       </section>
       <section>
-        <h3 className="text-[17px] font-semibold text-ink-100">International duty</h3>
+        <h3 className="heading">International duty</h3>
         <p className="mb-3 mt-1 text-[14px] text-ink-400">A long trip home means tired legs the weekend after.</p>
         {intlRows.length ? (
           <ul className="border-t border-line">

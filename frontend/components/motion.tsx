@@ -68,10 +68,10 @@ function parts(ms: number) {
 
 const pad = (n: number) => String(n).padStart(2, "0");
 
-/** The deadline as a chip in the header, on every screen size: the gameweek
- *  and the time left down to the second. Calm until the last day, amber
- *  inside 24 hours, red and pulsing inside 3. Renders its frame on the server
- *  and the clock once mounted, so it never mismatches. */
+/** The deadline on the fourth official's board: a black board, the
+ *  gameweek on a red panel, the time left in lit digits — green, amber inside
+ *  24 hours, red inside 3. Dark in both themes, because the real one is.
+ *  Renders its frame on the server and the clock once mounted. */
 export function DeadlineChip({ deadline, gameweek }: { deadline?: string | null; gameweek?: number | null }) {
   const [now, setNow] = useState<number | null>(null);
   useEffect(() => {
@@ -86,34 +86,40 @@ export function DeadlineChip({ deadline, gameweek }: { deadline?: string | null;
   const urgent = left !== null && left > 0 && left < 3 * 3600e3;
   const soon = left !== null && left > 0 && left < 24 * 3600e3;
   const { d, h, m, s } = parts(left ?? 0);
-  const dot = urgent ? "bg-risk animate-pulseDot" : soon ? "bg-warn" : "bg-pts animate-pulseDot";
-  const tone = urgent ? "text-risk" : soon ? "text-warn" : "text-ink-100";
+  const lit = urgent ? "#FF5A4A" : soon ? "#FFC247" : "#5BE38A";
 
   return (
     <div
       role="timer"
       aria-label={`Gameweek ${gameweek ?? ""} deadline`}
       title={now === null ? undefined : `Deadline ${at.toLocaleString(undefined, { weekday: "long", hour: "numeric", minute: "2-digit" })}`}
-      className="flex items-center gap-2 rounded-lg border border-line px-2.5 py-1.5 text-[13px] text-ink-400 sm:px-3"
+      className="flex h-9 items-stretch overflow-hidden rounded-md bg-[#0B0C0D] shadow-[inset_0_0_0_1px_rgba(255,255,255,0.08),0_2px_6px_rgba(0,0,0,0.25)]"
     >
-      <span className={`h-[7px] w-[7px] flex-none rounded-full ${dot}`} />
-      <span className="hidden whitespace-nowrap sm:inline">GW {gameweek ?? "—"} deadline</span>
-      {left === null ? (
-        <b className="font-semibold tabular-nums text-ink-300">—</b>
-      ) : passed ? (
-        <b className="whitespace-nowrap font-medium text-ink-300">Passed &middot; updating soon</b>
-      ) : (
-        <b className={`whitespace-nowrap font-semibold tabular-nums ${tone}`}>
-          {d > 0 && `${d}d `}
-          {h}h {pad(m)}m{" "}
-          <span className="text-gold">
-            <span key={s} className="inline-block animate-tick">
+      <span className="flex items-center bg-[#C8341F] px-2 font-display text-[14px] font-extrabold uppercase leading-none tracking-[0.04em] text-white">
+        GW{gameweek ?? "—"}
+      </span>
+      <span
+        className={`flex items-center gap-[3px] px-2.5 font-display text-[20px] font-extrabold leading-none tabular-nums ${
+          urgent ? "animate-pulseDot" : ""
+        }`}
+        style={{ color: lit }}
+      >
+        {left === null ? (
+          <span className="text-[#5BE38A]/40">--:--:--</span>
+        ) : passed ? (
+          <span className="text-[14px] uppercase tracking-[0.06em] text-white/70">Deadline passed</span>
+        ) : (
+          <>
+            {d > 0 && <span>{d}D</span>}
+            <span className={d > 0 ? "ml-1" : ""}>
+              {pad(h)}:{pad(m)}:
+            </span>
+            <span key={s} className="inline-block min-w-[2ch] animate-tick">
               {pad(s)}
             </span>
-            s
-          </span>
-        </b>
-      )}
+          </>
+        )}
+      </span>
     </div>
   );
 }
@@ -140,7 +146,7 @@ export function ThemeToggle() {
       type="button"
       onClick={flip}
       aria-label={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
-      className="grid h-9 w-9 flex-none place-items-center rounded-lg border border-line text-ink-100 transition-colors hover:border-line-strong"
+      className="grid h-9 w-9 flex-none place-items-center rounded-md border border-line text-ink-100 transition-colors hover:border-line-strong"
     >
       {theme === "dark" ? (
         <svg viewBox="0 0 24 24" className="h-[17px] w-[17px]" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">

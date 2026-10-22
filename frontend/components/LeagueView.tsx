@@ -88,7 +88,7 @@ export default function LeagueView({ league, players = [] }: { league: LeagueVie
         <div className="grid gap-12 lg:grid-cols-2 lg:gap-0">
           {/* What can gain you places */}
           <section className="lg:pr-10">
-            <h3 className="text-[17px] font-semibold text-ink-100">Only you have them</h3>
+            <h3 className="heading">Only you have them</h3>
             <p className="mb-5 mt-1 text-[14px] text-ink-400">
               When these score, you gain on everyone above you who doesn&apos;t own them. Shirt numbers are
               prices.
@@ -105,7 +105,7 @@ export default function LeagueView({ league, players = [] }: { league: LeagueVie
 
           {/* What can cost you places */}
           <section className="lg:border-l lg:border-line lg:pl-10">
-            <h3 className="text-[17px] font-semibold text-ink-100">They have them, you don&apos;t</h3>
+            <h3 className="heading">They have them, you don&apos;t</h3>
             <p className="mb-5 mt-1 text-[14px] text-ink-400">
               Every haul from these costs you ground, and you get nothing back when they blank.
             </p>
@@ -122,7 +122,7 @@ export default function LeagueView({ league, players = [] }: { league: LeagueVie
 
       {/* The table, with the chips everyone has spent */}
       <section>
-        <h3 className="text-[17px] font-semibold text-ink-100">The table</h3>
+        <h3 className="heading">The table</h3>
         <p className="mb-4 mt-1 text-[14px] text-ink-400">
           <Term explain="FPL issues chips in two half-season sets. Each set must be played inside its window — the first by the GW19 deadline — and an unplayed chip is lost rather than carried over. Everyone gets a fresh set at GW20.">
             Chips played this half
