@@ -1926,5 +1926,188 @@
     "source_title": "Mukiele and Xhaka both start as Le Bris makes six Sunderland changes for Lech Poznan - The Northern Echo"
    }
   ]
+ },
+ {
+  "gameweek": 8,
+  "fetched_at": "2026-10-23T04:06:08.051188+00:00",
+  "model": "gemini-3.5-flash-lite",
+  "items": [
+   {
+    "player_id": 1,
+    "name": "David Raya Mart\u00edn",
+    "club": "Arsenal",
+    "status": "no_news",
+    "start_chance": null,
+    "reason": "No news in headlines regarding injury or status.",
+    "source_url": null,
+    "source_date": null,
+    "source_title": null
+   },
+   {
+    "player_id": 8,
+    "name": "Riccardo Calafiori",
+    "club": "Arsenal",
+    "status": "no_news",
+    "start_chance": null,
+    "reason": "No news in headlines regarding injury or status.",
+    "source_url": null,
+    "source_date": null,
+    "source_title": null
+   },
+   {
+    "player_id": 31,
+    "name": "Ezri Konsa Ngoyo",
+    "club": "Arsenal",
+    "status": "no_news",
+    "start_chance": null,
+    "reason": "No news in headlines regarding injury or status.",
+    "source_url": null,
+    "source_date": null,
+    "source_title": null
+   },
+   {
+    "player_id": 106,
+    "name": "Igor Thiago Nascimento Rodrigues",
+    "club": "Brentford",
+    "status": "no_news",
+    "start_chance": null,
+    "reason": "No news in headlines regarding injury or status.",
+    "source_url": null,
+    "source_date": null,
+    "source_title": null
+   },
+   {
+    "player_id": 109,
+    "name": "Bart Verbruggen",
+    "club": "Brighton",
+    "status": "no_news",
+    "start_chance": null,
+    "reason": "No news in headlines regarding injury or status.",
+    "source_url": null,
+    "source_date": null,
+    "source_title": null
+   },
+   {
+    "player_id": 40,
+    "name": "Morgan Rogers",
+    "club": "Chelsea",
+    "status": "doubtful",
+    "start_chance": 50,
+    "reason": "Over 160,000 buys before Chelsea host Spurs, but no direct injury or fitness status mentioned in headline text.",
+    "source_url": "https://news.google.com/rss/articles/CBMiXkFVX3lxTE45a2N3Y0o5V3BJNV9YQmZHRmd1UnpCTDNwa0o3VDJYOFdLQ0dqRGxTRDcybkJQMzN6U2ZaSUpUQk5nbkE1NXUwZW5NaWxqa0tTWWM0enVmZDlZNEFUeFE?oc=5",
+    "source_date": "2026-10-22",
+    "source_title": "Rogers FPL GW8: Over 160,000 Buys Before Chelsea Host Spurs - The False 9"
+   },
+   {
+    "player_id": 249,
+    "name": "Thierno Barry",
+    "club": "Everton",
+    "status": "no_news",
+    "start_chance": null,
+    "reason": "None",
+    "source_url": null,
+    "source_date": null,
+    "source_title": null
+   },
+   {
+    "player_id": 397,
+    "name": "Antoine Semenyo",
+    "club": "Man City",
+    "status": "out",
+    "start_chance": 0,
+    "reason": "Out for the match against Aston Villa.",
+    "source_url": "https://news.google.com/rss/articles/CBMieEFVX3lxTE5pX1d0UHZoUmVnLVVHbTlNTWhYQy1lMC1UMmpUVGx4Y0dacVkzREdLM2dqMmY2c2QzS1Fsdng5TnB3X185ODZMMUpBdjlaOWkwWnBCV1dnalczdmZ4S00yUGZVZEVSU3A4X005N0h3dDNyWlZQZkY4dw?oc=5",
+    "source_date": "2026-10-22",
+    "source_title": "Aston Villa vs Man City Prediction: Haaland Fit, Semenyo, Wan-Bissaka Out - The False 9"
+   },
+   {
+    "player_id": 399,
+    "name": "Rayan Cherki",
+    "club": "Man City",
+    "status": "expected_to_start",
+    "start_chance": 100,
+    "reason": "Manager Enzo Maresca praised Cherki as one of the best in the right position.",
+    "source_url": "https://news.google.com/rss/articles/CBMingFBVV95cUxQd2FoT2k5M1NWRUszX1RKZkJVcjNtdGZtTXBYYmdHX0hBUWVoUWowWWczVUIzWWExcERiMU0tX2U5RTVNN2JQYjdJUTJZSXYxRHo0czRudTVoNWtqVjNVYVJFT1FvU283TVBvckloUmpzcnR6dHpMUDItaElFZHpQTWRPeU5tVGl5SGhQUlZsNUNfcU52Wi1UUWhtVTdlQQ?oc=5",
+    "source_date": "2026-10-22",
+    "source_title": "Cherki is one of the best in the right position, says Maresca - Manchester City FC"
+   },
+   {
+    "player_id": 411,
+    "name": "Erling Haaland",
+    "club": "Man City",
+    "status": "expected_to_start",
+    "start_chance": 100,
+    "reason": "Confirmed 100% available by the manager for the Villa trip.",
+    "source_url": "https://news.google.com/rss/articles/CBMingFBVV95cUxPamtuOHBqejVRWWx5Q1ZwbHppdEJ6eWVCeEtHSmZDaWNlM0hiOF9zdVlvQzN6UHd2M0w3SklBYW5pNnlZUTAzR01wa09CbHBfOFZoaXl5MWRhZ3VuN1h1MW11Z21SWjE3Q3M3eGlBMFZ3N0VYQS02WGNhbTFIOEJJa2RwM09ndFNrT1pzZkhDc2JTYnlURmJEMzJ1VUJWUQ?oc=5",
+    "source_date": "2026-10-22",
+    "source_title": "Maresca says Haaland is 100% available for Villa trip - Manchester City FC"
+   },
+   {
+    "player_id": 453,
+    "name": "Harvey Barnes",
+    "club": "Newcastle",
+    "status": "no_news",
+    "start_chance": null,
+    "reason": "No relevant news found in headlines",
+    "source_url": null,
+    "source_date": null,
+    "source_title": null
+   },
+   {
+    "player_id": 447,
+    "name": "Sven Botman",
+    "club": "Newcastle",
+    "status": "no_news",
+    "start_chance": null,
+    "reason": "No relevant news found in headlines",
+    "source_url": null,
+    "source_date": null,
+    "source_title": null
+   },
+   {
+    "player_id": 472,
+    "name": "Murillo Costa dos Santos",
+    "club": "Nott'm Forest",
+    "status": "no_news",
+    "start_chance": null,
+    "reason": "No relevant news found in headlines",
+    "source_url": null,
+    "source_date": null,
+    "source_title": null
+   },
+   {
+    "player_id": 403,
+    "name": "S\u00e1vio Moreira de Oliveira",
+    "club": "Spurs",
+    "status": "no_news",
+    "start_chance": null,
+    "reason": "No relevant news found in headlines",
+    "source_url": null,
+    "source_date": null,
+    "source_title": null
+   },
+   {
+    "player_id": 544,
+    "name": "Granit Xhaka",
+    "club": "Sunderland",
+    "status": "expected_to_start",
+    "start_chance": 100,
+    "reason": "Mukiele and Xhaka both start as Le Bris makes six Sunderland changes",
+    "source_url": "https://news.google.com/rss/articles/CBMioAFBVV95cUxObVNNblpUQlh5U3pTSzVSWnF4cEwxaTZVTGRwcXRqeVZRNjEzUEg3OXNEejN2YkFUM1ZtMG9mb2RhNnV2dlpXV0dIX1ZkcTU1NXZBQXI2RXdUU3NuVUJuMGdvT1duSzZpMnJrTUpDMDBJVXk5dDcwWGg4aFppVXJhOThnMTFTbDBqX2xDcExPbDg0cFlhWHNUVXlNYUEtV2NC?oc=5",
+    "source_date": "2026-10-22",
+    "source_title": "Mukiele and Xhaka both start as Le Bris makes six Sunderland changes for Lech Poznan - The Northern Echo"
+   },
+   {
+    "player_id": 533,
+    "name": "Nordi Mukiele",
+    "club": "Sunderland",
+    "status": "expected_to_start",
+    "start_chance": 100,
+    "reason": "Mukiele and Xhaka both start as Le Bris makes six Sunderland changes",
+    "source_url": "https://news.google.com/rss/articles/CBMioAFBVV95cUxObVNNblpUQlh5U3pTSzVSWnF4cEwxaTZVTGRwcXRqeVZRNjEzUEg3OXNEejN2YkFUM1ZtMG9mb2RhNnV2dlpXV0dIX1ZkcTU1NXZBQXI2RXdUU3NuVUJuMGdvT1duSzZpMnJrTUpDMDBJVXk5dDcwWGg4aFppVXJhOThnMTFTbDBqX2xDcExPbDg0cFlhWHNUVXlNYUEtV2NC?oc=5",
+    "source_date": "2026-10-22",
+    "source_title": "Mukiele and Xhaka both start as Le Bris makes six Sunderland changes for Lech Poznan - The Northern Echo"
+   }
+  ]
  }
 ]
