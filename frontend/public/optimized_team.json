@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-22T20:34:26.939264+00:00",
+  "generated_at": "2026-10-23T00:01:45.658505+00:00",
   "gameweek": 8,
   "deadline": "2026-10-23T17:30:00Z",
   "horizon_gws": 6,
@@ -1327,13 +1327,13 @@
           {
             "chip": "freehit",
             "gameweek": 14,
-            "value": 6.8,
+            "value": 7.0,
             "player": null,
             "firm": false,
             "now": false
           }
         ],
-        "total": 30.9,
+        "total": 31.1,
         "weeks": [
           {
             "gameweek": 8,
@@ -1418,7 +1418,7 @@
             "3xc": 5.3,
             "3xc_player": "Haaland",
             "bboost": 13.1,
-            "freehit": 6.8,
+            "freehit": 7.0,
             "xi_points": 53.5,
             "firm": false,
             "fixtures": {
@@ -1457,7 +1457,7 @@
             "3xc": 5.5,
             "3xc_player": "Haaland",
             "bboost": 14.3,
-            "freehit": 1.1,
+            "freehit": 1.2,
             "xi_points": 57.0,
             "firm": false,
             "fixtures": {
@@ -1499,7 +1499,7 @@
   },
   "team_news": {
     "enabled": true,
-    "fetched_at": "2026-10-22T20:34:17.576431+00:00",
+    "fetched_at": "2026-10-23T00:01:35.307433+00:00",
     "model": "gemini-3.5-flash-lite",
     "items": [
       {
@@ -1508,7 +1508,7 @@
         "club": "Man City",
         "status": "out",
         "start_chance": 0,
-        "reason": "Semenyo is out for the Aston Villa match",
+        "reason": "Semenyo Out",
         "source_url": "https://news.google.com/rss/articles/CBMieEFVX3lxTE5pX1d0UHZoUmVnLVVHbTlNTWhYQy1lMC1UMmpUVGx4Y0dacVkzREdLM2dqMmY2c2QzS1Fsdng5TnB3X185ODZMMUpBdjlaOWkwWnBCV1dnalczdmZ4S00yUGZVZEVSU3A4X005N0h3dDNyWlZQZkY4dw?oc=5",
         "source_date": "2026-10-22",
         "source_title": "Aston Villa vs Man City Prediction: Haaland Fit, Semenyo, Wan-Bissaka Out - The False 9"
@@ -1519,10 +1519,10 @@
         "club": "Man City",
         "status": "expected_to_start",
         "start_chance": 100,
-        "reason": "Maresca says Haaland is 100% available for Villa trip",
-        "source_url": "https://news.google.com/rss/articles/CBMingFBVV95cUxPamtuOHBqejVRWWx5Q1ZwbHppdEJ6eWVCeEtHSmZDaWNlM0hiOF9zdVlvQzN6UHd2M0w3SklBYW5pNnlZUTAzR01wa09CbHBfOFZoaXl5MWRhZ3VuN1h1MW11Z21SWjE3Q3M3eGlBMFZ3N0VYQS02WGNhbTFIOEJJa2RwM09ndFNrT1pzZkhDc2JTYnlURmJEMzJ1VUJWUQ?oc=5",
+        "reason": "Haaland is 100 per cent available",
+        "source_url": "https://news.google.com/rss/articles/CBMisAFBVV95cUxQMjI3aGI1ZWRTem9BS3hFb19lSUk1U3hXOUE5cjJRUHpjdkhreFE3VjVac2QyYVMwcXNpSVZMczBpQ0xoMXlNNUV1TDNBVTJWSXd2NnNZVHUySWN2bTJ6SVpxTjBMLXQzR21pejJodHh2QTBBNXFGSjlKWTIwWkl4UXZWQkhWOGpwSW4wR1VRNnF5dDFYS1I4M2t6eUVyVjJPQUh5dkl3ZVhlS3JYbjVYNw?oc=5",
         "source_date": "2026-10-22",
-        "source_title": "Maresca says Haaland is 100% available for Villa trip - Manchester City FC"
+        "source_title": "Haaland '100 per cent available', Manzambi doubt - Villa vs Man City commentary - talkSPORT"
       },
       {
         "player_id": 544,
@@ -1530,7 +1530,7 @@
         "club": "Sunderland",
         "status": "expected_to_start",
         "start_chance": 100,
-        "reason": "Headline states Granit Xhaka starts for Sunderland.",
+        "reason": "Mukiele and Xhaka both start as Le Bris makes six Sunderland changes",
         "source_url": "https://news.google.com/rss/articles/CBMioAFBVV95cUxObVNNblpUQlh5U3pTSzVSWnF4cEwxaTZVTGRwcXRqeVZRNjEzUEg3OXNEejN2YkFUM1ZtMG9mb2RhNnV2dlpXV0dIX1ZkcTU1NXZBQXI2RXdUU3NuVUJuMGdvT1duSzZpMnJrTUpDMDBJVXk5dDcwWGg4aFppVXJhOThnMTFTbDBqX2xDcExPbDg0cFlhWHNUVXlNYUEtV2NC?oc=5",
         "source_date": "2026-10-22",
         "source_title": "Mukiele and Xhaka both start as Le Bris makes six Sunderland changes for Lech Poznan - The Northern Echo"
@@ -1541,7 +1541,7 @@
         "club": "Sunderland",
         "status": "expected_to_start",
         "start_chance": 100,
-        "reason": "Headline states Nordi Mukiele starts for Sunderland.",
+        "reason": "Mukiele and Xhaka both start as Le Bris makes six Sunderland changes",
         "source_url": "https://news.google.com/rss/articles/CBMioAFBVV95cUxObVNNblpUQlh5U3pTSzVSWnF4cEwxaTZVTGRwcXRqeVZRNjEzUEg3OXNEejN2YkFUM1ZtMG9mb2RhNnV2dlpXV0dIX1ZkcTU1NXZBQXI2RXdUU3NuVUJuMGdvT1duSzZpMnJrTUpDMDBJVXk5dDcwWGg4aFppVXJhOThnMTFTbDBqX2xDcExPbDg0cFlhWHNUVXlNYUEtV2NC?oc=5",
         "source_date": "2026-10-22",
         "source_title": "Mukiele and Xhaka both start as Le Bris makes six Sunderland changes for Lech Poznan - The Northern Echo"
@@ -1551,8 +1551,8 @@
         "name": "Bart Verbruggen",
         "club": "Brighton",
         "status": "no_news",
-        "start_chance": null,
-        "reason": "no_news",
+        "start_chance": 100,
+        "reason": "",
         "source_url": null,
         "source_date": null,
         "source_title": null
@@ -1562,8 +1562,8 @@
         "name": "David Raya Mart\u00edn",
         "club": "Arsenal",
         "status": "no_news",
-        "start_chance": null,
-        "reason": "no_news",
+        "start_chance": 100,
+        "reason": "",
         "source_url": null,
         "source_date": null,
         "source_title": null
@@ -1573,8 +1573,8 @@
         "name": "Ezri Konsa Ngoyo",
         "club": "Arsenal",
         "status": "no_news",
-        "start_chance": null,
-        "reason": "no_news",
+        "start_chance": 100,
+        "reason": "",
         "source_url": null,
         "source_date": null,
         "source_title": null
@@ -1585,7 +1585,7 @@
         "club": "Newcastle",
         "status": "no_news",
         "start_chance": null,
-        "reason": "None",
+        "reason": "No news in headlines.",
         "source_url": null,
         "source_date": null,
         "source_title": null
@@ -1595,8 +1595,8 @@
         "name": "Igor Thiago Nascimento Rodrigues",
         "club": "Brentford",
         "status": "no_news",
-        "start_chance": null,
-        "reason": "no_news",
+        "start_chance": 100,
+        "reason": "",
         "source_url": null,
         "source_date": null,
         "source_title": null
@@ -1606,8 +1606,8 @@
         "name": "Morgan Rogers",
         "club": "Chelsea",
         "status": "no_news",
-        "start_chance": null,
-        "reason": "No news in the headlines regarding Morgan Rogers",
+        "start_chance": 100,
+        "reason": "Mentioned in FPL transfer context, but no injury or rotation news reported.",
         "source_url": null,
         "source_date": null,
         "source_title": null
@@ -1618,7 +1618,7 @@
         "club": "Nott'm Forest",
         "status": "no_news",
         "start_chance": null,
-        "reason": "None",
+        "reason": "No news in headlines.",
         "source_url": null,
         "source_date": null,
         "source_title": null
@@ -1628,8 +1628,8 @@
         "name": "Rayan Cherki",
         "club": "Man City",
         "status": "no_news",
-        "start_chance": null,
-        "reason": "Manager praised Cherki's position but no injury or status update given",
+        "start_chance": 100,
+        "reason": "Manager Maresca praised Cherki's position, with no injury or fitness concerns.",
         "source_url": null,
         "source_date": null,
         "source_title": null
@@ -1639,8 +1639,8 @@
         "name": "Riccardo Calafiori",
         "club": "Arsenal",
         "status": "no_news",
-        "start_chance": null,
-        "reason": "no_news",
+        "start_chance": 100,
+        "reason": "",
         "source_url": null,
         "source_date": null,
         "source_title": null
@@ -1651,7 +1651,7 @@
         "club": "Newcastle",
         "status": "no_news",
         "start_chance": null,
-        "reason": "None",
+        "reason": "No news in headlines.",
         "source_url": null,
         "source_date": null,
         "source_title": null
@@ -1662,7 +1662,7 @@
         "club": "Spurs",
         "status": "no_news",
         "start_chance": null,
-        "reason": "None",
+        "reason": "No news in headlines.",
         "source_url": null,
         "source_date": null,
         "source_title": null
@@ -1672,8 +1672,8 @@
         "name": "Thierno Barry",
         "club": "Everton",
         "status": "no_news",
-        "start_chance": null,
-        "reason": "No news in the headlines regarding Thierno Barry",
+        "start_chance": 100,
+        "reason": "No specific team news or fitness updates provided in the headlines.",
         "source_url": null,
         "source_date": null,
         "source_title": null
@@ -1715,7 +1715,7 @@
     }
   },
   "other_matches": {
-    "from": "2026-10-22T20:34:26.822781",
+    "from": "2026-10-23T00:01:45.599323",
     "to": "2026-12-05T11:00:00",
     "clubs": [
       {
