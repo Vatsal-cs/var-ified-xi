@@ -1,12 +1,12 @@
 {
-  "generated_at": "2026-10-23T05:57:05.146675+00:00",
+  "generated_at": "2026-10-23T14:16:38.981551+00:00",
   "gameweek": 8,
   "deadline": "2026-10-23T17:30:00Z",
   "horizon_gws": 6,
   "mode": "transfer_plan",
-  "budget_used_m": 98.1,
+  "budget_used_m": 100.4,
   "budget_total_m": 100.0,
-  "predicted_total_points": 54.63,
+  "predicted_total_points": 55.57,
   "starting_xi": [
     {
       "player_id": 1,
@@ -87,7 +87,7 @@
       },
       "start_probability": 0.86,
       "is_captain": false,
-      "is_vice_captain": true,
+      "is_vice_captain": false,
       "dist": {
         "mean": 4.56,
         "p10": 1,
@@ -198,14 +198,14 @@
       "team": "Arsenal",
       "now_cost_m": 4.6,
       "predicted_points": 4.43,
-      "horizon_points": 16.66,
+      "horizon_points": 16.67,
       "xp_by_gw": {
         "8": 4.43,
-        "9": 3.1,
+        "9": 3.11,
         "10": 4.69,
         "11": 4.29,
         "12": 3.3,
-        "13": 4.16
+        "13": 4.17
       },
       "start_probability": 0.87,
       "is_captain": false,
@@ -264,7 +264,7 @@
         "8": 4.53,
         "9": 3.87,
         "10": 3.09,
-        "11": 3.74,
+        "11": 3.75,
         "12": 4.08,
         "13": 4.53
       },
@@ -375,6 +375,67 @@
       }
     },
     {
+      "player_id": 40,
+      "name": "Rogers",
+      "position": "MID",
+      "team": "Chelsea",
+      "now_cost_m": 8.0,
+      "predicted_points": 5.09,
+      "horizon_points": 19.27,
+      "xp_by_gw": {
+        "8": 5.09,
+        "9": 4.37,
+        "10": 4.36,
+        "11": 4.96,
+        "12": 4.15,
+        "13": 4.73
+      },
+      "start_probability": 0.94,
+      "is_captain": false,
+      "is_vice_captain": true,
+      "dist": {
+        "mean": 4.72,
+        "p10": 1,
+        "p90": 10,
+        "p_blank": 0.416,
+        "p_return": 0.31,
+        "p_haul": 0.14,
+        "pmf": [
+          0.0351,
+          0.0742,
+          0.3064,
+          0.1808,
+          0.0184,
+          0.0755,
+          0.0334,
+          0.0409,
+          0.061,
+          0.0343,
+          0.0433,
+          0.0176,
+          0.0205,
+          0.0206,
+          0.0117,
+          0.006,
+          0.0087,
+          0.0,
+          0.0029,
+          0.0001,
+          0.0085,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      }
+    },
+    {
       "player_id": 544,
       "name": "Xhaka",
       "position": "MID",
@@ -425,67 +486,6 @@
           0.0,
           0.0,
           0.0006,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0
-        ]
-      }
-    },
-    {
-      "player_id": 542,
-      "name": "E.Le F\u00e9e",
-      "position": "MID",
-      "team": "Sunderland",
-      "now_cost_m": 5.7,
-      "predicted_points": 4.15,
-      "horizon_points": 16.9,
-      "xp_by_gw": {
-        "8": 4.15,
-        "9": 4.82,
-        "10": 3.74,
-        "11": 3.6,
-        "12": 4.48,
-        "13": 3.15
-      },
-      "start_probability": 0.88,
-      "is_captain": false,
-      "is_vice_captain": false,
-      "dist": {
-        "mean": 3.93,
-        "p10": 1,
-        "p90": 9,
-        "p_blank": 0.465,
-        "p_return": 0.242,
-        "p_haul": 0.087,
-        "pmf": [
-          0.0694,
-          0.1024,
-          0.2931,
-          0.184,
-          0.0455,
-          0.0631,
-          0.05,
-          0.0307,
-          0.0419,
-          0.0327,
-          0.0306,
-          0.0168,
-          0.0121,
-          0.0107,
-          0.0034,
-          0.0063,
-          0.0032,
-          0.0,
-          0.0022,
-          0.0,
-          0.0014,
-          0.0,
-          0.0,
-          0.0005,
           0.0,
           0.0,
           0.0,
@@ -871,16 +871,16 @@
       "team": "Spurs",
       "now_cost_m": 6.5,
       "predicted_points": 0.0,
-      "horizon_points": 0.9,
+      "horizon_points": 0.89,
       "xp_by_gw": {
         "8": 0.0,
         "9": 0.28,
         "10": 0.26,
-        "11": 0.33,
-        "12": 0.28,
+        "11": 0.32,
+        "12": 0.27,
         "13": 0.29
       },
-      "start_probability": 0.67,
+      "start_probability": 0.66,
       "is_captain": false,
       "is_vice_captain": false,
       "dist": {
@@ -927,7 +927,7 @@
     }
   ],
   "captain_id": 411,
-  "vice_captain_id": 8,
+  "vice_captain_id": 40,
   "chip_watch": {
     "checked_through_gw": 38,
     "next_double_gw": null,
@@ -1253,6 +1253,15 @@
       "beats_captain": null
     },
     {
+      "player_id": 40,
+      "name": "Rogers",
+      "projected": 5.09,
+      "p_haul": 0.14,
+      "p10": 1,
+      "p90": 10,
+      "beats_captain": 0.52
+    },
+    {
       "player_id": 8,
       "name": "Calafiori",
       "projected": 5.0,
@@ -1269,15 +1278,6 @@
       "p10": 1,
       "p90": 12,
       "beats_captain": 0.485
-    },
-    {
-      "player_id": 1,
-      "name": "Raya",
-      "projected": 4.75,
-      "p_haul": 0.049,
-      "p10": 1,
-      "p90": 9,
-      "beats_captain": 0.47
     }
   ],
   "odds_calibration": {
@@ -1341,7 +1341,7 @@
             "3xc_player": "Haaland",
             "bboost": 8.8,
             "freehit": 1.4,
-            "xi_points": 54.6,
+            "xi_points": 55.6,
             "firm": true,
             "fixtures": {
               "doubles": 0,
@@ -1366,7 +1366,7 @@
             "3xc": 6.1,
             "3xc_player": "Haaland",
             "bboost": 13.7,
-            "freehit": 3.4,
+            "freehit": 3.2,
             "xi_points": 55.9,
             "firm": true,
             "fixtures": {
@@ -1405,7 +1405,7 @@
             "3xc": 6.3,
             "3xc_player": "Haaland",
             "bboost": 13.0,
-            "freehit": 1.6,
+            "freehit": 1.5,
             "xi_points": 55.8,
             "firm": true,
             "fixtures": {
@@ -1483,7 +1483,7 @@
             "3xc": 7.4,
             "3xc_player": "Haaland",
             "bboost": 15.5,
-            "freehit": 1.4,
+            "freehit": 1.1,
             "xi_points": 63.2,
             "firm": false,
             "fixtures": {
@@ -1499,7 +1499,7 @@
   },
   "team_news": {
     "enabled": true,
-    "fetched_at": "2026-10-23T04:06:08.051188+00:00",
+    "fetched_at": "2026-10-23T14:16:24.770137+00:00",
     "model": "gemini-3.5-flash-lite",
     "items": [
       {
@@ -1508,21 +1508,10 @@
         "club": "Man City",
         "status": "out",
         "start_chance": 0,
-        "reason": "Out for the match against Aston Villa.",
-        "source_url": "https://news.google.com/rss/articles/CBMieEFVX3lxTE5pX1d0UHZoUmVnLVVHbTlNTWhYQy1lMC1UMmpUVGx4Y0dacVkzREdLM2dqMmY2c2QzS1Fsdng5TnB3X185ODZMMUpBdjlaOWkwWnBCV1dnalczdmZ4S00yUGZVZEVSU3A4X005N0h3dDNyWlZQZkY4dw?oc=5",
+        "reason": "Out according to Manchester City injury update return dates.",
+        "source_url": "https://news.google.com/rss/articles/CBMivAFBVV95cUxQUjhyRWlyX2Q3Rl9kNGJjaGZRMVVWblVBRFZSM2k0SDNsVzZyamQyMDJDekRHbUhGOURsNk9qMnNNYVEtRWpOZ1NQdjNfX0VoZVlITDZOZnVpVlB3Y1V6Y1laUGtRbW55OTY4RTZmSGg1ODhxT1o1NnlXdFdwVXRKWHNjdERDZjdwWXFHb2hVbG5UTnpRdmdnN0hObGgwbTNKemxueGI1c1BNUWhZUVBVeERublpKTC1ycWRyeQ?oc=5",
         "source_date": "2026-10-22",
-        "source_title": "Aston Villa vs Man City Prediction: Haaland Fit, Semenyo, Wan-Bissaka Out - The False 9"
-      },
-      {
-        "player_id": 40,
-        "name": "Morgan Rogers",
-        "club": "Chelsea",
-        "status": "doubtful",
-        "start_chance": 50,
-        "reason": "Over 160,000 buys before Chelsea host Spurs, but no direct injury or fitness status mentioned in headline text.",
-        "source_url": "https://news.google.com/rss/articles/CBMiXkFVX3lxTE45a2N3Y0o5V3BJNV9YQmZHRmd1UnpCTDNwa0o3VDJYOFdLQ0dqRGxTRDcybkJQMzN6U2ZaSUpUQk5nbkE1NXUwZW5NaWxqa0tTWWM0enVmZDlZNEFUeFE?oc=5",
-        "source_date": "2026-10-22",
-        "source_title": "Rogers FPL GW8: Over 160,000 Buys Before Chelsea Host Spurs - The False 9"
+        "source_title": "Man City injury update: Semenyo, Nunes, O'Reilly latest return dates - London Evening Standard"
       },
       {
         "player_id": 411,
@@ -1530,7 +1519,7 @@
         "club": "Man City",
         "status": "expected_to_start",
         "start_chance": 100,
-        "reason": "Confirmed 100% available by the manager for the Villa trip.",
+        "reason": "Enzo Maresca confirms Erling Haaland is 100 per cent available for Villa trip.",
         "source_url": "https://news.google.com/rss/articles/CBMingFBVV95cUxPamtuOHBqejVRWWx5Q1ZwbHppdEJ6eWVCeEtHSmZDaWNlM0hiOF9zdVlvQzN6UHd2M0w3SklBYW5pNnlZUTAzR01wa09CbHBfOFZoaXl5MWRhZ3VuN1h1MW11Z21SWjE3Q3M3eGlBMFZ3N0VYQS02WGNhbTFIOEJJa2RwM09ndFNrT1pzZkhDc2JTYnlURmJEMzJ1VUJWUQ?oc=5",
         "source_date": "2026-10-22",
         "source_title": "Maresca says Haaland is 100% available for Villa trip - Manchester City FC"
@@ -1541,7 +1530,7 @@
         "club": "Sunderland",
         "status": "expected_to_start",
         "start_chance": 100,
-        "reason": "Mukiele and Xhaka both start as Le Bris makes six Sunderland changes",
+        "reason": "Started in the midweek fixture against Lech Poznan.",
         "source_url": "https://news.google.com/rss/articles/CBMioAFBVV95cUxObVNNblpUQlh5U3pTSzVSWnF4cEwxaTZVTGRwcXRqeVZRNjEzUEg3OXNEejN2YkFUM1ZtMG9mb2RhNnV2dlpXV0dIX1ZkcTU1NXZBQXI2RXdUU3NuVUJuMGdvT1duSzZpMnJrTUpDMDBJVXk5dDcwWGg4aFppVXJhOThnMTFTbDBqX2xDcExPbDg0cFlhWHNUVXlNYUEtV2NC?oc=5",
         "source_date": "2026-10-22",
         "source_title": "Mukiele and Xhaka both start as Le Bris makes six Sunderland changes for Lech Poznan - The Northern Echo"
@@ -1552,29 +1541,18 @@
         "club": "Sunderland",
         "status": "expected_to_start",
         "start_chance": 100,
-        "reason": "Mukiele and Xhaka both start as Le Bris makes six Sunderland changes",
+        "reason": "Started in the midweek fixture against Lech Poznan.",
         "source_url": "https://news.google.com/rss/articles/CBMioAFBVV95cUxObVNNblpUQlh5U3pTSzVSWnF4cEwxaTZVTGRwcXRqeVZRNjEzUEg3OXNEejN2YkFUM1ZtMG9mb2RhNnV2dlpXV0dIX1ZkcTU1NXZBQXI2RXdUU3NuVUJuMGdvT1duSzZpMnJrTUpDMDBJVXk5dDcwWGg4aFppVXJhOThnMTFTbDBqX2xDcExPbDg0cFlhWHNUVXlNYUEtV2NC?oc=5",
         "source_date": "2026-10-22",
         "source_title": "Mukiele and Xhaka both start as Le Bris makes six Sunderland changes for Lech Poznan - The Northern Echo"
-      },
-      {
-        "player_id": 399,
-        "name": "Rayan Cherki",
-        "club": "Man City",
-        "status": "expected_to_start",
-        "start_chance": 100,
-        "reason": "Manager Enzo Maresca praised Cherki as one of the best in the right position.",
-        "source_url": "https://news.google.com/rss/articles/CBMingFBVV95cUxQd2FoT2k5M1NWRUszX1RKZkJVcjNtdGZtTXBYYmdHX0hBUWVoUWowWWczVUIzWWExcERiMU0tX2U5RTVNN2JQYjdJUTJZSXYxRHo0czRudTVoNWtqVjNVYVJFT1FvU283TVBvckloUmpzcnR6dHpMUDItaElFZHpQTWRPeU5tVGl5SGhQUlZsNUNfcU52Wi1UUWhtVTdlQQ?oc=5",
-        "source_date": "2026-10-22",
-        "source_title": "Cherki is one of the best in the right position, says Maresca - Manchester City FC"
       },
       {
         "player_id": 109,
         "name": "Bart Verbruggen",
         "club": "Brighton",
         "status": "no_news",
-        "start_chance": null,
-        "reason": "No news in headlines regarding injury or status.",
+        "start_chance": 100,
+        "reason": "No relevant news found in headlines.",
         "source_url": null,
         "source_date": null,
         "source_title": null
@@ -1584,8 +1562,8 @@
         "name": "David Raya Mart\u00edn",
         "club": "Arsenal",
         "status": "no_news",
-        "start_chance": null,
-        "reason": "No news in headlines regarding injury or status.",
+        "start_chance": 100,
+        "reason": "No relevant news found in headlines.",
         "source_url": null,
         "source_date": null,
         "source_title": null
@@ -1595,8 +1573,8 @@
         "name": "Ezri Konsa Ngoyo",
         "club": "Arsenal",
         "status": "no_news",
-        "start_chance": null,
-        "reason": "No news in headlines regarding injury or status.",
+        "start_chance": 100,
+        "reason": "No relevant news found in headlines.",
         "source_url": null,
         "source_date": null,
         "source_title": null
@@ -1607,7 +1585,7 @@
         "club": "Newcastle",
         "status": "no_news",
         "start_chance": null,
-        "reason": "No relevant news found in headlines",
+        "reason": "None",
         "source_url": null,
         "source_date": null,
         "source_title": null
@@ -1617,8 +1595,19 @@
         "name": "Igor Thiago Nascimento Rodrigues",
         "club": "Brentford",
         "status": "no_news",
+        "start_chance": 100,
+        "reason": "No relevant news found in headlines.",
+        "source_url": null,
+        "source_date": null,
+        "source_title": null
+      },
+      {
+        "player_id": 40,
+        "name": "Morgan Rogers",
+        "club": "Chelsea",
+        "status": "no_news",
         "start_chance": null,
-        "reason": "No news in headlines regarding injury or status.",
+        "reason": "No news in the provided headlines.",
         "source_url": null,
         "source_date": null,
         "source_title": null
@@ -1629,7 +1618,18 @@
         "club": "Nott'm Forest",
         "status": "no_news",
         "start_chance": null,
-        "reason": "No relevant news found in headlines",
+        "reason": "None",
+        "source_url": null,
+        "source_date": null,
+        "source_title": null
+      },
+      {
+        "player_id": 399,
+        "name": "Rayan Cherki",
+        "club": "Man City",
+        "status": "no_news",
+        "start_chance": null,
+        "reason": "Discussed by Maresca regarding his position, but no injury or fitness status given.",
         "source_url": null,
         "source_date": null,
         "source_title": null
@@ -1639,8 +1639,8 @@
         "name": "Riccardo Calafiori",
         "club": "Arsenal",
         "status": "no_news",
-        "start_chance": null,
-        "reason": "No news in headlines regarding injury or status.",
+        "start_chance": 100,
+        "reason": "No relevant news found in headlines.",
         "source_url": null,
         "source_date": null,
         "source_title": null
@@ -1651,7 +1651,7 @@
         "club": "Newcastle",
         "status": "no_news",
         "start_chance": null,
-        "reason": "No relevant news found in headlines",
+        "reason": "None",
         "source_url": null,
         "source_date": null,
         "source_title": null
@@ -1662,7 +1662,7 @@
         "club": "Spurs",
         "status": "no_news",
         "start_chance": null,
-        "reason": "No relevant news found in headlines",
+        "reason": "None",
         "source_url": null,
         "source_date": null,
         "source_title": null
@@ -1673,20 +1673,13 @@
         "club": "Everton",
         "status": "no_news",
         "start_chance": null,
-        "reason": "None",
+        "reason": "No news in the provided headlines.",
         "source_url": null,
         "source_date": null,
         "source_title": null
       }
     ],
-    "applied": [
-      {
-        "player_id": 40,
-        "status": "doubtful",
-        "chance": 50,
-        "fpl_chance": 100
-      }
-    ],
+    "applied": [],
     "errors": 0,
     "record": {
       "gameweeks": [
@@ -1722,7 +1715,7 @@
     }
   },
   "other_matches": {
-    "from": "2026-10-23T05:57:05.065905",
+    "from": "2026-10-23T14:16:38.909448",
     "to": "2026-12-05T11:00:00",
     "clubs": [
       {
@@ -1798,6 +1791,21 @@
         ],
         "players": [
           "Verbruggen"
+        ]
+      },
+      {
+        "club": "Chelsea",
+        "matches": [
+          {
+            "date": "2026-10-28T20:00:00+00:00",
+            "competition": "League Cup",
+            "opponent": "Liverpool",
+            "home": false,
+            "far": false
+          }
+        ],
+        "players": [
+          "Rogers"
         ]
       },
       {
@@ -1889,8 +1897,7 @@
         ],
         "players": [
           "Mukiele",
-          "Xhaka",
-          "E.Le F\u00e9e"
+          "Xhaka"
         ]
       }
     ],
@@ -2043,22 +2050,22 @@
         ]
       },
       {
-        "player_id": 542,
-        "name": "E.Le F\u00e9e",
-        "nation": "France",
+        "player_id": 40,
+        "name": "Rogers",
+        "nation": "England",
         "matches": [
           {
             "date": "2026-11-12T19:45:00+00:00",
             "competition": "Nations League",
-            "opponent": "Italy",
-            "home": false,
+            "opponent": "Croatia",
+            "home": true,
             "far": false
           },
           {
             "date": "2026-11-15T19:45:00+00:00",
             "competition": "Nations League",
-            "opponent": "T\u00fcrkiye",
-            "home": true,
+            "opponent": "Spain",
+            "home": false,
             "far": false
           }
         ]
@@ -2212,18 +2219,64 @@
       }
     ]
   },
+  "pick_checks": [
+    {
+      "player_id": 40,
+      "name": "Rogers",
+      "flags": [
+        "his price adds +0.8 to his projection"
+      ],
+      "wildcard": false,
+      "transfer": true,
+      "alternatives": [
+        {
+          "player_id": 542,
+          "name": "E.Le F\u00e9e",
+          "team": "SUN",
+          "cost_m": 5.7,
+          "next": 4.2,
+          "six_weeks": 16.9,
+          "ppg": 3.4,
+          "vs": -2.4,
+          "flags": []
+        },
+        {
+          "player_id": 124,
+          "name": "Gro\u00df",
+          "team": "BHA",
+          "cost_m": 6.2,
+          "next": 3.6,
+          "six_weeks": 16.7,
+          "ppg": 8.3,
+          "vs": -2.5,
+          "flags": []
+        },
+        {
+          "player_id": 455,
+          "name": "Tonali",
+          "team": "TOT",
+          "cost_m": 5.3,
+          "next": 3.1,
+          "six_weeks": 15.9,
+          "ppg": 3.6,
+          "vs": -3.3,
+          "flags": []
+        }
+      ]
+    }
+  ],
   "transfer_plan": {
     "weeks": [
       {
         "gameweek": 8,
         "transfers_in": [
           {
-            "player_id": 542,
-            "name": "E.Le F\u00e9e",
-            "cost_m": 5.7,
-            "predicted_points": 4.15,
+            "player_id": 40,
+            "name": "Rogers",
+            "cost_m": 8.0,
+            "predicted_points": 5.09,
             "position": "MID",
-            "team": "Sunderland"
+            "team": "Chelsea"
           }
         ],
         "transfers_out": [
@@ -2240,20 +2293,20 @@
         "free_transfers": 1,
         "hits": 0,
         "hit_cost": 0,
-        "bank_m": 3.0,
-        "predicted_points": 54.63,
+        "bank_m": 0.7,
+        "predicted_points": 55.57,
         "captain_id": 411
       },
       {
         "gameweek": 9,
         "transfers_in": [
           {
-            "player_id": 40,
-            "name": "Rogers",
-            "cost_m": 8.0,
-            "predicted_points": 4.37,
+            "player_id": 542,
+            "name": "E.Le F\u00e9e",
+            "cost_m": 5.7,
+            "predicted_points": 4.82,
             "position": "MID",
-            "team": "Chelsea"
+            "team": "Sunderland"
           }
         ],
         "transfers_out": [
@@ -2391,7 +2444,7 @@
         "hits": 0,
         "hit_cost": 0,
         "bank_m": 0.3,
-        "predicted_points": 55.83,
+        "predicted_points": 55.84,
         "captain_id": 411
       }
     ]
