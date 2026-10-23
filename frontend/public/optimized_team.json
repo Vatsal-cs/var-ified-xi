@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-23T14:16:38.981551+00:00",
+  "generated_at": "2026-10-23T16:14:32.317450+00:00",
   "gameweek": 8,
   "deadline": "2026-10-23T17:30:00Z",
   "horizon_gws": 6,
@@ -748,40 +748,40 @@
       "position": "FWD",
       "team": "Everton",
       "now_cost_m": 5.7,
-      "predicted_points": 2.9,
-      "horizon_points": 15.91,
+      "predicted_points": 2.89,
+      "horizon_points": 15.86,
       "xp_by_gw": {
-        "8": 2.9,
+        "8": 2.89,
         "9": 3.9,
-        "10": 4.68,
-        "11": 3.86,
-        "12": 4.2,
-        "13": 3.94
+        "10": 4.65,
+        "11": 3.85,
+        "12": 4.19,
+        "13": 3.92
       },
       "start_probability": 0.9,
       "is_captain": false,
       "is_vice_captain": false,
       "dist": {
-        "mean": 3.26,
+        "mean": 3.25,
         "p10": 1,
         "p90": 8,
-        "p_blank": 0.719,
-        "p_return": 0.203,
+        "p_blank": 0.72,
+        "p_return": 0.202,
         "p_haul": 0.029,
         "pmf": [
-          0.0559,
-          0.1283,
-          0.5349,
+          0.0569,
+          0.1285,
+          0.5344,
           0.0001,
           0.0171,
-          0.0612,
-          0.0302,
-          0.0463,
-          0.0466,
-          0.0503,
+          0.0611,
+          0.03,
+          0.046,
+          0.0467,
+          0.0502,
           0.0001,
-          0.0131,
-          0.0098,
+          0.013,
+          0.0097,
           0.0029,
           0.0,
           0.0,
@@ -1340,7 +1340,7 @@
             "3xc": 5.3,
             "3xc_player": "Haaland",
             "bboost": 8.8,
-            "freehit": 1.4,
+            "freehit": 1.5,
             "xi_points": 55.6,
             "firm": true,
             "fixtures": {
@@ -1405,7 +1405,7 @@
             "3xc": 6.3,
             "3xc_player": "Haaland",
             "bboost": 13.0,
-            "freehit": 1.5,
+            "freehit": 1.6,
             "xi_points": 55.8,
             "firm": true,
             "fixtures": {
@@ -1470,7 +1470,7 @@
             "3xc": 6.4,
             "3xc_player": "Haaland",
             "bboost": 13.1,
-            "freehit": 3.6,
+            "freehit": 3.7,
             "xi_points": 55.7,
             "firm": false,
             "fixtures": {
@@ -1715,7 +1715,7 @@
     }
   },
   "other_matches": {
-    "from": "2026-10-23T14:16:38.909448",
+    "from": "2026-10-23T16:14:32.276761",
     "to": "2026-12-05T11:00:00",
     "clubs": [
       {
@@ -2354,7 +2354,7 @@
         "hits": 0,
         "hit_cost": 0,
         "bank_m": 1.4,
-        "predicted_points": 55.89,
+        "predicted_points": 55.86,
         "captain_id": 411
       },
       {
@@ -2384,7 +2384,7 @@
         "hits": 0,
         "hit_cost": 0,
         "bank_m": 1.1,
-        "predicted_points": 59.17,
+        "predicted_points": 59.16,
         "captain_id": 411
       },
       {
@@ -2414,7 +2414,7 @@
         "hits": 0,
         "hit_cost": 0,
         "bank_m": 0.0,
-        "predicted_points": 51.67,
+        "predicted_points": 51.66,
         "captain_id": 544
       },
       {
@@ -2444,7 +2444,7 @@
         "hits": 0,
         "hit_cost": 0,
         "bank_m": 0.3,
-        "predicted_points": 55.84,
+        "predicted_points": 55.82,
         "captain_id": 411
       }
     ]
