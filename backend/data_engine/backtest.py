@@ -542,6 +542,15 @@ VARIANTS = {
         predict=_bundle_predict,
         context=_ownership_ctx,
     ),
+    "season_stage": Variant(
+        name="season_stage",
+        description="Production plus matches_played (fixtures so far this season), so the "
+                    "model can tell a three-match average from a one-match one "
+                    "(research/2026-10-season-stage)",
+        fit=lambda df: train_model.train_models(df, save=False),
+        predict=_bundle_predict,
+        context=lambda: _extra_features(["matches_played"]),
+    ),
     "transfer_flow": Variant(
         name="transfer_flow",
         description="NO DETECTABLE EFFECT (Oct 2026, 5 seeds): -47 [-127, +35], behind in both "
