@@ -1,5 +1,5 @@
 # Planner horizon decay 0.95 — pre-registration
-Written 2026-10-26 MDT, before any run.
+Written 2026-10-26 MDT, before any run. Commit ec79f7a.
 
 ## Why
 Against the same model with unlimited transfers (backtest), the
