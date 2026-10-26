@@ -1,0 +1,148 @@
+name: Backtest
+
+# Races model variants over completed seasons (data_engine.backtest), one job
+# per season x seed in parallel, then pools them into one verdict table in the
+# run summary. Manual only: a research job, nothing downstream depends on it.
+#
+# A season trains on the seasons listed before it, so "2024-25 2025-26" runs
+# 2025-26 with --prior-seasons 2024-25, as the research run.sh scripts do.
+on:
+  workflow_dispatch:
+    inputs:
+      seasons:
+        description: "Seasons to replay, space separated"
+        type: string
+        default: "2024-25 2025-26"
+      variants:
+        description: "Variants to race, space separated (include the reference)"
+        type: string
+        default: "production"
+      seeds:
+        description: "Model seeds, space separated"
+        type: string
+        default: "42 7 13 101 2024"
+      reference:
+        description: "Variant the others are paired against"
+        type: string
+        default: "production"
+      extra_args:
+        description: "Further backtest flags, e.g. --bag-size 1 or --lineup"
+        type: string
+        default: "--bag-size 1"
+
+concurrency:
+  group: backtest
+  cancel-in-progress: false
+
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.matrix.outputs.matrix }}
+    steps:
+      - id: matrix
+        env:
+          SEASONS: ${{ inputs.seasons }}
+          SEEDS: ${{ inputs.seeds }}
+        run: |
+          python3 - <<'EOF' >> "$GITHUB_OUTPUT"
+          import json, os
+          seasons = os.environ["SEASONS"].split()
+          seeds = os.environ["SEEDS"].split()
+          include = [{"season": s, "prior": " ".join(seasons[:i]), "seed": seed}
+                     for i, s in enumerate(seasons) for seed in seeds]
+          print("matrix=" + json.dumps({"include": include}))
+          EOF
+
+  backtest:
+    needs: plan
+    runs-on: ubuntu-latest
+    timeout-minutes: 350
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJSON(needs.plan.outputs.matrix) }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: backend/requirements.txt
+
+      - name: Install dependencies
+        working-directory: backend
+        run: pip install -r requirements.txt
+
+      - name: Restore historical data cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            backend/data/raw/historical_*
+            backend/data/raw/availability_*
+          key: fpl-historical-v2
+
+      - name: Run the backtest
+        working-directory: backend
+        env:
+          SEASON: ${{ matrix.season }}
+          PRIOR: ${{ matrix.prior }}
+          SEED: ${{ matrix.seed }}
+          VARIANTS: ${{ inputs.variants }}
+          EXTRA: ${{ inputs.extra_args }}
+        run: |
+          set -o pipefail
+          prior=()
+          [ -n "$PRIOR" ] && prior=(--prior-seasons $PRIOR)
+          python -u -m data_engine.backtest \
+            --seasons "$SEASON" "${prior[@]}" \
+            --variants $VARIANTS \
+            --seeds "$SEED" \
+            $EXTRA \
+            --out "backtest_${SEASON}_s${SEED}.json" \
+            2>&1 | tee backtest.log
+
+      - name: Upload results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: backtest-${{ matrix.season }}-s${{ matrix.seed }}
+          path: |
+            backend/backtest_*.json
+            backend/backtest.log
+          retention-days: 30
+
+  evaluate:
+    needs: backtest
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: backend/requirements.txt
+
+      - name: Install dependencies
+        working-directory: backend
+        run: pip install -r requirements.txt
+
+      - uses: actions/download-artifact@v4
+        with:
+          path: backend/results
+          pattern: backtest-*
+
+      - name: Pool the runs
+        working-directory: backend
+        env:
+          REFERENCE: ${{ inputs.reference }}
+        run: |
+          {
+            echo "## Backtest, pooled"
+            echo ""
+            echo '```'
+            python -m data_engine.evaluation results/*/backtest_*.json --reference "$REFERENCE" 2>&1 | tail -n 30
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
