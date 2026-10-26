@@ -151,6 +151,9 @@ class Policy:
     # Share of a bench player's projection the planner counts. None keeps
     # config.BENCH_WEIGHT.
     bench_weight: float = None
+    # Under the production procedure: ignore hit advice before this
+    # gameweek, when projections rest on a handful of this season's matches.
+    hits_from_gw: int = 0
 
 
 POLICIES = {
@@ -196,6 +199,13 @@ POLICIES = {
         description="the shipping procedure with a hit check margin of 6 (a hit must gain 10)",
         production=True,
         hit_margin=6.0,
+    ),
+    "production_early_nohits": Policy(
+        name="production_early_nohits",
+        description="the shipping procedure, but no hits before GW9: early projections "
+                    "rest on a handful of matches (research/2026-10-early-hits)",
+        production=True,
+        hits_from_gw=9,
     ),
     "production_hm0": Policy(
         name="production_hm0",
@@ -597,7 +607,8 @@ def _plan_week(state: ManagerState, players: pd.DataFrame, per_gw: pd.DataFrame,
         week["captain_id"] = decision["result"]["captain_id"]
         week["vice_captain_id"] = decision["result"]["vice_captain_id"]
         weeks = [week]
-        if decision["hit_week"] is not None and policy.follow_hit_advice:
+        if (decision["hit_week"] is not None and policy.follow_hit_advice
+                and gw >= policy.hits_from_gw):
             hit_week = dict(decision["hit_week"])
             hit_week["captain_id"], hit_week["vice_captain_id"] = planner.pick_captains(
                 hit_week["starting_ids"], captains)
@@ -761,7 +772,8 @@ def _branch_value(pre: ManagerState, weeks: list, per_gw: pd.DataFrame, gw: int,
 
 def simulate(season_df: pd.DataFrame, policies: list, prior_seasons_df=None,
              start_gw: int = DEFAULT_START_GW, stride: int = 1, rules=None,
-             legacy_prices: bool = False, branches: list = None) -> dict:
+             legacy_prices: bool = False, branches: list = None,
+             end_gw: int = None) -> dict:
     """Plays one season through, for every policy, off a shared model.
 
     branches: [(reference policy name, candidate Policy)]. Each gameweek the
@@ -773,7 +785,8 @@ def simulate(season_df: pd.DataFrame, policies: list, prior_seasons_df=None,
     """
     rules = rules or season_rules.SeasonRules(max_free_transfers=config.MAX_FREE_TRANSFERS)
     branches = branches or []
-    rounds = [r for r in sorted(season_df["round"].unique()) if r >= start_gw][::stride]
+    rounds = [r for r in sorted(season_df["round"].unique())
+              if r >= start_gw and (end_gw is None or r <= end_gw)][::stride]
     states = {p.name: ManagerState() for p in policies}
     branch_log = {cand.name: [] for _, cand in branches}
     # Positions for the whole season, so a player who blanks (or leaves the
@@ -978,6 +991,8 @@ def main():
                         default=["production", "production_no_hits", "no_transfers"],
                         help=f"any of: {', '.join(POLICIES)}")
     parser.add_argument("--start-gw", type=int, default=DEFAULT_START_GW)
+    parser.add_argument("--end-gw", type=int, default=None,
+                        help="last gameweek to simulate (default: the season's last)")
     parser.add_argument("--stride", type=int, default=1,
                         help="simulate every Nth gameweek (2 or 3 for a fast look)")
     parser.add_argument("--augment", action="store_true",
@@ -1067,7 +1082,7 @@ def main():
             res, branch_log = simulate(season_df, policies, prior_seasons_df=prior,
                                        start_gw=args.start_gw, stride=args.stride,
                                        rules=rules, legacy_prices=args.legacy_prices,
-                                       branches=branches)
+                                       branches=branches, end_gw=args.end_gw)
             _report(res, policies, title=f"SEASON {season} · seed {seed}")
             for name, r in res.items():
                 runs.append({

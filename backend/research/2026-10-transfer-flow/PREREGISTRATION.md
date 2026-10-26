@@ -1,5 +1,5 @@
 # Transfer flow as a model input — pre-registration
-Written 2026-10-26 MDT, after step 1 and before any backtest run.
+Written 2026-10-26 MDT, after step 1 and before any backtest run. Commit e571380.
 
 Why (2026-27 GW2-8 audit against 50 top-10k managers): the gap was mostly
 which players were owned (−73 points) and captained (−31), Haaland above all.
