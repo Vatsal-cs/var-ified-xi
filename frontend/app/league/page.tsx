@@ -50,7 +50,10 @@ export default function LeaguePage() {
             : []),
           ...(you && above ? [{ label: `Behind ${ordinal(above.rank)}`, value: above.total - you.total }] : []),
           { label: "Managers ahead", value: league.rivals_ahead },
-          { label: "Read after", value: `GW${league.gameweek_read}` },
+          {
+            label: league.final === false ? "Provisional: bonus and autosubs not in yet" : "Read after",
+            value: `GW${league.gameweek_read}`,
+          },
         ]}
       />
       <LeagueView league={league} players={players} />

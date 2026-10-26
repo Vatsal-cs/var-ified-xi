@@ -237,7 +237,7 @@ export default function ThisWeek({ team }: { team: OptimizedTeam }) {
           { label: "Free transfers", value: chip ? "∞" : team.team?.free_transfers ?? "—" },
           { label: "Bank", value: `£${(team.team?.bank_m ?? 0).toFixed(1)}m` },
           league?.your_rank
-            ? { label: "League", value: <>{league.your_rank}<small className="ml-1 font-body text-[14px] font-medium text-ink-400">of {league.league_size}</small></> }
+            ? { label: league.final === false ? "League (provisional)" : "League", value: <>{league.your_rank}<small className="ml-1 font-body text-[14px] font-medium text-ink-400">of {league.league_size}</small></> }
             : { label: "Horizon", value: `${team.horizon_gws} GWs` },
         ]
       : [

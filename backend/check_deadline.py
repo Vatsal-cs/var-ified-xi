@@ -12,7 +12,10 @@ seconds instead of several minutes of CI time.
 It also says yes once right after a gameweek finishes, if the dashboard
 hasn't been refreshed since: the new plan (and the Wildcard check) for next
 week should be waiting the morning after the last match, not a day before the
-next deadline.
+next deadline. And once more when FPL marks that gameweek data_checked (bonus
+points and autosubs added, usually some hours later), if the league table on
+the dashboard was read before then: otherwise it shows provisional standings
+until the next deadline window.
 
 Writes `should_run` and `gameweek` to $GITHUB_OUTPUT for later workflow steps.
 Run it locally too — it prints the same answer to stderr.
@@ -62,6 +65,21 @@ def _finished_since_refresh(bootstrap: dict, now: datetime) -> bool:
     return generated < ended
 
 
+def _standings_confirmed_since_refresh(bootstrap: dict) -> bool:
+    """True if FPL has confirmed the current gameweek's points and the
+    dashboard's league table was read before it did."""
+    current = next((e for e in bootstrap.get("events", []) if e.get("is_current")), None)
+    if current is None or not current.get("data_checked"):
+        return False
+    try:
+        league = json.loads(FRONTEND_JSON_PATH.read_text()).get("league")
+    except (OSError, ValueError):
+        return False
+    if not league:
+        return False
+    return not (league.get("gameweek_read") == current["id"] and league.get("final"))
+
+
 def main() -> int:
     force = os.environ.get("FORCE", "").lower() == "true"
 
@@ -95,8 +113,11 @@ def main() -> int:
 
     after_gameweek = (not force and hours > WINDOW_HOURS
                       and _finished_since_refresh(bootstrap, now))
-    should_run = force or hours <= WINDOW_HOURS or after_gameweek
-    reason = " — a gameweek just finished" if after_gameweek else ""
+    confirmed = (not force and hours > WINDOW_HOURS and not after_gameweek
+                 and _standings_confirmed_since_refresh(bootstrap))
+    should_run = force or hours <= WINDOW_HOURS or after_gameweek or confirmed
+    reason = (" — a gameweek just finished" if after_gameweek
+              else " — FPL confirmed the gameweek's points" if confirmed else "")
     print(
         f"GW{gameweek} deadline in {hours:.1f}h "
         f"({'running' if should_run else 'skipping'}{reason}).",

@@ -165,6 +165,12 @@ def build_league_view(entry_id: int, bootstrap: dict, gameweek: int) -> dict:
             "your_rank": my_rank,
             "rivals_ahead": n,
             "gameweek_read": last_played,
+            # FPL adds bonus points and autosubs some hours after the last
+            # match and flags the gameweek data_checked once it has. Read
+            # before that, the table is provisional: GW8 2026-27 was read
+            # an hour after the last match and put you 4th; bonus and
+            # autosubs then moved a rival 14 points and you to 5th.
+            "final": _data_checked(bootstrap, last_played),
             "differentials": differentials,
             "template_gaps": template_gaps,
             "chips_spent": _chip_ledger(rows, entry_id),
@@ -181,6 +187,12 @@ def build_league_view(entry_id: int, bootstrap: dict, gameweek: int) -> dict:
     except requests.RequestException as e:
         logger.warning("Rival view unavailable (%s) — continuing without it.", e)
         return None
+
+
+def _data_checked(bootstrap: dict, gameweek: int) -> bool:
+    """Whether FPL has confirmed `gameweek`'s points (bonus, autosubs)."""
+    event = next((e for e in bootstrap.get("events", []) if e.get("id") == gameweek), {})
+    return bool(event.get("data_checked"))
 
 
 def _current_chip_window(bootstrap: dict, gameweek: int) -> dict:

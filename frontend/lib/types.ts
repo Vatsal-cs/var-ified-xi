@@ -272,6 +272,9 @@ export interface LeagueView {
   your_rank: number | null;
   rivals_ahead: number;
   gameweek_read: number;
+  /** False when read before FPL added that gameweek's bonus points and
+   *  autosubs: the table can still move. Absent on older files. */
+  final?: boolean;
   differentials: RivalOwnership[];
   template_gaps: RivalOwnership[];
   chips_spent: LeagueRival[];
