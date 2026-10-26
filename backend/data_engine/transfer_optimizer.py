@@ -86,6 +86,7 @@ def plan_transfers(
     bench_weight: float = None,
     wildcard: bool = False,
     locked_first_week: bool = False,
+    horizon_decay: float = None,
 ) -> dict:
     """Solves the multi-gameweek transfer problem.
 
@@ -122,6 +123,8 @@ def plan_transfers(
     locked_first_week: no transfers in week 0 — the squad is already set
                 for it (a Wildcard made in the FPL app, which the public API
                 hides until the deadline). Week 0 still picks the XI.
+    horizon_decay: weight of each later gameweek relative to the one before.
+                Defaults to config.HORIZON_DECAY. Research knob.
 
     Returns the full plan: transfers per gameweek, the resulting squad, and
     the starting XI and captain for the immediate gameweek.
@@ -307,9 +310,10 @@ def plan_transfers(
     if hit_margin is None:
         hit_margin = config.HIT_MARGIN
 
+    decay = HORIZON_DECAY if horizon_decay is None else horizon_decay
     objective = []
     for idx, t in enumerate(gameweeks):
-        weight = HORIZON_DECAY ** idx
+        weight = decay ** idx
         for i in ids:
             points = obj_xp(i, t)
             objective.append(weight * points * start[i, t])

@@ -156,6 +156,9 @@ class Policy:
     # Under the production procedure: ignore hit advice before this
     # gameweek, when projections rest on a handful of this season's matches.
     hits_from_gw: int = 0
+    # Under the production procedure: weight of each later gameweek in the
+    # planner. None keeps config.HORIZON_DECAY.
+    horizon_decay: float = None
 
 
 POLICIES = {
@@ -209,6 +212,13 @@ POLICIES = {
                     "hits before GW9 (research/2026-10-early-hits)",
         production=True,
         hits_from_gw=9,
+    ),
+    "production_decay95": Policy(
+        name="production_decay95",
+        description="the shipping procedure, later gameweeks discounted 5% a week "
+                    "instead of 15% (research/2026-10-horizon-decay)",
+        production=True,
+        horizon_decay=0.95,
     ),
     "production_hm0": Policy(
         name="production_hm0",
@@ -611,7 +621,7 @@ def _plan_week(state: ManagerState, players: pd.DataFrame, per_gw: pd.DataFrame,
         decision = planner.plan_week(
             players, team_state, xp_by_gw, gameweeks,
             hit_margin=policy.hit_margin, captain_col=policy.captain_col, rules=rules,
-            bench_weight=policy.bench_weight,
+            bench_weight=policy.bench_weight, horizon_decay=policy.horizon_decay,
         )
         week = dict(decision["plan"]["immediate"])
         week["captain_id"] = decision["result"]["captain_id"]

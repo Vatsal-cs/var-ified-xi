@@ -31,11 +31,12 @@ from data_engine import entry_data, transfer_optimizer
 logger = logging.getLogger(__name__)
 
 
-def horizon_score(plan: dict) -> float:
+def horizon_score(plan: dict, decay: float = None) -> float:
     """Decay-weighted expected points across the whole plan, hits already
     netted out. This is the single number the two plans are compared on.
     """
-    return sum(config.HORIZON_DECAY ** i * w["predicted_points"]
+    decay = config.HORIZON_DECAY if decay is None else decay
+    return sum(decay ** i * w["predicted_points"]
                for i, w in enumerate(plan["weeks"]))
 
 
@@ -83,7 +84,7 @@ def team_state_after(team_state, free_week: dict, players_df) -> "entry_data.Tea
 
 def hit_check(team_state, free_plan: dict, players_df, xp_by_gw: dict,
               gameweeks: list, hit_margin: float = None, rules=None,
-              bench_weight: float = None):
+              bench_weight: float = None, horizon_decay: float = None):
     """Decides whether a points hit this gameweek is actually worth taking —
     ON TOP OF the free plan, not instead of it.
 
@@ -103,6 +104,7 @@ def hit_check(team_state, free_plan: dict, players_df, xp_by_gw: dict,
     topup_plan = transfer_optimizer.plan_transfers(
         players_df, topup_state, xp_by_gw, gameweeks,
         hit_margin=hit_margin, rules=rules, bench_weight=bench_weight,
+        horizon_decay=horizon_decay,
     )
     topup_week = topup_plan["immediate"]
     if topup_week["hits"] <= 0:
@@ -112,7 +114,7 @@ def hit_check(team_state, free_plan: dict, players_df, xp_by_gw: dict,
     # one with the extra hit-funded moves priced in (hit cost already
     # subtracted into predicted_points — see transfer_optimizer._extract_plan)
     # and one without, so this difference is a fair like-for-like gain.
-    gain = horizon_score(topup_plan) - horizon_score(free_plan)
+    gain = horizon_score(topup_plan, horizon_decay) - horizon_score(free_plan, horizon_decay)
 
     recommendation = {
         "worth_it": gain > 0,
@@ -131,7 +133,8 @@ def hit_check(team_state, free_plan: dict, players_df, xp_by_gw: dict,
 
 def plan_week(players_df, team_state, xp_by_gw: dict, gameweeks: list,
               hit_margin: float = None, captain_col: str = "predicted_points",
-              rules=None, bench_weight: float = None) -> dict:
+              rules=None, bench_weight: float = None,
+              horizon_decay: float = None) -> dict:
     """Production's full weekly decision.
 
     players_df: one row per player with now_cost, predicted_points (next
@@ -139,6 +142,8 @@ def plan_week(players_df, team_state, xp_by_gw: dict, gameweeks: list,
                 else, `captain_col`.
     hit_margin: overrides config.HIT_MARGIN in the hit check. Research knob.
     rules:      rules.SeasonRules for a replayed season; None is today's.
+    horizon_decay: overrides config.HORIZON_DECAY in both solves and the hit
+                check's comparison. Research knob.
 
     Returns {"result", "plan", "hit_week"}. `result` has the same shape as
     optimizer.optimize_squad()'s, for the free plan. `hit_week` is the week
@@ -148,13 +153,13 @@ def plan_week(players_df, team_state, xp_by_gw: dict, gameweeks: list,
                 gameweeks[0], gameweeks[-1])
     free_plan = transfer_optimizer.plan_transfers(
         players_df, team_state, xp_by_gw, gameweeks, max_total_hits=0, rules=rules,
-        bench_weight=bench_weight,
+        bench_weight=bench_weight, horizon_decay=horizon_decay,
     )
 
     logger.info("Checking whether a hit ON TOP of that plan is worth it...")
     hit_rec, hit_week = hit_check(team_state, free_plan, players_df, xp_by_gw,
                                   gameweeks, hit_margin=hit_margin, rules=rules,
-                                  bench_weight=bench_weight)
+                                  bench_weight=bench_weight, horizon_decay=horizon_decay)
     if hit_rec and hit_rec["worth_it"]:
         logger.info("  A -%d hit IS worth taking this week: %s",
                     hit_rec["hit_cost"], hit_rec["verdict"])
