@@ -1,5 +1,5 @@
 # Season stage (matches_played) as a model input — pre-registration
-Written 2026-10-26 MDT, before any run.
+Written 2026-10-26 MDT, before any run. Commit f2ce959.
 
 ## Why
 Players projected 2+ straight after a 10+ haul scored less than projected in
