@@ -1,0 +1,14 @@
+variant             season    seeds  GWs     mean     sd        range    MAE  rank-r  Brier60
+--------------------------------------------------------------------------------------------
+production          2024-25       3   37   2157.0   92.2    2095-2263    nan     nan      nan
+production          2025-26       3   37   2195.7   57.7    2157-2262    nan     nan      nan
+production@lineup   2024-25       3   37   2144.0   92.7    2087-2251    nan     nan      nan
+production@lineup   2025-26       3   37   2171.7   39.7    2137-2215    nan     nan      nan
+--------------------------------------------------------------------------------------------
+Paired against production, per-gameweek, averaged over seeds (block bootstrap, 4-GW blocks, 95% CI):
+  production@lineup  pooled   -37.0 [-75, -4]  won 0/6 cells  -> WORSE
+                     2024-25 -13 [-38,+8]  2025-26 -24 [-52,+1]
+============================================================================================
+better = pooled CI above zero and ahead in every season; worse = the
+mirror image; anything else is no detectable effect, not a rejection.
+
