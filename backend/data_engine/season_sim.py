@@ -202,8 +202,9 @@ POLICIES = {
     ),
     "production_early_nohits": Policy(
         name="production_early_nohits",
-        description="the shipping procedure, but no hits before GW9: early projections "
-                    "rest on a handful of matches (research/2026-10-early-hits)",
+        description="NO DETECTABLE EFFECT (Oct 2026, branch test GW2-8): +41 in 2024-25, "
+                    "all of it one GW3 hit; 0 in 2025-26. The shipping procedure, but no "
+                    "hits before GW9 (research/2026-10-early-hits)",
         production=True,
         hits_from_gw=9,
     ),

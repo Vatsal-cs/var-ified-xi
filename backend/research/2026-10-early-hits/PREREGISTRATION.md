@@ -1,5 +1,5 @@
 # No hits before GW9 — pre-registration
-Written 2026-10-26 MDT, before any run of this policy.
+Written 2026-10-26 MDT, before any run of this policy. Commit 652ddfe.
 
 ## Why
 - 2026-27: "the model picks a player because he just scored 10". Out-of-sample

@@ -1,0 +1,139 @@
+{
+ "harness": "season_sim",
+ "commit": "652ddfe",
+ "settings": {
+  "seasons": [
+   "2025-26"
+  ],
+  "policies": [
+   "production"
+  ],
+  "start_gw": 2,
+  "end_gw": 8,
+  "stride": 1,
+  "augment": false,
+  "prior_seasons": [
+   "2024-25"
+  ],
+  "bag_size": 1,
+  "seeds": [
+   13
+  ],
+  "out": "research/2026-10-early-hits/eh_25_s13.json",
+  "tag": "",
+  "no_availability": false,
+  "legacy_prices": false,
+  "legacy_rules": false,
+  "block": 4,
+  "branch": [
+   "production:production_early_nohits"
+  ]
+ },
+ "runs": [
+  {
+   "variant": "production",
+   "season": "2025-26",
+   "seed": 13,
+   "total": 444,
+   "hits": 0,
+   "transfers": 6,
+   "captain": 71,
+   "per_gw": [
+    [
+     2,
+     60
+    ],
+    [
+     3,
+     61
+    ],
+    [
+     4,
+     61
+    ],
+    [
+     5,
+     87
+    ],
+    [
+     6,
+     62
+    ],
+    [
+     7,
+     59
+    ],
+    [
+     8,
+     54
+    ]
+   ]
+  },
+  {
+   "variant": "branch:production",
+   "season": "2025-26",
+   "seed": 13,
+   "total": 1937,
+   "changed": 0,
+   "per_gw": [
+    [
+     3,
+     358
+    ],
+    [
+     4,
+     347
+    ],
+    [
+     5,
+     352
+    ],
+    [
+     6,
+     305
+    ],
+    [
+     7,
+     299
+    ],
+    [
+     8,
+     276
+    ]
+   ]
+  },
+  {
+   "variant": "branch:production_early_nohits",
+   "season": "2025-26",
+   "seed": 13,
+   "total": 1937,
+   "changed": 0,
+   "per_gw": [
+    [
+     3,
+     358
+    ],
+    [
+     4,
+     347
+    ],
+    [
+     5,
+     352
+    ],
+    [
+     6,
+     305
+    ],
+    [
+     7,
+     299
+    ],
+    [
+     8,
+     276
+    ]
+   ]
+  }
+ ]
+}

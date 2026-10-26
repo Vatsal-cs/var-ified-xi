@@ -250,6 +250,10 @@ OWNERSHIP_FEATURE = True
 # before that deadline: GW1 is all zeros); live rows use transfers_in_event /
 # transfers_out_event, whose pattern two days out already correlates 0.96
 # with the final count, which is why it is a share rather than a raw count.
+# TESTED (Oct 2026, backtest, 5 seeds): -47 [-127, +35], -25 and -22 by
+# season, 3 of 10 runs ahead. The minutes Brier score improved in both
+# seasons (0.0868 -> 0.0852, 0.0778 -> 0.0757) but the squads scored less.
+# Not used; the column is still built so it can be re-run.
 TRANSFER_FLOW_FEATURE = False
 
 # How much each club has been rotating: the average number of starters changed

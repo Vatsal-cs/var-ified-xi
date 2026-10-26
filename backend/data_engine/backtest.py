@@ -542,7 +542,8 @@ VARIANTS = {
     ),
     "transfer_flow": Variant(
         name="transfer_flow",
-        description="Production plus transfer_flow: net transfers in before the deadline as "
+        description="NO DETECTABLE EFFECT (Oct 2026, 5 seeds): -47 [-127, +35], behind in both "
+                    "seasons. Production plus transfer_flow: net transfers in before the deadline as "
                     "a percent of that gameweek's transfers in (research/2026-10-transfer-flow)",
         fit=lambda df: train_model.train_models(df, save=False),
         predict=_bundle_predict,

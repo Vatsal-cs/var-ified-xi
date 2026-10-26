@@ -159,6 +159,8 @@ Every verdict below was first decided on **one seed**. The October 2026 audit re
 | Points-if-60+ calibrated to what players at each level really scored (new) | — | −29 [−123, +69] · +6 and −35 by season | no detectable effect — not used |
 | Stale ratings replaced by odds-based ratings, as live (new) | — | −28 [−128, +75] · +14 and −42 by season | no detectable effect — not used |
 | Form in European, cup and international games, second look (new) | — | stopped at step 1: misses +0.04 [−0.21, +0.29] for players who scored there; strong or weak opponents alike | no signal — not built |
+| Transfer flow: net transfers in before the deadline, as an input (new) | — | −47 [−127, +35] · −25 and −22 by season · minutes Brier better in both | no detectable effect, behind in both — not used |
+| No hits before GW9, simulator branch test GW2-8 (new) | — | +41 in 2024-25, all of it one GW3 hit · 0 in 2025-26 (no early hits advised) | no detectable effect — not adopted |
 | Split training populations, vs starters-only for both stages | +7 | starters-only **+56** [+11, +103] on the tuning seasons — then +18 and −17 on the held-back seasons | ⚠️ **unconfirmed**: split populations stay |
 
 Not re-measured, and every one of them sits inside the ±146-point band that changing only the seed produces — so treat each as **unproven either way**, not as settled:
