@@ -369,6 +369,11 @@ def build_horizon_predictions(bundle, history: pd.DataFrame, season_df: pd.DataF
         snapshot["now_cost"] = snapshot["player_id"].map(deadline["now_cost"]).fillna(
             snapshot["now_cost"])
         form_cols.append("now_cost")
+    if "transfer_flow" in deadline.columns and "transfer_flow" in snapshot.columns:
+        # This deadline's transfers, not last week's: the snapshot is the
+        # last played row, whose flow belongs to the previous deadline.
+        snapshot["transfer_flow"] = snapshot["player_id"].map(
+            deadline["transfer_flow"]).fillna(0.0)
     snapshot = snapshot[form_cols]
 
     frames = []

@@ -271,6 +271,8 @@ def build_gameweek_history_df(bootstrap: dict, player_histories: dict,
                 "clean_sheets": float(gw.get("clean_sheets", 0) or 0),
                 "goals_conceded": float(gw.get("goals_conceded", 0) or 0),
                 "selected": float(gw.get("selected", 0) or 0),
+                "transfers_in": float(gw.get("transfers_in", 0) or 0),
+                "transfers_balance": float(gw.get("transfers_balance", 0) or 0),
             })
 
     if skipped:
@@ -286,6 +288,8 @@ def build_gameweek_history_df(bootstrap: dict, player_histories: dict,
         # manager holds 15 players, so a round's selections sum to 15x the field.
         field = df.groupby("round")["selected"].transform("sum") / 15.0
         df["selected_by_percent"] = (df["selected"] / field.where(field > 0)).fillna(0.0).clip(0, 1) * 100.0
+    df["transfer_flow"] = historical_data.transfer_flow(
+        df["transfers_balance"], df["transfers_in"], df["round"], df["player_id"])
     attach_live_setpieces(df, bootstrap)
     if config.TEAM_FORM:
         team_form.attach(df, live_team_form_start(bootstrap))
@@ -667,6 +671,14 @@ def build_prediction_set(
 
     latest["selected_by_percent"] = latest["player_id"].map(
         lambda pid: float(players_meta.get(pid, {}).get("selected_by_percent", 0) or 0)
+    )
+    # This deadline's transfers so far (the counters reset at each deadline),
+    # as the same share of all transfers in that training rows carry.
+    window_in = sum(float(p.get("transfers_in_event", 0) or 0) for p in bootstrap["elements"])
+    latest["transfer_flow"] = latest["player_id"].map(
+        lambda pid: (float(players_meta.get(pid, {}).get("transfers_in_event", 0) or 0)
+                     - float(players_meta.get(pid, {}).get("transfers_out_event", 0) or 0))
+        / window_in * 100.0 if window_in else 0.0
     )
     latest["now_cost"] = latest["player_id"].map(
         lambda pid: players_meta.get(pid, {}).get("now_cost", latest.loc[latest.player_id == pid, "now_cost"])

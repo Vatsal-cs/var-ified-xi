@@ -167,6 +167,9 @@ def fetch_season(season: str, season_index: int):
         # tracks the real figure closely: it puts Haaland at 69% in 2025-26
         # GW10, matching what FPL published.
         "ownership": _ownership_share(gw_df),
+        # Net transfers in before this deadline, as a percent of the
+        # gameweek's transfers in (config.TRANSFER_FLOW_FEATURE).
+        "transfer_flow": _transfer_flow(gw_df),
         # Defensive-contribution scoring, introduced in 2025-26. Older
         # seasons return 0.0 rather than failing.
         "defensive_contribution": _numeric(gw_df, "defensive_contribution"),
@@ -314,6 +317,27 @@ def _ownership_share(gw_df: pd.DataFrame) -> pd.Series:
     selected = pd.to_numeric(gw_df["selected"], errors="coerce").fillna(0.0)
     managers = selected.groupby(gw_df["GW"]).transform("sum") / 15.0
     return (selected / managers.replace(0, pd.NA)).fillna(0.0).clip(0, 1)
+
+
+def transfer_flow(balance: pd.Series, transfers_in: pd.Series, rounds: pd.Series,
+                  players: pd.Series) -> pd.Series:
+    """Net transfers into each player before the deadline, as a percent of
+    all transfers in that gameweek. A double gameweek repeats the player's
+    figures on both rows, so the total counts each player once per round.
+    Shared by the archive and this season's history rows."""
+    frame = pd.DataFrame({"b": pd.to_numeric(balance, errors="coerce").fillna(0.0),
+                          "i": pd.to_numeric(transfers_in, errors="coerce").fillna(0.0),
+                          "r": rounds, "p": players})
+    total = frame.drop_duplicates(["p", "r"]).groupby("r")["i"].sum()
+    denom = frame["r"].map(total).astype(float)
+    return (frame["b"] / denom.where(denom > 0)).fillna(0.0) * 100.0
+
+
+def _transfer_flow(gw_df: pd.DataFrame) -> pd.Series:
+    if "transfers_balance" not in gw_df.columns or "transfers_in" not in gw_df.columns:
+        return pd.Series(0.0, index=gw_df.index)
+    return transfer_flow(gw_df["transfers_balance"], gw_df["transfers_in"],
+                         gw_df["GW"], gw_df["element"])
 
 
 def _attach_setpiece_features(out: pd.DataFrame, gw_df: pd.DataFrame, season: str) -> None:

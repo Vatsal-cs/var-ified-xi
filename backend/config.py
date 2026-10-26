@@ -239,6 +239,19 @@ LAGGED_TEAM_RATINGS_SEASONS = ()
 # improved in all four seasons — the crowd knows who's starting.
 OWNERSHIP_FEATURE = True
 
+# Transfer flow: the net transfers into a player before this deadline, as a
+# percent of all that gameweek's transfers in (transfer_flow). Ownership is
+# the crowd's settled view; this is what it changed its mind about this week —
+# a leaked lineup, a new penalty taker, a knock — before the stats can show it.
+# Step 1 (research/2026-10-transfer-flow): among players projected 2+, those
+# being bought outscored quiet players with similar projections by +0.29
+# [+0.05, +0.52] (2024-25) and +0.15 [-0.05, +0.33] (2025-26), mostly through
+# minutes. Archive and history rows carry FPL's per-gameweek transfers (made
+# before that deadline: GW1 is all zeros); live rows use transfers_in_event /
+# transfers_out_event, whose pattern two days out already correlates 0.96
+# with the final count, which is why it is a share rather than a raw count.
+TRANSFER_FLOW_FEATURE = False
+
 # How much each club has been rotating: the average number of starters changed
 # from the previous match, over its last five (team_changes_avg5). The minutes
 # model only ever saw each player's own record, never that his manager rotates
@@ -681,3 +694,5 @@ ATTACH_ODDS = False
 # after FEATURE_COLUMNS, so this has to come last).
 if OTHER_MATCHES:
     FEATURE_COLUMNS = FEATURE_COLUMNS + [c for c in OTHER_MATCH_COLUMNS if c not in FEATURE_COLUMNS]
+if TRANSFER_FLOW_FEATURE and "transfer_flow" not in FEATURE_COLUMNS:
+    FEATURE_COLUMNS = FEATURE_COLUMNS + ["transfer_flow"]

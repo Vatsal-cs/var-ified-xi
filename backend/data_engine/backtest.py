@@ -540,6 +540,14 @@ VARIANTS = {
         predict=_bundle_predict,
         context=_ownership_ctx,
     ),
+    "transfer_flow": Variant(
+        name="transfer_flow",
+        description="Production plus transfer_flow: net transfers in before the deadline as "
+                    "a percent of that gameweek's transfers in (research/2026-10-transfer-flow)",
+        fit=lambda df: train_model.train_models(df, save=False),
+        predict=_bundle_predict,
+        context=lambda: _extra_features(["transfer_flow"]),
+    ),
     "live_ratings": Variant(
         name="live_ratings",
         description="Reference for research/2026-10-stale-ratings (lagged_ratings vs this: -14 "
