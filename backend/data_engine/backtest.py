@@ -74,7 +74,9 @@ from data_engine import (
     evaluation,
     feature_engineering,
     historical_data,
+    lineup,
     optimizer,
+    planner,
     train_model,
 )
 from data_engine.odds_data import ODDS_FEATURE_COLUMNS
@@ -926,6 +928,7 @@ def simulate_season(
     stride: int = 1,
     legacy_doubles: bool = False,
     extra_bench_weights: tuple = (),
+    lineup_rule: bool = False,
 ) -> dict:
     """Walks a season gameweek by gameweek, training only on the past.
 
@@ -942,6 +945,11 @@ def simulate_season(
 
     per_gw, preds, p60s = [], [], []
     extra = {w: [] for w in extra_bench_weights}
+    # lineup_rule: the same squad also fielded by lineup.choose_lineup (XI and
+    # bench order valued after autosubs) — a lineup rule compared with no
+    # model noise in between. Recorded as extra["lineup"].
+    if lineup_rule:
+        extra["lineup"] = []
 
     for gw in rounds:
         history = season_df[season_df["round"] < gw]
@@ -962,6 +970,7 @@ def simulate_season(
             if variant.captain_values is not None:
                 gw_rows["ceiling_points"] = variant.captain_values(model, gw_rows).to_numpy()
             p60 = _p60(model, gw_rows)
+            played_rows = gw_rows
         else:
             # One prediction per MATCH, then summed per player — a double
             # gameweek is two chances to score, exactly as in production
@@ -973,6 +982,7 @@ def simulate_season(
                 per_fixture["ceiling_points"] = variant.captain_values(model, per_fixture).to_numpy()
                 agg["ceiling_points"] = "sum"
             p60 = _p60(model, per_fixture)
+            played_rows = per_fixture
             summed = per_fixture.groupby("player_id")[list(agg)].sum()
             gw_rows = _collapse_doubles(fixtures)
             for col in agg:
@@ -993,6 +1003,10 @@ def simulate_season(
                              "captain": int(r["captain_id"]),
                              "bench_cost": int(sum(gw_rows.set_index("player_id")["now_cost"].get(p, 0)
                                                    for p in r["bench_ids"]))})
+
+        if lineup_rule:
+            extra["lineup"].append({"gw": gw, **_lineup_scored(model, played_rows, gw_rows, result,
+                                                               captain_col, scored)})
 
         per_gw.append({"gw": gw, **scored, "predicted": result["total_predicted_points"],
                        "xi": sorted(int(p) for p in result["starting_ids"]),
@@ -1051,6 +1065,40 @@ def frozen_form_for_doubles(fixtures: pd.DataFrame) -> pd.DataFrame:
     for col in form_cols:
         fixtures.loc[second, col] = fixtures.loc[second, "player_id"].map(first[col]).to_numpy()
     return fixtures
+
+
+def _p_play(model, rows: pd.DataFrame):
+    """P(plays at all) per player after production's availability rule, a
+    double gameweek counting as playing in either match. None without a
+    minutes model."""
+    if not isinstance(model, dict) or not ("minutes_clf" in model or "members" in model):
+        return None
+    proba = 1.0 - train_model.play_probability(model, train_model._prep_X(rows))[:, train_model.DNP]
+    if "chance_of_playing" in rows.columns:
+        proba = proba * rows["chance_of_playing"].fillna(100).astype(float).to_numpy() / 100.0
+    if "status" in rows.columns:
+        proba = np.where(rows["status"].isin(["i", "s", "u", "n"]).to_numpy(), proba * 0.1, proba)
+    miss = pd.Series(1.0 - proba, index=rows["player_id"].to_numpy())
+    return (1.0 - miss.groupby(level=0).prod()).to_dict()
+
+
+def _lineup_scored(model, played_rows, gw_rows, result, captain_col, fallback):
+    """The chosen squad fielded by lineup.choose_lineup, scored like the
+    production lineup. Falls back to the production lineup's score when the
+    squad can't be fielded that way."""
+    p_play = _p_play(model, played_rows)
+    lookup = gw_rows.set_index("player_id")
+    chosen = (lineup.choose_lineup(result["squad_ids"], lookup["element_type"].to_dict(),
+                                   p_play, lookup["predicted_points"].to_dict())
+              if p_play is not None else None)
+    if chosen is None:
+        return {**fallback, "predicted": result["total_predicted_points"]}
+    xi, bench, expected = chosen
+    captain, vice = planner.pick_captains(xi, lookup[captain_col].to_dict())
+    order = {p: len(bench) - k for k, p in enumerate(bench)}
+    alt = {"starting_ids": xi, "bench_ids": bench, "captain_id": captain, "vice_captain_id": vice}
+    return {**score_gameweek(alt, gw_rows, order), "predicted": expected,
+            "xi": sorted(int(p) for p in xi), "captain": int(captain)}
 
 
 def _p60(model, rows: pd.DataFrame):
@@ -1185,6 +1233,9 @@ def main(argv=None) -> None:
                         help="Old harness: predict a double-gameweek player for one match.")
     parser.add_argument("--block", type=int, default=2,
                         help="Bootstrap block length for the paired intervals.")
+    parser.add_argument("--lineup", action="store_true",
+                        help="also field each week's squad with lineup.choose_lineup (XI and "
+                             "bench order valued after autosubs), recorded as VARIANT@lineup")
     parser.add_argument("--bench-weights", nargs="*", type=float, default=[],
                         help="Also score squads picked with these bench weights, from "
                              "the same predictions (variant@benchW in the output).")
@@ -1255,6 +1306,7 @@ def main(argv=None) -> None:
                         stride=args.stride,
                         legacy_doubles=args.legacy_doubles,
                         extra_bench_weights=tuple(args.bench_weights),
+                        lineup_rule=args.lineup,
                     )
                     logger.info("    %s %s seed %d: %d pts in %.0fs", label, season, seed,
                                 summary["total_points"], time.time() - started)
@@ -1263,7 +1315,8 @@ def main(argv=None) -> None:
                     else:
                         runs.append(run_record(label, season, seed, summary))
                         for w, s in summary.get("extra", {}).items():
-                            runs.append(run_record(f"{label}@bench{w:g}", season, seed, s))
+                            name = f"{label}@{w}" if isinstance(w, str) else f"{label}@bench{w:g}"
+                            runs.append(run_record(name, season, seed, s))
                     if args.out:
                         write_results(args.out, "backtest", runs, vars(args))
 

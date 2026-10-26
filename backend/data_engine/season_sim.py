@@ -87,6 +87,7 @@ import argparse
 import logging
 from dataclasses import dataclass, field, replace
 
+import numpy as np
 import pandas as pd
 
 import config
@@ -96,6 +97,7 @@ from data_engine import (
     entry_data,
     evaluation,
     feature_engineering,
+    lineup,
     optimizer,
     horizon_availability,
     planner,
@@ -426,6 +428,9 @@ def build_horizon_predictions(bundle, history: pd.DataFrame, season_df: pd.DataF
                                    gw_col="target_gw", kickoff_col="fixture_kickoff")
 
     scored = train_model.predict_points(bundle, rows)
+    # Chance he plays at all, after the same availability rule as points.
+    scored["p_play"] = ((1.0 - scored["p_dnp"]) * scored.get("avail_factor", 1.0)
+                        if "p_dnp" in scored.columns else scored["p_full"])
 
     # A double gameweek is two rows for one player; their expected points add
     # up the same way their real points would. P(60+) is the first match's,
@@ -434,6 +439,8 @@ def build_horizon_predictions(bundle, history: pd.DataFrame, season_df: pd.DataF
         predicted_points=("predicted_points", "sum"),
         ceiling_points=("ceiling_points", "sum"),
         p_full=("p_full", "first"),
+        # Plays in at least one of a double gameweek's matches.
+        p_play=("p_play", lambda p: 1.0 - float(np.prod(1.0 - p))),
     )
     return per_gw
 
@@ -454,6 +461,7 @@ def _collapse_to_players(per_gw: pd.DataFrame, meta: pd.DataFrame, gw: int,
     out["predicted_points"] = out["player_id"].map(immediate["predicted_points"]).fillna(0.0)
     out["ceiling_points"] = out["player_id"].map(immediate["ceiling_points"]).fillna(0.0)
     out["p_full"] = out["player_id"].map(immediate["p_full"]).fillna(0.0)
+    out["p_play"] = out["player_id"].map(immediate["p_play"]).fillna(0.0)
     out["horizon_points"] = out["player_id"].map(horizon_points).fillna(0.0)
     return out
 
@@ -485,6 +493,7 @@ def _with_owned(players: pd.DataFrame, squad: list, season_df: pd.DataFrame,
         "predicted_points": 0.0,
         "ceiling_points": 0.0,
         "p_full": 0.0,
+        "p_play": 0.0,
         "horizon_points": 0.0,
         "ownership": 0.0,
     })
@@ -774,7 +783,7 @@ def _branch_value(pre: ManagerState, weeks: list, per_gw: pd.DataFrame, gw: int,
 def simulate(season_df: pd.DataFrame, policies: list, prior_seasons_df=None,
              start_gw: int = DEFAULT_START_GW, stride: int = 1, rules=None,
              legacy_prices: bool = False, branches: list = None,
-             end_gw: int = None) -> dict:
+             end_gw: int = None, lineup_rule: bool = False) -> dict:
     """Plays one season through, for every policy, off a shared model.
 
     branches: [(reference policy name, candidate Policy)]. Each gameweek the
@@ -790,6 +799,11 @@ def simulate(season_df: pd.DataFrame, policies: list, prior_seasons_df=None,
               if r >= start_gw and (end_gw is None or r <= end_gw)][::stride]
     states = {p.name: ManagerState() for p in policies}
     branch_log = {cand.name: [] for _, cand in branches}
+    # lineup_rule: each policy's squad also fielded with lineup.choose_lineup
+    # (XI and bench order valued after autosubs), scored the same week. The
+    # squad and every later decision are untouched, so the two differ only by
+    # the lineup.
+    lineup_log = {p.name: [] for p in policies} if lineup_rule else {}
     # Positions for the whole season, so a player who blanks (or leaves the
     # league) can still be placed in a formation when scoring.
     positions = dict(zip(season_df["player_id"], season_df["element_type"]))
@@ -903,6 +917,10 @@ def simulate(season_df: pd.DataFrame, policies: list, prior_seasons_df=None,
                 result["starting_ids"], result["captain_id"], gw_rows
             )
             state.per_gw.append({"gw": gw, "points": net})
+            if lineup_rule:
+                lineup_log[policy.name].append(
+                    {"gw": gw, "points": _lineup_points(state.squad, players, policy, gw_rows,
+                                                        positions, scored["points"]) - hit_cost})
             line.append(f"{policy.name}={net:>3d}")
 
         for cand_name, log in branch_log.items():
@@ -923,7 +941,32 @@ def simulate(season_df: pd.DataFrame, policies: list, prior_seasons_df=None,
         }
         for name, s in states.items()
     }
+    for name, log in lineup_log.items():
+        out[f"{name}@lineup"] = {
+            "points": sum(g["points"] for g in log), "captain_points": 0,
+            "differential_points": 0.0, "transfers": states[name].transfers_made,
+            "hits": states[name].hits_taken, "hit_cost": 0,
+            "gameweeks": len(log), "per_gw": log,
+        }
     return out, branch_log
+
+
+def _lineup_points(squad: list, players: pd.DataFrame, policy: Policy,
+                   gw_rows: pd.DataFrame, positions: dict, fallback: int) -> int:
+    """Realised points of `squad` fielded by lineup.choose_lineup, with the
+    armband on the top projections as production puts it. `fallback` (the
+    production lineup's points) when the squad can't be fielded that way."""
+    owned = players.set_index("player_id")
+    chosen = lineup.choose_lineup(squad, positions, owned["p_play"].to_dict(),
+                                  owned["predicted_points"].to_dict())
+    if chosen is None:
+        return fallback
+    xi, bench, _ = chosen
+    captain, vice = planner.pick_captains(xi, owned[policy.captain_col].to_dict())
+    order = {p: len(bench) - k for k, p in enumerate(bench)}
+    return backtest.score_gameweek(
+        {"starting_ids": xi, "bench_ids": bench, "captain_id": captain, "vice_captain_id": vice},
+        _pad_for_squad(gw_rows, squad, positions), order)["points"]
 
 
 def _report(results: dict, policies: list,
@@ -992,6 +1035,9 @@ def main():
                         default=["production", "production_no_hits", "no_transfers"],
                         help=f"any of: {', '.join(POLICIES)}")
     parser.add_argument("--start-gw", type=int, default=DEFAULT_START_GW)
+    parser.add_argument("--lineup", action="store_true",
+                        help="also score each policy's squad fielded by lineup.choose_lineup "
+                             "(XI and bench order valued after autosubs), as POLICY@lineup")
     parser.add_argument("--end-gw", type=int, default=None,
                         help="last gameweek to simulate (default: the season's last)")
     parser.add_argument("--stride", type=int, default=1,
@@ -1083,7 +1129,8 @@ def main():
             res, branch_log = simulate(season_df, policies, prior_seasons_df=prior,
                                        start_gw=args.start_gw, stride=args.stride,
                                        rules=rules, legacy_prices=args.legacy_prices,
-                                       branches=branches, end_gw=args.end_gw)
+                                       branches=branches, end_gw=args.end_gw,
+                                       lineup_rule=args.lineup)
             _report(res, policies, title=f"SEASON {season} · seed {seed}")
             for name, r in res.items():
                 runs.append({

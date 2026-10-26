@@ -6,6 +6,11 @@ name: Season simulation
 #
 # Manual only. This is a research job, not part of the weekly pipeline: it
 # takes hours rather than minutes and nothing downstream depends on it.
+#
+# Each season x seed runs as its own job, in parallel. A season trains on the
+# seasons listed before it (as --augment did when they ran in one job), so
+# "2024-25 2025-26" runs 2025-26 with --prior-seasons 2024-25. Download the
+# per-job JSON with `gh run download` and pool it with data_engine.evaluation.
 on:
   workflow_dispatch:
     inputs:
@@ -29,18 +34,44 @@ on:
         description: "First gameweek to simulate"
         type: string
         default: "2"
+      extra_args:
+        description: "Further season_sim flags, e.g. --lineup --bag-size 1 or --branch production:production_e4"
+        type: string
+        default: ""
 
 concurrency:
   group: season-simulation
   cancel-in-progress: false
 
 jobs:
-  simulate:
+  plan:
     runs-on: ubuntu-latest
-    # A full two-season, six-policy race is a few hours of MILP solving on a
-    # two-core runner. Well inside GitHub's 6-hour ceiling, but not by so much
-    # that the default 360 can be left implicit.
+    outputs:
+      matrix: ${{ steps.matrix.outputs.matrix }}
+    steps:
+      - id: matrix
+        env:
+          SEASONS: ${{ inputs.seasons }}
+          SEEDS: ${{ inputs.seeds }}
+        run: |
+          python3 - <<'EOF' >> "$GITHUB_OUTPUT"
+          import json, os
+          seasons = os.environ["SEASONS"].split()
+          seeds = os.environ["SEEDS"].split()
+          include = [{"season": s, "prior": " ".join(seasons[:i]), "seed": seed}
+                     for i, s in enumerate(seasons) for seed in seeds]
+          print("matrix=" + json.dumps({"include": include}))
+          EOF
+
+  simulate:
+    needs: plan
+    runs-on: ubuntu-latest
+    # A full season of MILP solving per job. Well inside GitHub's 6-hour
+    # ceiling, but not by so much that the default 360 can be left implicit.
     timeout-minutes: 350
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJSON(needs.plan.outputs.matrix) }}
 
     steps:
       - uses: actions/checkout@v4
@@ -65,26 +96,42 @@ jobs:
 
       - name: Run the simulation
         working-directory: backend
+        env:
+          SEASON: ${{ matrix.season }}
+          PRIOR: ${{ matrix.prior }}
+          SEED: ${{ matrix.seed }}
+          POLICIES: ${{ inputs.policies }}
+          START_GW: ${{ inputs.start_gw }}
+          STRIDE: ${{ inputs.stride }}
+          EXTRA: ${{ inputs.extra_args }}
         run: |
           set -o pipefail
+          prior=()
+          [ -n "$PRIOR" ] && prior=(--prior-seasons $PRIOR)
           python -u -m data_engine.season_sim \
-            --seasons ${{ inputs.seasons }} \
-            --augment \
-            --policies ${{ inputs.policies }} \
-            --seeds ${{ inputs.seeds }} \
-            --start-gw ${{ inputs.start_gw }} \
-            --stride ${{ inputs.stride }} \
+            --seasons "$SEASON" "${prior[@]}" \
+            --policies $POLICIES \
+            --seeds "$SEED" \
+            --start-gw "$START_GW" \
+            --stride "$STRIDE" \
+            $EXTRA \
             --out simulation.json \
             2>&1 | tee simulation.log
 
       - name: Publish the result table to the run summary
         if: always()
         working-directory: backend
+        env:
+          SEASON: ${{ matrix.season }}
+          SEED: ${{ matrix.seed }}
+          POLICIES: ${{ inputs.policies }}
+          STRIDE: ${{ inputs.stride }}
+          EXTRA: ${{ inputs.extra_args }}
         run: |
           {
-            echo "## Season simulation"
+            echo "## Season simulation · $SEASON · seed $SEED"
             echo ""
-            echo "\`seasons: ${{ inputs.seasons }}\` &middot; \`policies: ${{ inputs.policies }}\` &middot; \`seeds: ${{ inputs.seeds }}\` &middot; \`stride: ${{ inputs.stride }}\`"
+            echo "\`policies: $POLICIES\` &middot; \`stride: $STRIDE\` &middot; \`extra: $EXTRA\`"
             echo ""
             echo '```'
             # The pooled verdict table is the tail; the per-gameweek lines
@@ -97,7 +144,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: simulation-log
+          name: simulation-${{ matrix.season }}-s${{ matrix.seed }}
           path: |
             backend/simulation.log
             backend/simulation.json
