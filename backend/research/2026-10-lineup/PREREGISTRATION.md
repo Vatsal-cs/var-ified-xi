@@ -1,5 +1,5 @@
 # Choosing the XI after autosubs — pre-registration
-Written 2026-10-26 MDT, before any full run (one 7-week smoke test of the
+Written 2026-10-26 MDT, commit a03050c, before any full run (one 7-week smoke test of the
 backtest wiring, 2025-26 seed 42 stride 6: −12, one coin-flip swap).
 
 ## Why
