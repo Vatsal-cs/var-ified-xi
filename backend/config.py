@@ -436,6 +436,8 @@ HORIZON_GWS = 6
 # Future gameweeks are discounted in the objective — a point next week is
 # worth more than a projected point five weeks out, because the projection is
 # less certain and because you can always transfer again before then.
+# TESTED (Oct 2026, research/2026-10-horizon-decay): 0.95 in the simulator's
+# branch test, +60 [-109, +239], +110 and -49 by season. Stays 0.85.
 HORIZON_DECAY = 0.85
 
 # ---------------------------------------------------------------------------

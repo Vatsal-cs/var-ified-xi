@@ -62,8 +62,11 @@ three seeds (De Bruyne projected 10.5 after his start).
 |---|---|---|
 | Transfer flow (net transfers before the deadline) as an input | research/2026-10-transfer-flow | −47 [−127, +35], behind in both seasons — not used |
 | No hits before GW9 | research/2026-10-early-hits | +41 in 2024-25 (one GW3 decision), 0 in 2025-26 — not adopted |
+| Choosing the XI after autosubs | research/2026-10-lineup | −37 [−75, −4], behind in both — worse |
+| Season stage (matches_played) as an input | research/2026-10-season-stage | −13 [−70, +44], +34 / −47 — not used |
+| Planner horizon decay 0.95 | research/2026-10-horizon-decay | +60 [−109, +239], +110 / −49 — not adopted |
 
-Neither passed. What the audit does leave standing: the model plays like a
+None passed. What the audit does leave standing: the model plays like a
 roughly top-1M manager (simulator ~56 a gameweek before chips, against ~63-68
 for a top-10k season), the transfer-constrained planner gives up 6-8 a
 gameweek against the same model with unlimited transfers, and early-season

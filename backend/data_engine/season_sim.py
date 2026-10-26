@@ -215,7 +215,8 @@ POLICIES = {
     ),
     "production_decay95": Policy(
         name="production_decay95",
-        description="the shipping procedure, later gameweeks discounted 5% a week "
+        description="NO DETECTABLE EFFECT (Oct 2026, branch test): +60 [-109, +239], +110 and "
+                    "-49 by season. The shipping procedure, later gameweeks discounted 5% a week "
                     "instead of 15% (research/2026-10-horizon-decay)",
         production=True,
         horizon_decay=0.95,

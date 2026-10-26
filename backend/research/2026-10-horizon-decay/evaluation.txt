@@ -1,0 +1,12 @@
+branch:production   2024-25       3   36  11162.7  391.3  10798-11576    nan     nan      nan
+branch:production   2025-26       3   36  11014.3  212.1  10798-11222    nan     nan      nan
+branch:production_d 2024-25       3   36  11272.3  423.1  10892-11728    nan     nan      nan
+branch:production_d 2025-26       3   36  10965.0  166.3  10777-11093    nan     nan      nan
+--------------------------------------------------------------------------------------------
+Paired against branch:production, per-gameweek, averaged over seeds (block bootstrap, 4-GW blocks, 95% CI):
+  branch:production_decay95 pooled   +60.3 [-109, +239]  won 4/6 cells  -> NO DETECTABLE EFFECT
+                     2024-25 +110 [-9,+251]  2025-26 -49 [-180,+43]
+============================================================================================
+better = pooled CI above zero and ahead in every season; worse = the
+mirror image; anything else is no detectable effect, not a rejection.
+

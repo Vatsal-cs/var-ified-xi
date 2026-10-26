@@ -544,7 +544,8 @@ VARIANTS = {
     ),
     "season_stage": Variant(
         name="season_stage",
-        description="Production plus matches_played (fixtures so far this season), so the "
+        description="NO DETECTABLE EFFECT (Oct 2026, 5 seeds): -13 [-70, +44], +34 and -47 by "
+                    "season. Production plus matches_played (fixtures so far this season), so the "
                     "model can tell a three-match average from a one-match one "
                     "(research/2026-10-season-stage)",
         fit=lambda df: train_model.train_models(df, save=False),

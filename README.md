@@ -161,6 +161,9 @@ Every verdict below was first decided on **one seed**. The October 2026 audit re
 | Form in European, cup and international games, second look (new) | — | stopped at step 1: misses +0.04 [−0.21, +0.29] for players who scored there; strong or weak opponents alike | no signal — not built |
 | Transfer flow: net transfers in before the deadline, as an input (new) | — | −47 [−127, +35] · −25 and −22 by season · minutes Brier better in both | no detectable effect, behind in both — not used |
 | No hits before GW9, simulator branch test GW2-8 (new) | — | +41 in 2024-25, all of it one GW3 hit · 0 in 2025-26 (no early hits advised) | no detectable effect — not adopted |
+| XI and bench chosen on expected points after autosubs, simulator (new) | — | −37 [−75, −4] · −13 and −24 by season, 0 of 6 runs ahead | ❌ worse — not used |
+| Season stage (matches played) as an input, re-measured (new) | −42 | −13 [−70, +44] · +34 and −47 by season | no detectable effect — not used |
+| Planner discounts later weeks 5% instead of 15%, simulator branch test (new) | — | +60 [−109, +239] · +110 and −49 by season | no detectable effect — stays 0.85 |
 | Split training populations, vs starters-only for both stages | +7 | starters-only **+56** [+11, +103] on the tuning seasons — then +18 and −17 on the held-back seasons | ⚠️ **unconfirmed**: split populations stay |
 
 Not re-measured, and every one of them sits inside the ±146-point band that changing only the seed produces — so treat each as **unproven either way**, not as settled:

@@ -1,0 +1,13 @@
+--------------------------------------------------------------------------------------------
+production          2024-25       5   37   2518.6   48.6    2465-2582  0.989   0.720   0.0868
+production          2025-26       5   37   2376.6   35.8    2321-2412  0.908   0.752   0.0778
+season_stage        2024-25       5   37   2552.2   24.5    2527-2581  0.995   0.720   0.0868
+season_stage        2025-26       5   37   2330.0   23.5    2300-2361  0.909   0.752   0.0778
+--------------------------------------------------------------------------------------------
+Paired against production, per-gameweek, averaged over seeds (block bootstrap, 2-GW blocks, 95% CI):
+  season_stage       pooled   -13.0 [-70, +44]  won 4/10 cells  -> NO DETECTABLE EFFECT
+                     2024-25 +34 [-9,+77]  2025-26 -47 [-84,-9]
+============================================================================================
+better = pooled CI above zero and ahead in every season; worse = the
+mirror image; anything else is no detectable effect, not a rejection.
+
