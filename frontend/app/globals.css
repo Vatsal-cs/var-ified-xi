@@ -197,8 +197,9 @@ body > * {
    stays invisible without it. */
 .js-reveal .reveal {
   opacity: 0;
-  transform: translateY(14px);
-  transition: opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1), transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+  transform: perspective(1600px) rotateX(9deg) translateY(28px);
+  transform-origin: 50% 100%;
+  transition: opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1), transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
 }
 .js-reveal .reveal.is-in {
   opacity: 1;
@@ -209,6 +210,75 @@ body > * {
 .js-reveal .reveal:not(.is-in) *,
 .js-reveal .on-view:not(.is-in) * {
   animation-play-state: paused !important;
+}
+
+/* Depth as you scroll, tied to the scroll position itself where the browser
+   can (Chrome, Edge, Safari 26); elsewhere these blocks just sit still.
+     .depth-rise    a block lies tipped back below the fold and stands up as
+                    it comes in;
+     .depth-recede  the opening block lies back as it leaves the top;
+     .depth-far     the stadium moves slower than the page, so it reads as far
+                    off, and has faded by the time the content is over it;
+     .depth-turf    its pitch, seen from a camera that cranes up. */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .depth-rise {
+      transform-origin: 50% 100%;
+      animation: depth-rise linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 260px;
+    }
+    .depth-recede {
+      transform-origin: 50% 100%;
+      animation: depth-recede linear both;
+      animation-timeline: view();
+      animation-range: exit 0% exit 100%;
+    }
+    .depth-far {
+      animation: depth-far linear both;
+      animation-timeline: scroll(root);
+      animation-range: 0px 100vh;
+    }
+    .depth-turf {
+      animation: depth-turf linear both;
+      animation-timeline: scroll(root);
+      animation-range: 0px 100vh;
+    }
+  }
+}
+@keyframes depth-rise {
+  from {
+    opacity: 0.35;
+    transform: perspective(1600px) rotateX(16deg) translateY(48px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes depth-recede {
+  from {
+    opacity: 1;
+    transform: none;
+  }
+  to {
+    opacity: 0.4;
+    transform: perspective(1600px) rotateX(18deg) translateY(-20px) scale(0.93);
+  }
+}
+@keyframes depth-far {
+  to {
+    opacity: 0;
+    transform: translateY(45vh);
+  }
+}
+@keyframes depth-turf {
+  from {
+    transform: translateX(-50%) rotateX(64deg);
+  }
+  to {
+    transform: translateX(-50%) rotateX(52deg);
+  }
 }
 
 /* Shirts pivot from the peg they hang on. */

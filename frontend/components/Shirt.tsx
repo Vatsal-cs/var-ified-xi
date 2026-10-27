@@ -25,6 +25,39 @@ const LEFT_SLEEVE = "M100 22 L112 40 L98 50 L88 43 L86 24 Z";
 const ARMBAND = "M90.6 50.4 L114.4 33.4 L109.4 27.2 L85.7 44.1 Z";
 const ARMBAND_TEXT = { x: 100, y: 38.8, angle: -35.5 };
 
+// The number, and the white patch it sits on over stripes. The patch is cut
+// to the number rather than fixed: "4.5" is wider than "1.1", and a fixed one
+// let the figures run off its sides. Widths are the kit face's figures
+// (Barlow Semi Condensed 700) in ems, so this works out on the server.
+const FIGURE_EM: Record<string, number> = {
+  "0": 0.511, "1": 0.318, "2": 0.499, "3": 0.487, "4": 0.544,
+  "5": 0.488, "6": 0.488, "7": 0.451, "8": 0.49, "9": 0.482, ".": 0.247, "-": 0.37,
+};
+const NUMBER_SIZE = 29;
+const NUMBER_TRACKING = -0.5;
+const NUMBER_MAX_W = 40; // wider than this ("10.5") and the figures shrink to fit the chest
+const FIGURE_HEIGHT_EM = 0.71;
+const NUMBER_MID_Y = 75; // the figures are centred on this line
+const PATCH_PAD = { x: 4.5, y: 4.5 };
+
+function numberLayout(number: string) {
+  const widthAt = (size: number) =>
+    [...number].reduce((w, c) => w + (FIGURE_EM[c] ?? 0.5) * size + NUMBER_TRACKING, 0);
+  const size = NUMBER_SIZE * Math.min(1, NUMBER_MAX_W / widthAt(NUMBER_SIZE));
+  const width = widthAt(size);
+  const height = FIGURE_HEIGHT_EM * size;
+  return {
+    size,
+    baseline: NUMBER_MID_Y + height / 2,
+    patch: {
+      x: 60 - width / 2 - PATCH_PAD.x,
+      y: NUMBER_MID_Y - height / 2 - PATCH_PAD.y,
+      width: width + 2 * PATCH_PAD.x,
+      height: height + 2 * PATCH_PAD.y,
+    },
+  };
+}
+
 export default function Shirt({
   team,
   number,
@@ -52,6 +85,7 @@ export default function Shirt({
   const crest = crestUrls(team)[0];
   const edge = striped ? kit.shirt : kit.trim;
   const band = captain ? { fill: "#E3A93C", line: "#9A6A14", text: "#2A1A00", letter: "C" } : { fill: "#17181B", line: "#000", text: "#F2F0EC", letter: "V" };
+  const num = numberLayout(number);
 
   return (
     <svg viewBox="0 0 120 120" className={className} aria-hidden>
@@ -134,15 +168,17 @@ export default function Shirt({
 
       {crest && <image href={crest} x="65" y="29" width="12" height="12" />}
 
-      {striped && <rect x="44" y="62" width="32" height="30" rx="5" fill="#fff" />}
+      {striped && (
+        <rect {...num.patch} rx="4" fill="#fff" stroke="rgba(0,0,0,0.14)" strokeWidth="0.6" />
+      )}
       <text
         x="60"
-        y="86"
+        y={num.baseline}
         textAnchor="middle"
         className="font-kit"
         fontWeight="700"
-        fontSize="31"
-        letterSpacing="-0.5"
+        fontSize={num.size}
+        letterSpacing={NUMBER_TRACKING}
         fill={striped ? "#111" : kit.trim}
       >
         {number}

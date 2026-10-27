@@ -14,7 +14,7 @@ import { Figures, Term } from "./ui";
 import CaptainOdds from "./CaptainOdds";
 import TeamNews from "./TeamNews";
 import CoinFlips from "./CoinFlips";
-import { CountUp, OnView } from "./motion";
+import { CountUp, OnView, Tilt } from "./motion";
 import { pct } from "@/lib/odds";
 
 const CHIP_LABEL: Record<string, string> = { wildcard: "Wildcard", freehit: "Free Hit" };
@@ -248,7 +248,7 @@ export default function ThisWeek({ team }: { team: OptimizedTeam }) {
 
   return (
     <section id="week" className="grid scroll-mt-32 items-center gap-10 lg:grid-cols-[1.05fr_1fr] lg:gap-14">
-      <div>
+      <div className="depth-recede">
       <p className="flex animate-rise flex-wrap items-baseline gap-x-3 gap-y-1">
         <span className="kicker">Gameweek {team.gameweek}</span>
         {team.team && (
@@ -316,11 +316,13 @@ export default function ThisWeek({ team }: { team: OptimizedTeam }) {
 
       {/* The stage: the swap itself, lit. On a phone it's below the fold, so it
           waits to be scrolled to before the shirts swing. */}
-      <OnView className="relative">
+      <OnView className="depth-recede relative">
         {chip ? (
           <LockedCheck check={team.lineup_check} chip={chip} />
         ) : week && week.transfers_out.length > 0 ? (
-          <SwapRail week={week} />
+          <Tilt max={10}>
+            <SwapRail week={week} />
+          </Tilt>
         ) : (
           <div className="flex flex-col items-center py-6 text-center">
             <Hanger className="w-24" />
@@ -344,15 +346,17 @@ function Captain({ team }: { team: OptimizedTeam }) {
   return (
     <div>
       <div className="flex items-center gap-4">
-        <Shirt
-          team={cap.team}
-          number={cap.predicted_points.toFixed(1)}
-          uid={`cap-${cap.player_id}`}
-          goalkeeper={cap.position === "GK"}
-          captain
-          armbandDelay={0.7}
-          className="h-[88px] w-[88px] flex-none drop-shadow-[0_8px_10px_rgba(0,0,0,0.25)]"
-        />
+        <Tilt max={14} className="flex-none">
+          <Shirt
+            team={cap.team}
+            number={cap.predicted_points.toFixed(1)}
+            uid={`cap-${cap.player_id}`}
+            goalkeeper={cap.position === "GK"}
+            captain
+            armbandDelay={0.7}
+            className="h-[88px] w-[88px] flex-none drop-shadow-[0_8px_10px_rgba(0,0,0,0.25)]"
+          />
+        </Tilt>
         <div className="min-w-0">
           <p className="font-display text-[30px] font-extrabold uppercase leading-none text-ink-100">{cap.name}</p>
           <p className="mt-0.5 text-[13px] leading-snug text-ink-400">

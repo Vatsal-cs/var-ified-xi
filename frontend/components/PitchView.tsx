@@ -13,6 +13,7 @@ import Crest from "@/components/Crest";
 import Shirt from "@/components/Shirt";
 import { goalkeeperKit, kitFor } from "@/lib/teams";
 import { pct } from "@/lib/odds";
+import { Tilt } from "@/components/motion";
 
 const ROW_ORDER: Player["position"][] = ["FWD", "MID", "DEF", "GK"];
 // Where each line stands on the turf, from the far touchline (0) to the near one (1).
@@ -255,45 +256,47 @@ export default function PitchView({
 
   return (
     <div>
-      <div className="relative mx-auto aspect-[1/1.04] w-full [container-type:inline-size]">
-        {/* The turf, tipped back like a broadcast camera's view */}
-        <div aria-hidden className="absolute inset-0 [perspective-origin:50%_100%] [perspective:200cqw]">
-          <div
-            className="absolute inset-x-0 bottom-0 h-[115.4%] origin-bottom overflow-hidden rounded-lg bg-[repeating-linear-gradient(180deg,rgb(var(--c-grass))_0_8.33%,rgb(var(--c-grass-dark))_8.33%_16.66%)] shadow-[0_30px_60px_-30px_rgba(0,0,0,0.8)] transition-colors duration-300"
-            style={{ transform: `rotateX(${TILT}deg)` }}
-          >
-            {/* Floodlights in the four corners, and the shadow at the edges */}
-            <div className="absolute inset-0 bg-[radial-gradient(55%_40%_at_0%_0%,rgba(255,244,214,0.16),transparent_70%),radial-gradient(55%_40%_at_100%_0%,rgba(255,244,214,0.16),transparent_70%),radial-gradient(55%_40%_at_0%_100%,rgba(214,232,255,0.1),transparent_70%),radial-gradient(55%_40%_at_100%_100%,rgba(214,232,255,0.1),transparent_70%)]" />
-            <div className="absolute inset-0 shadow-[inset_0_0_80px_rgba(0,0,0,0.5)]" />
-            {/* Chalk markings */}
-            <svg className="absolute inset-0 h-full w-full" viewBox="0 0 100 100" preserveAspectRatio="none">
-              <g fill="none" stroke="var(--chalk)" strokeWidth="1.4" vectorEffect="non-scaling-stroke">
-                <rect x="3" y="2.5" width="94" height="95" rx="1" vectorEffect="non-scaling-stroke" />
-                <line x1="3" y1="50" x2="97" y2="50" vectorEffect="non-scaling-stroke" />
-                <ellipse cx="50" cy="50" rx="13" ry="10.8" vectorEffect="non-scaling-stroke" />
-                <rect x="25" y="2.5" width="50" height="13" vectorEffect="non-scaling-stroke" />
-                <rect x="38" y="2.5" width="24" height="5" vectorEffect="non-scaling-stroke" />
-                <rect x="25" y="84.5" width="50" height="13" vectorEffect="non-scaling-stroke" />
-                <rect x="38" y="92.5" width="24" height="5" vectorEffect="non-scaling-stroke" />
-              </g>
-            </svg>
+      <Tilt max={4}>
+        <div className="relative mx-auto aspect-[1/1.04] w-full [container-type:inline-size]">
+          {/* The turf, tipped back like a broadcast camera's view */}
+          <div aria-hidden className="absolute inset-0 [perspective-origin:50%_100%] [perspective:200cqw]">
+            <div
+              className="absolute inset-x-0 bottom-0 h-[115.4%] origin-bottom overflow-hidden rounded-lg bg-[repeating-linear-gradient(180deg,rgb(var(--c-grass))_0_8.33%,rgb(var(--c-grass-dark))_8.33%_16.66%)] shadow-[0_30px_60px_-30px_rgba(0,0,0,0.8)] transition-colors duration-300"
+              style={{ transform: `rotateX(${TILT}deg)` }}
+            >
+              {/* Floodlights in the four corners, and the shadow at the edges */}
+              <div className="absolute inset-0 bg-[radial-gradient(55%_40%_at_0%_0%,rgba(255,244,214,0.16),transparent_70%),radial-gradient(55%_40%_at_100%_0%,rgba(255,244,214,0.16),transparent_70%),radial-gradient(55%_40%_at_0%_100%,rgba(214,232,255,0.1),transparent_70%),radial-gradient(55%_40%_at_100%_100%,rgba(214,232,255,0.1),transparent_70%)]" />
+              <div className="absolute inset-0 shadow-[inset_0_0_80px_rgba(0,0,0,0.5)]" />
+              {/* Chalk markings */}
+              <svg className="absolute inset-0 h-full w-full" viewBox="0 0 100 100" preserveAspectRatio="none">
+                <g fill="none" stroke="var(--chalk)" strokeWidth="1.4" vectorEffect="non-scaling-stroke">
+                  <rect x="3" y="2.5" width="94" height="95" rx="1" vectorEffect="non-scaling-stroke" />
+                  <line x1="3" y1="50" x2="97" y2="50" vectorEffect="non-scaling-stroke" />
+                  <ellipse cx="50" cy="50" rx="13" ry="10.8" vectorEffect="non-scaling-stroke" />
+                  <rect x="25" y="2.5" width="50" height="13" vectorEffect="non-scaling-stroke" />
+                  <rect x="38" y="2.5" width="24" height="5" vectorEffect="non-scaling-stroke" />
+                  <rect x="25" y="84.5" width="50" height="13" vectorEffect="non-scaling-stroke" />
+                  <rect x="38" y="92.5" width="24" height="5" vectorEffect="non-scaling-stroke" />
+                </g>
+              </svg>
+            </div>
           </div>
-        </div>
 
-        {placed.map(({ player, x, y, scale }) => (
-          <PlayerShirt
-            key={player.player_id}
-            player={player}
-            x={x}
-            y={y}
-            scale={scale}
-            order={hangIndex.get(player.player_id) ?? 0}
-            isActive={active?.player_id === player.player_id}
-            coinFlip={coinFlipIds.includes(player.player_id)}
-            onSelect={() => setActive(active?.player_id === player.player_id ? null : player)}
-          />
-        ))}
-      </div>
+          {placed.map(({ player, x, y, scale }) => (
+            <PlayerShirt
+              key={player.player_id}
+              player={player}
+              x={x}
+              y={y}
+              scale={scale}
+              order={hangIndex.get(player.player_id) ?? 0}
+              isActive={active?.player_id === player.player_id}
+              coinFlip={coinFlipIds.includes(player.player_id)}
+              onSelect={() => setActive(active?.player_id === player.player_id ? null : player)}
+            />
+          ))}
+        </div>
+      </Tilt>
 
       {active ? (
         <div className="mt-5 animate-rise border-t border-line pt-4">

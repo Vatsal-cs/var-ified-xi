@@ -36,7 +36,7 @@ export default function Home() {
 
       {/* The squad it produces */}
       <section id="squad" aria-label={title} className="scroll-mt-32">
-        <div className="mb-6 flex flex-wrap items-end justify-between gap-x-6 gap-y-2 border-t border-line pt-8">
+        <div className="depth-rise mb-6 flex flex-wrap items-end justify-between gap-x-6 gap-y-2 border-t border-line pt-8">
           <div>
             <p className="kicker">{formation} &middot; {team.predicted_total_points.toFixed(1)} pts projected</p>
             <h2 className="headline mt-2 text-[40px] sm:text-[52px]">{title}</h2>
@@ -53,12 +53,12 @@ export default function Home() {
           </p>
         </div>
         <div className="grid items-start gap-12 lg:grid-cols-[1.2fr_1fr] lg:gap-14">
-          {/* Each block plays its animations when it scrolls into view */}
+          {/* Each block stands up as it scrolls into view, then plays its animations */}
           <div>
-            <OnView>
+            <OnView className="depth-rise">
               <PitchView startingXi={team.starting_xi} coinFlipIds={flipIds} />
             </OnView>
-            <OnView className="mt-8">
+            <OnView className="depth-rise mt-8">
               <BenchStrip
                 bench={team.bench}
                 startingXi={team.starting_xi}
@@ -67,17 +67,17 @@ export default function Home() {
             </OnView>
           </div>
           <div className="space-y-10">
-            <OnView>
+            <OnView className="depth-rise">
               <Armband team={team} />
             </OnView>
-            <OnView>
+            <OnView className="depth-rise">
               <CloseCalls team={team} />
             </OnView>
           </div>
         </div>
       </section>
 
-      <section className="border-t border-line pt-8">
+      <section className="depth-rise border-t border-line pt-8">
         <NewsDesk team={team} />
       </section>
     </PageShell>

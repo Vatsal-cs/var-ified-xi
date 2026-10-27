@@ -2,8 +2,8 @@
 // Path: var-ified-xi/frontend/components/motion.tsx
 //
 // The page's small amount of motion, all client-side and all optional:
-// sections that arrive as they scroll in, numbers that count up, the deadline
-// chip and the light/dark switch. Everything renders its final state without
+// sections that arrive as they scroll in, shirts that lean towards the
+// pointer, numbers that count up, the deadline chip and the light/dark switch. Everything renders its final state without
 // JavaScript and respects reduced motion.
 
 "use client";
@@ -70,6 +70,44 @@ export function OnView({ children, className = "" }: { children: ReactNode; clas
   }, []);
   return (
     <div ref={ref} className={`on-view ${className}`}>
+      {children}
+    </div>
+  );
+}
+
+/** Leans its contents towards the pointer, a few degrees in 3D, on a device
+ *  with a mouse. Touch screens and reduced motion get it still. */
+export function Tilt({ children, max = 8, className = "" }: { children: ReactNode; max?: number; className?: string }) {
+  const ref = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el || reduced() || !window.matchMedia("(hover: hover) and (pointer: fine)").matches) return;
+    let raf = 0;
+    const move = (e: PointerEvent) => {
+      const r = el.getBoundingClientRect();
+      const x = (e.clientX - r.left) / r.width - 0.5;
+      const y = (e.clientY - r.top) / r.height - 0.5;
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() => {
+        el.style.transition = "transform 0.15s ease-out";
+        el.style.transform = `perspective(900px) rotateX(${(-y * 2 * max).toFixed(2)}deg) rotateY(${(x * 2 * max).toFixed(2)}deg)`;
+      });
+    };
+    const leave = () => {
+      cancelAnimationFrame(raf);
+      el.style.transition = "transform 0.7s cubic-bezier(0.22, 1, 0.36, 1)";
+      el.style.transform = "";
+    };
+    el.addEventListener("pointermove", move);
+    el.addEventListener("pointerleave", leave);
+    return () => {
+      cancelAnimationFrame(raf);
+      el.removeEventListener("pointermove", move);
+      el.removeEventListener("pointerleave", leave);
+    };
+  }, [max]);
+  return (
+    <div ref={ref} className={className}>
       {children}
     </div>
   );

@@ -42,7 +42,7 @@ function Floodlight({ side }: { side: "left" | "right" }) {
  *  to the screen, its floodlights sat on top of whatever scrolled past. */
 function Stadium() {
   return (
-    <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 z-0 h-[100svh] overflow-hidden">
+    <div aria-hidden className="depth-far pointer-events-none absolute inset-x-0 top-0 z-0 h-[100svh] overflow-hidden">
       {/* The sky over the stand, lit from below */}
       <div className="absolute inset-0 bg-[radial-gradient(90%_42%_at_50%_30%,var(--sky-glow),transparent_72%)]" />
       <Floodlight side="left" />
@@ -50,7 +50,7 @@ function Stadium() {
       {/* The pitch */}
       <div className="absolute inset-x-0 bottom-0 top-[13vh] [perspective-origin:50%_0%] [perspective:700px] lg:top-[30vh]">
         <div
-          className="absolute left-1/2 top-0 h-[700px] w-[400vw] origin-top"
+          className="depth-turf absolute left-1/2 top-0 h-[700px] w-[400vw] origin-top"
           style={{
             transform: "translateX(-50%) rotateX(64deg)",
             backgroundImage: "repeating-linear-gradient(180deg, var(--turf-a) 0 56px, var(--turf-b) 56px 112px)",
