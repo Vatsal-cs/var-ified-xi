@@ -300,8 +300,7 @@ body > * {
 
 /* The chalkboard behind the page (components/Chalkboard.tsx): lines draw
    themselves in, notes are written out left to right and the ball travels
-   its pass, all as you scroll; elsewhere they're simply there. The net at
-   the bottom of the page stirs whatever the browser. */
+   its pass, all as you scroll; elsewhere they're simply there. */
 .chalk-draw path {
   stroke-dasharray: 1;
   stroke-dashoffset: 0;
@@ -347,19 +346,6 @@ body > * {
   }
   to {
     offset-distance: 100%;
-  }
-}
-@media (prefers-reduced-motion: no-preference) {
-  .net-sway {
-    animation: net-sway 7s ease-in-out infinite alternate;
-  }
-}
-@keyframes net-sway {
-  from {
-    transform: translateY(0) skewX(0deg);
-  }
-  to {
-    transform: translateY(6px) skewX(2.5deg);
   }
 }
 @keyframes chalk-draw {

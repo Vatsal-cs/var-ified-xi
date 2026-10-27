@@ -7,8 +7,8 @@
 // gameweeks gone, and notes on this week in the coach's hand — the captain,
 // the transfer, when the chips go. As you scroll each one is drawn in, the
 // notes are written out and the ball travels its pass (globals.css); without
-// that support they're simply there. The bottom of every page is the back of
-// the net, stirring in the wind.
+// that support they're simply there. The board stops short of the footer: the
+// end of the page is left clear.
 
 import type { CSSProperties, ReactNode } from "react";
 import type { OptimizedTeam } from "@/lib/types";
@@ -347,13 +347,17 @@ export default function Chalkboard({ team }: { team: OptimizedTeam }) {
     { side: "left", inset: "2%", turn: 5, node: piece("shot") },
     { side: "right", inset: "3%", turn: -3, node: note(3) },
   ];
-  const STEP = 230;
+  const STEP = 200;
   const spots: Spot[] = [0, 1].flatMap((r) =>
     round.map((s, i) => ({ ...s, y: r * round.length * STEP + i * STEP + (s.side === "centre" ? 40 : 0) }))
   );
 
   return (
-    <div aria-hidden className="pointer-events-none absolute inset-0 z-0 select-none overflow-clip">
+    // Fades out well above the footer, so nothing is chalked at the end of the page
+    <div
+      aria-hidden
+      className="pointer-events-none absolute inset-0 z-0 select-none overflow-clip [mask-image:linear-gradient(180deg,#000_calc(100%-700px),transparent_calc(100%-450px))]"
+    >
       {spots.map(
         (s, i) =>
           s.node && (
@@ -361,7 +365,7 @@ export default function Chalkboard({ team }: { team: OptimizedTeam }) {
               key={i}
               className={`absolute ${s.phone ? "" : "hidden md:block"}`}
               style={{
-                top: `calc(95vh + ${s.y}px)`,
+                top: `calc(75vh + ${s.y}px)`,
                 ...(s.side === "centre"
                   ? { left: "50%", transform: "translateX(-50%)" }
                   : { [s.side]: s.inset, transform: s.turn ? `rotate(${s.turn}deg)` : undefined }),
@@ -371,8 +375,6 @@ export default function Chalkboard({ team }: { team: OptimizedTeam }) {
             </div>
           )
       )}
-      {/* The back of the net, at the bottom of every page */}
-      <div className="net-sway absolute inset-x-[-40px] bottom-0 h-[300px] bg-[repeating-linear-gradient(45deg,var(--doodle)_0_1.5px,transparent_1.5px_24px),repeating-linear-gradient(-45deg,var(--doodle)_0_1.5px,transparent_1.5px_24px)] [mask-image:linear-gradient(0deg,#000_20%,transparent)]" />
     </div>
   );
 }
