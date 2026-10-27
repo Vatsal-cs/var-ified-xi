@@ -113,6 +113,11 @@ module.exports = {
           "70%": { opacity: "1", transform: "scale(1.12)" },
           "100%": { opacity: "1", transform: "scale(1)" },
         },
+        // The pitch-side LED board, its message running right to left.
+        hoarding: {
+          "0%": { transform: "translateX(0)" },
+          "100%": { transform: "translateX(-50%)" },
+        },
         // The seconds digit dropping into place each tick.
         tick: {
           "0%": { transform: "translateY(-35%)", opacity: "0.3" },
@@ -127,6 +132,7 @@ module.exports = {
         grow: "grow 1.1s cubic-bezier(0.2,0.8,0.2,1) both",
         coin: "coin 1.4s cubic-bezier(0.45,0,0.2,1) both",
         hang: "hang 1s cubic-bezier(0.25,0.9,0.3,1.2) both",
+        hoarding: "hoarding 45s linear infinite",
         outgo: "outgo 1.3s cubic-bezier(0.3,0.7,0.3,1) both",
         income: "income 1.4s cubic-bezier(0.2,0.9,0.25,1) both",
         pop: "pop 0.5s cubic-bezier(0.3,1.5,0.5,1) both",

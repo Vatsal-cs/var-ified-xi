@@ -28,6 +28,14 @@ export default function Home() {
         : "Wildcard"
       : null;
   const title = chipTeam ? `Your ${chipTeam} team` : isPlan ? "The dressing room" : "The starting XI";
+  const captain = team.starting_xi.find((p) => p.is_captain);
+  const board = [
+    `Gameweek ${team.gameweek}`,
+    formation,
+    `${team.predicted_total_points.toFixed(1)} pts projected`,
+    ...(captain ? [`Captain ${captain.name}`] : []),
+    "VAR-ified XI",
+  ];
 
   return (
     <PageShell team={team}>
@@ -56,7 +64,7 @@ export default function Home() {
           {/* Each block stands up as it scrolls into view, then plays its animations */}
           <div>
             <OnView className="depth-rise">
-              <PitchView startingXi={team.starting_xi} coinFlipIds={flipIds} />
+              <PitchView startingXi={team.starting_xi} coinFlipIds={flipIds} board={board} />
             </OnView>
             <OnView className="depth-rise mt-8">
               <BenchStrip

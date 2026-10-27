@@ -281,6 +281,15 @@ body > * {
   }
 }
 
+/* The grain of the grass on the pitch (components/PitchView.tsx): fine
+   streaks along the mowing, lighter and darker, blended into the turf. */
+.turf-grain {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.35 1.6' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23g)'/%3E%3C/svg%3E");
+  background-size: 160px 160px;
+  mix-blend-mode: soft-light;
+  opacity: 0.55;
+}
+
 /* Shirts pivot from the peg they hang on. */
 .shirt-hang {
   transform-origin: 50% 0;
