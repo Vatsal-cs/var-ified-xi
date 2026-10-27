@@ -35,13 +35,14 @@ function Floodlight({ side }: { side: "left" | "right" }) {
   );
 }
 
-/** The ground behind every page: a stadium. Floodlights in the top corners,
- *  their light in the sky over the stand, and the pitch laid out in
- *  perspective below the horizon, its mown bands widening towards you. Fixed,
- *  so the page scrolls over it like a camera pan. */
+/** The ground behind the top of every page: a stadium. Floodlights in the top
+ *  corners, their light in the sky over the stand, and the pitch laid out in
+ *  perspective below the horizon, its mown bands widening towards you. It
+ *  scrolls away with the first screen and fades into the page below it; pinned
+ *  to the screen, its floodlights sat on top of whatever scrolled past. */
 function Stadium() {
   return (
-    <div aria-hidden className="pointer-events-none fixed inset-0 z-0 overflow-hidden">
+    <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 z-0 h-[100svh] overflow-hidden">
       {/* The sky over the stand, lit from below */}
       <div className="absolute inset-0 bg-[radial-gradient(90%_42%_at_50%_30%,var(--sky-glow),transparent_72%)]" />
       <Floodlight side="left" />
@@ -60,6 +61,8 @@ function Stadium() {
       {/* Mist where the pitch meets the stand, and the corners falling into shadow */}
       <div className="absolute inset-x-0 top-[6vh] h-[16vh] bg-[linear-gradient(180deg,transparent,var(--mist)_50%,transparent)] lg:top-[22vh] lg:h-[18vh]" />
       <div className="absolute inset-0 bg-[radial-gradient(140%_95%_at_50%_42%,transparent_55%,rgb(var(--c-base)/0.85)_100%)]" />
+      {/* No edge where the stadium ends */}
+      <div className="absolute inset-x-0 bottom-0 h-[35%] bg-gradient-to-b from-transparent to-base" />
     </div>
   );
 }
