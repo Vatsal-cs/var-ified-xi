@@ -57,6 +57,8 @@ module.exports = {
         mono: ["var(--font-mono)", "ui-monospace", "monospace"],
         // Shirt numbers and big figures: a condensed sports numeral.
         kit: ["var(--font-kit)", "var(--font-sans)", "sans-serif"],
+        // Chalk on the board behind the page.
+        chalk: ["var(--font-chalk)", "cursive"],
       },
       boxShadow: {
         panel: "var(--shadow-panel)",

@@ -2,7 +2,7 @@
 // Path: var-ified-xi/frontend/app/layout.tsx
 
 import type { Metadata } from "next";
-import { Barlow_Semi_Condensed, Big_Shoulders, Geist_Mono, Schibsted_Grotesk } from "next/font/google";
+import { Barlow_Semi_Condensed, Big_Shoulders, Caveat, Geist_Mono, Schibsted_Grotesk } from "next/font/google";
 import "./globals.css";
 
 // Headlines and big figures: condensed, heavy, stadium signage.
@@ -21,6 +21,9 @@ const kit = Barlow_Semi_Condensed({
   variable: "--font-kit",
 });
 
+// The coach's hand: notes chalked on the board behind the page.
+const chalk = Caveat({ subsets: ["latin"], weight: ["700"], variable: "--font-chalk" });
+
 export const metadata: Metadata = {
   title: "VAR-ified XI — your FPL week, decided",
   description:
@@ -38,7 +41,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html
       lang="en"
       suppressHydrationWarning
-      className={`${display.variable} ${sans.variable} ${mono.variable} ${kit.variable}`}
+      className={`${display.variable} ${sans.variable} ${mono.variable} ${kit.variable} ${chalk.variable}`}
     >
       <head>
         <script dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }} />

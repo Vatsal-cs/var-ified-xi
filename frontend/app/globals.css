@@ -54,6 +54,7 @@
   --page-turf-a: rgba(46, 125, 74, 0.012);
   --page-turf-b: rgba(46, 125, 74, 0.04);
   --doodle: rgba(21, 23, 27, 0.09);
+  --doodle-text: rgba(21, 23, 27, 0.14);
 }
 
 [data-theme="dark"] {
@@ -100,6 +101,7 @@
   --page-turf-a: rgba(60, 150, 95, 0.03);
   --page-turf-b: rgba(60, 150, 95, 0.075);
   --doodle: rgba(242, 240, 236, 0.1);
+  --doodle-text: rgba(242, 240, 236, 0.15);
 }
 
 html {
@@ -296,11 +298,21 @@ body > * {
   opacity: 0.55;
 }
 
-/* The chalk tactics behind the page (components/PageShell.tsx) draw
-   themselves in as they scroll into view; elsewhere they're simply there. */
+/* The chalkboard behind the page (components/Chalkboard.tsx): lines draw
+   themselves in, notes are written out left to right and the ball travels
+   its pass, all as you scroll; elsewhere they're simply there. The net at
+   the bottom of the page stirs whatever the browser. */
 .chalk-draw path {
   stroke-dasharray: 1;
   stroke-dashoffset: 0;
+}
+.chalk-piece {
+  view-timeline-name: --chalk;
+}
+.chalk-ball {
+  offset-anchor: center;
+  offset-rotate: 0deg;
+  offset-distance: 0%;
 }
 @supports (animation-timeline: view()) {
   @media (prefers-reduced-motion: no-preference) {
@@ -309,6 +321,45 @@ body > * {
       animation-timeline: view();
       animation-range: entry 15% cover 45%;
     }
+    .chalk-write {
+      animation: chalk-write linear both;
+      animation-timeline: view();
+      animation-range: entry 25% cover 45%;
+    }
+    .chalk-ball {
+      animation: chalk-ball linear both;
+      animation-timeline: --chalk;
+      animation-range: entry 40% cover 70%;
+    }
+  }
+}
+@keyframes chalk-write {
+  from {
+    clip-path: inset(-30% 100% -30% -5%);
+  }
+  to {
+    clip-path: inset(-30% -5% -30% -5%);
+  }
+}
+@keyframes chalk-ball {
+  from {
+    offset-distance: 0%;
+  }
+  to {
+    offset-distance: 100%;
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .net-sway {
+    animation: net-sway 7s ease-in-out infinite alternate;
+  }
+}
+@keyframes net-sway {
+  from {
+    transform: translateY(0) skewX(0deg);
+  }
+  to {
+    transform: translateY(6px) skewX(2.5deg);
   }
 }
 @keyframes chalk-draw {
