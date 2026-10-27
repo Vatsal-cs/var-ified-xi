@@ -51,6 +51,9 @@
   --mist: rgba(255, 255, 255, 0.45);
   --wash: rgba(255, 255, 255, 0.55);
   --grain: 0.22;
+  --page-turf-a: rgba(46, 125, 74, 0.012);
+  --page-turf-b: rgba(46, 125, 74, 0.04);
+  --doodle: rgba(21, 23, 27, 0.09);
 }
 
 [data-theme="dark"] {
@@ -94,6 +97,9 @@
   --mist: rgba(170, 205, 190, 0.07);
   --wash: rgba(255, 255, 255, 0.045);
   --grain: 0.32;
+  --page-turf-a: rgba(60, 150, 95, 0.03);
+  --page-turf-b: rgba(60, 150, 95, 0.075);
+  --doodle: rgba(242, 240, 236, 0.1);
 }
 
 html {
@@ -288,6 +294,30 @@ body > * {
   background-size: 160px 160px;
   mix-blend-mode: soft-light;
   opacity: 0.55;
+}
+
+/* The chalk tactics behind the page (components/PageShell.tsx) draw
+   themselves in as they scroll into view; elsewhere they're simply there. */
+.chalk-draw path {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 0;
+}
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .chalk-draw path {
+      animation: chalk-draw linear both;
+      animation-timeline: view();
+      animation-range: entry 15% cover 45%;
+    }
+  }
+}
+@keyframes chalk-draw {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
 }
 
 /* Shirts pivot from the peg they hang on. */
