@@ -45,17 +45,17 @@ function SwapShirt({ move, tone, uid }: { move?: TransferMove; tone: "out" | "in
       }`}
       style={{ animationDelay: isOut ? "0.5s" : "0.9s" }}
     >
-      <Hanger className="relative z-[1] -mb-2 w-[84px] sm:w-[100px]" />
+      <Hanger className="relative z-[1] -mb-2 w-[84px] sm:w-[100px] lg:w-[118px]" />
       <Shirt
         team={move?.team}
         number={(move?.predicted_points ?? 0).toFixed(1)}
         uid={uid}
-        className={`relative z-[1] h-[124px] w-[124px] drop-shadow-[0_14px_16px_rgba(0,0,0,0.3)] sm:h-[156px] sm:w-[156px] ${
+        className={`relative z-[1] h-[124px] w-[124px] drop-shadow-[0_14px_16px_rgba(0,0,0,0.3)] sm:h-[156px] sm:w-[156px] lg:h-[184px] lg:w-[184px] ${
           isOut ? "opacity-70 saturate-[.35]" : ""
         }`}
       />
       {/* Its shadow on the floor */}
-      <span aria-hidden className="-mt-3 h-3 w-[96px] rounded-[50%] bg-black/30 blur-[6px]" />
+      <span aria-hidden className="-mt-3 h-3 w-[96px] rounded-[50%] bg-black/30 blur-[6px] lg:w-[124px]" />
       <p className="mt-2 flex items-center justify-center gap-1.5 text-[17px] font-semibold tracking-[-0.01em] text-ink-100 sm:text-[18px]">
         <Crest team={move?.team} className="h-[18px] w-[18px] flex-none" />
         <span className={isOut ? "line-through decoration-risk decoration-2" : ""}>{move?.name ?? "—"}</span>

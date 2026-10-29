@@ -51,6 +51,8 @@
   --lamp-frame: linear-gradient(180deg, #6a6f75, #464a50);
   --bloom: transparent;
   --mast: rgba(21, 23, 27, 0.12);
+  --stadium-line: rgba(255, 255, 255, 0.55);
+  --boards: rgba(21, 23, 27, 0.1);
   --mist: rgba(255, 255, 255, 0.45);
   --wash: rgba(255, 255, 255, 0.55);
   --grain: 0.22;
@@ -101,6 +103,8 @@
   --lamp-frame: linear-gradient(180deg, #2c2f34, #141618);
   --bloom: rgba(255, 240, 212, 0.22);
   --mast: rgba(255, 255, 255, 0.07);
+  --stadium-line: rgba(255, 255, 255, 0.1);
+  --boards: rgba(255, 214, 140, 0.2);
   --mist: rgba(170, 205, 190, 0.07);
   --wash: rgba(255, 255, 255, 0.045);
   --grain: 0.32;
@@ -120,6 +124,7 @@ html {
 :root {
   --header-h: 107px;
   --beam-turn: 20deg;
+  --stadium-m: clamp(6px, 0.62vw, 9px);
 }
 @media (min-width: 768px) {
   :root {
@@ -186,7 +191,7 @@ body > * {
   /* Headlines and section names in sentence case, set tight, like a back
      page; the kicker above them stays stadium signage, condensed capitals. */
   .headline {
-    @apply font-headline font-extrabold leading-[0.92] tracking-[-0.03em] text-ink-100;
+    @apply font-headline font-extrabold leading-[0.92] tracking-[-0.018em] text-ink-100;
   }
   .kicker {
     @apply font-display text-[15px] font-bold uppercase tracking-[0.1em] text-gold;
@@ -335,30 +340,14 @@ body > * {
   mask-composite: intersect;
 }
 
-/* The grass on the pitch (components/PitchView.tsx), in three layers over
-   the mown bands: the blades, fine streaks pointing up the pitch; the
-   unevenness of a real lawn, broad patches a shade lighter or darker; and
-   the wear in each goalmouth and round the spots, where the turf is thin. */
+/* The grain of the grass on the pitch (components/PitchView.tsx): short,
+   fine blades, slightly longer up the pitch than across it, blended into the
+   mown bands so they read as grass up close and vanish from further off. */
 .turf-blades {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='b'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1 0.09' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23b)'/%3E%3C/svg%3E");
-  background-size: 200px 200px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='b'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.5 0.6' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23b)'/%3E%3C/svg%3E");
+  background-size: 160px 160px;
   mix-blend-mode: soft-light;
-  opacity: 0.6;
-}
-.turf-patches {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='600'%3E%3Cfilter id='p'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.008' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='600' height='600' filter='url(%23p)'/%3E%3C/svg%3E");
-  background-size: 600px 600px;
-  mix-blend-mode: soft-light;
-  opacity: 0.5;
-}
-.turf-wear {
-  background:
-    radial-gradient(13% 3.6% at 50% 4.6%, rgba(168, 152, 98, 0.32), transparent 78%),
-    radial-gradient(13% 3.6% at 50% 95.4%, rgba(168, 152, 98, 0.32), transparent 78%),
-    radial-gradient(3.4% 1.6% at 50% 11.2%, rgba(168, 152, 98, 0.28), transparent 80%),
-    radial-gradient(3.4% 1.6% at 50% 88.8%, rgba(168, 152, 98, 0.28), transparent 80%),
-    radial-gradient(6% 2.6% at 50% 50%, rgba(168, 152, 98, 0.2), transparent 80%);
-  mix-blend-mode: overlay;
+  opacity: 0.35;
 }
 
 /* The chalkboard behind the page (components/Chalkboard.tsx): lines draw

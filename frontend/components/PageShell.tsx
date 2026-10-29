@@ -47,31 +47,97 @@ function Floodlight({ side }: { side: "left" | "right" }) {
   );
 }
 
-/** The ground behind the top of every page: a stadium. Floodlights in the top
- *  corners, their light in the sky over the stand, and the pitch laid out in
- *  perspective below the horizon, its mown bands widening towards you. It
- *  scrolls away with the first screen and fades into the page below it; pinned
- *  to the screen, its floodlights sat on top of whatever scrolled past. */
+/** A length on the stadium's pitch, in metres at the scale of its far side
+ *  (--stadium-m, globals.css, which grows with the screen). */
+const metres = (n: number) => `calc(${n} * var(--stadium-m))`;
+
+/** The pitch below the horizon, laid flat and seen from high in the main
+ *  stand: touchlines, halfway line, centre circle, both boxes and their arcs,
+ *  mown across its width so the stripes run away towards the far side, and
+ *  the perimeter boards lit behind the far touchline. Drawn upright here; the
+ *  plane it lies on is tipped back in perspective (Stadium). */
+function StadiumPitch() {
+  const end = (side: "left" | "right") => {
+    const at = side === "left" ? "left-0 border-l-0" : "right-0 border-r-0";
+    return (
+      <>
+        <div className={`absolute top-1/2 -translate-y-1/2 border-2 border-[var(--stadium-line)] ${at}`} style={{ width: metres(16.5), height: metres(40.3) }} />
+        <div className={`absolute top-1/2 -translate-y-1/2 border-2 border-[var(--stadium-line)] ${at}`} style={{ width: metres(5.5), height: metres(18.3) }} />
+        {/* The arc of the D: the circle round the spot, beyond the box */}
+        <div
+          className="absolute top-1/2 -translate-y-1/2 rounded-full border-2 border-[var(--stadium-line)]"
+          style={{
+            [side]: metres(11 - 9.15),
+            width: metres(18.3),
+            height: metres(18.3),
+            clipPath: side === "left" ? "inset(0 0 0 80%)" : "inset(0 80% 0 0)",
+          }}
+        />
+        <div
+          className="absolute top-1/2 h-[5px] w-[5px] -translate-y-1/2 rounded-full bg-[var(--stadium-line)]"
+          style={{ [side]: metres(11) }}
+        />
+      </>
+    );
+  };
+  return (
+    <div
+      className="absolute left-1/2 -translate-x-1/2 border-2 border-[var(--stadium-line)]"
+      style={{
+        top: metres(4),
+        width: metres(105),
+        height: metres(68),
+        backgroundImage: "repeating-linear-gradient(90deg, var(--turf-b) 0 5.5556%, var(--turf-a) 5.5556% 11.1111%)",
+      }}
+    >
+      <div
+        className="absolute left-1/2 -translate-x-1/2 bg-[linear-gradient(90deg,transparent,var(--boards)_12%,var(--boards)_88%,transparent)]"
+        style={{ top: metres(-3.2), width: metres(118), height: metres(1) }}
+      />
+      <div className="absolute inset-y-0 left-1/2 w-[2px] -translate-x-1/2 bg-[var(--stadium-line)]" />
+      <div
+        className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-[var(--stadium-line)]"
+        style={{ width: metres(18.3), height: metres(18.3) }}
+      />
+      <div className="absolute left-1/2 top-1/2 h-[5px] w-[5px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[var(--stadium-line)]" />
+      {end("left")}
+      {end("right")}
+    </div>
+  );
+}
+
+/** The ground behind the top of every page: a stadium at night, the wide shot
+ *  from the main stand. Floodlights in the top corners, their light in the
+ *  sky over the far stand, and the pitch laid out in perspective below the
+ *  horizon. It scrolls away with the first screen and fades into the page
+ *  below it; pinned to the screen, its floodlights sat on top of whatever
+ *  scrolled past. */
 function Stadium() {
   return (
     <div aria-hidden className="depth-far pointer-events-none absolute inset-x-0 top-0 z-0 h-[100svh] overflow-hidden">
       {/* The sky over the stand, lit from below */}
-      <div className="absolute inset-0 bg-[radial-gradient(90%_42%_at_50%_30%,var(--sky-glow),transparent_72%)]" />
+      <div className="absolute inset-0 bg-[radial-gradient(90%_36%_at_50%_10%,var(--sky-glow),transparent_72%)]" />
       <Floodlight side="left" />
       <Floodlight side="right" />
-      {/* The pitch */}
-      <div className="absolute inset-x-0 bottom-0 top-[13vh] [perspective-origin:50%_0%] [perspective:700px] lg:top-[30vh]">
+      {/* The ground: the pitch on a wider plane of grass, tipped back. Its far
+          side sits just under the header, level with the floodlights, so the
+          page reads as standing on it rather than a line running through it. */}
+      <div
+        className="absolute inset-x-0 bottom-0 [perspective-origin:50%_0%] [perspective:700px]"
+        style={{ top: "calc(var(--header-h) + 2.5vh)" }}
+      >
         <div
-          className="depth-turf absolute left-1/2 top-0 h-[700px] w-[400vw] origin-top"
-          style={{
-            transform: "translateX(-50%) rotateX(64deg)",
-            backgroundImage: "repeating-linear-gradient(180deg, var(--turf-a) 0 56px, var(--turf-b) 56px 112px)",
-          }}
+          className="depth-turf absolute left-1/2 top-0 h-[1400px] w-[400vw] origin-top bg-[var(--turf-a)]"
+          style={{ transform: "translateX(-50%) rotateX(64deg)" }}
         >
+          <StadiumPitch />
         </div>
       </div>
       {/* Mist where the pitch meets the stand, and the corners falling into shadow */}
-      <div className="absolute inset-x-0 top-[6vh] h-[16vh] bg-[linear-gradient(180deg,transparent,var(--mist)_50%,transparent)] lg:top-[22vh] lg:h-[18vh]" />
+      <div
+        className="absolute inset-x-0 h-[14vh] bg-[linear-gradient(180deg,transparent,var(--mist)_50%,transparent)]"
+        style={{ top: "calc(var(--header-h) + 2.5vh - 7vh)" }}
+      />
       <div className="absolute inset-0 bg-[radial-gradient(140%_95%_at_50%_42%,transparent_55%,rgb(var(--c-base)/0.85)_100%)]" />
       {/* No edge where the stadium ends */}
       <div className="absolute inset-x-0 bottom-0 h-[35%] bg-gradient-to-b from-transparent to-base" />
