@@ -53,6 +53,9 @@ module.exports = {
       },
       fontFamily: {
         display: ["var(--font-display)", "var(--font-sans)", "sans-serif"],
+        // Headlines, at their narrowest width; the optical size follows the
+        // font size on its own.
+        headline: [["var(--font-headline)", "var(--font-sans)", "sans-serif"], { fontVariationSettings: "'wdth' 75" }],
         body: ["var(--font-sans)", "system-ui", "sans-serif"],
         mono: ["var(--font-mono)", "ui-monospace", "monospace"],
         // Shirt numbers and big figures: a condensed sports numeral.

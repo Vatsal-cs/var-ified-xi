@@ -10,6 +10,7 @@
 
 "use client";
 
+import { useEffect, useRef } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { OptimizedTeam } from "@/lib/types";
@@ -22,9 +23,21 @@ export type NavPage = { href: string; label: string };
 
 export default function SiteHeader({ team, pages }: { team: OptimizedTeam; pages: NavPage[] }) {
   const pathname = usePathname();
+  // Its height, for what sits just below it (the floodlights in PageShell);
+  // it changes with the screen, from one row to two.
+  const ref = useRef<HTMLElement>(null);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const ro = new ResizeObserver(() =>
+      document.documentElement.style.setProperty("--header-h", `${el.offsetHeight}px`)
+    );
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
 
   return (
-    <header className="sticky top-0 z-50 border-b border-line bg-base/95 backdrop-blur-md transition-colors duration-300">
+    <header ref={ref} className="sticky top-0 z-50 border-b border-line bg-base/95 backdrop-blur-md transition-colors duration-300">
       <div className="mx-auto grid max-w-6xl grid-cols-[1fr_auto] items-center gap-x-2.5 gap-y-2.5 px-4 py-3 [grid-template-areas:'brand_chip'_'nav_nav'] sm:px-6 md:grid-cols-[auto_1fr_auto_auto] md:gap-x-3 md:py-3.5 md:[grid-template-areas:'brand_nav_chip_actions']">
         <Link href="/" aria-label="VAR-ified XI, this week" className="group flex items-center gap-2.5 [grid-area:brand]">
           <LogoMark className="h-8 w-8 flex-none drop-shadow-[0_3px_6px_rgba(0,0,0,0.3)] transition-transform duration-300 group-hover:-rotate-6 sm:h-10 sm:w-10" />

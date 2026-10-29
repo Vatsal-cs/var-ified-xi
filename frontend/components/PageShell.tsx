@@ -10,26 +10,37 @@ import type { OptimizedTeam } from "@/lib/types";
 import SiteHeader, { type NavPage } from "./SiteHeader";
 import Chalkboard from "./Chalkboard";
 
-/** A bank of floodlights high in a corner, throwing its beam across the
- *  ground. Lit at night; in daylight the lamps are off and there's no beam. */
+// How brightly each of the twelve lamps burns: never all quite the same.
+const LAMPS = [1, 1, 0.9, 1, 0.95, 1, 1, 0.85, 1, 0.92, 1, 1];
+
+/** A bank of floodlights high in a corner, just under the header whatever the
+ *  screen (it measures itself into --header-h), sized to the screen too.
+ *  Twelve lamps on a frame turned down and in towards the pitch, the air
+ *  round them catching the light, and a beam with dust in it falling across
+ *  the ground; a mast below where there's room beside the page. Lit at night;
+ *  in daylight the lamps are off and there's no beam (globals.css). */
 function Floodlight({ side }: { side: "left" | "right" }) {
   const left = side === "left";
   return (
-    <div className={`absolute top-[11vh] hidden lg:block ${left ? "left-[2.5vw]" : "right-[2.5vw]"}`}>
+    <div
+      className="absolute w-[clamp(28px,3.6vw,58px)]"
+      style={{ top: "calc(var(--header-h) + clamp(4px, 1vw, 16px))", [side]: "clamp(10px, 2.4vw, 46px)" }}
+    >
       <div
-        className="absolute top-4 h-[85vh] w-[44vw]"
-        style={{
-          [left ? "left" : "right"]: "10px",
-          background: "linear-gradient(180deg, var(--beam), transparent 78%)",
-          clipPath: left ? "polygon(0 0, 7% 0, 100% 100%, 38% 100%)" : "polygon(93% 0, 100% 0, 62% 100%, 0 100%)",
-        }}
+        className="floodlight-beam absolute left-[calc(50%-110vh)] top-1/2 h-[110vh] w-[220vh] origin-top"
+        style={{ transform: `rotate(calc(var(--beam-turn) * ${left ? -1 : 1}))` }}
       />
+      <div className="floodlight-bloom absolute left-1/2 top-1/2 aspect-square w-[360%] -translate-x-1/2 -translate-y-1/2" />
+      <div className="absolute left-1/2 top-[70%] hidden h-[42vh] w-[3px] -translate-x-1/2 bg-gradient-to-b from-[var(--mast)] to-transparent xl:block" />
       <div
-        className="relative grid grid-cols-4 gap-[3px] rounded-[3px] bg-[var(--lamp-frame)] p-[4px]"
-        style={{ transform: `rotate(${left ? 9 : -9}deg)` }}
+        className="relative grid grid-cols-4 gap-[2px] rounded-[3px] p-[3px] shadow-[0_4px_10px_rgba(0,0,0,0.45),inset_0_1px_0_rgba(255,255,255,0.14)]"
+        style={{
+          background: "var(--lamp-frame)",
+          transform: `perspective(260px) rotateX(16deg) rotateY(${left ? 26 : -26}deg)`,
+        }}
       >
-        {Array.from({ length: 12 }, (_, i) => (
-          <span key={i} className="h-[7px] w-[7px] rounded-full bg-[var(--lamp)] shadow-[var(--lamp-glow)]" />
+        {LAMPS.map((burn, i) => (
+          <span key={i} className="floodlight-lamp aspect-square rounded-full" style={{ opacity: burn }} />
         ))}
       </div>
     </div>

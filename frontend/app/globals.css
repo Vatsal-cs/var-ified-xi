@@ -27,8 +27,8 @@
   --c-coral: 194 90 60;
   --c-warn: 168 116 15;
   --c-risk: 200 52 31;
-  --c-grass: 47 106 61;
-  --c-grass-dark: 43 98 56;
+  --c-grass: 58 122 64;
+  --c-grass-dark: 45 103 55;
   --c-plate: 21 23 27;
   --c-plate-text: 255 255 255;
   --c-ink-100: 21 23 27;
@@ -45,9 +45,12 @@
   --turf-b: rgba(46, 125, 74, 0.095);
   --sky-glow: rgba(255, 255, 255, 0.65);
   --beam: rgba(255, 255, 255, 0);
-  --lamp: rgba(21, 23, 27, 0.2);
-  --lamp-glow: none;
-  --lamp-frame: rgba(21, 23, 27, 0.08);
+  --beam-on: 0;
+  --lamp-lens: radial-gradient(circle at 38% 34%, #fbfbf8 0 10%, #d3d6d9 30%, #9a9fa5 62%, #5a5f66 100%);
+  --lamp-glow: 0 0 0 transparent;
+  --lamp-frame: linear-gradient(180deg, #6a6f75, #464a50);
+  --bloom: transparent;
+  --mast: rgba(21, 23, 27, 0.12);
   --mist: rgba(255, 255, 255, 0.45);
   --wash: rgba(255, 255, 255, 0.55);
   --grain: 0.22;
@@ -74,8 +77,8 @@
   --c-coral: 229 138 111;
   --c-warn: 217 164 65;
   --c-risk: 236 106 85;
-  --c-grass: 30 74 42;
-  --c-grass-dark: 27 67 38;
+  --c-grass: 39 91 49;
+  --c-grass-dark: 28 72 40;
   --c-plate: 242 240 236;
   --c-plate-text: 17 17 17;
   --c-ink-100: 242 240 236;
@@ -91,10 +94,13 @@
   --turf-a: rgba(60, 150, 95, 0.055);
   --turf-b: rgba(60, 150, 95, 0.095);
   --sky-glow: rgba(150, 180, 220, 0.11);
-  --beam: rgba(255, 246, 222, 0.07);
-  --lamp: #fff4d6;
-  --lamp-glow: 0 0 8px rgba(255, 244, 214, 0.9);
-  --lamp-frame: rgba(255, 255, 255, 0.07);
+  --beam: rgba(255, 246, 222, 0.13);
+  --beam-on: 1;
+  --lamp-lens: radial-gradient(circle at 50% 46%, #fff 0 22%, #fff7e3 36%, #ffe1a3 54%, #d6a14c 68%, #3b3022 84%, #17181b 100%);
+  --lamp-glow: 0 0 5px rgba(255, 238, 200, 0.7);
+  --lamp-frame: linear-gradient(180deg, #2c2f34, #141618);
+  --bloom: rgba(255, 240, 212, 0.22);
+  --mast: rgba(255, 255, 255, 0.07);
   --mist: rgba(170, 205, 190, 0.07);
   --wash: rgba(255, 255, 255, 0.045);
   --grain: 0.32;
@@ -106,6 +112,20 @@
 
 html {
   scroll-behavior: smooth;
+}
+
+/* The sticky header's height, which SiteHeader measures and keeps current;
+   these are its two sizes for the first paint. The floodlights sit just
+   below it, and their beams turn further in where the screen is wider. */
+:root {
+  --header-h: 107px;
+  --beam-turn: 20deg;
+}
+@media (min-width: 768px) {
+  :root {
+    --header-h: 69px;
+    --beam-turn: 34deg;
+  }
 }
 
 /* Floodlights from above: one soft wash over the top of the page, and a fine
@@ -163,15 +183,16 @@ body > * {
 
   /* Small print that names a thing. Sentence case: the tracked-out capitals
      every dashboard template uses are exactly what made this look generic. */
-  /* Stadium signage: condensed capitals for headlines and section names. */
+  /* Headlines and section names in sentence case, set tight, like a back
+     page; the kicker above them stays stadium signage, condensed capitals. */
   .headline {
-    @apply font-display font-extrabold uppercase leading-[0.9] tracking-[-0.005em] text-ink-100;
+    @apply font-headline font-extrabold leading-[0.92] tracking-[-0.03em] text-ink-100;
   }
   .kicker {
     @apply font-display text-[15px] font-bold uppercase tracking-[0.1em] text-gold;
   }
   .heading {
-    @apply font-display text-[20px] font-extrabold uppercase tracking-[0.02em] text-ink-100;
+    @apply font-headline text-[22px] font-extrabold leading-tight tracking-[-0.02em] text-ink-100;
   }
 
   .label {
@@ -289,13 +310,55 @@ body > * {
   }
 }
 
-/* The grain of the grass on the pitch (components/PitchView.tsx): fine
-   streaks along the mowing, lighter and darker, blended into the turf. */
-.turf-grain {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.35 1.6' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23g)'/%3E%3C/svg%3E");
-  background-size: 160px 160px;
+/* The floodlights (components/PageShell.tsx). Each lamp burns white at the
+   centre and warm towards its rim, inside a dark reflector; the air round the
+   bank catches a little of it; the beam is a soft-edged cone that fades with
+   distance, with dust drifting in it. In daylight the lamps are plain glass
+   and there's no beam (the theme variables above). */
+.floodlight-lamp {
+  background: var(--lamp-lens);
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.55), var(--lamp-glow);
+}
+.floodlight-bloom {
+  background: radial-gradient(closest-side, var(--bloom), transparent);
+}
+.floodlight-beam {
+  opacity: var(--beam-on);
+  background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='260'%3E%3Cfilter id='d'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.6' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 0.97 0 0 0 0 0.9 2 0 0 0 -1.25'/%3E%3C/filter%3E%3Crect width='260' height='260' filter='url(%23d)' opacity='0.3'/%3E%3C/svg%3E") 0 0 / 260px 260px,
+    var(--beam);
+  -webkit-mask-image: conic-gradient(from 154deg at 50% 0%, transparent 0deg, rgba(0, 0, 0, 0.5) 8deg, #000 17deg, #000 35deg, rgba(0, 0, 0, 0.5) 44deg, transparent 52deg),
+    linear-gradient(180deg, #000 0%, rgba(0, 0, 0, 0.75) 40%, transparent 92%);
+  -webkit-mask-composite: source-in;
+  mask-image: conic-gradient(from 154deg at 50% 0%, transparent 0deg, rgba(0, 0, 0, 0.5) 8deg, #000 17deg, #000 35deg, rgba(0, 0, 0, 0.5) 44deg, transparent 52deg),
+    linear-gradient(180deg, #000 0%, rgba(0, 0, 0, 0.75) 40%, transparent 92%);
+  mask-composite: intersect;
+}
+
+/* The grass on the pitch (components/PitchView.tsx), in three layers over
+   the mown bands: the blades, fine streaks pointing up the pitch; the
+   unevenness of a real lawn, broad patches a shade lighter or darker; and
+   the wear in each goalmouth and round the spots, where the turf is thin. */
+.turf-blades {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='b'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1 0.09' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23b)'/%3E%3C/svg%3E");
+  background-size: 200px 200px;
   mix-blend-mode: soft-light;
-  opacity: 0.55;
+  opacity: 0.6;
+}
+.turf-patches {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='600'%3E%3Cfilter id='p'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.008' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='600' height='600' filter='url(%23p)'/%3E%3C/svg%3E");
+  background-size: 600px 600px;
+  mix-blend-mode: soft-light;
+  opacity: 0.5;
+}
+.turf-wear {
+  background:
+    radial-gradient(13% 3.6% at 50% 4.6%, rgba(168, 152, 98, 0.32), transparent 78%),
+    radial-gradient(13% 3.6% at 50% 95.4%, rgba(168, 152, 98, 0.32), transparent 78%),
+    radial-gradient(3.4% 1.6% at 50% 11.2%, rgba(168, 152, 98, 0.28), transparent 80%),
+    radial-gradient(3.4% 1.6% at 50% 88.8%, rgba(168, 152, 98, 0.28), transparent 80%),
+    radial-gradient(6% 2.6% at 50% 50%, rgba(168, 152, 98, 0.2), transparent 80%);
+  mix-blend-mode: overlay;
 }
 
 /* The chalkboard behind the page (components/Chalkboard.tsx): lines draw

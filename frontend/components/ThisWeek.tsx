@@ -33,38 +33,29 @@ function activeChip(team: OptimizedTeam): string | null {
 const and = (names: string[]) =>
   names.length <= 1 ? names.join("") : `${names.slice(0, -1).join(", ")} and ${names[names.length - 1]}`;
 
-/** One shirt on the swap rail, lit red going out and green coming in. */
+/** One shirt on the swap rail. Both hang straight; the one going out is
+ *  faded, and the tags underneath say which way each is going. */
 function SwapShirt({ move, tone, uid }: { move?: TransferMove; tone: "out" | "in"; uid: string }) {
   const isOut = tone === "out";
   const price = isOut ? move?.sell_price_m : move?.cost_m;
-  const light = isOut ? "236,90,70" : "70,205,125";
   return (
     <div
       className={`shirt-hang relative isolate flex flex-col items-center text-center ${
-        isOut ? "-translate-x-1.5 -rotate-[7deg] animate-outgo" : "animate-income"
+        isOut ? "animate-outgo" : "animate-income"
       }`}
       style={{ animationDelay: isOut ? "0.5s" : "0.9s" }}
     >
-      {/* The light this shirt stands in */}
-      <span
-        aria-hidden
-        className="pointer-events-none absolute left-1/2 top-0 -z-10 h-[230px] w-[230px] -translate-x-1/2 sm:h-[260px] sm:w-[270px]"
-        style={{ background: `radial-gradient(ellipse 50% 52% at 50% 46%, rgba(${light},${isOut ? 0.26 : 0.32}), transparent 70%)` }}
-      />
       <Hanger className="relative z-[1] -mb-2 w-[84px] sm:w-[100px]" />
       <Shirt
         team={move?.team}
         number={(move?.predicted_points ?? 0).toFixed(1)}
         uid={uid}
         className={`relative z-[1] h-[124px] w-[124px] drop-shadow-[0_14px_16px_rgba(0,0,0,0.3)] sm:h-[156px] sm:w-[156px] ${
-          isOut ? "opacity-60 grayscale" : ""
+          isOut ? "opacity-70 saturate-[.35]" : ""
         }`}
       />
-      <span
-        aria-hidden
-        className="-mt-3 h-3 w-[110px] rounded-[50%] blur-[6px]"
-        style={{ background: `rgba(${light},0.55)` }}
-      />
+      {/* Its shadow on the floor */}
+      <span aria-hidden className="-mt-3 h-3 w-[96px] rounded-[50%] bg-black/30 blur-[6px]" />
       <p className="mt-2 flex items-center justify-center gap-1.5 text-[17px] font-semibold tracking-[-0.01em] text-ink-100 sm:text-[18px]">
         <Crest team={move?.team} className="h-[18px] w-[18px] flex-none" />
         <span className={isOut ? "line-through decoration-risk decoration-2" : ""}>{move?.name ?? "—"}</span>
@@ -320,9 +311,7 @@ export default function ThisWeek({ team }: { team: OptimizedTeam }) {
         {chip ? (
           <LockedCheck check={team.lineup_check} chip={chip} />
         ) : week && week.transfers_out.length > 0 ? (
-          <Tilt max={10}>
-            <SwapRail week={week} />
-          </Tilt>
+          <SwapRail week={week} />
         ) : (
           <div className="flex flex-col items-center py-6 text-center">
             <Hanger className="w-24" />

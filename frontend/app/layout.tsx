@@ -2,11 +2,15 @@
 // Path: var-ified-xi/frontend/app/layout.tsx
 
 import type { Metadata } from "next";
-import { Barlow_Semi_Condensed, Big_Shoulders, Caveat, Geist_Mono, Schibsted_Grotesk } from "next/font/google";
+import { Barlow_Semi_Condensed, Big_Shoulders, Bricolage_Grotesque, Caveat, Geist_Mono, Schibsted_Grotesk } from "next/font/google";
 import "./globals.css";
 
-// Headlines and big figures: condensed, heavy, stadium signage.
+// Signage, labels and big figures: condensed, heavy, stadium boards.
 const display = Big_Shoulders({ subsets: ["latin"], weight: ["700", "800", "900"], variable: "--font-display" });
+
+// Headlines: a narrow grotesque with ink traps, in sentence case, like a
+// back page rather than a scoreboard.
+const headline = Bricolage_Grotesque({ subsets: ["latin"], axes: ["wdth", "opsz"], variable: "--font-headline" });
 
 // Everything you read: a newspaper grotesk with some character.
 const sans = Schibsted_Grotesk({ subsets: ["latin"], variable: "--font-sans" });
@@ -41,7 +45,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html
       lang="en"
       suppressHydrationWarning
-      className={`${display.variable} ${sans.variable} ${mono.variable} ${kit.variable} ${chalk.variable}`}
+      className={`${display.variable} ${headline.variable} ${sans.variable} ${mono.variable} ${kit.variable} ${chalk.variable}`}
     >
       <head>
         <script dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }} />

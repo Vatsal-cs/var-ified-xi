@@ -5,7 +5,8 @@
 // They're hung up one at a time — keeper first, forwards last — and the
 // captain's armband goes on once they're all in. Hover a shirt for a quick
 // look; tap it for the full spread and fixture run. The ground is dressed
-// for a night match: full markings and goals, mown grass, a shadow from each
+// for a night match: full markings and goals, mown grass worn in the
+// goalmouths, a shadow from each
 // of the four floodlights, the ball on the spot and the LED board behind the
 // far goal running the week's numbers.
 "use client";
@@ -429,14 +430,19 @@ export default function PitchView({
           {/* The turf, tipped back like a broadcast camera's view */}
           <div aria-hidden className="absolute inset-0 [perspective-origin:50%_100%] [perspective:200cqw]">
             <div
-              className="absolute inset-x-0 bottom-0 h-[115.4%] origin-bottom overflow-hidden rounded-lg bg-[repeating-linear-gradient(180deg,rgb(var(--c-grass))_0_8.33%,rgb(var(--c-grass-dark))_8.33%_16.66%)] shadow-[0_30px_60px_-30px_rgba(0,0,0,0.8)] transition-colors duration-300"
+              className="absolute inset-x-0 bottom-0 h-[115.4%] origin-bottom overflow-hidden rounded-lg bg-[repeating-linear-gradient(180deg,rgb(var(--c-grass))_0,rgb(var(--c-grass))_7.9%,rgb(var(--c-grass-dark))_8.4%,rgb(var(--c-grass-dark))_16.2%,rgb(var(--c-grass))_16.7%)] shadow-[0_30px_60px_-30px_rgba(0,0,0,0.8)] transition-colors duration-300"
               style={{ transform: `rotateX(${TILT}deg)` }}
             >
-              {/* Mown in bands, with a lighter cross-cut, and the grain of the grass */}
-            <div className="absolute inset-0 bg-[repeating-linear-gradient(180deg,rgba(255,255,255,0.035)_0_8.33%,transparent_8.33%_16.66%),repeating-linear-gradient(90deg,rgba(0,0,0,0.035)_0_12.5%,transparent_12.5%_25%)]" />
-            <div className="turf-grain absolute inset-0" />
-            {/* Floodlights in the four corners, and the shadow at the edges */}
-              <div className="absolute inset-0 bg-[radial-gradient(55%_40%_at_0%_0%,rgba(255,244,214,0.16),transparent_70%),radial-gradient(55%_40%_at_100%_0%,rgba(255,244,214,0.16),transparent_70%),radial-gradient(55%_40%_at_0%_100%,rgba(214,232,255,0.1),transparent_70%),radial-gradient(55%_40%_at_100%_100%,rgba(214,232,255,0.1),transparent_70%)]" />
+              {/* Mown in bands, the light ones a touch yellower where the blades
+                  lean away; then the blades, the patchiness and the wear
+                  (globals.css) */}
+              <div className="absolute inset-0 bg-[repeating-linear-gradient(180deg,rgba(255,236,150,0.05)_0_8.33%,transparent_8.33%_16.66%)]" />
+              <div className="turf-patches absolute inset-0" />
+              <div className="turf-blades absolute inset-0" />
+              <div className="turf-wear absolute inset-0" />
+              {/* Floodlights in the four corners, a sheen down the middle where
+                  they cross, the far end falling into the dark, and the edges */}
+              <div className="absolute inset-0 bg-[radial-gradient(55%_40%_at_0%_0%,rgba(255,244,214,0.16),transparent_70%),radial-gradient(55%_40%_at_100%_0%,rgba(255,244,214,0.16),transparent_70%),radial-gradient(55%_40%_at_0%_100%,rgba(214,232,255,0.1),transparent_70%),radial-gradient(55%_40%_at_100%_100%,rgba(214,232,255,0.1),transparent_70%),radial-gradient(45%_35%_at_50%_62%,rgba(255,255,255,0.05),transparent_75%),linear-gradient(180deg,rgba(0,0,0,0.22),transparent_32%)]" />
               <div className="absolute inset-0 shadow-[inset_0_0_80px_rgba(0,0,0,0.5)]" />
               <Markings />
             </div>
