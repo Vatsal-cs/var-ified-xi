@@ -1,12 +1,12 @@
 {
-  "generated_at": "2026-10-30T15:50:14.639691+00:00",
+  "generated_at": "2026-10-30T21:29:02.834714+00:00",
   "gameweek": 9,
   "deadline": "2026-10-31T11:00:00Z",
   "horizon_gws": 6,
   "mode": "transfer_plan",
   "budget_used_m": 98.8,
   "budget_total_m": 100.0,
-  "predicted_total_points": 50.33,
+  "predicted_total_points": 50.3,
   "starting_xi": [
     {
       "player_id": 1,
@@ -563,45 +563,45 @@
       "position": "FWD",
       "team": "Brentford",
       "now_cost_m": 7.8,
-      "predicted_points": 4.8,
-      "horizon_points": 18.45,
+      "predicted_points": 4.77,
+      "horizon_points": 18.33,
       "xp_by_gw": {
-        "9": 4.8,
-        "10": 4.35,
-        "11": 4.7,
-        "12": 4.29,
-        "13": 3.96,
-        "14": 4.19
+        "9": 4.77,
+        "10": 4.32,
+        "11": 4.67,
+        "12": 4.26,
+        "13": 3.93,
+        "14": 4.16
       },
       "start_probability": 0.92,
       "is_captain": false,
       "is_vice_captain": true,
       "dist": {
-        "mean": 4.43,
+        "mean": 4.42,
         "p10": 1,
-        "p90": 11,
-        "p_blank": 0.604,
-        "p_return": 0.318,
-        "p_haul": 0.112,
+        "p90": 12,
+        "p_blank": 0.613,
+        "p_return": 0.313,
+        "p_haul": 0.115,
         "pmf": [
-          0.04,
-          0.0783,
-          0.4861,
-          0.0011,
-          0.0044,
-          0.0724,
-          0.0457,
-          0.0422,
-          0.0497,
-          0.0677,
-          0.0019,
-          0.0116,
-          0.0413,
-          0.0435,
-          0.0009,
-          0.0126,
-          0.0001,
-          0.0006,
+          0.0395,
+          0.0733,
+          0.4997,
+          0.0004,
+          0.0023,
+          0.072,
+          0.0414,
+          0.0403,
+          0.0468,
+          0.0696,
+          0.0007,
+          0.0125,
+          0.0437,
+          0.0444,
+          0.0003,
+          0.0127,
+          0.0,
+          0.0002,
           0.0,
           0.0,
           0.0,
@@ -880,7 +880,7 @@
         "13": 0.14,
         "14": 0.12
       },
-      "start_probability": 0.31,
+      "start_probability": 0.32,
       "is_captain": false,
       "is_vice_captain": false,
       "dist": {
@@ -1236,11 +1236,11 @@
     {
       "player_id": 106,
       "name": "Thiago",
-      "projected": 4.8,
-      "p_haul": 0.112,
+      "projected": 4.77,
+      "p_haul": 0.115,
       "p10": 1,
-      "p90": 11,
-      "beats_captain": 0.459
+      "p90": 12,
+      "beats_captain": 0.458
     },
     {
       "player_id": 40,
@@ -1320,7 +1320,7 @@
             "3xc": 5.7,
             "3xc_player": "Haaland",
             "bboost": 5.5,
-            "freehit": 3.7,
+            "freehit": 3.8,
             "xi_points": 50.3,
             "firm": true,
             "fixtures": {
@@ -1334,7 +1334,7 @@
             "3xc_player": "Gabriel",
             "bboost": 8.0,
             "freehit": 4.3,
-            "xi_points": 57.4,
+            "xi_points": 57.3,
             "firm": true,
             "fixtures": {
               "doubles": 0,
@@ -1359,7 +1359,7 @@
             "3xc": 4.8,
             "3xc_player": "Rogers",
             "bboost": 12.2,
-            "freehit": 2.5,
+            "freehit": 2.6,
             "xi_points": 51.2,
             "firm": true,
             "fixtures": {
@@ -1424,7 +1424,7 @@
             "3xc": 5.5,
             "3xc_player": "Haaland",
             "bboost": 11.7,
-            "freehit": 4.6,
+            "freehit": 4.5,
             "xi_points": 54.9,
             "firm": false,
             "fixtures": {
@@ -1450,7 +1450,7 @@
             "3xc": 6.7,
             "3xc_player": "Haaland",
             "bboost": 12.2,
-            "freehit": 2.0,
+            "freehit": 1.9,
             "xi_points": 60.3,
             "firm": false,
             "fixtures": {
@@ -1466,7 +1466,7 @@
   },
   "team_news": {
     "enabled": true,
-    "fetched_at": "2026-10-30T15:50:05.602837+00:00",
+    "fetched_at": "2026-10-30T21:28:52.705024+00:00",
     "model": "gemini-3.5-flash-lite",
     "items": [
       {
@@ -1475,7 +1475,7 @@
         "club": "Spurs",
         "status": "out",
         "start_chance": 0,
-        "reason": "Ruled out for the Palace clash.",
+        "reason": "Ruled out for the Crystal Palace clash.",
         "source_url": "https://news.google.com/rss/articles/CBMirgFBVV95cUxPVjhhZ0toZmczN2FTNHNCaWxIUG9DdjRScThXTXJsQWF6czktTmFzZUZoTlZXbkRNNlBmY29Ib2NVdkZMV2NlMUdoaTBMRjR3VjR0cHF1Q2JhTjRxZ3ZIX2Y5QzhVNzhSbUQ0eEhRdzl4WnkzR1ZkbWxuUnFZTFRPckNWM2xLeEJ5dnpGSEFTOFZ5ZFY2Z2FGT1hyN2dJOVVPSHdBWkNueV9jSDBjUnc?oc=5",
         "source_date": "2026-10-30",
         "source_title": "Team news | Udogie back, Bergvall, Savio, Tosin out for Palace clash - Tottenham Hotspur"
@@ -1486,7 +1486,7 @@
         "club": "Sunderland",
         "status": "doubtful",
         "start_chance": 50,
-        "reason": "Doubtful for Coventry clash.",
+        "reason": "A doubt for the Coventry match.",
         "source_url": "https://news.google.com/rss/articles/CBMivwFBVV95cUxPdklIc0FiTGJCTk5yYjhQa1ltRHhTbHdTTXIxTnhOTnNSSWZwYURVcDA1Mms0NUxhNVc2QUl0MnRsaDVwbjdkemtoc245Mk5ad3RpRVI3NHV3U1A0WlA5TUxNUUhwMUo4YUpUa2RlUTFRdUVJbUFXVjh1R0hIc3Q4MWg1UGVKbXhuRTFEZFpqNnh3SXJJVEZLSFpVNUw4ZGFsb3JJLXI3aUdKRWNkRlBDTS1ueVFBUEtBamJjZWh6QQ?oc=5",
         "source_date": "2026-10-30",
         "source_title": "R\u00e9gis Le Bris relieved by Omar Alderete upturn, Nordi Mukiele a doubt for Coventry - OneFootball"
@@ -1496,8 +1496,8 @@
         "name": "Bart Verbruggen",
         "club": "Brighton",
         "status": "no_news",
-        "start_chance": null,
-        "reason": "No relevant news found in the headlines.",
+        "start_chance": 100,
+        "reason": "No news in headlines.",
         "source_url": null,
         "source_date": null,
         "source_title": null
@@ -1507,8 +1507,8 @@
         "name": "David Raya Mart\u00edn",
         "club": "Arsenal",
         "status": "no_news",
-        "start_chance": null,
-        "reason": "No news in the headlines.",
+        "start_chance": 100,
+        "reason": "",
         "source_url": null,
         "source_date": null,
         "source_title": null
@@ -1518,11 +1518,11 @@
         "name": "Erling Haaland",
         "club": "Man City",
         "status": "no_news",
-        "start_chance": 50,
-        "reason": "No news in the headlines.",
-        "source_url": null,
-        "source_date": null,
-        "source_title": null
+        "start_chance": 100,
+        "reason": "Erling Haaland update provided with no injury specified.",
+        "source_url": "https://news.google.com/rss/articles/CBMiqgFBVV95cUxNWkt1UUNtaHV2dXZGNi1Gc2Q3dmtQSVI3VmszT2hPeFhvaEJvNFUzR3hhcGtZLV9zQ2p3OVFCdkkxNC0wVW5wVmw4cVA1cmZZeUF4dkZFenAybWZIR2ItbEU1TVN1TmxaUjBlMlVkX3pUVElDZW44TmZhbE5lVGFucXRqUjVRNHVHbmt1bDR3Q1BnSkVnLVBaU0o4dThRYUxtLV93ZmROREtxQdIBrwFBVV95cUxOVHEtUnNEaXlJX05uY28wd3pNSW8tV3dFR29TdUc2RnRnWmpYRWxXSWNVS2Q4Y1ZWRWVTdDVPbHNtSl9EazhoZVpJV1lzV3ExMnhCV085U1hEVjRlR2l3Umt1c3RmcXhKOHRMS2s1YTNsbVZ4VjlMcmxzelJFTjFDTlk1STVoNy1UOUNQcmprbjU4NVhJM24wMlF6OHEtcEZOZ1FLd3BZWXBPZDd6RTdj?oc=5",
+        "source_date": "2026-10-30",
+        "source_title": "7 players set to miss Man City vs Brighton as Erling Haaland update provided - Manchester Evening News"
       },
       {
         "player_id": 31,
@@ -1530,7 +1530,7 @@
         "club": "Arsenal",
         "status": "no_news",
         "start_chance": null,
-        "reason": "No news in the headlines.",
+        "reason": "",
         "source_url": null,
         "source_date": null,
         "source_title": null
@@ -1541,7 +1541,7 @@
         "club": "Sunderland",
         "status": "no_news",
         "start_chance": null,
-        "reason": "None",
+        "reason": "No news in the headlines.",
         "source_url": null,
         "source_date": null,
         "source_title": null
@@ -1552,7 +1552,7 @@
         "club": "Newcastle",
         "status": "no_news",
         "start_chance": 50,
-        "reason": "No news in the headlines.",
+        "reason": "No news mentions Harvey Barnes.",
         "source_url": null,
         "source_date": null,
         "source_title": null
@@ -1563,7 +1563,7 @@
         "club": "Brentford",
         "status": "no_news",
         "start_chance": null,
-        "reason": "No news in the headlines.",
+        "reason": "",
         "source_url": null,
         "source_date": null,
         "source_title": null
@@ -1573,8 +1573,8 @@
         "name": "Morgan Rogers",
         "club": "Chelsea",
         "status": "no_news",
-        "start_chance": null,
-        "reason": "No relevant news found in the headlines.",
+        "start_chance": 100,
+        "reason": "No news in headlines.",
         "source_url": null,
         "source_date": null,
         "source_title": null
@@ -1585,7 +1585,7 @@
         "club": "Nott'm Forest",
         "status": "no_news",
         "start_chance": 50,
-        "reason": "No news in the headlines.",
+        "reason": "No news mentions Murillo Costa dos Santos.",
         "source_url": null,
         "source_date": null,
         "source_title": null
@@ -1596,7 +1596,7 @@
         "club": "Man City",
         "status": "no_news",
         "start_chance": 50,
-        "reason": "No news in the headlines.",
+        "reason": "No news mentions Rayan Cherki.",
         "source_url": null,
         "source_date": null,
         "source_title": null
@@ -1607,7 +1607,7 @@
         "club": "Bournemouth",
         "status": "no_news",
         "start_chance": null,
-        "reason": "No news in the headlines.",
+        "reason": "",
         "source_url": null,
         "source_date": null,
         "source_title": null
@@ -1617,11 +1617,11 @@
         "name": "Riccardo Calafiori",
         "club": "Arsenal",
         "status": "no_news",
-        "start_chance": null,
-        "reason": "Cited a headline about someone else: Mikel Arteta to make late call on Arsenal star to face Liverpool after triple injury boost",
-        "source_url": null,
-        "source_date": null,
-        "source_title": null
+        "start_chance": 100,
+        "reason": "Mentioned in injury latest round-ups with no definitive rule-out.",
+        "source_url": "https://news.google.com/rss/articles/CBMikAFBVV95cUxPdHUtWXZPMS1mbXFJMTByV0hYN3NXOVFtZy1yX2VBTkUwZ3NSRHVKUzhPWnV2MWZZTE1JTkRQSVhneXpkbFRHcDF3bF9VN25PVFRfcnAwdDUxZFZUQjAyRzlLVjY4b05SMmRjX2hhVWJsM194ci1qU3NhcnQ0akFnRVVVWHpObGVaM2dLSHZ5bW7SAZYBQVVfeXFMTjF0aXFMYzJhZkRjOXNaYjVZTkpEdHdMU1laczJseDdmek03Q3h5RjUzamVfbGN5N3pZSk5yM0tyUU5ITDlZb19vUkNYbWE0ZXYxckNBdWJ2YUNCSXF0NXB5NDlYUXNHcmIzZGRQUExNajlVMHNpeTZGWWdQS1pncE11YWgyS281X3NrWUxzMWdlMUd3N2pn?oc=5",
+        "source_date": "2026-10-30",
+        "source_title": "Rice, Calafiori, Saka - Arsenal injury latest and return dates ahead of Liverpool - Football London"
       },
       {
         "player_id": 447,
@@ -1629,7 +1629,7 @@
         "club": "Newcastle",
         "status": "no_news",
         "start_chance": 50,
-        "reason": "No news in the headlines.",
+        "reason": "No news mentions Sven Botman.",
         "source_url": null,
         "source_date": null,
         "source_title": null
@@ -1639,8 +1639,8 @@
         "name": "Thierno Barry",
         "club": "Everton",
         "status": "no_news",
-        "start_chance": null,
-        "reason": "No relevant news found in the headlines.",
+        "start_chance": 100,
+        "reason": "No news in headlines.",
         "source_url": null,
         "source_date": null,
         "source_title": null
@@ -1723,7 +1723,7 @@
     }
   },
   "other_matches": {
-    "from": "2026-10-30T15:50:14.601722",
+    "from": "2026-10-30T21:29:02.794690",
     "to": "2026-12-12T13:30:00",
     "clubs": [
       {
@@ -2255,7 +2255,7 @@
             "player_id": 399,
             "name": "Cherki",
             "sell_price_m": 7.9,
-            "predicted_points": 3.21,
+            "predicted_points": 3.14,
             "position": "MID",
             "team": "Man City"
           }
@@ -2265,7 +2265,7 @@
         "hits": 0,
         "hit_cost": 0,
         "bank_m": 2.3,
-        "predicted_points": 50.33,
+        "predicted_points": 50.3,
         "captain_id": 411
       },
       {
@@ -2295,7 +2295,7 @@
         "hits": 0,
         "hit_cost": 0,
         "bank_m": 0.3,
-        "predicted_points": 57.37,
+        "predicted_points": 57.34,
         "captain_id": 4
       },
       {
@@ -2325,7 +2325,7 @@
         "hits": 0,
         "hit_cost": 0,
         "bank_m": 0.6,
-        "predicted_points": 58.32,
+        "predicted_points": 58.29,
         "captain_id": 411
       },
       {
@@ -2355,7 +2355,7 @@
         "hits": 0,
         "hit_cost": 0,
         "bank_m": 0.9,
-        "predicted_points": 51.24,
+        "predicted_points": 51.21,
         "captain_id": 40
       },
       {
@@ -2365,7 +2365,7 @@
             "player_id": 79,
             "name": "Evanilson",
             "cost_m": 6.3,
-            "predicted_points": 4.13,
+            "predicted_points": 4.15,
             "position": "FWD",
             "team": "Bournemouth"
           }
@@ -2375,7 +2375,7 @@
             "player_id": 106,
             "name": "Thiago",
             "sell_price_m": 7.8,
-            "predicted_points": 3.96,
+            "predicted_points": 3.93,
             "position": "FWD",
             "team": "Brentford"
           }
@@ -2385,7 +2385,7 @@
         "hits": 0,
         "hit_cost": 0,
         "bank_m": 2.4,
-        "predicted_points": 54.67,
+        "predicted_points": 54.69,
         "captain_id": 411
       },
       {
@@ -2415,7 +2415,7 @@
         "hits": 0,
         "hit_cost": 0,
         "bank_m": 0.7,
-        "predicted_points": 59.27,
+        "predicted_points": 59.29,
         "captain_id": 4
       }
     ]

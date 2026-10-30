@@ -1,6 +1,6 @@
 {
  "gameweek": 9,
- "fetched_at": "2026-10-30T15:50:05.602837+00:00",
+ "fetched_at": "2026-10-30T21:28:52.705024+00:00",
  "model": "gemini-3.5-flash-lite",
  "prompt_version": 3,
  "clubs": [
@@ -22,8 +22,8 @@
    "name": "David Raya Mart\u00edn",
    "club": "Arsenal",
    "status": "no_news",
-   "start_chance": null,
-   "reason": "No news in the headlines.",
+   "start_chance": 100,
+   "reason": "",
    "source_url": null,
    "source_date": null,
    "source_title": null
@@ -33,11 +33,11 @@
    "name": "Riccardo Calafiori",
    "club": "Arsenal",
    "status": "no_news",
-   "start_chance": null,
-   "reason": "Cited a headline about someone else: Mikel Arteta to make late call on Arsenal star to face Liverpool after triple injury boost",
-   "source_url": null,
-   "source_date": null,
-   "source_title": null
+   "start_chance": 100,
+   "reason": "Mentioned in injury latest round-ups with no definitive rule-out.",
+   "source_url": "https://news.google.com/rss/articles/CBMikAFBVV95cUxPdHUtWXZPMS1mbXFJMTByV0hYN3NXOVFtZy1yX2VBTkUwZ3NSRHVKUzhPWnV2MWZZTE1JTkRQSVhneXpkbFRHcDF3bF9VN25PVFRfcnAwdDUxZFZUQjAyRzlLVjY4b05SMmRjX2hhVWJsM194ci1qU3NhcnQ0akFnRVVVWHpObGVaM2dLSHZ5bW7SAZYBQVVfeXFMTjF0aXFMYzJhZkRjOXNaYjVZTkpEdHdMU1laczJseDdmek03Q3h5RjUzamVfbGN5N3pZSk5yM0tyUU5ITDlZb19vUkNYbWE0ZXYxckNBdWJ2YUNCSXF0NXB5NDlYUXNHcmIzZGRQUExNajlVMHNpeTZGWWdQS1pncE11YWgyS281X3NrWUxzMWdlMUd3N2pn?oc=5",
+   "source_date": "2026-10-30",
+   "source_title": "Rice, Calafiori, Saka - Arsenal injury latest and return dates ahead of Liverpool - Football London"
   },
   {
    "player_id": 31,
@@ -45,7 +45,7 @@
    "club": "Arsenal",
    "status": "no_news",
    "start_chance": null,
-   "reason": "No news in the headlines.",
+   "reason": "",
    "source_url": null,
    "source_date": null,
    "source_title": null
@@ -56,7 +56,7 @@
    "club": "Bournemouth",
    "status": "no_news",
    "start_chance": null,
-   "reason": "No news in the headlines.",
+   "reason": "",
    "source_url": null,
    "source_date": null,
    "source_title": null
@@ -67,7 +67,7 @@
    "club": "Brentford",
    "status": "no_news",
    "start_chance": null,
-   "reason": "No news in the headlines.",
+   "reason": "",
    "source_url": null,
    "source_date": null,
    "source_title": null
@@ -77,8 +77,8 @@
    "name": "Bart Verbruggen",
    "club": "Brighton",
    "status": "no_news",
-   "start_chance": null,
-   "reason": "No relevant news found in the headlines.",
+   "start_chance": 100,
+   "reason": "No news in headlines.",
    "source_url": null,
    "source_date": null,
    "source_title": null
@@ -88,8 +88,8 @@
    "name": "Morgan Rogers",
    "club": "Chelsea",
    "status": "no_news",
-   "start_chance": null,
-   "reason": "No relevant news found in the headlines.",
+   "start_chance": 100,
+   "reason": "No news in headlines.",
    "source_url": null,
    "source_date": null,
    "source_title": null
@@ -99,8 +99,8 @@
    "name": "Thierno Barry",
    "club": "Everton",
    "status": "no_news",
-   "start_chance": null,
-   "reason": "No relevant news found in the headlines.",
+   "start_chance": 100,
+   "reason": "No news in headlines.",
    "source_url": null,
    "source_date": null,
    "source_title": null
@@ -111,7 +111,7 @@
    "club": "Man City",
    "status": "no_news",
    "start_chance": 50,
-   "reason": "No news in the headlines.",
+   "reason": "No news mentions Rayan Cherki.",
    "source_url": null,
    "source_date": null,
    "source_title": null
@@ -121,11 +121,11 @@
    "name": "Erling Haaland",
    "club": "Man City",
    "status": "no_news",
-   "start_chance": 50,
-   "reason": "No news in the headlines.",
-   "source_url": null,
-   "source_date": null,
-   "source_title": null
+   "start_chance": 100,
+   "reason": "Erling Haaland update provided with no injury specified.",
+   "source_url": "https://news.google.com/rss/articles/CBMiqgFBVV95cUxNWkt1UUNtaHV2dXZGNi1Gc2Q3dmtQSVI3VmszT2hPeFhvaEJvNFUzR3hhcGtZLV9zQ2p3OVFCdkkxNC0wVW5wVmw4cVA1cmZZeUF4dkZFenAybWZIR2ItbEU1TVN1TmxaUjBlMlVkX3pUVElDZW44TmZhbE5lVGFucXRqUjVRNHVHbmt1bDR3Q1BnSkVnLVBaU0o4dThRYUxtLV93ZmROREtxQdIBrwFBVV95cUxOVHEtUnNEaXlJX05uY28wd3pNSW8tV3dFR29TdUc2RnRnWmpYRWxXSWNVS2Q4Y1ZWRWVTdDVPbHNtSl9EazhoZVpJV1lzV3ExMnhCV085U1hEVjRlR2l3Umt1c3RmcXhKOHRMS2s1YTNsbVZ4VjlMcmxzelJFTjFDTlk1STVoNy1UOUNQcmprbjU4NVhJM24wMlF6OHEtcEZOZ1FLd3BZWXBPZDd6RTdj?oc=5",
+   "source_date": "2026-10-30",
+   "source_title": "7 players set to miss Man City vs Brighton as Erling Haaland update provided - Manchester Evening News"
   },
   {
    "player_id": 453,
@@ -133,7 +133,7 @@
    "club": "Newcastle",
    "status": "no_news",
    "start_chance": 50,
-   "reason": "No news in the headlines.",
+   "reason": "No news mentions Harvey Barnes.",
    "source_url": null,
    "source_date": null,
    "source_title": null
@@ -144,7 +144,7 @@
    "club": "Newcastle",
    "status": "no_news",
    "start_chance": 50,
-   "reason": "No news in the headlines.",
+   "reason": "No news mentions Sven Botman.",
    "source_url": null,
    "source_date": null,
    "source_title": null
@@ -155,7 +155,7 @@
    "club": "Nott'm Forest",
    "status": "no_news",
    "start_chance": 50,
-   "reason": "No news in the headlines.",
+   "reason": "No news mentions Murillo Costa dos Santos.",
    "source_url": null,
    "source_date": null,
    "source_title": null
@@ -166,7 +166,7 @@
    "club": "Spurs",
    "status": "out",
    "start_chance": 0,
-   "reason": "Ruled out for the Palace clash.",
+   "reason": "Ruled out for the Crystal Palace clash.",
    "source_url": "https://news.google.com/rss/articles/CBMirgFBVV95cUxPVjhhZ0toZmczN2FTNHNCaWxIUG9DdjRScThXTXJsQWF6czktTmFzZUZoTlZXbkRNNlBmY29Ib2NVdkZMV2NlMUdoaTBMRjR3VjR0cHF1Q2JhTjRxZ3ZIX2Y5QzhVNzhSbUQ0eEhRdzl4WnkzR1ZkbWxuUnFZTFRPckNWM2xLeEJ5dnpGSEFTOFZ5ZFY2Z2FGT1hyN2dJOVVPSHdBWkNueV9jSDBjUnc?oc=5",
    "source_date": "2026-10-30",
    "source_title": "Team news | Udogie back, Bergvall, Savio, Tosin out for Palace clash - Tottenham Hotspur"
@@ -177,7 +177,7 @@
    "club": "Sunderland",
    "status": "no_news",
    "start_chance": null,
-   "reason": "None",
+   "reason": "No news in the headlines.",
    "source_url": null,
    "source_date": null,
    "source_title": null
@@ -188,7 +188,7 @@
    "club": "Sunderland",
    "status": "doubtful",
    "start_chance": 50,
-   "reason": "Doubtful for Coventry clash.",
+   "reason": "A doubt for the Coventry match.",
    "source_url": "https://news.google.com/rss/articles/CBMivwFBVV95cUxPdklIc0FiTGJCTk5yYjhQa1ltRHhTbHdTTXIxTnhOTnNSSWZwYURVcDA1Mms0NUxhNVc2QUl0MnRsaDVwbjdkemtoc245Mk5ad3RpRVI3NHV3U1A0WlA5TUxNUUhwMUo4YUpUa2RlUTFRdUVJbUFXVjh1R0hIc3Q4MWg1UGVKbXhuRTFEZFpqNnh3SXJJVEZLSFpVNUw4ZGFsb3JJLXI3aUdKRWNkRlBDTS1ueVFBUEtBamJjZWh6QQ?oc=5",
    "source_date": "2026-10-30",
    "source_title": "R\u00e9gis Le Bris relieved by Omar Alderete upturn, Nordi Mukiele a doubt for Coventry - OneFootball"
