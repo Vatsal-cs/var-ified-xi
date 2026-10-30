@@ -1,10 +1,11 @@
 {
- "gameweek": 8,
- "fetched_at": "2026-10-23T14:16:24.770137+00:00",
+ "gameweek": 9,
+ "fetched_at": "2026-10-30T07:02:24.190589+00:00",
  "model": "gemini-3.5-flash-lite",
  "prompt_version": 3,
  "clubs": [
   "Arsenal",
+  "Bournemouth",
   "Brentford",
   "Brighton",
   "Chelsea",
@@ -21,8 +22,8 @@
    "name": "David Raya Mart\u00edn",
    "club": "Arsenal",
    "status": "no_news",
-   "start_chance": 100,
-   "reason": "No relevant news found in headlines.",
+   "start_chance": null,
+   "reason": "No news in headlines regarding David Raya",
    "source_url": null,
    "source_date": null,
    "source_title": null
@@ -32,19 +33,30 @@
    "name": "Riccardo Calafiori",
    "club": "Arsenal",
    "status": "no_news",
-   "start_chance": 100,
-   "reason": "No relevant news found in headlines.",
-   "source_url": null,
-   "source_date": null,
-   "source_title": null
+   "start_chance": null,
+   "reason": "Mikel Arteta makes Riccardo Calafiori calls ahead of Liverpool",
+   "source_url": "https://news.google.com/rss/articles/CBMilAFBVV95cUxNSW9sbVY5Y1NnaWpWNEd6SjBqZUlzV1ItVmFaMkpZNDJ0Z054RUZjZVFNSGtHNmYyOGxoR3d5ZzFrNzliQy0xeVJzUjRrcEw2VERBNnFFeExqd3pwdDFfQU1yaWhvNkE4V2J0SG01eUpCSU93QXVHUjh4dmMxMF83Mko5RGRJTUwxc1pvSE5DeU5sM25J0gGaAUFVX3lxTE5reFRybnJ5VUNfaGMzR2l6QkNlUW1CbnF5Nm83Qnp5MTNZNGYtWmtsYW9GNUNMTE1DWWtJM1hGaDNmYU1vV0NHM182SURMRUpUd3NsaHJHTC1kN0M0M2ttcmdDaDktNl9nMXNRYzA2T054bmtfOTNPSDRjeFVHbTJ4cUtfSFBDdTE0ZE9wXzFXNlJ0U3RaT29SZXc?oc=5",
+   "source_date": "2026-10-29",
+   "source_title": "Eight Arsenal changes for Liverpool as Mikel Arteta makes Riccardo Calafiori and Kai Havertz calls - Football London"
   },
   {
    "player_id": 31,
    "name": "Ezri Konsa Ngoyo",
    "club": "Arsenal",
    "status": "no_news",
-   "start_chance": 100,
-   "reason": "No relevant news found in headlines.",
+   "start_chance": null,
+   "reason": "No news in headlines regarding Ezri Konsa",
+   "source_url": null,
+   "source_date": null,
+   "source_title": null
+  },
+  {
+   "player_id": 67,
+   "name": "Rayan Vitor Simpl\u00edcio Rocha",
+   "club": "Bournemouth",
+   "status": "no_news",
+   "start_chance": null,
+   "reason": "No news in headlines regarding Rayan Vitor",
    "source_url": null,
    "source_date": null,
    "source_title": null
@@ -54,19 +66,19 @@
    "name": "Igor Thiago Nascimento Rodrigues",
    "club": "Brentford",
    "status": "no_news",
-   "start_chance": 100,
-   "reason": "No relevant news found in headlines.",
-   "source_url": null,
-   "source_date": null,
-   "source_title": null
+   "start_chance": null,
+   "reason": "Thiago started cup tie",
+   "source_url": "https://news.google.com/rss/articles/CBMiowFBVV95cUxQTmZTNUxra1l1VTlLN2ZMWnVIOVNXVWFjZThyN05EaGktcHEyQWVPb3YyNFdhdUtrNENzQ0hYalNmMDBmNkUydk1oTWJuTzZmRUxpM040RW1felV3UTNUNS10QzB1WUxLSnBVcXZOWjlBdnZqak0weGJXQ2hXUDZwdW44dXZGQl9iWDNXVG1yWFNQQlNuY3JFTjlMMFd6cTVZOTJN?oc=5",
+   "source_date": "2026-10-28",
+   "source_title": "Confirmed Sunderland v Brentford team news: Thiago and Wilson both start cup tie - Brentford FC"
   },
   {
    "player_id": 109,
    "name": "Bart Verbruggen",
    "club": "Brighton",
    "status": "no_news",
-   "start_chance": 100,
-   "reason": "No relevant news found in headlines.",
+   "start_chance": 50,
+   "reason": "",
    "source_url": null,
    "source_date": null,
    "source_title": null
@@ -76,8 +88,8 @@
    "name": "Morgan Rogers",
    "club": "Chelsea",
    "status": "no_news",
-   "start_chance": null,
-   "reason": "No news in the provided headlines.",
+   "start_chance": 50,
+   "reason": "",
    "source_url": null,
    "source_date": null,
    "source_title": null
@@ -87,22 +99,11 @@
    "name": "Thierno Barry",
    "club": "Everton",
    "status": "no_news",
-   "start_chance": null,
-   "reason": "No news in the provided headlines.",
+   "start_chance": 50,
+   "reason": "",
    "source_url": null,
    "source_date": null,
    "source_title": null
-  },
-  {
-   "player_id": 397,
-   "name": "Antoine Semenyo",
-   "club": "Man City",
-   "status": "out",
-   "start_chance": 0,
-   "reason": "Out according to Manchester City injury update return dates.",
-   "source_url": "https://news.google.com/rss/articles/CBMivAFBVV95cUxQUjhyRWlyX2Q3Rl9kNGJjaGZRMVVWblVBRFZSM2k0SDNsVzZyamQyMDJDekRHbUhGOURsNk9qMnNNYVEtRWpOZ1NQdjNfX0VoZVlITDZOZnVpVlB3Y1V6Y1laUGtRbW55OTY4RTZmSGg1ODhxT1o1NnlXdFdwVXRKWHNjdERDZjdwWXFHb2hVbG5UTnpRdmdnN0hObGgwbTNKemxueGI1c1BNUWhZUVBVeERublpKTC1ycWRyeQ?oc=5",
-   "source_date": "2026-10-22",
-   "source_title": "Man City injury update: Semenyo, Nunes, O'Reilly latest return dates - London Evening Standard"
   },
   {
    "player_id": 399,
@@ -110,7 +111,7 @@
    "club": "Man City",
    "status": "no_news",
    "start_chance": null,
-   "reason": "Discussed by Maresca regarding his position, but no injury or fitness status given.",
+   "reason": "No news mentions Rayan Cherki.",
    "source_url": null,
    "source_date": null,
    "source_title": null
@@ -119,12 +120,12 @@
    "player_id": 411,
    "name": "Erling Haaland",
    "club": "Man City",
-   "status": "expected_to_start",
-   "start_chance": 100,
-   "reason": "Enzo Maresca confirms Erling Haaland is 100 per cent available for Villa trip.",
-   "source_url": "https://news.google.com/rss/articles/CBMingFBVV95cUxPamtuOHBqejVRWWx5Q1ZwbHppdEJ6eWVCeEtHSmZDaWNlM0hiOF9zdVlvQzN6UHd2M0w3SklBYW5pNnlZUTAzR01wa09CbHBfOFZoaXl5MWRhZ3VuN1h1MW11Z21SWjE3Q3M3eGlBMFZ3N0VYQS02WGNhbTFIOEJJa2RwM09ndFNrT1pzZkhDc2JTYnlURmJEMzJ1VUJWUQ?oc=5",
-   "source_date": "2026-10-22",
-   "source_title": "Maresca says Haaland is 100% available for Villa trip - Manchester City FC"
+   "status": "no_news",
+   "start_chance": null,
+   "reason": "No news mentions Erling Haaland.",
+   "source_url": null,
+   "source_date": null,
+   "source_title": null
   },
   {
    "player_id": 453,
@@ -132,7 +133,7 @@
    "club": "Newcastle",
    "status": "no_news",
    "start_chance": null,
-   "reason": "None",
+   "reason": "No news mentions Harvey Barnes.",
    "source_url": null,
    "source_date": null,
    "source_title": null
@@ -143,7 +144,7 @@
    "club": "Newcastle",
    "status": "no_news",
    "start_chance": null,
-   "reason": "None",
+   "reason": "No news mentions Sven Botman.",
    "source_url": null,
    "source_date": null,
    "source_title": null
@@ -154,7 +155,7 @@
    "club": "Nott'm Forest",
    "status": "no_news",
    "start_chance": null,
-   "reason": "None",
+   "reason": "No news mentions Murillo Costa dos Santos.",
    "source_url": null,
    "source_date": null,
    "source_title": null
@@ -163,34 +164,34 @@
    "player_id": 403,
    "name": "S\u00e1vio Moreira de Oliveira",
    "club": "Spurs",
-   "status": "no_news",
-   "start_chance": null,
-   "reason": "None",
-   "source_url": null,
-   "source_date": null,
-   "source_title": null
+   "status": "doubtful",
+   "start_chance": 50,
+   "reason": "Mentioned in Tottenham injury update regarding latest return dates.",
+   "source_url": "https://news.google.com/rss/articles/CBMixAFBVV95cUxPd0ZSYnVaRWdqLTBTZkVVSzR2cUxmNmo1cmlEZm83emU4SnRRTUowVGFvdU5JQzdhaWlFdHltWVZ2NlBSR2NiMGcwZzYybVRFY0gyNDlqbFBCZjlRYmRHdzVmZzVueDJjQ2pnR1NIOFV5SnFJbjdhdE9ITTRnQi1pbEpDV1NheXRhYkd4eEE3MTdKSDJVR2FDakdIUENpNUloVUZBdWZHQlRqdUtqeVZpdFE3R0UyQW52N0h4MmxhRXdhanNC?oc=5",
+   "source_date": "2026-10-29",
+   "source_title": "Tottenham injury update: Maddison, Savio, Udogie latest return dates - London Evening Standard"
   },
   {
    "player_id": 544,
    "name": "Granit Xhaka",
    "club": "Sunderland",
-   "status": "expected_to_start",
+   "status": "no_news",
    "start_chance": 100,
-   "reason": "Started in the midweek fixture against Lech Poznan.",
-   "source_url": "https://news.google.com/rss/articles/CBMioAFBVV95cUxObVNNblpUQlh5U3pTSzVSWnF4cEwxaTZVTGRwcXRqeVZRNjEzUEg3OXNEejN2YkFUM1ZtMG9mb2RhNnV2dlpXV0dIX1ZkcTU1NXZBQXI2RXdUU3NuVUJuMGdvT1duSzZpMnJrTUpDMDBJVXk5dDcwWGg4aFppVXJhOThnMTFTbDBqX2xDcExPbDg0cFlhWHNUVXlNYUEtV2NC?oc=5",
-   "source_date": "2026-10-22",
-   "source_title": "Mukiele and Xhaka both start as Le Bris makes six Sunderland changes for Lech Poznan - The Northern Echo"
+   "reason": "No relevant news found in the provided headlines.",
+   "source_url": null,
+   "source_date": null,
+   "source_title": null
   },
   {
    "player_id": 533,
    "name": "Nordi Mukiele",
    "club": "Sunderland",
-   "status": "expected_to_start",
+   "status": "no_news",
    "start_chance": 100,
-   "reason": "Started in the midweek fixture against Lech Poznan.",
-   "source_url": "https://news.google.com/rss/articles/CBMioAFBVV95cUxObVNNblpUQlh5U3pTSzVSWnF4cEwxaTZVTGRwcXRqeVZRNjEzUEg3OXNEejN2YkFUM1ZtMG9mb2RhNnV2dlpXV0dIX1ZkcTU1NXZBQXI2RXdUU3NuVUJuMGdvT1duSzZpMnJrTUpDMDBJVXk5dDcwWGg4aFppVXJhOThnMTFTbDBqX2xDcExPbDg0cFlhWHNUVXlNYUEtV2NC?oc=5",
-   "source_date": "2026-10-22",
-   "source_title": "Mukiele and Xhaka both start as Le Bris makes six Sunderland changes for Lech Poznan - The Northern Echo"
+   "reason": "No relevant news found in the provided headlines.",
+   "source_url": null,
+   "source_date": null,
+   "source_title": null
   }
  ],
  "errors": []
