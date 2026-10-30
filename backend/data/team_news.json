@@ -1,6 +1,6 @@
 {
  "gameweek": 9,
- "fetched_at": "2026-10-30T07:02:24.190589+00:00",
+ "fetched_at": "2026-10-30T15:50:05.602837+00:00",
  "model": "gemini-3.5-flash-lite",
  "prompt_version": 3,
  "clubs": [
@@ -23,7 +23,7 @@
    "club": "Arsenal",
    "status": "no_news",
    "start_chance": null,
-   "reason": "No news in headlines regarding David Raya",
+   "reason": "No news in the headlines.",
    "source_url": null,
    "source_date": null,
    "source_title": null
@@ -34,10 +34,10 @@
    "club": "Arsenal",
    "status": "no_news",
    "start_chance": null,
-   "reason": "Mikel Arteta makes Riccardo Calafiori calls ahead of Liverpool",
-   "source_url": "https://news.google.com/rss/articles/CBMilAFBVV95cUxNSW9sbVY5Y1NnaWpWNEd6SjBqZUlzV1ItVmFaMkpZNDJ0Z054RUZjZVFNSGtHNmYyOGxoR3d5ZzFrNzliQy0xeVJzUjRrcEw2VERBNnFFeExqd3pwdDFfQU1yaWhvNkE4V2J0SG01eUpCSU93QXVHUjh4dmMxMF83Mko5RGRJTUwxc1pvSE5DeU5sM25J0gGaAUFVX3lxTE5reFRybnJ5VUNfaGMzR2l6QkNlUW1CbnF5Nm83Qnp5MTNZNGYtWmtsYW9GNUNMTE1DWWtJM1hGaDNmYU1vV0NHM182SURMRUpUd3NsaHJHTC1kN0M0M2ttcmdDaDktNl9nMXNRYzA2T054bmtfOTNPSDRjeFVHbTJ4cUtfSFBDdTE0ZE9wXzFXNlJ0U3RaT29SZXc?oc=5",
-   "source_date": "2026-10-29",
-   "source_title": "Eight Arsenal changes for Liverpool as Mikel Arteta makes Riccardo Calafiori and Kai Havertz calls - Football London"
+   "reason": "Cited a headline about someone else: Mikel Arteta to make late call on Arsenal star to face Liverpool after triple injury boost",
+   "source_url": null,
+   "source_date": null,
+   "source_title": null
   },
   {
    "player_id": 31,
@@ -45,7 +45,7 @@
    "club": "Arsenal",
    "status": "no_news",
    "start_chance": null,
-   "reason": "No news in headlines regarding Ezri Konsa",
+   "reason": "No news in the headlines.",
    "source_url": null,
    "source_date": null,
    "source_title": null
@@ -56,7 +56,7 @@
    "club": "Bournemouth",
    "status": "no_news",
    "start_chance": null,
-   "reason": "No news in headlines regarding Rayan Vitor",
+   "reason": "No news in the headlines.",
    "source_url": null,
    "source_date": null,
    "source_title": null
@@ -67,18 +67,18 @@
    "club": "Brentford",
    "status": "no_news",
    "start_chance": null,
-   "reason": "Thiago started cup tie",
-   "source_url": "https://news.google.com/rss/articles/CBMiowFBVV95cUxQTmZTNUxra1l1VTlLN2ZMWnVIOVNXVWFjZThyN05EaGktcHEyQWVPb3YyNFdhdUtrNENzQ0hYalNmMDBmNkUydk1oTWJuTzZmRUxpM040RW1felV3UTNUNS10QzB1WUxLSnBVcXZOWjlBdnZqak0weGJXQ2hXUDZwdW44dXZGQl9iWDNXVG1yWFNQQlNuY3JFTjlMMFd6cTVZOTJN?oc=5",
-   "source_date": "2026-10-28",
-   "source_title": "Confirmed Sunderland v Brentford team news: Thiago and Wilson both start cup tie - Brentford FC"
+   "reason": "No news in the headlines.",
+   "source_url": null,
+   "source_date": null,
+   "source_title": null
   },
   {
    "player_id": 109,
    "name": "Bart Verbruggen",
    "club": "Brighton",
    "status": "no_news",
-   "start_chance": 50,
-   "reason": "",
+   "start_chance": null,
+   "reason": "No relevant news found in the headlines.",
    "source_url": null,
    "source_date": null,
    "source_title": null
@@ -88,8 +88,8 @@
    "name": "Morgan Rogers",
    "club": "Chelsea",
    "status": "no_news",
-   "start_chance": 50,
-   "reason": "",
+   "start_chance": null,
+   "reason": "No relevant news found in the headlines.",
    "source_url": null,
    "source_date": null,
    "source_title": null
@@ -99,8 +99,8 @@
    "name": "Thierno Barry",
    "club": "Everton",
    "status": "no_news",
-   "start_chance": 50,
-   "reason": "",
+   "start_chance": null,
+   "reason": "No relevant news found in the headlines.",
    "source_url": null,
    "source_date": null,
    "source_title": null
@@ -110,8 +110,8 @@
    "name": "Rayan Cherki",
    "club": "Man City",
    "status": "no_news",
-   "start_chance": null,
-   "reason": "No news mentions Rayan Cherki.",
+   "start_chance": 50,
+   "reason": "No news in the headlines.",
    "source_url": null,
    "source_date": null,
    "source_title": null
@@ -121,8 +121,8 @@
    "name": "Erling Haaland",
    "club": "Man City",
    "status": "no_news",
-   "start_chance": null,
-   "reason": "No news mentions Erling Haaland.",
+   "start_chance": 50,
+   "reason": "No news in the headlines.",
    "source_url": null,
    "source_date": null,
    "source_title": null
@@ -132,8 +132,8 @@
    "name": "Harvey Barnes",
    "club": "Newcastle",
    "status": "no_news",
-   "start_chance": null,
-   "reason": "No news mentions Harvey Barnes.",
+   "start_chance": 50,
+   "reason": "No news in the headlines.",
    "source_url": null,
    "source_date": null,
    "source_title": null
@@ -143,8 +143,8 @@
    "name": "Sven Botman",
    "club": "Newcastle",
    "status": "no_news",
-   "start_chance": null,
-   "reason": "No news mentions Sven Botman.",
+   "start_chance": 50,
+   "reason": "No news in the headlines.",
    "source_url": null,
    "source_date": null,
    "source_title": null
@@ -154,8 +154,8 @@
    "name": "Murillo Costa dos Santos",
    "club": "Nott'm Forest",
    "status": "no_news",
-   "start_chance": null,
-   "reason": "No news mentions Murillo Costa dos Santos.",
+   "start_chance": 50,
+   "reason": "No news in the headlines.",
    "source_url": null,
    "source_date": null,
    "source_title": null
@@ -164,20 +164,20 @@
    "player_id": 403,
    "name": "S\u00e1vio Moreira de Oliveira",
    "club": "Spurs",
-   "status": "doubtful",
-   "start_chance": 50,
-   "reason": "Mentioned in Tottenham injury update regarding latest return dates.",
-   "source_url": "https://news.google.com/rss/articles/CBMixAFBVV95cUxPd0ZSYnVaRWdqLTBTZkVVSzR2cUxmNmo1cmlEZm83emU4SnRRTUowVGFvdU5JQzdhaWlFdHltWVZ2NlBSR2NiMGcwZzYybVRFY0gyNDlqbFBCZjlRYmRHdzVmZzVueDJjQ2pnR1NIOFV5SnFJbjdhdE9ITTRnQi1pbEpDV1NheXRhYkd4eEE3MTdKSDJVR2FDakdIUENpNUloVUZBdWZHQlRqdUtqeVZpdFE3R0UyQW52N0h4MmxhRXdhanNC?oc=5",
-   "source_date": "2026-10-29",
-   "source_title": "Tottenham injury update: Maddison, Savio, Udogie latest return dates - London Evening Standard"
+   "status": "out",
+   "start_chance": 0,
+   "reason": "Ruled out for the Palace clash.",
+   "source_url": "https://news.google.com/rss/articles/CBMirgFBVV95cUxPVjhhZ0toZmczN2FTNHNCaWxIUG9DdjRScThXTXJsQWF6czktTmFzZUZoTlZXbkRNNlBmY29Ib2NVdkZMV2NlMUdoaTBMRjR3VjR0cHF1Q2JhTjRxZ3ZIX2Y5QzhVNzhSbUQ0eEhRdzl4WnkzR1ZkbWxuUnFZTFRPckNWM2xLeEJ5dnpGSEFTOFZ5ZFY2Z2FGT1hyN2dJOVVPSHdBWkNueV9jSDBjUnc?oc=5",
+   "source_date": "2026-10-30",
+   "source_title": "Team news | Udogie back, Bergvall, Savio, Tosin out for Palace clash - Tottenham Hotspur"
   },
   {
    "player_id": 544,
    "name": "Granit Xhaka",
    "club": "Sunderland",
    "status": "no_news",
-   "start_chance": 100,
-   "reason": "No relevant news found in the provided headlines.",
+   "start_chance": null,
+   "reason": "None",
    "source_url": null,
    "source_date": null,
    "source_title": null
@@ -186,12 +186,12 @@
    "player_id": 533,
    "name": "Nordi Mukiele",
    "club": "Sunderland",
-   "status": "no_news",
-   "start_chance": 100,
-   "reason": "No relevant news found in the provided headlines.",
-   "source_url": null,
-   "source_date": null,
-   "source_title": null
+   "status": "doubtful",
+   "start_chance": 50,
+   "reason": "Doubtful for Coventry clash.",
+   "source_url": "https://news.google.com/rss/articles/CBMivwFBVV95cUxPdklIc0FiTGJCTk5yYjhQa1ltRHhTbHdTTXIxTnhOTnNSSWZwYURVcDA1Mms0NUxhNVc2QUl0MnRsaDVwbjdkemtoc245Mk5ad3RpRVI3NHV3U1A0WlA5TUxNUUhwMUo4YUpUa2RlUTFRdUVJbUFXVjh1R0hIc3Q4MWg1UGVKbXhuRTFEZFpqNnh3SXJJVEZLSFpVNUw4ZGFsb3JJLXI3aUdKRWNkRlBDTS1ueVFBUEtBamJjZWh6QQ?oc=5",
+   "source_date": "2026-10-30",
+   "source_title": "R\u00e9gis Le Bris relieved by Omar Alderete upturn, Nordi Mukiele a doubt for Coventry - OneFootball"
   }
  ],
  "errors": []

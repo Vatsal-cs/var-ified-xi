@@ -226,112 +226,112 @@
    "club": "Arsenal",
    "status": "no_news",
    "chance": null,
-   "at": "2026-10-30T07:02:24.190589+00:00"
+   "at": "2026-10-30T15:50:05.602837+00:00"
   },
   "8": {
    "name": "Riccardo Calafiori",
    "club": "Arsenal",
    "status": "no_news",
    "chance": null,
-   "at": "2026-10-30T07:02:24.190589+00:00"
+   "at": "2026-10-30T15:50:05.602837+00:00"
   },
   "31": {
    "name": "Ezri Konsa Ngoyo",
    "club": "Arsenal",
    "status": "no_news",
    "chance": null,
-   "at": "2026-10-30T07:02:24.190589+00:00"
+   "at": "2026-10-30T15:50:05.602837+00:00"
   },
   "67": {
    "name": "Rayan Vitor Simplício Rocha",
    "club": "Bournemouth",
    "status": "no_news",
    "chance": null,
-   "at": "2026-10-30T07:02:24.190589+00:00"
+   "at": "2026-10-30T15:50:05.602837+00:00"
   },
   "106": {
    "name": "Igor Thiago Nascimento Rodrigues",
    "club": "Brentford",
    "status": "no_news",
    "chance": null,
-   "at": "2026-10-30T07:02:24.190589+00:00"
+   "at": "2026-10-30T15:50:05.602837+00:00"
   },
   "109": {
    "name": "Bart Verbruggen",
    "club": "Brighton",
    "status": "no_news",
-   "chance": 50,
-   "at": "2026-10-30T07:02:24.190589+00:00"
+   "chance": null,
+   "at": "2026-10-30T15:50:05.602837+00:00"
   },
   "40": {
    "name": "Morgan Rogers",
    "club": "Chelsea",
    "status": "no_news",
-   "chance": 50,
-   "at": "2026-10-30T07:02:24.190589+00:00"
+   "chance": null,
+   "at": "2026-10-30T15:50:05.602837+00:00"
   },
   "249": {
    "name": "Thierno Barry",
    "club": "Everton",
    "status": "no_news",
-   "chance": 50,
-   "at": "2026-10-30T07:02:24.190589+00:00"
+   "chance": null,
+   "at": "2026-10-30T15:50:05.602837+00:00"
   },
   "399": {
    "name": "Rayan Cherki",
    "club": "Man City",
    "status": "no_news",
-   "chance": null,
-   "at": "2026-10-30T07:02:24.190589+00:00"
+   "chance": 50,
+   "at": "2026-10-30T15:50:05.602837+00:00"
   },
   "411": {
    "name": "Erling Haaland",
    "club": "Man City",
    "status": "no_news",
-   "chance": null,
-   "at": "2026-10-30T07:02:24.190589+00:00"
+   "chance": 50,
+   "at": "2026-10-30T15:50:05.602837+00:00"
   },
   "453": {
    "name": "Harvey Barnes",
    "club": "Newcastle",
    "status": "no_news",
-   "chance": null,
-   "at": "2026-10-30T07:02:24.190589+00:00"
+   "chance": 50,
+   "at": "2026-10-30T15:50:05.602837+00:00"
   },
   "447": {
    "name": "Sven Botman",
    "club": "Newcastle",
    "status": "no_news",
-   "chance": null,
-   "at": "2026-10-30T07:02:24.190589+00:00"
+   "chance": 50,
+   "at": "2026-10-30T15:50:05.602837+00:00"
   },
   "472": {
    "name": "Murillo Costa dos Santos",
    "club": "Nott'm Forest",
    "status": "no_news",
-   "chance": null,
-   "at": "2026-10-30T07:02:24.190589+00:00"
+   "chance": 50,
+   "at": "2026-10-30T15:50:05.602837+00:00"
   },
   "403": {
    "name": "Sávio Moreira de Oliveira",
    "club": "Spurs",
-   "status": "doubtful",
-   "chance": 50,
-   "at": "2026-10-30T07:02:24.190589+00:00"
+   "status": "out",
+   "chance": 0,
+   "at": "2026-10-30T15:50:05.602837+00:00"
   },
   "544": {
    "name": "Granit Xhaka",
    "club": "Sunderland",
    "status": "no_news",
-   "chance": 100,
-   "at": "2026-10-30T07:02:24.190589+00:00"
+   "chance": null,
+   "at": "2026-10-30T15:50:05.602837+00:00"
   },
   "533": {
    "name": "Nordi Mukiele",
    "club": "Sunderland",
-   "status": "no_news",
-   "chance": 100,
-   "at": "2026-10-30T07:02:24.190589+00:00"
+   "status": "doubtful",
+   "chance": 50,
+   "at": "2026-10-30T15:50:05.602837+00:00"
   }
  }
 }

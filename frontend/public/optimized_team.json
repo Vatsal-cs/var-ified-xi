@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-30T07:02:37.799266+00:00",
+  "generated_at": "2026-10-30T15:50:14.639691+00:00",
   "gameweek": 9,
   "deadline": "2026-10-31T11:00:00Z",
   "horizon_gws": 6,
@@ -394,15 +394,15 @@
       "is_captain": false,
       "is_vice_captain": false,
       "dist": {
-        "mean": 4.17,
+        "mean": 4.18,
         "p10": 1,
         "p90": 9,
         "p_blank": 0.433,
         "p_return": 0.27,
         "p_haul": 0.099,
         "pmf": [
-          0.0449,
-          0.1062,
+          0.044,
+          0.107,
           0.2822,
           0.2016,
           0.032,
@@ -809,10 +809,10 @@
       "position": "DEF",
       "team": "Sunderland",
       "now_cost_m": 5.4,
-      "predicted_points": 2.03,
-      "horizon_points": 8.99,
+      "predicted_points": 1.35,
+      "horizon_points": 8.31,
       "xp_by_gw": {
-        "9": 2.03,
+        "9": 1.35,
         "10": 2.15,
         "11": 2.28,
         "12": 2.56,
@@ -823,35 +823,35 @@
       "is_captain": false,
       "is_vice_captain": false,
       "dist": {
-        "mean": 1.93,
+        "mean": 1.27,
         "p10": 0,
         "p90": 6,
-        "p_blank": 0.762,
-        "p_return": 0.169,
-        "p_haul": 0.032,
+        "p_blank": 0.844,
+        "p_return": 0.111,
+        "p_haul": 0.021,
         "pmf": [
-          0.5023,
-          0.1772,
-          0.0822,
-          0.0174,
-          0.0279,
-          0.0242,
-          0.0841,
-          0.0181,
-          0.0227,
-          0.0122,
-          0.0069,
-          0.0112,
+          0.6734,
+          0.1163,
+          0.0539,
+          0.0114,
+          0.0183,
+          0.0159,
+          0.0552,
+          0.0119,
+          0.0149,
+          0.008,
+          0.0045,
+          0.0073,
+          0.0011,
+          0.0011,
+          0.0022,
           0.0017,
-          0.0017,
-          0.0034,
-          0.0025,
-          0.0009,
-          0.0018,
-          0.0008,
+          0.0006,
+          0.0012,
+          0.0006,
           0.0,
           0.0,
-          0.0008,
+          0.0006,
           0.0,
           0.0,
           0.0,
@@ -1319,7 +1319,7 @@
             "gameweek": 9,
             "3xc": 5.7,
             "3xc_player": "Haaland",
-            "bboost": 6.2,
+            "bboost": 5.5,
             "freehit": 3.7,
             "xi_points": 50.3,
             "firm": true,
@@ -1333,7 +1333,7 @@
             "3xc": 6.3,
             "3xc_player": "Gabriel",
             "bboost": 8.0,
-            "freehit": 4.2,
+            "freehit": 4.3,
             "xi_points": 57.4,
             "firm": true,
             "fixtures": {
@@ -1373,7 +1373,7 @@
             "3xc_player": "Haaland",
             "bboost": 10.7,
             "freehit": 2.5,
-            "xi_points": 54.6,
+            "xi_points": 54.7,
             "firm": true,
             "fixtures": {
               "doubles": 0,
@@ -1386,7 +1386,7 @@
             "3xc_player": "Gabriel",
             "bboost": 13.9,
             "freehit": 0.7,
-            "xi_points": 59.2,
+            "xi_points": 59.3,
             "firm": true,
             "fixtures": {
               "doubles": 0,
@@ -1411,7 +1411,7 @@
             "3xc": 7.5,
             "3xc_player": "Haaland",
             "bboost": 11.4,
-            "freehit": 5.0,
+            "freehit": 5.2,
             "xi_points": 58.6,
             "firm": false,
             "fixtures": {
@@ -1425,7 +1425,7 @@
             "3xc_player": "Haaland",
             "bboost": 11.7,
             "freehit": 4.6,
-            "xi_points": 54.8,
+            "xi_points": 54.9,
             "firm": false,
             "fixtures": {
               "doubles": 0,
@@ -1466,27 +1466,38 @@
   },
   "team_news": {
     "enabled": true,
-    "fetched_at": "2026-10-30T07:02:24.190589+00:00",
+    "fetched_at": "2026-10-30T15:50:05.602837+00:00",
     "model": "gemini-3.5-flash-lite",
     "items": [
       {
         "player_id": 403,
         "name": "S\u00e1vio Moreira de Oliveira",
         "club": "Spurs",
+        "status": "out",
+        "start_chance": 0,
+        "reason": "Ruled out for the Palace clash.",
+        "source_url": "https://news.google.com/rss/articles/CBMirgFBVV95cUxPVjhhZ0toZmczN2FTNHNCaWxIUG9DdjRScThXTXJsQWF6czktTmFzZUZoTlZXbkRNNlBmY29Ib2NVdkZMV2NlMUdoaTBMRjR3VjR0cHF1Q2JhTjRxZ3ZIX2Y5QzhVNzhSbUQ0eEhRdzl4WnkzR1ZkbWxuUnFZTFRPckNWM2xLeEJ5dnpGSEFTOFZ5ZFY2Z2FGT1hyN2dJOVVPSHdBWkNueV9jSDBjUnc?oc=5",
+        "source_date": "2026-10-30",
+        "source_title": "Team news | Udogie back, Bergvall, Savio, Tosin out for Palace clash - Tottenham Hotspur"
+      },
+      {
+        "player_id": 533,
+        "name": "Nordi Mukiele",
+        "club": "Sunderland",
         "status": "doubtful",
         "start_chance": 50,
-        "reason": "Mentioned in Tottenham injury update regarding latest return dates.",
-        "source_url": "https://news.google.com/rss/articles/CBMixAFBVV95cUxPd0ZSYnVaRWdqLTBTZkVVSzR2cUxmNmo1cmlEZm83emU4SnRRTUowVGFvdU5JQzdhaWlFdHltWVZ2NlBSR2NiMGcwZzYybVRFY0gyNDlqbFBCZjlRYmRHdzVmZzVueDJjQ2pnR1NIOFV5SnFJbjdhdE9ITTRnQi1pbEpDV1NheXRhYkd4eEE3MTdKSDJVR2FDakdIUENpNUloVUZBdWZHQlRqdUtqeVZpdFE3R0UyQW52N0h4MmxhRXdhanNC?oc=5",
-        "source_date": "2026-10-29",
-        "source_title": "Tottenham injury update: Maddison, Savio, Udogie latest return dates - London Evening Standard"
+        "reason": "Doubtful for Coventry clash.",
+        "source_url": "https://news.google.com/rss/articles/CBMivwFBVV95cUxPdklIc0FiTGJCTk5yYjhQa1ltRHhTbHdTTXIxTnhOTnNSSWZwYURVcDA1Mms0NUxhNVc2QUl0MnRsaDVwbjdkemtoc245Mk5ad3RpRVI3NHV3U1A0WlA5TUxNUUhwMUo4YUpUa2RlUTFRdUVJbUFXVjh1R0hIc3Q4MWg1UGVKbXhuRTFEZFpqNnh3SXJJVEZLSFpVNUw4ZGFsb3JJLXI3aUdKRWNkRlBDTS1ueVFBUEtBamJjZWh6QQ?oc=5",
+        "source_date": "2026-10-30",
+        "source_title": "R\u00e9gis Le Bris relieved by Omar Alderete upturn, Nordi Mukiele a doubt for Coventry - OneFootball"
       },
       {
         "player_id": 109,
         "name": "Bart Verbruggen",
         "club": "Brighton",
         "status": "no_news",
-        "start_chance": 50,
-        "reason": "",
+        "start_chance": null,
+        "reason": "No relevant news found in the headlines.",
         "source_url": null,
         "source_date": null,
         "source_title": null
@@ -1497,7 +1508,7 @@
         "club": "Arsenal",
         "status": "no_news",
         "start_chance": null,
-        "reason": "No news in headlines regarding David Raya",
+        "reason": "No news in the headlines.",
         "source_url": null,
         "source_date": null,
         "source_title": null
@@ -1507,8 +1518,8 @@
         "name": "Erling Haaland",
         "club": "Man City",
         "status": "no_news",
-        "start_chance": null,
-        "reason": "No news mentions Erling Haaland.",
+        "start_chance": 50,
+        "reason": "No news in the headlines.",
         "source_url": null,
         "source_date": null,
         "source_title": null
@@ -1519,7 +1530,7 @@
         "club": "Arsenal",
         "status": "no_news",
         "start_chance": null,
-        "reason": "No news in headlines regarding Ezri Konsa",
+        "reason": "No news in the headlines.",
         "source_url": null,
         "source_date": null,
         "source_title": null
@@ -1529,8 +1540,8 @@
         "name": "Granit Xhaka",
         "club": "Sunderland",
         "status": "no_news",
-        "start_chance": 100,
-        "reason": "No relevant news found in the provided headlines.",
+        "start_chance": null,
+        "reason": "None",
         "source_url": null,
         "source_date": null,
         "source_title": null
@@ -1540,8 +1551,8 @@
         "name": "Harvey Barnes",
         "club": "Newcastle",
         "status": "no_news",
-        "start_chance": null,
-        "reason": "No news mentions Harvey Barnes.",
+        "start_chance": 50,
+        "reason": "No news in the headlines.",
         "source_url": null,
         "source_date": null,
         "source_title": null
@@ -1552,18 +1563,18 @@
         "club": "Brentford",
         "status": "no_news",
         "start_chance": null,
-        "reason": "Thiago started cup tie",
-        "source_url": "https://news.google.com/rss/articles/CBMiowFBVV95cUxQTmZTNUxra1l1VTlLN2ZMWnVIOVNXVWFjZThyN05EaGktcHEyQWVPb3YyNFdhdUtrNENzQ0hYalNmMDBmNkUydk1oTWJuTzZmRUxpM040RW1felV3UTNUNS10QzB1WUxLSnBVcXZOWjlBdnZqak0weGJXQ2hXUDZwdW44dXZGQl9iWDNXVG1yWFNQQlNuY3JFTjlMMFd6cTVZOTJN?oc=5",
-        "source_date": "2026-10-28",
-        "source_title": "Confirmed Sunderland v Brentford team news: Thiago and Wilson both start cup tie - Brentford FC"
+        "reason": "No news in the headlines.",
+        "source_url": null,
+        "source_date": null,
+        "source_title": null
       },
       {
         "player_id": 40,
         "name": "Morgan Rogers",
         "club": "Chelsea",
         "status": "no_news",
-        "start_chance": 50,
-        "reason": "",
+        "start_chance": null,
+        "reason": "No relevant news found in the headlines.",
         "source_url": null,
         "source_date": null,
         "source_title": null
@@ -1573,19 +1584,8 @@
         "name": "Murillo Costa dos Santos",
         "club": "Nott'm Forest",
         "status": "no_news",
-        "start_chance": null,
-        "reason": "No news mentions Murillo Costa dos Santos.",
-        "source_url": null,
-        "source_date": null,
-        "source_title": null
-      },
-      {
-        "player_id": 533,
-        "name": "Nordi Mukiele",
-        "club": "Sunderland",
-        "status": "no_news",
-        "start_chance": 100,
-        "reason": "No relevant news found in the provided headlines.",
+        "start_chance": 50,
+        "reason": "No news in the headlines.",
         "source_url": null,
         "source_date": null,
         "source_title": null
@@ -1595,8 +1595,8 @@
         "name": "Rayan Cherki",
         "club": "Man City",
         "status": "no_news",
-        "start_chance": null,
-        "reason": "No news mentions Rayan Cherki.",
+        "start_chance": 50,
+        "reason": "No news in the headlines.",
         "source_url": null,
         "source_date": null,
         "source_title": null
@@ -1607,7 +1607,7 @@
         "club": "Bournemouth",
         "status": "no_news",
         "start_chance": null,
-        "reason": "No news in headlines regarding Rayan Vitor",
+        "reason": "No news in the headlines.",
         "source_url": null,
         "source_date": null,
         "source_title": null
@@ -1618,18 +1618,18 @@
         "club": "Arsenal",
         "status": "no_news",
         "start_chance": null,
-        "reason": "Mikel Arteta makes Riccardo Calafiori calls ahead of Liverpool",
-        "source_url": "https://news.google.com/rss/articles/CBMilAFBVV95cUxNSW9sbVY5Y1NnaWpWNEd6SjBqZUlzV1ItVmFaMkpZNDJ0Z054RUZjZVFNSGtHNmYyOGxoR3d5ZzFrNzliQy0xeVJzUjRrcEw2VERBNnFFeExqd3pwdDFfQU1yaWhvNkE4V2J0SG01eUpCSU93QXVHUjh4dmMxMF83Mko5RGRJTUwxc1pvSE5DeU5sM25J0gGaAUFVX3lxTE5reFRybnJ5VUNfaGMzR2l6QkNlUW1CbnF5Nm83Qnp5MTNZNGYtWmtsYW9GNUNMTE1DWWtJM1hGaDNmYU1vV0NHM182SURMRUpUd3NsaHJHTC1kN0M0M2ttcmdDaDktNl9nMXNRYzA2T054bmtfOTNPSDRjeFVHbTJ4cUtfSFBDdTE0ZE9wXzFXNlJ0U3RaT29SZXc?oc=5",
-        "source_date": "2026-10-29",
-        "source_title": "Eight Arsenal changes for Liverpool as Mikel Arteta makes Riccardo Calafiori and Kai Havertz calls - Football London"
+        "reason": "Cited a headline about someone else: Mikel Arteta to make late call on Arsenal star to face Liverpool after triple injury boost",
+        "source_url": null,
+        "source_date": null,
+        "source_title": null
       },
       {
         "player_id": 447,
         "name": "Sven Botman",
         "club": "Newcastle",
         "status": "no_news",
-        "start_chance": null,
-        "reason": "No news mentions Sven Botman.",
+        "start_chance": 50,
+        "reason": "No news in the headlines.",
         "source_url": null,
         "source_date": null,
         "source_title": null
@@ -1639,14 +1639,21 @@
         "name": "Thierno Barry",
         "club": "Everton",
         "status": "no_news",
-        "start_chance": 50,
-        "reason": "",
+        "start_chance": null,
+        "reason": "No relevant news found in the headlines.",
         "source_url": null,
         "source_date": null,
         "source_title": null
       }
     ],
-    "applied": [],
+    "applied": [
+      {
+        "player_id": 533,
+        "status": "doubtful",
+        "chance": 50,
+        "fpl_chance": 75
+      }
+    ],
     "errors": 0,
     "record": {
       "gameweeks": [
@@ -1716,7 +1723,7 @@
     }
   },
   "other_matches": {
-    "from": "2026-10-30T07:02:37.725578",
+    "from": "2026-10-30T15:50:14.601722",
     "to": "2026-12-12T13:30:00",
     "clubs": [
       {
@@ -2358,7 +2365,7 @@
             "player_id": 79,
             "name": "Evanilson",
             "cost_m": 6.3,
-            "predicted_points": 4.11,
+            "predicted_points": 4.13,
             "position": "FWD",
             "team": "Bournemouth"
           }
@@ -2378,7 +2385,7 @@
         "hits": 0,
         "hit_cost": 0,
         "bank_m": 2.4,
-        "predicted_points": 54.65,
+        "predicted_points": 54.67,
         "captain_id": 411
       },
       {
@@ -2408,7 +2415,7 @@
         "hits": 0,
         "hit_cost": 0,
         "bank_m": 0.7,
-        "predicted_points": 59.25,
+        "predicted_points": 59.27,
         "captain_id": 4
       }
     ]
