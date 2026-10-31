@@ -122,6 +122,7 @@ TRANSFER_HIT_COST = 4  # points deducted per extra transfer
 # ML feature engineering
 # ---------------------------------------------------------------------------
 ROLLING_WINDOWS = [3, 5]        # gameweeks, for rolling form features
+LONG_FORM_WINDOWS = [10, "season"]  # long-run form; "season" = every earlier gameweek of it
 MIN_MINUTES_HISTORY = 1         # drop rows where player didn't play at all
 
 # Early-season shrinkage: blend rolling averages toward the positional norm
@@ -264,6 +265,18 @@ OWNERSHIP_FEATURE = True
 # Not used; the column is still built so it can be re-run.
 TRANSFER_FLOW_FEATURE = False
 
+# Long-run form: points, minutes, xGI, BPS and defensive contributions averaged
+# over the last ten gameweeks and the whole season so far (LONG_FORM_WINDOWS).
+# Every other form input looks back three to five gameweeks, so a good player
+# in a cold month read much like a poor one on a hot run.
+# SHIPPED (Oct 2026, research/2026-10-long-form): +102 [+9, +187] on the
+# tuning seasons (+33, +69, 8 of 10 runs), then +42 and +19 on the held-back
+# 2022-23 and 2023-24. Both sides rated teams on last season's ratings, as
+# live.
+LONG_FORM_FEATURE = True
+LONG_FORM_COLUMNS = [f"{p}_{w}" for p in ("points_avg", "minutes_avg", "xgi_avg", "bps_avg", "dc_avg")
+                     for w in LONG_FORM_WINDOWS]
+
 # How much each club has been rotating: the average number of starters changed
 # from the previous match, over its last five (team_changes_avg5). The minutes
 # model only ever saw each player's own record, never that his manager rotates
@@ -346,6 +359,9 @@ HISTORICAL_DATA_BASE_URL = "https://raw.githubusercontent.com/vaastav/Fantasy-Pr
 #                Oct 2026, ownership (selected_by_percent filled in for
 #                training): +122 [+26, +216] on tuning, then +65 / +14 here
 #                — confirmed, shipped.
+#                Oct 2026, long-run form (ten-gameweek and season-so-far
+#                averages): +102 [+9, +187] on tuning, then +42 / +19 here —
+#                confirmed, shipped.
 TUNING_SEASONS = ["2024-25", "2025-26"]
 CONFIRMATION_SEASONS = ["2022-23", "2023-24"]
 
@@ -710,3 +726,5 @@ if OTHER_MATCHES:
     FEATURE_COLUMNS = FEATURE_COLUMNS + [c for c in OTHER_MATCH_COLUMNS if c not in FEATURE_COLUMNS]
 if TRANSFER_FLOW_FEATURE and "transfer_flow" not in FEATURE_COLUMNS:
     FEATURE_COLUMNS = FEATURE_COLUMNS + ["transfer_flow"]
+if LONG_FORM_FEATURE:
+    FEATURE_COLUMNS = FEATURE_COLUMNS + [c for c in LONG_FORM_COLUMNS if c not in FEATURE_COLUMNS]

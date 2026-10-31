@@ -35,6 +35,7 @@ import numpy as np
 
 from config import (
     ROLLING_WINDOWS,
+    LONG_FORM_WINDOWS,
     FALLBACK_AGE,
     HORIZON_DECAY,
     FORM_SHRINKAGE_GAMES,
@@ -55,7 +56,6 @@ FIXTURES_PUBLISHED_THRESHOLD = 0.5
 # A window spanning every earlier gameweek of the season (player ids are
 # per season, so it never reaches into the last one).
 SEASON = "season"
-LONG_WINDOWS = [10, SEASON]
 
 
 def _window(s: pd.Series, w):
@@ -110,13 +110,12 @@ ROLLING_FEATURE_SPEC = [
     ("played", "played_avg", [5]),
     # Long-run level: the last ten gameweeks and the whole season so far, so a
     # good player in a cold patch isn't judged on his last three to five games
-    # alone. Under test in research/2026-10-long-form; computed always, used
-    # only if it passes.
-    ("total_points", "points_avg", LONG_WINDOWS),
-    ("minutes", "minutes_avg", LONG_WINDOWS),
-    ("expected_goal_involvements", "xgi_avg", LONG_WINDOWS),
-    ("bps", "bps_avg", LONG_WINDOWS),
-    ("defensive_contribution", "dc_avg", LONG_WINDOWS),
+    # alone (config.LONG_FORM_FEATURE, research/2026-10-long-form).
+    ("total_points", "points_avg", LONG_FORM_WINDOWS),
+    ("minutes", "minutes_avg", LONG_FORM_WINDOWS),
+    ("expected_goal_involvements", "xgi_avg", LONG_FORM_WINDOWS),
+    ("bps", "bps_avg", LONG_FORM_WINDOWS),
+    ("defensive_contribution", "dc_avg", LONG_FORM_WINDOWS),
 ]
 
 

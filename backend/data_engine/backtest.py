@@ -392,10 +392,8 @@ class _extra_features:
         config.FEATURE_COLUMNS = self._old
 
 
-# Ten-gameweek and season-so-far averages (feature_engineering.LONG_WINDOWS),
-# under test in research/2026-10-long-form.
-LONG_FORM_FEATURES = [f"{p}_{w}" for p in ("points_avg", "minutes_avg", "xgi_avg", "bps_avg", "dc_avg")
-                      for w in feature_engineering.LONG_WINDOWS]
+# Ten-gameweek and season-so-far averages (research/2026-10-long-form).
+LONG_FORM_FEATURES = list(config.LONG_FORM_COLUMNS)
 
 
 # The residual corrector for each simulated season, fitted on OTHER seasons'
@@ -608,9 +606,12 @@ VARIANTS = {
     ),
     "lagged_long_form": Variant(
         name="lagged_long_form",
-        description="lagged_ratings plus long-run form: points, minutes, xGI, BPS and "
-                    "defensive contributions averaged over the last ten gameweeks and the "
-                    "season so far (research/2026-10-long-form)",
+        description="SHIPPED (Oct 2026, 5 seeds): +102 [+9, +187] vs lagged_ratings, then "
+                    "+42 / +19 held back; now in production, so at HEAD this matches "
+                    "lagged_ratings (run commit 3ef0b06 to reproduce). lagged_ratings plus "
+                    "long-run form: points, minutes, xGI, BPS and defensive contributions "
+                    "averaged over the last ten gameweeks and the season so far "
+                    "(research/2026-10-long-form)",
         fit=lambda df: train_model.train_models(df, save=False),
         predict=_bundle_predict,
         context=lambda: _nested(_lagged_ratings_ctx(), _extra_features(LONG_FORM_FEATURES)),

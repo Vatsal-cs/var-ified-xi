@@ -17,9 +17,9 @@ const STAGES = [
   {
     n: "2",
     title: "Turn it into form signals",
-    summary: "Rolling averages over the last 3–5 games, plus the fixture ahead.",
+    summary: "Averages over the last 3, 5 and 10 games and the season so far, plus the fixture ahead.",
     body: [
-      "Raw stats don't predict much on their own. Each player's history becomes rolling averages — minutes, points, expected goals/assists, bonus-point score, how often they actually start, defensive contributions.",
+      "Raw stats don't predict much on their own. Each player's history becomes rolling averages — minutes, points, expected goals/assists, bonus-point score, how often they actually start, defensive contributions. The short ones catch a change in role; the ten-game and season-long ones keep a good player in a cold month from reading like a poor one on a hot run.",
       "For training, every average is shifted back a gameweek so a row never sees its own result. For the prediction it isn't shifted — the last match played is fair information about the next one. Fixture difficulty is folded in by comparing each team's attacking strength against the opponent's defence.",
     ],
   },

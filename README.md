@@ -120,6 +120,7 @@ Changes are tuned on 2024-25 and 2025-26. Two more seasons, 2022-23 and 2023-24,
 | A model at all, vs last-5 average | **+614** [+361, +876] | ✅ better |
 | Ownership as an input (it was silently 0 in training) | **+122** [+26, +216] · held back +65 and +14 | ✅ shipped |
 | Cup, European and international matches as inputs | **+87** [+13, +159] · held back +43 and +11 | ✅ shipped |
+| Ten-game and season-long form as inputs, not just the last 3–5 games | **+102** [+9, +187] · held back +42 and +19 | ✅ shipped |
 | Average five models trained on different seeds | XIs agree 86–88% (was 75–78%) · points +25 [−37, +92] | ✅ shipped |
 | Train both stages on established starters only | +56 on the tuning seasons, then +18 and −17 held back | ⚠️ not confirmed — stays off |
 | Team strength from recent xG instead of FPL's ratings | −153 [−276, −24] in 2025-26 | ❌ worse |
@@ -164,6 +165,7 @@ Every verdict below was first decided on **one seed**. The October 2026 audit re
 | XI and bench chosen on expected points after autosubs, simulator (new) | — | −37 [−75, −4] · −13 and −24 by season, 0 of 6 runs ahead | ❌ worse — not used |
 | Season stage (matches played) as an input, re-measured (new) | −42 | −13 [−70, +44] · +34 and −47 by season | no detectable effect — not used |
 | Is the stale-ratings gap real? FPL's ratings as shown at each kickoff vs last season's, both as live (new). The archive keeps only FPL's end-of-season revision | — | −3 [−131, +122] · −73 and +70 by season · the archived ratings' edge over both is hindsight (+202 [+42, +367]) | no detectable effect — the gap was hindsight; last season's ratings stay, team-ratings work stops |
+| Long-run form: points, minutes, xGI, BPS and defensive contributions over the last ten gameweeks and the season so far, with last season's ratings as live (new) | — | **+102** [+9, +187] · +33 and +69 by season, 8 of 10 runs · held back **+42 and +19** | ✅ **shipped** |
 | Planner discounts later weeks 5% instead of 15%, simulator branch test (new) | — | +60 [−109, +239] · +110 and −49 by season | no detectable effect — stays 0.85 |
 | Split training populations, vs starters-only for both stages | +7 | starters-only **+56** [+11, +103] on the tuning seasons — then +18 and −17 on the held-back seasons | ⚠️ **unconfirmed**: split populations stay |
 
