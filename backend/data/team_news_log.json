@@ -2841,5 +2841,188 @@
     "source_title": "R\u00e9gis Le Bris relieved by Omar Alderete upturn, Nordi Mukiele a doubt for Coventry - OneFootball"
    }
   ]
+ },
+ {
+  "gameweek": 9,
+  "fetched_at": "2026-10-31T06:55:02.103382+00:00",
+  "model": "gemini-3.5-flash-lite",
+  "items": [
+   {
+    "player_id": 1,
+    "name": "David Raya Mart\u00edn",
+    "club": "Arsenal",
+    "status": "no_news",
+    "start_chance": null,
+    "reason": "No news mentions David Raya Mart\u00edn",
+    "source_url": null,
+    "source_date": null,
+    "source_title": null
+   },
+   {
+    "player_id": 8,
+    "name": "Riccardo Calafiori",
+    "club": "Arsenal",
+    "status": "doubtful",
+    "start_chance": 50,
+    "reason": "Calafiori is included in the Arsenal injury update and fitness news ahead of Liverpool.",
+    "source_url": "https://news.google.com/rss/articles/CBMitAFBVV95cUxNZnNObGtxMDhlelF0bmROUGJ2UWRIYWp5dDVhUUFzR0d5WHQ5Yzg0Z2NOdldkT2VIcUFOcXJoQlQ0LW5LVGFjcmZaLUtVWC04Q1NybE1jRmJiR0JGZnpmMlVaLUJZQXpqSm1BX3NmV3l2elplajZ3bENNOWt3X2VMVVFaQV90QWxYR2R0RU95amtwSGZ2OFlNSnlIeVFSaXFZXzBpMmRUTnQ3QXdybjdVQWJoYnY?oc=5",
+    "source_date": "2026-10-30",
+    "source_title": "Calafiori, Rice, Madueke: Arsenal injury latest for FPL Gameweek 9 - www.fantasyfootballscout.co.uk"
+   },
+   {
+    "player_id": 31,
+    "name": "Ezri Konsa Ngoyo",
+    "club": "Arsenal",
+    "status": "no_news",
+    "start_chance": null,
+    "reason": "No news mentions Ezri Konsa Ngoyo",
+    "source_url": null,
+    "source_date": null,
+    "source_title": null
+   },
+   {
+    "player_id": 67,
+    "name": "Rayan Vitor Simpl\u00edcio Rocha",
+    "club": "Bournemouth",
+    "status": "no_news",
+    "start_chance": null,
+    "reason": "No news mentions Rayan Vitor Simpl\u00edcio Rocha",
+    "source_url": null,
+    "source_date": null,
+    "source_title": null
+   },
+   {
+    "player_id": 106,
+    "name": "Igor Thiago Nascimento Rodrigues",
+    "club": "Brentford",
+    "status": "no_news",
+    "start_chance": null,
+    "reason": "No news mentions Igor Thiago Nascimento Rodrigues",
+    "source_url": null,
+    "source_date": null,
+    "source_title": null
+   },
+   {
+    "player_id": 109,
+    "name": "Bart Verbruggen",
+    "club": "Brighton",
+    "status": "no_news",
+    "start_chance": 100,
+    "reason": "",
+    "source_url": null,
+    "source_date": null,
+    "source_title": null
+   },
+   {
+    "player_id": 40,
+    "name": "Morgan Rogers",
+    "club": "Chelsea",
+    "status": "no_news",
+    "start_chance": 100,
+    "reason": "",
+    "source_url": null,
+    "source_date": null,
+    "source_title": null
+   },
+   {
+    "player_id": 249,
+    "name": "Thierno Barry",
+    "club": "Everton",
+    "status": "no_news",
+    "start_chance": 100,
+    "reason": "",
+    "source_url": null,
+    "source_date": null,
+    "source_title": null
+   },
+   {
+    "player_id": 399,
+    "name": "Rayan Cherki",
+    "club": "Man City",
+    "status": "no_news",
+    "start_chance": null,
+    "reason": "No news in the headlines.",
+    "source_url": null,
+    "source_date": null,
+    "source_title": null
+   },
+   {
+    "player_id": 411,
+    "name": "Erling Haaland",
+    "club": "Man City",
+    "status": "expected_to_start",
+    "start_chance": 100,
+    "reason": "Erling Haaland injury update provided by Enzo Maresca",
+    "source_url": "https://news.google.com/rss/articles/CBMigwFBVV95cUxONUFZWVhuaXE3VmhaZWIwY0I5X3hfOFZNbVJVSVFNekxwUUgtVGpTMjJwTkpqZGlrR0JDSkRSY3Y1cUY3MnU1SXJucTN6eVA1QWlnQ0NvWld5WHJrOWlFVmRfdjFZdlgxdkN2WHFZZ0tVNVYzaHlBSEVfcXRmelVaR0hpbw?oc=5",
+    "source_date": "2026-10-30",
+    "source_title": "Man City: Enzo Maresca issues Erling Haaland and Antoine Semenyo injury updates before Brighton rematch - Yahoo Sports"
+   },
+   {
+    "player_id": 453,
+    "name": "Harvey Barnes",
+    "club": "Newcastle",
+    "status": "no_news",
+    "start_chance": null,
+    "reason": "No news in the headlines.",
+    "source_url": null,
+    "source_date": null,
+    "source_title": null
+   },
+   {
+    "player_id": 447,
+    "name": "Sven Botman",
+    "club": "Newcastle",
+    "status": "no_news",
+    "start_chance": null,
+    "reason": "No news in the headlines.",
+    "source_url": null,
+    "source_date": null,
+    "source_title": null
+   },
+   {
+    "player_id": 472,
+    "name": "Murillo Costa dos Santos",
+    "club": "Nott'm Forest",
+    "status": "no_news",
+    "start_chance": null,
+    "reason": "No news in the headlines.",
+    "source_url": null,
+    "source_date": null,
+    "source_title": null
+   },
+   {
+    "player_id": 403,
+    "name": "S\u00e1vio Moreira de Oliveira",
+    "club": "Spurs",
+    "status": "doubtful",
+    "start_chance": 50,
+    "reason": "Savio latest return dates mentioned in injury update",
+    "source_url": "https://news.google.com/rss/articles/CBMixAFBVV95cUxPRGxraVlrZ1gwS3ZvXzNUNTdfVS1scW1YWWtHWlhKeXZqMndhdlRaOE13Z0VrRzNHWWZGYVlydVNBdVVCZlc0UFc0SmRxNWpXQmZlMjVwUERLWmlod21nN1dxaEFBaG9oTFU2MmJKYkRVbi1xN2JYTGdsU2JVRXRqMFZReTh2TUd0SjdZampmS09VV1hwazFjdEV2UGg2OURCYzJza1dlUFZnVVhSMUlqQlhESHZKalhSNjJZOWg0ZGxiLTRy?oc=5",
+    "source_date": "2026-10-30",
+    "source_title": "Tottenham injury update: Maddison, Udogie, Savio latest return dates - London Evening Standard"
+   },
+   {
+    "player_id": 544,
+    "name": "Granit Xhaka",
+    "club": "Sunderland",
+    "status": "no_news",
+    "start_chance": null,
+    "reason": "",
+    "source_url": null,
+    "source_date": null,
+    "source_title": null
+   },
+   {
+    "player_id": 533,
+    "name": "Nordi Mukiele",
+    "club": "Sunderland",
+    "status": "doubtful",
+    "start_chance": 50,
+    "reason": "Nordi Mukiele a doubt for Coventry",
+    "source_url": "https://news.google.com/rss/articles/CBMivwFBVV95cUxPdklIc0FiTGJCTk5yYjhQa1ltRHhTbHdTTXIxTnhOTnNSSWZwYURVcDA1Mms0NUxhNVc2QUl0MnRsaDVwbjdkemtoc245Mk5ad3RpRVI3NHV3U1A0WlA5TUxNUUhwMUo4YUpUa2RlUTFRdUVJbUFXVjh1R0hIc3Q4MWg1UGVKbXhuRTFEZFpqNnh3SXJJVEZLSFpVNUw4ZGFsb3JJLXI3aUdKRWNkRlBDTS1ueVFBUEtBamJjZWh6QQ?oc=5",
+    "source_date": "2026-10-30",
+    "source_title": "R\u00e9gis Le Bris relieved by Omar Alderete upturn, Nordi Mukiele a doubt for Coventry - OneFootball"
+   }
+  ]
  }
 ]
