@@ -51,13 +51,18 @@ export default function Home() {
           </div>
           <p className="max-w-[40ch] text-[14px] text-ink-400">
             {isPlan ? (
-              <>Squad value &pound;{team.budget_used_m.toFixed(1)}m</>
+              // FPL's team value counts the bank: this squad's prices plus
+              // what this week's moves leave in it.
+              <>
+                Team value &pound;
+                {(team.budget_used_m + (team.transfer_plan?.weeks[0]?.bank_m ?? team.team?.bank_m ?? 0)).toFixed(1)}m
+              </>
             ) : (
               <>
                 Budget used &pound;{team.budget_used_m.toFixed(1)}m of &pound;{team.budget_total_m.toFixed(1)}m
               </>
             )}{" "}
-            &middot; planned {team.horizon_gws} gameweeks ahead. Tap a shirt for the player&apos;s full projection.
+            &middot; {`planned ${team.horizon_gws} gameweeks ahead. Tap a shirt for the player's full projection.`}
           </p>
         </div>
         <div className="grid items-start gap-12 lg:grid-cols-[1.2fr_1fr] lg:gap-14">

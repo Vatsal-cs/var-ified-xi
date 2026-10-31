@@ -220,13 +220,19 @@ export default function ThisWeek({ team }: { team: OptimizedTeam }) {
     .filter((c): c is PickCheck => !!c);
   const hit = team.transfer_plan?.hit_recommendation;
   const league = team.league;
+  // The bank now, and what this week's moves leave in it: showing the first
+  // beside a squad that already has the new signings in it added up to less
+  // than FPL's team value.
+  const bankNow = team.team?.bank_m ?? 0;
+  const bankAfter = week?.bank_m ?? bankNow;
+  const bankMoves = Math.abs(bankAfter - bankNow) >= 0.05;
 
   const numbers: { label: string; value: React.ReactNode }[] =
     team.mode === "transfer_plan" && week
       ? [
           { label: "Projected", value: <><CountUp value={week.predicted_points} /><small className="ml-1 font-body text-[14px] font-medium text-ink-400">pts</small></> },
           { label: "Free transfers", value: chip ? "∞" : team.team?.free_transfers ?? "—" },
-          { label: "Bank", value: `£${(team.team?.bank_m ?? 0).toFixed(1)}m` },
+          { label: bankMoves ? "Bank after moves" : "Bank", value: `£${bankAfter.toFixed(1)}m` },
           league?.your_rank
             ? { label: league.final === false ? "League (provisional)" : "League", value: <>{league.your_rank}<small className="ml-1 font-body text-[14px] font-medium text-ink-400">of {league.league_size}</small></> }
             : { label: "Horizon", value: `${team.horizon_gws} GWs` },
@@ -246,7 +252,8 @@ export default function ThisWeek({ team }: { team: OptimizedTeam }) {
           <span className="text-[13.5px] text-ink-400">
             {team.team.name} &middot;{" "}
             {chip ? `${chip} active` : `${team.team.free_transfers} free transfer${team.team.free_transfers === 1 ? "" : "s"}`}{" "}
-            &middot; &pound;{team.team.bank_m.toFixed(1)}m in the bank
+            &middot; &pound;{bankNow.toFixed(1)}m in the bank
+            {bankMoves && <>, &pound;{bankAfter.toFixed(1)}m after the move{(week?.transfer_count ?? 0) === 1 ? "" : "s"}</>}
           </span>
         )}
       </p>
