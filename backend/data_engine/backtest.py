@@ -591,9 +591,11 @@ VARIANTS = {
     ),
     "pit_ratings": Variant(
         name="pit_ratings",
-        description="production, but each past match rated with the FPL ratings saved "
-                    "before its kickoff instead of the season's final file, which FPL "
-                    "revised mid-season (research/2026-10-ratings-hindsight)",
+        description="NO DETECTABLE EFFECT vs lagged_ratings (Oct 2026, 5 seeds): -3 [-131, +122], "
+                    "-73 and +70 by season. Production, but each past match rated with the FPL "
+                    "ratings saved before its kickoff instead of the season's final file, which "
+                    "FPL revised mid-season; production's edge over both is hindsight "
+                    "(research/2026-10-ratings-hindsight)",
         fit=lambda df: train_model.train_models(df, save=False),
         predict=_bundle_predict,
         context=_point_in_time_ratings_ctx,

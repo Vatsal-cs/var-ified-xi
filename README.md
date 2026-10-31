@@ -150,9 +150,9 @@ Every verdict below was first decided on **one seed**. The October 2026 audit re
 | A second model that learns the first one's mistakes (new) | — | 2024-25 −51 [−166, +53], behind in 3 of 4 runs — stopped once it couldn't pass | not used |
 | This season's team form added to the ratings (new) | — | −0.2 [−110, +112] · +41 and −41 by season | no detectable effect — not used |
 | Real player ages: a live-only bug, not a test. History stores every age as 26, so only this season's rows had real ages and the trees used them to tell players apart (Henderson, 36: 2.4 → 5.1 projected) | — | never in any backtest: age is 26 in every replayed season | 🐞 **fixed**: age off, so live runs match what was tested |
-| This season's team form, tested with last season's ratings as live (new) | — | +6 [−118, +123] · +13 and −7 by season · the season's own ratings were worth +107 in 2025-26 | no detectable effect — not used |
+| This season's team form, tested with last season's ratings as live (new) | — | +6 [−118, +123] · +13 and −7 by season · the season's own ratings were worth +107 in 2025-26 (later shown to be hindsight) | no detectable effect — not used |
 | Team ratings from betting odds, with last season's ratings as live (new) | — | +1 [−107, +111] · +4 and −3 by season | no detectable effect — not used |
-| Training on stale team ratings, as the live model plays on them (new) | — | −14 [−85, +58] on 2025-26 · stale ratings themselves cost ~93 a season | no detectable effect — not used |
+| Training on stale team ratings, as the live model plays on them (new) | — | −14 [−85, +58] on 2025-26 · stale ratings looked to cost ~93 a season, later shown to be hindsight | no detectable effect — not used |
 | Early-season tilt toward points per match played (GW1-10) (new) | — | −17.6 [−45, +9] · −11 and −7 by season, 3 of 10 runs | no detectable effect, behind in both — not used |
 | Ownership as an input, actually filled in for training (it was 0 everywhere) (new) | — | **+122** [+26, +216] · ahead in both, 8 of 10 runs · held back **+65 and +14** | ✅ **shipped** |
 | Club rotation rate as an input (new) | — | −19 [−80, +43] · +12 and −31 by season | no detectable effect — not used |
@@ -163,6 +163,7 @@ Every verdict below was first decided on **one seed**. The October 2026 audit re
 | No hits before GW9, simulator branch test GW2-8 (new) | — | +41 in 2024-25, all of it one GW3 hit · 0 in 2025-26 (no early hits advised) | no detectable effect — not adopted |
 | XI and bench chosen on expected points after autosubs, simulator (new) | — | −37 [−75, −4] · −13 and −24 by season, 0 of 6 runs ahead | ❌ worse — not used |
 | Season stage (matches played) as an input, re-measured (new) | −42 | −13 [−70, +44] · +34 and −47 by season | no detectable effect — not used |
+| Is the stale-ratings gap real? FPL's ratings as shown at each kickoff vs last season's, both as live (new). The archive keeps only FPL's end-of-season revision | — | −3 [−131, +122] · −73 and +70 by season · the archived ratings' edge over both is hindsight (+202 [+42, +367]) | no detectable effect — the gap was hindsight; last season's ratings stay, team-ratings work stops |
 | Planner discounts later weeks 5% instead of 15%, simulator branch test (new) | — | +60 [−109, +239] · +110 and −49 by season | no detectable effect — stays 0.85 |
 | Split training populations, vs starters-only for both stages | +7 | starters-only **+56** [+11, +103] on the tuning seasons — then +18 and −17 on the held-back seasons | ⚠️ **unconfirmed**: split populations stay |
 

@@ -19,6 +19,11 @@ on last season's ratings is worth about −93 points a season. Nothing free trie
 so far recovers it (xG form replaced or added, odds-based form added); some of
 it may be hindsight in the archived ratings that no live model could have.
 
+**Corrected (research/2026-10-ratings-hindsight):** it is hindsight. The
+archive's ratings are FPL's end-of-season revision. Rated with what FPL showed
+at each kickoff, the replay does no better than on last season's ratings
+(−3 [−131, +122]), so the −93 is not a real cost.
+
 ## Reproduce
 
 ```bash

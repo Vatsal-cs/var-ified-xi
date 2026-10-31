@@ -13,6 +13,10 @@ in 2025-26 isn't recovered by a recency-weighted market rating built during
 the season; whatever those ratings carried (hindsight in the archived
 snapshot, or a pre-season judgement of squads), it isn't this.
 
+Later shown to be hindsight in the archived snapshot
+(research/2026-10-ratings-hindsight): FPL's ratings as shown at the time do no
+better than last season's.
+
 ## Reproduce
 
 ```bash

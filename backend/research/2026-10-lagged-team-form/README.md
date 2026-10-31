@@ -18,6 +18,11 @@ Whether that is hindsight in the archived snapshot or simply better ratings,
 it is the largest gap any input has shown, and the place to look next for a
 current-season rating that isn't xG form (which has now failed three ways).
 
+**Corrected (research/2026-10-ratings-hindsight):** it was hindsight. FPL
+revises its ratings mid-season and the archive keeps the final version. With
+the ratings FPL showed at each kickoff, the replay does no better than on last
+season's (−3 [−131, +122]); there is no real gap here to close.
+
 ## Reproduce
 
 ```bash

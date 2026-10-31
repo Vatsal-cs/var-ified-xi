@@ -228,8 +228,10 @@ LAGGED_TEAM_RATINGS_SEASONS = ()
 # Research only: rate each past match with the ratings FPL was showing at its
 # kickoff, from the archive's saved versions of teams.csv, instead of the
 # season's final file. FPL revises ratings mid-season and the final file knows
-# how the season went (research/2026-10-ratings-hindsight). Never affects
-# live runs.
+# how the season went. TESTED (Oct 2026, research/2026-10-ratings-hindsight):
+# vs last season's ratings, as live, −3 [−131, +122]. FPL's live ratings were
+# no better than last season's, so the old "stale ratings cost ~100 a season"
+# was hindsight. Never affects live runs.
 POINT_IN_TIME_RATINGS = False
 
 # Ownership (selected_by_percent) as a model input. It has been in
