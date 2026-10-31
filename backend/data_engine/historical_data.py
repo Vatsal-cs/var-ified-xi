@@ -25,6 +25,7 @@ with (and corrupt the rolling-form calculation for) a real current player.
 """
 
 import io
+import json
 import logging
 import requests
 import pandas as pd
@@ -44,6 +45,10 @@ PLAYER_ID_BASE = 1_000_000
 # Same idea for club ids: live FPL team ids are 1-20, so historical clubs are
 # offset far above that range.
 HISTORICAL_TEAM_ID_BASE = 10_000
+
+# The archive's own history, for files it has revised (_rating_versions).
+ARCHIVE_COMMITS_URL = "https://api.github.com/repos/vaastav/Fantasy-Premier-League/commits"
+ARCHIVE_RAW_URL = "https://raw.githubusercontent.com/vaastav/Fantasy-Premier-League"
 
 
 def _season_cache_path(season: str, name: str):
@@ -193,6 +198,8 @@ def fetch_season(season: str, season_index: int):
     out["team_strength_defence"] = gw_df["team"].map(lambda t: name_strength.get(t, {}).get("defence", 1100))
     out["opp_strength_attack"] = gw_df["opponent_team"].map(lambda o: id_strength.get(o, {}).get("attack", 1100))
     out["opp_strength_defence"] = gw_df["opponent_team"].map(lambda o: id_strength.get(o, {}).get("defence", 1100))
+    if config.POINT_IN_TIME_RATINGS:
+        _point_in_time_strengths(out, gw_df, season)
 
     _attach_odds_features(out, gw_df, season)
     _attach_setpiece_features(out, gw_df, season)
@@ -225,6 +232,49 @@ def _lagged_strengths(season: str, teams_df: pd.DataFrame):
     by_name = {n: dict(prev_by_name.get(n, promoted)) for n in teams_df["name"]}
     by_id = {int(i): by_name[n] for i, n in zip(teams_df["id"], teams_df["name"])}
     return by_id, by_name
+
+
+def _rating_versions(season: str) -> list:
+    """[(saved at, by id, by name)] for every version of `season`'s teams.csv
+    the archive committed, oldest first. FPL revises its ratings during a
+    season (2025-26: from November on, Liverpool's attack 1310 -> 1160, Man
+    Utd's defence 1120 -> 1275) and the archive's current file is the last
+    version, which knows how each team's season went. Each version here is
+    what FPL showed when the archive saved it — never later than that.
+    Research only (config.POINT_IN_TIME_RATINGS)."""
+    listing = RAW_DIR / f"historical_{season}_teams_versions.json"
+    if listing.exists():
+        commits = json.loads(listing.read_text())
+    else:
+        resp = requests.get(ARCHIVE_COMMITS_URL,
+                            params={"path": f"data/{season}/teams.csv", "per_page": 100}, timeout=30)
+        resp.raise_for_status()
+        commits = [{"sha": c["sha"], "date": c["commit"]["committer"]["date"]} for c in resp.json()]
+        listing.write_text(json.dumps(commits))
+    versions = []
+    for c in sorted(commits, key=lambda c: c["date"]):
+        text = _fetch_csv_text(f"{ARCHIVE_RAW_URL}/{c['sha']}/data/{season}/teams.csv",
+                               _season_cache_path(season, f"teams_{c['sha'][:10]}"))
+        by_id, by_name = _team_strength_lookups(pd.read_csv(io.StringIO(text)))
+        versions.append((pd.Timestamp(c["date"]).tz_convert(None), by_id, by_name))
+    return versions
+
+
+def _point_in_time_strengths(out: pd.DataFrame, gw_df: pd.DataFrame, season: str) -> None:
+    """Rates each row's team and opponent with the ratings FPL was showing
+    at its kickoff (_rating_versions), in place. A row before the first saved
+    version, or with no kickoff time, gets the first."""
+    versions = _rating_versions(season)
+    saved = pd.DatetimeIndex([v[0] for v in versions])
+    kickoff = pd.to_datetime(gw_df["kickoff_time"], errors="coerce", utc=True).dt.tz_localize(None)
+    which = (saved.searchsorted(kickoff.fillna(saved[0]), side="right") - 1).clip(0)
+    for side, key, lookup in (("team", "team", 2), ("opp", "opponent_team", 1)):
+        for kind in ("attack", "defence"):
+            out[f"{side}_strength_{kind}"] = [
+                versions[w][lookup].get(k, {}).get(kind, 1100) for w, k in zip(which, gw_df[key])]
+    changed = int((pd.Series(which) > 0).sum())
+    logger.info("Point-in-time ratings %s: %d versions, %d / %d rows rated after a revision",
+                season, len(versions), changed, len(out))
 
 
 def _previous_season(season: str) -> str:

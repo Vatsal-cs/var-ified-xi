@@ -274,6 +274,15 @@ class _lagged_ratings_ctx:
         config.LAGGED_TEAM_RATINGS = self._old
 
 
+class _point_in_time_ratings_ctx:
+    """Past seasons rated with what FPL showed at each kickoff."""
+    def __enter__(self):
+        self._old = config.POINT_IN_TIME_RATINGS
+        config.POINT_IN_TIME_RATINGS = True
+    def __exit__(self, *a):
+        config.POINT_IN_TIME_RATINGS = self._old
+
+
 class _market_source_ctx:
     """Team form built from the goals betting odds expected before each match
     (odds_data.py) instead of the xG that happened."""
@@ -579,6 +588,15 @@ VARIANTS = {
         fit=lambda df: train_model.train_models(df, save=False),
         predict=_bundle_predict,
         context=_lagged_ratings_ctx,
+    ),
+    "pit_ratings": Variant(
+        name="pit_ratings",
+        description="production, but each past match rated with the FPL ratings saved "
+                    "before its kickoff instead of the season's final file, which FPL "
+                    "revised mid-season (research/2026-10-ratings-hindsight)",
+        fit=lambda df: train_model.train_models(df, save=False),
+        predict=_bundle_predict,
+        context=_point_in_time_ratings_ctx,
     ),
     "team_form": Variant(
         name="team_form",

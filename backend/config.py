@@ -225,6 +225,12 @@ LAGGED_TEAM_RATINGS = False
 # earlier seasons' own ratings and plays the replayed one on last season's —
 # exactly how the live model runs in 2026-27 (research/2026-10-stale-ratings).
 LAGGED_TEAM_RATINGS_SEASONS = ()
+# Research only: rate each past match with the ratings FPL was showing at its
+# kickoff, from the archive's saved versions of teams.csv, instead of the
+# season's final file. FPL revises ratings mid-season and the final file knows
+# how the season went (research/2026-10-ratings-hindsight). Never affects
+# live runs.
+POINT_IN_TIME_RATINGS = False
 
 # Ownership (selected_by_percent) as a model input. It has been in
 # FEATURE_COLUMNS all along but was 0 in every training row — the archive's
