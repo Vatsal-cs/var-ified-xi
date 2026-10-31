@@ -392,6 +392,12 @@ class _extra_features:
         config.FEATURE_COLUMNS = self._old
 
 
+# Ten-gameweek and season-so-far averages (feature_engineering.LONG_WINDOWS),
+# under test in research/2026-10-long-form.
+LONG_FORM_FEATURES = [f"{p}_{w}" for p in ("points_avg", "minutes_avg", "xgi_avg", "bps_avg", "dc_avg")
+                      for w in feature_engineering.LONG_WINDOWS]
+
+
 # The residual corrector for each simulated season, fitted on OTHER seasons'
 # misses (research/2026-10-residual-model).
 RESIDUAL_BY_SEASON = {"2024-25": "from_2025-26", "2025-26": "from_2024-25",
@@ -599,6 +605,15 @@ VARIANTS = {
         fit=lambda df: train_model.train_models(df, save=False),
         predict=_bundle_predict,
         context=_point_in_time_ratings_ctx,
+    ),
+    "lagged_long_form": Variant(
+        name="lagged_long_form",
+        description="lagged_ratings plus long-run form: points, minutes, xGI, BPS and "
+                    "defensive contributions averaged over the last ten gameweeks and the "
+                    "season so far (research/2026-10-long-form)",
+        fit=lambda df: train_model.train_models(df, save=False),
+        predict=_bundle_predict,
+        context=lambda: _nested(_lagged_ratings_ctx(), _extra_features(LONG_FORM_FEATURES)),
     ),
     "team_form": Variant(
         name="team_form",

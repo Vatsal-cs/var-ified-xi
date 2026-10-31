@@ -52,6 +52,17 @@ logger = logging.getLogger(__name__)
 # couple of clubs — nowhere near half the league.
 FIXTURES_PUBLISHED_THRESHOLD = 0.5
 
+# A window spanning every earlier gameweek of the season (player ids are
+# per season, so it never reaches into the last one).
+SEASON = "season"
+LONG_WINDOWS = [10, SEASON]
+
+
+def _window(s: pd.Series, w):
+    """The last w rows, or the whole season so far when w is SEASON."""
+    return s.expanding() if w == SEASON else s.rolling(w, min_periods=1)
+
+
 # Every rolling-average feature the model can see, declared once.
 #   (source column, output prefix, windows)
 # Each is computed per player as shift(1).rolling(w).mean() — the shift is
@@ -97,6 +108,15 @@ ROLLING_FEATURE_SPEC = [
     # it gives points per match played. Under test in research/2026-10-form-tilt;
     # computed always, not a model input.
     ("played", "played_avg", [5]),
+    # Long-run level: the last ten gameweeks and the whole season so far, so a
+    # good player in a cold patch isn't judged on his last three to five games
+    # alone. Under test in research/2026-10-long-form; computed always, used
+    # only if it passes.
+    ("total_points", "points_avg", LONG_WINDOWS),
+    ("minutes", "minutes_avg", LONG_WINDOWS),
+    ("expected_goal_involvements", "xgi_avg", LONG_WINDOWS),
+    ("bps", "bps_avg", LONG_WINDOWS),
+    ("defensive_contribution", "dc_avg", LONG_WINDOWS),
 ]
 
 
@@ -386,12 +406,8 @@ def add_rolling_features(df: pd.DataFrame) -> pd.DataFrame:
         for w in windows:
             name = f"{prefix}_{w}"
             if source in df.columns:
-                df[name] = grp[source].apply(
-                    lambda s: s.shift(1).rolling(w, min_periods=1).mean()
-                )
-                counts = grp[source].apply(
-                    lambda s: s.shift(1).rolling(w, min_periods=1).count()
-                )
+                df[name] = grp[source].apply(lambda s: _window(s.shift(1), w).mean())
+                counts = grp[source].apply(lambda s: _window(s.shift(1), w).count())
                 df[name] = _shrink(df[name], counts, priors,
                                    df["element_type"], FORM_SHRINKAGE_GAMES)
             else:
@@ -464,12 +480,8 @@ def latest_form_snapshot(df: pd.DataFrame) -> pd.DataFrame:
         for w in windows:
             name = f"{prefix}_{w}"
             if source in df.columns:
-                out[name] = grp[source].apply(
-                    lambda s: s.rolling(w, min_periods=1).mean()
-                )
-                counts = grp[source].apply(
-                    lambda s: s.rolling(w, min_periods=1).count()
-                )
+                out[name] = grp[source].apply(lambda s: _window(s, w).mean())
+                counts = grp[source].apply(lambda s: _window(s, w).count())
                 out[name] = _shrink(out[name], counts, priors,
                                     out["element_type"], FORM_SHRINKAGE_GAMES)
             else:
