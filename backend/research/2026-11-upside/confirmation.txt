@@ -1,0 +1,30 @@
+
+============================================================================================
+POOLED RESULTS (10 file(s))
+============================================================================================
+variant             season    seeds  GWs     mean     sd        range    MAE  rank-r  Brier60
+--------------------------------------------------------------------------------------------
+lagged_ratings      2022-23       5   36   2440.4   51.1    2390-2526  1.112   0.701   0.0952
+lagged_ratings      2023-24       5   37   2363.4   43.1    2311-2405  0.965   0.694   0.0823
+upside_full         2022-23       5   36   2379.8   37.8    2334-2436  1.360   0.696   0.0952
+upside_full         2023-24       5   37   2291.6   38.5    2242-2334  1.236   0.686   0.0823
+--------------------------------------------------------------------------------------------
+Paired against lagged_ratings, per-gameweek, averaged over seeds (block bootstrap, 2-GW blocks, 95% CI):
+  upside_full        pooled  -132.4 [-296, +31]  won 0/10 cells  -> NO DETECTABLE EFFECT
+                     2022-23 -61 [-163,+46]  2023-24 -72 [-206,+56]
+============================================================================================
+better = pooled CI above zero and ahead in every season; worse = the
+mirror image; anything else is no detectable effect, not a rejection.
+
+
+2022-23: huge season = 2723+ (the reference's top 1%)
+  lagged_ratings   chance  1.01%   average   +0.0
+  upside_full      chance  0.31%   average  -55.4
+
+2023-24: huge season = 2719+ (the reference's top 1%)
+  lagged_ratings   chance  1.02%   average   +0.0
+  upside_full      chance  0.21%   average  -79.9
+
+Pooled (mean of seasons):
+  lagged_ratings   chance  1.02%   average   +0.0
+  upside_full      chance  0.26%   average  -67.6

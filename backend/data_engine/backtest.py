@@ -715,7 +715,8 @@ VARIANTS = {
     # average. Judged on how often a season reaches the reference's top 1%.
     "upside_captain": Variant(
         name="upside_captain",
-        description="lagged_ratings with the armband on the 80th-percentile good-day "
+        description="CLOSED (Nov 2026, 5 seeds): -11 [-65, +37], huge seasons 0.8%/1.4% vs 1%. "
+                    "lagged_ratings with the armband on the 80th-percentile good-day "
                     "projection (research/2026-11-upside)",
         fit=lambda df: train_model.train_models(df, save=False),
         predict=_bundle_predict,
@@ -724,7 +725,8 @@ VARIANTS = {
     ),
     "upside_half": Variant(
         name="upside_half",
-        description="lagged_ratings picking on the mean halfway to the good-day projection, "
+        description="CLOSED (Nov 2026, 5 seeds): -43 [-142, +66], huge seasons 1.3%/0.1% vs 1%. "
+                    "lagged_ratings picking on the mean halfway to the good-day projection, "
                     "armband on the good day (research/2026-11-upside)",
         fit=lambda df: train_model.train_models(df, save=False),
         predict=_upside_predict(0.5),
@@ -733,7 +735,8 @@ VARIANTS = {
     ),
     "upside_full": Variant(
         name="upside_full",
-        description="lagged_ratings picking and captaining on the good-day projection "
+        description="CLOSED (Nov 2026, 5 seeds): tuning +49, huge seasons 1.8%/2.6%; held back -61/-72, "
+                    "huge seasons 0.3%/0.2% vs 1%. lagged_ratings picking and captaining on the good-day projection "
                     "(research/2026-11-upside)",
         fit=lambda df: train_model.train_models(df, save=False),
         predict=_upside_predict(1.0),

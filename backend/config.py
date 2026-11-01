@@ -396,6 +396,9 @@ HISTORICAL_DATA_BASE_URL = "https://raw.githubusercontent.com/vaastav/Fantasy-Pr
 #                Oct 2026, long-run form (ten-gameweek and season-so-far
 #                averages): +102 [+9, +187] on tuning, then +42 / +19 here —
 #                confirmed, shipped.
+#                Nov 2026, upside_full (picks on the good-day projection),
+#                a declared second look after failing tuning: huge seasons
+#                0.3% / 0.2% (vs 1%), average -61 / -72 here — closed.
 TUNING_SEASONS = ["2024-25", "2025-26"]
 CONFIRMATION_SEASONS = ["2022-23", "2023-24"]
 
