@@ -1,0 +1,44 @@
+
+============================================================================================
+POOLED RESULTS (10 file(s))
+============================================================================================
+variant             season    seeds  GWs     mean     sd        range    MAE  rank-r  Brier60
+--------------------------------------------------------------------------------------------
+lagged_ratings      2024-25       5   37   2444.2   27.0    2412-2480  0.994   0.720   0.0858
+lagged_ratings      2025-26       5   37   2297.2   59.1    2209-2341  0.912   0.752   0.0771
+upside_captain      2024-25       5   37   2425.2   38.9    2370-2465  0.994   0.720   0.0858
+upside_captain      2025-26       5   37   2304.8   57.1    2217-2363  0.912   0.752   0.0771
+upside_full         2024-25       5   37   2443.8   29.4    2407-2481  1.202   0.714   0.0858
+upside_full         2025-26       5   37   2346.6   38.4    2291-2386  1.111   0.750   0.0771
+upside_half         2024-25       5   37   2441.8   37.2    2396-2500  1.084   0.718   0.0858
+upside_half         2025-26       5   37   2256.2   19.2    2226-2273  0.998   0.752   0.0771
+--------------------------------------------------------------------------------------------
+Paired against lagged_ratings, per-gameweek, averaged over seeds (block bootstrap, 2-GW blocks, 95% CI):
+  upside_captain     pooled   -11.4 [-65, +37]  won 4/10 cells  -> NO DETECTABLE EFFECT
+                     2024-25 -19 [-66,+25]  2025-26 +8 [-16,+31]
+  upside_half        pooled   -43.4 [-142, +66]  won 3/10 cells  -> NO DETECTABLE EFFECT
+                     2024-25 -2 [-78,+78]  2025-26 -41 [-107,+32]
+  upside_full        pooled   +49.0 [-89, +204]  won 7/10 cells  -> NO DETECTABLE EFFECT
+                     2024-25 -0 [-100,+112]  2025-26 +49 [-43,+165]
+============================================================================================
+better = pooled CI above zero and ahead in every season; worse = the
+mirror image; anything else is no detectable effect, not a rejection.
+
+
+2024-25: huge season = 2777+ (the reference's top 1%)
+  lagged_ratings   chance  1.00%   average   +0.0
+  upside_captain   chance  0.81%   average  -19.6
+  upside_full      chance  1.80%   average   +1.1
+  upside_half      chance  1.26%   average   +3.1
+
+2025-26: huge season = 2541+ (the reference's top 1%)
+  lagged_ratings   chance  1.03%   average   +0.0
+  upside_captain   chance  1.43%   average   +7.8
+  upside_full      chance  2.56%   average  +53.2
+  upside_half      chance  0.10%   average  -33.6
+
+Pooled (mean of seasons):
+  lagged_ratings   chance  1.01%   average   +0.0
+  upside_captain   chance  1.12%   average   -5.9
+  upside_full      chance  2.18%   average  +27.1
+  upside_half      chance  0.68%   average  -15.3

@@ -40,3 +40,17 @@ unlimited transfers, and the "huge" line is relative to our own model's
 seasons, not the field's. This measures how much the model's own spread
 widens, which is a necessary condition for a better shot at an extreme rank,
 not proof of one.
+
+## Addendum, 2026-11-01, after the tuning run (a declared deviation)
+Tuning result: no variant passed. upside_full came closest: huge-season
+chance 1.80% (2024-25) and 2.56% (2025-26), against 2.0% needed in both,
+with no cost on average (+0 and +49, pooled +49 [−89, +204]). By the rule
+above, the model stays on the mean.
+
+Because its average cost looks like zero, upside_full alone gets ONE look at
+the held-back 2022-23 and 2023-24. This is not in the original plan, and
+it's written here before that run. Same test there: huge-season chance at
+least 2.0% in both held-back seasons AND average cost no more than 50 in
+each. It ships as the default only if it passes both. Otherwise it is
+closed. This is a second bite at a failed variant, so it ships only if the
+evidence is clean in both new seasons.
