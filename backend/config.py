@@ -124,8 +124,9 @@ TRANSFER_HIT_COST = 4  # points deducted per extra transfer
 ROLLING_WINDOWS = [3, 5]        # gameweeks, for rolling form features
 LONG_FORM_WINDOWS = [10, "season"]  # long-run form; "season" = every earlier gameweek of it
 MIN_MINUTES_HISTORY = 1         # drop rows where player didn't play at all
-# Depth of every tree in the minutes and points models. 4 has never been
-# tested against anything else; research/2026-10-model-batch tries 6.
+# Depth of every tree in the minutes and points models. TESTED 6 instead
+# (Nov 2026, research/2026-10-model-batch): −145 [−252, −39], worse — the
+# extra depth fits noise. Stays 4.
 TREE_MAX_DEPTH = 4
 
 # Early-season shrinkage: blend rolling averages toward the positional norm
@@ -280,26 +281,32 @@ LONG_FORM_FEATURE = True
 LONG_FORM_COLUMNS = [f"{p}_{w}" for p in ("points_avg", "minutes_avg", "xgi_avg", "bps_avg", "dc_avg")
                      for w in LONG_FORM_WINDOWS]
 
-# Under test in research/2026-10-model-batch (pre-registered together, each
-# against lagged_ratings). Built always, model inputs only in their variant.
+# TESTED (Nov 2026, research/2026-10-model-batch: pre-registered together, each
+# against lagged_ratings, 5 seeds). None passed; all built, none model inputs.
 # Breakout: the last three gameweeks minus the season level, so a run well
-# above a player's norm is one split rather than two.
+# above a player's norm is one split rather than two. −75 [−161, +11], behind
+# in both seasons.
 FORM_TREND_COLUMNS = ["xgi_trend", "minutes_trend", "points_trend"]
 # Season so far per 90 minutes played, which an average per gameweek mixes
 # with how often he played (zero below 450 minutes, five full matches).
+# −61 [−130, +14], behind in both.
 PER90_COLUMNS = ["points_per90_season", "xgi_per90_season", "bps_per90_season", "dc_per90_season"]
 # The ten-gameweek and season windows for the stats long-run form left out.
+# −66 [−157, +27], behind in both.
 LONG_FORM_REST_COLUMNS = [f"{p}_{w}" for p in ("starts_avg", "xg_avg", "xa_avg", "cs_avg", "saves_avg",
                                                 "xgc_avg") for w in LONG_FORM_WINDOWS]
 # Research only: each player's previous Premier League season — minutes, and
 # points, xGI and BPS per 90 (zero below 900 minutes) — from the archive's
 # players_raw.csv, matched on FPL's lifetime player code. Fetched while rows
 # are built, so it is a flag rather than a column list alone.
+# −147 [−237, −56], worse — price and ownership already carry the prior.
 LAST_SEASON_PRIOR = False
 LAST_SEASON_COLUMNS = ["prev_minutes", "prev_points_per90", "prev_xgi_per90", "prev_bps_per90"]
 # Research only: Understat's per-match shots, key passes, non-penalty xG,
 # xGChain and xGBuildup (understat_data.py), averaged over five gameweeks and
-# the season so far. Under test in research/2026-10-understat.
+# the season so far. TESTED (Nov 2026, research/2026-10-understat, 5 seeds):
+# −111 [−198, −27], −14 and −97 by season — worse. FPL's own xG, xA, ICT and
+# BPS already carry what it adds. Off; the packs and code stay.
 UNDERSTAT = False
 UNDERSTAT_COLUMNS = [f"{p}_{w}" for p in ("us_shots_avg", "us_key_passes_avg", "us_npxg_avg",
                                            "us_xgchain_avg", "us_xgbuildup_avg") for w in (5, "season")]

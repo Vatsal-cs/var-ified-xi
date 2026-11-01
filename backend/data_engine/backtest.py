@@ -632,7 +632,7 @@ VARIANTS = {
     # against lagged_ratings.
     "form_trend": Variant(
         name="form_trend",
-        description="lagged_ratings plus breakout inputs: xGI, minutes and points over the "
+        description="NO DETECTABLE EFFECT (Nov 2026, 5 seeds): -75 [-161, +11]. lagged_ratings plus breakout inputs: xGI, minutes and points over the "
                     "last three gameweeks minus their season level (research/2026-10-model-batch)",
         fit=lambda df: train_model.train_models(df, save=False),
         predict=_bundle_predict,
@@ -640,7 +640,7 @@ VARIANTS = {
     ),
     "per90": Variant(
         name="per90",
-        description="lagged_ratings plus season-so-far points, xGI, BPS and defensive "
+        description="NO DETECTABLE EFFECT (Nov 2026, 5 seeds): -61 [-130, +14]. lagged_ratings plus season-so-far points, xGI, BPS and defensive "
                     "contributions per 90 minutes played (research/2026-10-model-batch)",
         fit=lambda df: train_model.train_models(df, save=False),
         predict=_bundle_predict,
@@ -648,7 +648,7 @@ VARIANTS = {
     ),
     "long_form_rest": Variant(
         name="long_form_rest",
-        description="lagged_ratings plus ten-gameweek and season windows for starts, xG, xA, "
+        description="NO DETECTABLE EFFECT (Nov 2026, 5 seeds): -66 [-157, +27]. lagged_ratings plus ten-gameweek and season windows for starts, xG, xA, "
                     "clean sheets, saves and xGC (research/2026-10-model-batch)",
         fit=lambda df: train_model.train_models(df, save=False),
         predict=_bundle_predict,
@@ -656,7 +656,7 @@ VARIANTS = {
     ),
     "last_season": Variant(
         name="last_season",
-        description="lagged_ratings plus each player's previous Premier League season: "
+        description="WORSE (Nov 2026, 5 seeds): -147 [-237, -56]. lagged_ratings plus each player's previous Premier League season: "
                     "minutes, and points, xGI and BPS per 90 (research/2026-10-model-batch)",
         fit=lambda df: train_model.train_models(df, save=False),
         predict=_bundle_predict,
@@ -665,7 +665,7 @@ VARIANTS = {
     ),
     "deeper_trees": Variant(
         name="deeper_trees",
-        description="lagged_ratings with trees six deep instead of four in the minutes and "
+        description="WORSE (Nov 2026, 5 seeds): -145 [-252, -39]. lagged_ratings with trees six deep instead of four in the minutes and "
                     "points models (research/2026-10-model-batch)",
         fit=lambda df: train_model.train_models(df, save=False),
         predict=_bundle_predict,
@@ -673,7 +673,7 @@ VARIANTS = {
     ),
     "understat": Variant(
         name="understat",
-        description="lagged_ratings plus Understat's shots, key passes, non-penalty xG, "
+        description="WORSE (Nov 2026, 5 seeds): -111 [-198, -27]. lagged_ratings plus Understat's shots, key passes, non-penalty xG, "
                     "xGChain and xGBuildup over five gameweeks and the season so far "
                     "(research/2026-10-understat)",
         fit=lambda df: train_model.train_models(df, save=False),
