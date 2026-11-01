@@ -1,0 +1,18 @@
+
+============================================================================================
+POOLED RESULTS (10 file(s))
+============================================================================================
+variant             season    seeds  GWs     mean     sd        range    MAE  rank-r  Brier60
+--------------------------------------------------------------------------------------------
+captain_crowd       2024-25       5   37   2464.6   30.6    2424-2500  0.994   0.720   0.0858
+captain_crowd       2025-26       5   37   2287.4   50.4    2211-2339  0.912   0.752   0.0771
+lagged_ratings      2024-25       5   37   2444.2   27.0    2412-2480  0.994   0.720   0.0858
+lagged_ratings      2025-26       5   37   2297.2   59.1    2209-2341  0.912   0.752   0.0771
+--------------------------------------------------------------------------------------------
+Paired against lagged_ratings, per-gameweek, averaged over seeds (block bootstrap, 2-GW blocks, 95% CI):
+  captain_crowd      pooled   +10.6 [-23, +44]  won 5/10 cells  -> NO DETECTABLE EFFECT
+                     2024-25 +20 [-6,+48]  2025-26 -10 [-32,+11]
+============================================================================================
+better = pooled CI above zero and ahead in every season; worse = the
+mirror image; anything else is no detectable effect, not a rejection.
+

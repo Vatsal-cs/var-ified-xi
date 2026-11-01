@@ -168,6 +168,7 @@ Every verdict below was first decided on **one seed**. The October 2026 audit re
 | Long-run form: points, minutes, xGI, BPS and defensive contributions over the last ten gameweeks and the season so far, with last season's ratings as live (new) | — | **+102** [+9, +187] · +33 and +69 by season, 8 of 10 runs · held back **+42 and +19** | ✅ **shipped** |
 | Five changes at once on top of long-run form: breakout inputs, per-90 rates, long windows for the other stats, last season's record, deeper trees (new) | — | −75 [−161, +11] · −61 [−130, +14] · −66 [−157, +27] · **−147** [−237, −56] · **−145** [−252, −39] | none used — last season and deeper trees ❌ worse |
 | Understat shot data: shots, key passes, non-penalty xG, xGChain, xGBuildup (new) | — | **−111** [−198, −27] · −14 and −97 by season | ❌ worse — not used |
+| The crowd's captain: the most-owned player within 1 point of the best projection takes the armband (new) | — | +11 [−23, +44] · +20 and −10 by season · armband moved in 24% of weeks | no detectable effect — captain stays on the projection |
 | Planner discounts later weeks 5% instead of 15%, simulator branch test (new) | — | +60 [−109, +239] · +110 and −49 by season | no detectable effect — stays 0.85 |
 | Split training populations, vs starters-only for both stages | +7 | starters-only **+56** [+11, +103] on the tuning seasons — then +18 and −17 on the held-back seasons | ⚠️ **unconfirmed**: split populations stay |
 

@@ -704,7 +704,8 @@ VARIANTS = {
     ),
     "captain_crowd": Variant(
         name="captain_crowd",
-        description="lagged_ratings, but the armband goes to the XI's most-owned player "
+        description="NO DETECTABLE EFFECT (Nov 2026, 5 seeds): +11 [-23, +44], +20 and -10 by season. "
+                    "lagged_ratings, but the armband goes to the XI's most-owned player "
                     "among those projected within 1 point of its best (research/2026-10-captain-crowd)",
         fit=lambda df: train_model.train_models(df, save=False),
         predict=_bundle_predict,
