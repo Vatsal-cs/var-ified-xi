@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-31T23:23:48.545985+00:00",
+  "generated_at": "2026-11-01T17:05:38.723343+00:00",
   "gameweek": 10,
   "deadline": "2026-11-06T18:30:00Z",
   "horizon_gws": 6,
@@ -137,14 +137,14 @@
       "team": "Arsenal",
       "now_cost_m": 4.7,
       "predicted_points": 4.94,
-      "horizon_points": 17.35,
+      "horizon_points": 17.39,
       "xp_by_gw": {
         "10": 4.94,
         "11": 4.3,
-        "12": 3.22,
-        "13": 4.15,
-        "14": 4.45,
-        "15": 3.52
+        "12": 3.24,
+        "13": 4.16,
+        "14": 4.46,
+        "15": 3.53
       },
       "start_probability": 0.84,
       "is_captain": false,
@@ -153,26 +153,26 @@
         "mean": 4.49,
         "p10": 1,
         "p90": 10,
-        "p_blank": 0.435,
+        "p_blank": 0.434,
         "p_return": 0.409,
         "p_haul": 0.101,
         "pmf": [
-          0.0902,
-          0.1746,
-          0.1701,
+          0.0901,
+          0.174,
+          0.17,
           0.0219,
-          0.0653,
-          0.0692,
-          0.1845,
-          0.0321,
-          0.0525,
-          0.0391,
+          0.0654,
+          0.0694,
+          0.1847,
+          0.032,
+          0.0527,
+          0.0393,
           0.0145,
-          0.0413,
-          0.0178,
+          0.0414,
+          0.0179,
           0.0067,
-          0.009,
-          0.009,
+          0.0089,
+          0.0089,
           0.0,
           0.0,
           0.0011,
@@ -1028,7 +1028,7 @@
         "player_id": 68,
         "name": "Tavernier",
         "team": "Bournemouth",
-        "cost_m": 6.5,
+        "cost_m": 6.6,
         "owned_by": 2,
         "share": 0.5
       },
@@ -1054,7 +1054,7 @@
         "entry": 190324,
         "name": "Ali \u0130\u00e7ingir",
         "rank": 1,
-        "total": 563,
+        "total": 565,
         "is_you": false,
         "chips": [
           {
@@ -1072,7 +1072,7 @@
         "entry": 6286989,
         "name": "Sumit Sharma",
         "rank": 2,
-        "total": 551,
+        "total": 553,
         "is_you": false,
         "chips": [
           {
@@ -1090,7 +1090,7 @@
         "entry": 5874404,
         "name": "Sarthak Sharma",
         "rank": 3,
-        "total": 497,
+        "total": 499,
         "is_you": false,
         "chips": [],
         "hits_cost": 8
@@ -1099,7 +1099,7 @@
         "entry": 4801643,
         "name": "Aamer Quazi",
         "rank": 4,
-        "total": 478,
+        "total": 480,
         "is_you": false,
         "chips": [],
         "hits_cost": 0
@@ -1108,7 +1108,7 @@
         "entry": 9927826,
         "name": "Vatsal Jain",
         "rank": 5,
-        "total": 478,
+        "total": 480,
         "is_you": true,
         "chips": [
           {
@@ -1119,19 +1119,10 @@
         "hits_cost": 0
       },
       {
-        "entry": 5475730,
-        "name": "Kaustav Sikder",
-        "rank": 6,
-        "total": 455,
-        "is_you": false,
-        "chips": [],
-        "hits_cost": 8
-      },
-      {
         "entry": 5103376,
         "name": "Pat Thakkar",
-        "rank": 7,
-        "total": 451,
+        "rank": 6,
+        "total": 459,
         "is_you": false,
         "chips": [
           {
@@ -1150,10 +1141,19 @@
         "hits_cost": 12
       },
       {
+        "entry": 5475730,
+        "name": "Kaustav Sikder",
+        "rank": 7,
+        "total": 457,
+        "is_you": false,
+        "chips": [],
+        "hits_cost": 8
+      },
+      {
         "entry": 9765092,
         "name": "Mr Glass",
         "rank": 8,
-        "total": 377,
+        "total": 378,
         "is_you": false,
         "chips": [],
         "hits_cost": 0
@@ -1162,7 +1162,7 @@
         "entry": 7912130,
         "name": "Akshit Kudyar",
         "rank": 9,
-        "total": 375,
+        "total": 378,
         "is_you": false,
         "chips": [],
         "hits_cost": 52
@@ -1171,7 +1171,7 @@
         "entry": 3168209,
         "name": "Sumit Kumar Sharma",
         "rank": 10,
-        "total": 336,
+        "total": 351,
         "is_you": false,
         "chips": [],
         "hits_cost": 0
@@ -1328,13 +1328,13 @@
           {
             "chip": "freehit",
             "gameweek": 16,
-            "value": 6.2,
+            "value": 6.3,
             "player": null,
             "firm": false,
             "now": false
           }
         ],
-        "total": 28.3,
+        "total": 28.4,
         "weeks": [
           {
             "gameweek": 10,
@@ -1354,7 +1354,7 @@
             "3xc": 7.0,
             "3xc_player": "Haaland",
             "bboost": 9.9,
-            "freehit": 4.2,
+            "freehit": 4.1,
             "xi_points": 58.2,
             "firm": true,
             "fixtures": {
@@ -1364,11 +1364,11 @@
           },
           {
             "gameweek": 12,
-            "3xc": 5.6,
+            "3xc": 5.5,
             "3xc_player": "N.Jackson",
             "bboost": 10.3,
-            "freehit": 4.2,
-            "xi_points": 51.4,
+            "freehit": 4.1,
+            "xi_points": 51.2,
             "firm": true,
             "fixtures": {
               "doubles": 0,
@@ -1381,7 +1381,7 @@
             "3xc_player": "Haaland",
             "bboost": 9.8,
             "freehit": 2.4,
-            "xi_points": 56.5,
+            "xi_points": 56.4,
             "firm": true,
             "fixtures": {
               "doubles": 0,
@@ -1393,8 +1393,8 @@
             "3xc": 6.2,
             "3xc_player": "Gabriel",
             "bboost": 14.7,
-            "freehit": 2.0,
-            "xi_points": 60.5,
+            "freehit": 2.1,
+            "xi_points": 60.4,
             "firm": true,
             "fixtures": {
               "doubles": 0,
@@ -1407,7 +1407,7 @@
             "3xc_player": "Haaland",
             "bboost": 13.0,
             "freehit": 1.1,
-            "xi_points": 54.7,
+            "xi_points": 54.6,
             "firm": true,
             "fixtures": {
               "doubles": 0,
@@ -1419,8 +1419,8 @@
             "3xc": 8.1,
             "3xc_player": "Haaland",
             "bboost": 12.3,
-            "freehit": 6.2,
-            "xi_points": 58.0,
+            "freehit": 6.3,
+            "xi_points": 57.9,
             "firm": false,
             "fixtures": {
               "doubles": 0,
@@ -1445,8 +1445,8 @@
             "3xc": 6.6,
             "3xc_player": "Haaland",
             "bboost": 13.6,
-            "freehit": 2.9,
-            "xi_points": 58.1,
+            "freehit": 3.0,
+            "xi_points": 58.0,
             "firm": false,
             "fixtures": {
               "doubles": 0,
@@ -1544,7 +1544,7 @@
     }
   },
   "other_matches": {
-    "from": "2026-10-31T23:23:48.460714",
+    "from": "2026-11-01T17:05:38.634583",
     "to": "2026-12-19T11:00:00",
     "clubs": [
       {
@@ -2118,6 +2118,17 @@
       "transfer": true,
       "alternatives": [
         {
+          "player_id": 115,
+          "name": "De Cuyper",
+          "team": "BHA",
+          "cost_m": 5.4,
+          "next": 4.1,
+          "six_weeks": 17.2,
+          "ppg": 7.7,
+          "vs": -5.0,
+          "flags": []
+        },
+        {
           "player_id": 504,
           "name": "Vuskovic",
           "team": "BHA",
@@ -2126,17 +2137,6 @@
           "six_weeks": 17.1,
           "ppg": 6.4,
           "vs": -5.0,
-          "flags": []
-        },
-        {
-          "player_id": 115,
-          "name": "De Cuyper",
-          "team": "BHA",
-          "cost_m": 5.3,
-          "next": 4.1,
-          "six_weeks": 17.1,
-          "ppg": 7.7,
-          "vs": -5.1,
           "flags": []
         },
         {
@@ -2151,6 +2151,3928 @@
           "flags": []
         }
       ]
+    }
+  ],
+  "projections": [
+    {
+      "player_id": 411,
+      "name": "Haaland",
+      "position": "FWD",
+      "team": "Man City",
+      "cost_m": 15.8,
+      "next": 6.48,
+      "six_weeks": 25.3,
+      "start_probability": 0.93
+    },
+    {
+      "player_id": 4,
+      "name": "Gabriel",
+      "position": "DEF",
+      "team": "Arsenal",
+      "cost_m": 8.0,
+      "next": 6.47,
+      "six_weeks": 22.13,
+      "start_probability": 0.92
+    },
+    {
+      "player_id": 40,
+      "name": "Rogers",
+      "position": "MID",
+      "team": "Chelsea",
+      "cost_m": 8.1,
+      "next": 4.64,
+      "six_weeks": 20.31,
+      "start_probability": 0.9
+    },
+    {
+      "player_id": 166,
+      "name": "N.Jackson",
+      "position": "FWD",
+      "team": "Aston Villa",
+      "cost_m": 7.0,
+      "next": 3.49,
+      "six_weeks": 19.0,
+      "start_probability": 0.86
+    },
+    {
+      "player_id": 427,
+      "name": "Mbeumo",
+      "position": "MID",
+      "team": "Man Utd",
+      "cost_m": 7.9,
+      "next": 4.47,
+      "six_weeks": 19.0,
+      "start_probability": 0.93
+    },
+    {
+      "player_id": 79,
+      "name": "Evanilson",
+      "position": "FWD",
+      "team": "Bournemouth",
+      "cost_m": 6.4,
+      "next": 4.91,
+      "six_weeks": 17.85,
+      "start_probability": 0.85
+    },
+    {
+      "player_id": 106,
+      "name": "Thiago",
+      "position": "FWD",
+      "team": "Brentford",
+      "cost_m": 7.8,
+      "next": 4.05,
+      "six_weeks": 17.64,
+      "start_probability": 0.91
+    },
+    {
+      "player_id": 249,
+      "name": "Barry",
+      "position": "FWD",
+      "team": "Everton",
+      "cost_m": 5.6,
+      "next": 4.75,
+      "six_weeks": 17.63,
+      "start_probability": 0.91
+    },
+    {
+      "player_id": 127,
+      "name": "Gomez",
+      "position": "MID",
+      "team": "Brighton",
+      "cost_m": 5.0,
+      "next": 4.18,
+      "six_weeks": 17.54,
+      "start_probability": 0.86
+    },
+    {
+      "player_id": 31,
+      "name": "Konsa",
+      "position": "DEF",
+      "team": "Arsenal",
+      "cost_m": 4.7,
+      "next": 4.94,
+      "six_weeks": 17.39,
+      "start_probability": 0.84
+    },
+    {
+      "player_id": 68,
+      "name": "Tavernier",
+      "position": "MID",
+      "team": "Bournemouth",
+      "cost_m": 6.6,
+      "next": 4.52,
+      "six_weeks": 17.23,
+      "start_probability": 0.87
+    },
+    {
+      "player_id": 115,
+      "name": "De Cuyper",
+      "position": "DEF",
+      "team": "Brighton",
+      "cost_m": 5.4,
+      "next": 4.11,
+      "six_weeks": 17.16,
+      "start_probability": 0.85
+    },
+    {
+      "player_id": 504,
+      "name": "Vuskovic",
+      "position": "DEF",
+      "team": "Brighton",
+      "cost_m": 5.2,
+      "next": 3.96,
+      "six_weeks": 17.09,
+      "start_probability": 0.89
+    },
+    {
+      "player_id": 356,
+      "name": "Virgil",
+      "position": "DEF",
+      "team": "Liverpool",
+      "cost_m": 6.4,
+      "next": 4.27,
+      "six_weeks": 16.98,
+      "start_probability": 0.94
+    },
+    {
+      "player_id": 67,
+      "name": "Rayan",
+      "position": "MID",
+      "team": "Bournemouth",
+      "cost_m": 6.3,
+      "next": 4.41,
+      "six_weeks": 16.94,
+      "start_probability": 0.9
+    },
+    {
+      "player_id": 124,
+      "name": "Gro\u00df",
+      "position": "MID",
+      "team": "Brighton",
+      "cost_m": 6.2,
+      "next": 4.02,
+      "six_weeks": 16.93,
+      "start_probability": 0.82
+    },
+    {
+      "player_id": 236,
+      "name": "Dewsbury-Hall",
+      "position": "MID",
+      "team": "Everton",
+      "cost_m": 6.6,
+      "next": 4.55,
+      "six_weeks": 16.79,
+      "start_probability": 0.91
+    },
+    {
+      "player_id": 627,
+      "name": "Barcola",
+      "position": "MID",
+      "team": "Liverpool",
+      "cost_m": 8.1,
+      "next": 3.82,
+      "six_weeks": 16.79,
+      "start_probability": 0.81
+    },
+    {
+      "player_id": 426,
+      "name": "B.Fernandes",
+      "position": "MID",
+      "team": "Man Utd",
+      "cost_m": 11.7,
+      "next": 3.99,
+      "six_weeks": 16.73,
+      "start_probability": 0.74
+    },
+    {
+      "player_id": 154,
+      "name": "Palmer",
+      "position": "MID",
+      "team": "Chelsea",
+      "cost_m": 9.8,
+      "next": 3.79,
+      "six_weeks": 16.63,
+      "start_probability": 0.88
+    },
+    {
+      "player_id": 346,
+      "name": "Calvert-Lewin",
+      "position": "FWD",
+      "team": "Leeds",
+      "cost_m": 6.1,
+      "next": 4.41,
+      "six_weeks": 16.57,
+      "start_probability": 0.9
+    },
+    {
+      "player_id": 334,
+      "name": "Muharemovi\u0107",
+      "position": "DEF",
+      "team": "Leeds",
+      "cost_m": 5.1,
+      "next": 4.55,
+      "six_weeks": 16.56,
+      "start_probability": 0.95
+    },
+    {
+      "player_id": 156,
+      "name": "Neto",
+      "position": "MID",
+      "team": "Chelsea",
+      "cost_m": 6.6,
+      "next": 3.88,
+      "six_weeks": 16.55,
+      "start_probability": 0.87
+    },
+    {
+      "player_id": 15,
+      "name": "\u00d8degaard",
+      "position": "MID",
+      "team": "Arsenal",
+      "cost_m": 6.7,
+      "next": 4.7,
+      "six_weeks": 16.48,
+      "start_probability": 0.8
+    },
+    {
+      "player_id": 60,
+      "name": "Hill",
+      "position": "DEF",
+      "team": "Bournemouth",
+      "cost_m": 5.5,
+      "next": 4.37,
+      "six_weeks": 16.4,
+      "start_probability": 0.92
+    },
+    {
+      "player_id": 472,
+      "name": "Murillo",
+      "position": "DEF",
+      "team": "Nott'm Forest",
+      "cost_m": 5.5,
+      "next": 3.24,
+      "six_weeks": 16.3,
+      "start_probability": 0.9
+    },
+    {
+      "player_id": 1,
+      "name": "Raya",
+      "position": "GK",
+      "team": "Arsenal",
+      "cost_m": 6.2,
+      "next": 4.33,
+      "six_weeks": 16.29,
+      "start_probability": 0.96
+    },
+    {
+      "player_id": 455,
+      "name": "Tonali",
+      "position": "MID",
+      "team": "Spurs",
+      "cost_m": 5.3,
+      "next": 3.49,
+      "six_weeks": 16.22,
+      "start_probability": 0.9
+    },
+    {
+      "player_id": 13,
+      "name": "Rice",
+      "position": "MID",
+      "team": "Arsenal",
+      "cost_m": 7.4,
+      "next": 4.72,
+      "six_weeks": 16.0,
+      "start_probability": 0.82
+    },
+    {
+      "player_id": 229,
+      "name": "Tarkowski",
+      "position": "DEF",
+      "team": "Everton",
+      "cost_m": 6.2,
+      "next": 4.22,
+      "six_weeks": 15.86,
+      "start_probability": 0.93
+    },
+    {
+      "player_id": 566,
+      "name": "Silva",
+      "position": "DEF",
+      "team": "Bournemouth",
+      "cost_m": 5.0,
+      "next": 4.24,
+      "six_weeks": 15.7,
+      "start_probability": 0.9
+    },
+    {
+      "player_id": 138,
+      "name": "Kostoulas",
+      "position": "FWD",
+      "team": "Brighton",
+      "cost_m": 5.8,
+      "next": 3.71,
+      "six_weeks": 15.68,
+      "start_probability": 0.79
+    },
+    {
+      "player_id": 202,
+      "name": "Richards",
+      "position": "DEF",
+      "team": "Crystal Palace",
+      "cost_m": 4.9,
+      "next": 3.14,
+      "six_weeks": 15.59,
+      "start_probability": 0.88
+    },
+    {
+      "player_id": 362,
+      "name": "Jacquet",
+      "position": "DEF",
+      "team": "Liverpool",
+      "cost_m": 5.1,
+      "next": 3.88,
+      "six_weeks": 15.33,
+      "start_probability": 0.87
+    },
+    {
+      "player_id": 226,
+      "name": "Pickford",
+      "position": "GK",
+      "team": "Everton",
+      "cost_m": 5.5,
+      "next": 3.87,
+      "six_weeks": 15.11,
+      "start_probability": 0.96
+    },
+    {
+      "player_id": 384,
+      "name": "Donnarumma",
+      "position": "GK",
+      "team": "Man City",
+      "cost_m": 5.5,
+      "next": 3.99,
+      "six_weeks": 15.09,
+      "start_probability": 0.93
+    },
+    {
+      "player_id": 390,
+      "name": "R\u00faben",
+      "position": "DEF",
+      "team": "Man City",
+      "cost_m": 5.5,
+      "next": 3.92,
+      "six_weeks": 14.97,
+      "start_probability": 0.87
+    },
+    {
+      "player_id": 350,
+      "name": "A.Becker",
+      "position": "GK",
+      "team": "Liverpool",
+      "cost_m": 5.5,
+      "next": 3.72,
+      "six_weeks": 14.92,
+      "start_probability": 0.95
+    },
+    {
+      "player_id": 486,
+      "name": "McAtee",
+      "position": "MID",
+      "team": "Nott'm Forest",
+      "cost_m": 5.5,
+      "next": 3.08,
+      "six_weeks": 14.79,
+      "start_probability": 0.87
+    },
+    {
+      "player_id": 453,
+      "name": "Barnes",
+      "position": "MID",
+      "team": "Newcastle",
+      "cost_m": 6.1,
+      "next": 3.72,
+      "six_weeks": 14.72,
+      "start_probability": 0.87
+    },
+    {
+      "player_id": 544,
+      "name": "Xhaka",
+      "position": "MID",
+      "team": "Sunderland",
+      "cost_m": 5.4,
+      "next": 3.34,
+      "six_weeks": 14.67,
+      "start_probability": 0.93
+    },
+    {
+      "player_id": 330,
+      "name": "Bogle",
+      "position": "DEF",
+      "team": "Leeds",
+      "cost_m": 4.8,
+      "next": 3.96,
+      "six_weeks": 14.65,
+      "start_probability": 0.88
+    },
+    {
+      "player_id": 61,
+      "name": "Truffert",
+      "position": "DEF",
+      "team": "Bournemouth",
+      "cost_m": 5.4,
+      "next": 3.87,
+      "six_weeks": 14.64,
+      "start_probability": 0.89
+    },
+    {
+      "player_id": 542,
+      "name": "E.Le F\u00e9e",
+      "position": "MID",
+      "team": "Sunderland",
+      "cost_m": 5.7,
+      "next": 3.53,
+      "six_weeks": 14.63,
+      "start_probability": 0.87
+    },
+    {
+      "player_id": 204,
+      "name": "Mitchell",
+      "position": "DEF",
+      "team": "Crystal Palace",
+      "cost_m": 4.5,
+      "next": 2.97,
+      "six_weeks": 14.57,
+      "start_probability": 0.84
+    },
+    {
+      "player_id": 268,
+      "name": "King",
+      "position": "MID",
+      "team": "Fulham",
+      "cost_m": 5.5,
+      "next": 3.78,
+      "six_weeks": 14.57,
+      "start_probability": 0.83
+    },
+    {
+      "player_id": 372,
+      "name": "Mac Allister",
+      "position": "MID",
+      "team": "Liverpool",
+      "cost_m": 5.4,
+      "next": 3.5,
+      "six_weeks": 14.47,
+      "start_probability": 0.81
+    },
+    {
+      "player_id": 449,
+      "name": "Hall",
+      "position": "DEF",
+      "team": "Newcastle",
+      "cost_m": 5.3,
+      "next": 3.74,
+      "six_weeks": 14.39,
+      "start_probability": 0.92
+    },
+    {
+      "player_id": 338,
+      "name": "Ampadu",
+      "position": "MID",
+      "team": "Leeds",
+      "cost_m": 5.3,
+      "next": 3.85,
+      "six_weeks": 14.32,
+      "start_probability": 0.92
+    },
+    {
+      "player_id": 210,
+      "name": "Wharton",
+      "position": "MID",
+      "team": "Crystal Palace",
+      "cost_m": 5.4,
+      "next": 2.99,
+      "six_weeks": 14.26,
+      "start_probability": 0.84
+    },
+    {
+      "player_id": 412,
+      "name": "Lammens",
+      "position": "GK",
+      "team": "Man Utd",
+      "cost_m": 4.8,
+      "next": 3.39,
+      "six_weeks": 14.23,
+      "start_probability": 0.94
+    },
+    {
+      "player_id": 109,
+      "name": "Verbruggen",
+      "position": "GK",
+      "team": "Brighton",
+      "cost_m": 4.6,
+      "next": 3.29,
+      "six_weeks": 14.21,
+      "start_probability": 0.96
+    },
+    {
+      "player_id": 37,
+      "name": "Lindel\u00f6f",
+      "position": "DEF",
+      "team": "Aston Villa",
+      "cost_m": 4.5,
+      "next": 2.48,
+      "six_weeks": 14.17,
+      "start_probability": 0.91
+    },
+    {
+      "player_id": 418,
+      "name": "Maguire",
+      "position": "DEF",
+      "team": "Man Utd",
+      "cost_m": 4.7,
+      "next": 3.39,
+      "six_weeks": 14.01,
+      "start_probability": 0.89
+    },
+    {
+      "player_id": 366,
+      "name": "Wirtz",
+      "position": "MID",
+      "team": "Liverpool",
+      "cost_m": 7.2,
+      "next": 3.26,
+      "six_weeks": 13.97,
+      "start_probability": 0.71
+    },
+    {
+      "player_id": 257,
+      "name": "Bassey",
+      "position": "DEF",
+      "team": "Fulham",
+      "cost_m": 4.5,
+      "next": 3.77,
+      "six_weeks": 13.93,
+      "start_probability": 0.93
+    },
+    {
+      "player_id": 8,
+      "name": "Calafiori",
+      "position": "DEF",
+      "team": "Arsenal",
+      "cost_m": 5.9,
+      "next": 3.88,
+      "six_weeks": 13.92,
+      "start_probability": 0.77
+    },
+    {
+      "player_id": 237,
+      "name": "Ndiaye",
+      "position": "MID",
+      "team": "Man City",
+      "cost_m": 5.8,
+      "next": 3.43,
+      "six_weeks": 13.79,
+      "start_probability": 0.76
+    },
+    {
+      "player_id": 580,
+      "name": "Charles",
+      "position": "MID",
+      "team": "Fulham",
+      "cost_m": 5.0,
+      "next": 3.62,
+      "six_weeks": 13.73,
+      "start_probability": 0.87
+    },
+    {
+      "player_id": 569,
+      "name": "Gonzalo",
+      "position": "FWD",
+      "team": "Fulham",
+      "cost_m": 6.0,
+      "next": 3.53,
+      "six_weeks": 13.68,
+      "start_probability": 0.78
+    },
+    {
+      "player_id": 385,
+      "name": "Trafford",
+      "position": "GK",
+      "team": "Leeds",
+      "cost_m": 5.0,
+      "next": 3.53,
+      "six_weeks": 13.64,
+      "start_probability": 0.97
+    },
+    {
+      "player_id": 87,
+      "name": "Ajer",
+      "position": "DEF",
+      "team": "Brentford",
+      "cost_m": 4.5,
+      "next": 3.07,
+      "six_weeks": 13.58,
+      "start_probability": 0.93
+    },
+    {
+      "player_id": 417,
+      "name": "Dalot",
+      "position": "DEF",
+      "team": "Man Utd",
+      "cost_m": 4.8,
+      "next": 3.29,
+      "six_weeks": 13.51,
+      "start_probability": 0.82
+    },
+    {
+      "player_id": 332,
+      "name": "Justin",
+      "position": "DEF",
+      "team": "Leeds",
+      "cost_m": 4.5,
+      "next": 3.66,
+      "six_weeks": 13.43,
+      "start_probability": 0.88
+    },
+    {
+      "player_id": 45,
+      "name": "McGinn",
+      "position": "MID",
+      "team": "Aston Villa",
+      "cost_m": 5.4,
+      "next": 2.53,
+      "six_weeks": 13.42,
+      "start_probability": 0.76
+    },
+    {
+      "player_id": 261,
+      "name": "Iwobi",
+      "position": "MID",
+      "team": "Fulham",
+      "cost_m": 5.4,
+      "next": 3.52,
+      "six_weeks": 13.42,
+      "start_probability": 0.84
+    },
+    {
+      "player_id": 391,
+      "name": "Gvardiol",
+      "position": "DEF",
+      "team": "Man City",
+      "cost_m": 5.7,
+      "next": 3.44,
+      "six_weeks": 13.4,
+      "start_probability": 0.72
+    },
+    {
+      "player_id": 57,
+      "name": "Petrovi\u0107",
+      "position": "GK",
+      "team": "Bournemouth",
+      "cost_m": 4.5,
+      "next": 3.51,
+      "six_weeks": 13.39,
+      "start_probability": 0.95
+    },
+    {
+      "player_id": 86,
+      "name": "Lewis-Potter",
+      "position": "MID",
+      "team": "Brentford",
+      "cost_m": 5.5,
+      "next": 3.13,
+      "six_weeks": 13.32,
+      "start_probability": 0.8
+    },
+    {
+      "player_id": 358,
+      "name": "Kerkez",
+      "position": "DEF",
+      "team": "Liverpool",
+      "cost_m": 5.3,
+      "next": 3.29,
+      "six_weeks": 13.29,
+      "start_probability": 0.84
+    },
+    {
+      "player_id": 529,
+      "name": "Roefs",
+      "position": "GK",
+      "team": "Sunderland",
+      "cost_m": 4.9,
+      "next": 3.15,
+      "six_weeks": 13.2,
+      "start_probability": 0.94
+    },
+    {
+      "player_id": 264,
+      "name": "Bobb",
+      "position": "MID",
+      "team": "Fulham",
+      "cost_m": 5.5,
+      "next": 3.42,
+      "six_weeks": 13.15,
+      "start_probability": 0.8
+    },
+    {
+      "player_id": 116,
+      "name": "Dunk",
+      "position": "DEF",
+      "team": "Brighton",
+      "cost_m": 4.5,
+      "next": 3.17,
+      "six_weeks": 13.08,
+      "start_probability": 0.82
+    },
+    {
+      "player_id": 26,
+      "name": "Havertz",
+      "position": "FWD",
+      "team": "Arsenal",
+      "cost_m": 7.4,
+      "next": 3.6,
+      "six_weeks": 13.03,
+      "start_probability": 0.53
+    },
+    {
+      "player_id": 512,
+      "name": "Kudus",
+      "position": "MID",
+      "team": "Spurs",
+      "cost_m": 6.5,
+      "next": 2.89,
+      "six_weeks": 13.03,
+      "start_probability": 0.85
+    },
+    {
+      "player_id": 112,
+      "name": "Van Hecke",
+      "position": "DEF",
+      "team": "Spurs",
+      "cost_m": 5.0,
+      "next": 2.86,
+      "six_weeks": 13.01,
+      "start_probability": 0.93
+    },
+    {
+      "player_id": 129,
+      "name": "Ayari",
+      "position": "MID",
+      "team": "Brighton",
+      "cost_m": 5.4,
+      "next": 3.1,
+      "six_weeks": 12.99,
+      "start_probability": 0.73
+    },
+    {
+      "player_id": 239,
+      "name": "Garner",
+      "position": "MID",
+      "team": "Everton",
+      "cost_m": 6.0,
+      "next": 3.33,
+      "six_weeks": 12.91,
+      "start_probability": 0.88
+    },
+    {
+      "player_id": 597,
+      "name": "Suzuki",
+      "position": "GK",
+      "team": "Aston Villa",
+      "cost_m": 5.0,
+      "next": 2.37,
+      "six_weeks": 12.91,
+      "start_probability": 0.89
+    },
+    {
+      "player_id": 155,
+      "name": "Enzo",
+      "position": "MID",
+      "team": "Man City",
+      "cost_m": 6.9,
+      "next": 3.24,
+      "six_weeks": 12.88,
+      "start_probability": 0.65
+    },
+    {
+      "player_id": 214,
+      "name": "Kamada",
+      "position": "MID",
+      "team": "Crystal Palace",
+      "cost_m": 5.0,
+      "next": 2.67,
+      "six_weeks": 12.86,
+      "start_probability": 0.72
+    },
+    {
+      "player_id": 16,
+      "name": "Madueke",
+      "position": "MID",
+      "team": "Arsenal",
+      "cost_m": 6.2,
+      "next": 3.46,
+      "six_weeks": 12.81,
+      "start_probability": 0.6
+    },
+    {
+      "player_id": 591,
+      "name": "Enciso",
+      "position": "MID",
+      "team": "Ipswich Town",
+      "cost_m": 5.5,
+      "next": 2.92,
+      "six_weeks": 12.79,
+      "start_probability": 0.87
+    },
+    {
+      "player_id": 47,
+      "name": "Kamara",
+      "position": "MID",
+      "team": "Aston Villa",
+      "cost_m": 5.0,
+      "next": 2.27,
+      "six_weeks": 12.77,
+      "start_probability": 0.78
+    },
+    {
+      "player_id": 567,
+      "name": "Horn\u00ed\u010dek",
+      "position": "GK",
+      "team": "Newcastle",
+      "cost_m": 5.0,
+      "next": 3.22,
+      "six_weeks": 12.76,
+      "start_probability": 0.95
+    },
+    {
+      "player_id": 73,
+      "name": "Adams",
+      "position": "MID",
+      "team": "Bournemouth",
+      "cost_m": 5.0,
+      "next": 3.24,
+      "six_weeks": 12.68,
+      "start_probability": 0.77
+    },
+    {
+      "player_id": 82,
+      "name": "Kelleher",
+      "position": "GK",
+      "team": "Brentford",
+      "cost_m": 5.0,
+      "next": 2.95,
+      "six_weeks": 12.68,
+      "start_probability": 0.95
+    },
+    {
+      "player_id": 464,
+      "name": "Wissa",
+      "position": "FWD",
+      "team": "Newcastle",
+      "cost_m": 6.0,
+      "next": 3.05,
+      "six_weeks": 12.68,
+      "start_probability": 0.65
+    },
+    {
+      "player_id": 496,
+      "name": "Kinsky",
+      "position": "GK",
+      "team": "Spurs",
+      "cost_m": 4.4,
+      "next": 2.74,
+      "six_weeks": 12.62,
+      "start_probability": 0.96
+    },
+    {
+      "player_id": 149,
+      "name": "Colwill",
+      "position": "DEF",
+      "team": "Chelsea",
+      "cost_m": 4.8,
+      "next": 3.14,
+      "six_weeks": 12.6,
+      "start_probability": 0.87
+    },
+    {
+      "player_id": 467,
+      "name": "Sels",
+      "position": "GK",
+      "team": "Nott'm Forest",
+      "cost_m": 5.0,
+      "next": 2.64,
+      "six_weeks": 12.54,
+      "start_probability": 0.95
+    },
+    {
+      "player_id": 286,
+      "name": "Belloumi",
+      "position": "MID",
+      "team": "Hull City",
+      "cost_m": 5.3,
+      "next": 2.34,
+      "six_weeks": 12.52,
+      "start_probability": 0.87
+    },
+    {
+      "player_id": 88,
+      "name": "Kayode",
+      "position": "DEF",
+      "team": "Brentford",
+      "cost_m": 4.6,
+      "next": 2.79,
+      "six_weeks": 12.51,
+      "start_probability": 0.86
+    },
+    {
+      "player_id": 503,
+      "name": "Van de Ven",
+      "position": "DEF",
+      "team": "Spurs",
+      "cost_m": 5.0,
+      "next": 2.69,
+      "six_weeks": 12.5,
+      "start_probability": 0.87
+    },
+    {
+      "player_id": 183,
+      "name": "Rudoni",
+      "position": "MID",
+      "team": "Coventry City",
+      "cost_m": 4.9,
+      "next": 2.79,
+      "six_weeks": 12.47,
+      "start_probability": 0.89
+    },
+    {
+      "player_id": 405,
+      "name": "N.Gonzalez",
+      "position": "MID",
+      "team": "Newcastle",
+      "cost_m": 5.5,
+      "next": 3.07,
+      "six_weeks": 12.41,
+      "start_probability": 0.82
+    },
+    {
+      "player_id": 480,
+      "name": "Gibbs-White",
+      "position": "MID",
+      "team": "Nott'm Forest",
+      "cost_m": 7.9,
+      "next": 2.74,
+      "six_weeks": 12.37,
+      "start_probability": 0.74
+    },
+    {
+      "player_id": 481,
+      "name": "Anderson",
+      "position": "MID",
+      "team": "Man City",
+      "cost_m": 6.3,
+      "next": 3.15,
+      "six_weeks": 12.3,
+      "start_probability": 0.67
+    },
+    {
+      "player_id": 525,
+      "name": "Fernandes",
+      "position": "MID",
+      "team": "Spurs",
+      "cost_m": 5.6,
+      "next": 2.68,
+      "six_weeks": 12.23,
+      "start_probability": 0.69
+    },
+    {
+      "player_id": 379,
+      "name": "Isak",
+      "position": "FWD",
+      "team": "Liverpool",
+      "cost_m": 9.2,
+      "next": 2.76,
+      "six_weeks": 12.14,
+      "start_probability": 0.58
+    },
+    {
+      "player_id": 167,
+      "name": "Delap",
+      "position": "FWD",
+      "team": "Nott'm Forest",
+      "cost_m": 5.4,
+      "next": 2.6,
+      "six_weeks": 12.07,
+      "start_probability": 0.67
+    },
+    {
+      "player_id": 469,
+      "name": "N.Williams",
+      "position": "DEF",
+      "team": "Nott'm Forest",
+      "cost_m": 4.9,
+      "next": 2.4,
+      "six_weeks": 12.05,
+      "start_probability": 0.9
+    },
+    {
+      "player_id": 203,
+      "name": "Canvot",
+      "position": "DEF",
+      "team": "Crystal Palace",
+      "cost_m": 4.8,
+      "next": 2.5,
+      "six_weeks": 11.99,
+      "start_probability": 0.76
+    },
+    {
+      "player_id": 565,
+      "name": "M.Sangar\u00e9",
+      "position": "MID",
+      "team": "Brentford",
+      "cost_m": 5.4,
+      "next": 2.69,
+      "six_weeks": 11.99,
+      "start_probability": 0.73
+    },
+    {
+      "player_id": 95,
+      "name": "O.Dango",
+      "position": "MID",
+      "team": "Brentford",
+      "cost_m": 6.2,
+      "next": 2.78,
+      "six_weeks": 11.89,
+      "start_probability": 0.68
+    },
+    {
+      "player_id": 514,
+      "name": "Tel",
+      "position": "MID",
+      "team": "Spurs",
+      "cost_m": 5.6,
+      "next": 2.64,
+      "six_weeks": 11.88,
+      "start_probability": 0.7
+    },
+    {
+      "player_id": 162,
+      "name": "Andrey Santos",
+      "position": "MID",
+      "team": "Man Utd",
+      "cost_m": 4.7,
+      "next": 2.89,
+      "six_weeks": 11.84,
+      "start_probability": 0.66
+    },
+    {
+      "player_id": 258,
+      "name": "Castagne",
+      "position": "DEF",
+      "team": "Fulham",
+      "cost_m": 4.5,
+      "next": 3.21,
+      "six_weeks": 11.82,
+      "start_probability": 0.85
+    },
+    {
+      "player_id": 64,
+      "name": "Smith",
+      "position": "DEF",
+      "team": "Bournemouth",
+      "cost_m": 4.5,
+      "next": 3.08,
+      "six_weeks": 11.78,
+      "start_probability": 0.85
+    },
+    {
+      "player_id": 295,
+      "name": "McBurnie",
+      "position": "FWD",
+      "team": "Hull City",
+      "cost_m": 5.5,
+      "next": 2.08,
+      "six_weeks": 11.73,
+      "start_probability": 0.89
+    },
+    {
+      "player_id": 244,
+      "name": "Armstrong",
+      "position": "MID",
+      "team": "Everton",
+      "cost_m": 5.0,
+      "next": 3.06,
+      "six_weeks": 11.69,
+      "start_probability": 0.82
+    },
+    {
+      "player_id": 91,
+      "name": "Pinnock",
+      "position": "DEF",
+      "team": "Coventry City",
+      "cost_m": 4.5,
+      "next": 2.66,
+      "six_weeks": 11.68,
+      "start_probability": 0.85
+    },
+    {
+      "player_id": 400,
+      "name": "Doku",
+      "position": "MID",
+      "team": "Man City",
+      "cost_m": 7.5,
+      "next": 2.88,
+      "six_weeks": 11.64,
+      "start_probability": 0.73
+    },
+    {
+      "player_id": 265,
+      "name": "Berge",
+      "position": "MID",
+      "team": "Fulham",
+      "cost_m": 4.9,
+      "next": 3.03,
+      "six_weeks": 11.46,
+      "start_probability": 0.79
+    },
+    {
+      "player_id": 305,
+      "name": "Davis",
+      "position": "DEF",
+      "team": "Ipswich Town",
+      "cost_m": 4.0,
+      "next": 2.5,
+      "six_weeks": 11.46,
+      "start_probability": 0.92
+    },
+    {
+      "player_id": 250,
+      "name": "Leno",
+      "position": "GK",
+      "team": "Fulham",
+      "cost_m": 4.5,
+      "next": 2.96,
+      "six_weeks": 11.36,
+      "start_probability": 0.95
+    },
+    {
+      "player_id": 452,
+      "name": "Bruno G.",
+      "position": "MID",
+      "team": "Arsenal",
+      "cost_m": 6.7,
+      "next": 3.01,
+      "six_weeks": 11.34,
+      "start_probability": 0.48
+    },
+    {
+      "player_id": 201,
+      "name": "Mu\u00f1oz",
+      "position": "DEF",
+      "team": "Nott'm Forest",
+      "cost_m": 5.3,
+      "next": 2.33,
+      "six_weeks": 11.24,
+      "start_probability": 0.71
+    },
+    {
+      "player_id": 526,
+      "name": "Solanke",
+      "position": "FWD",
+      "team": "Spurs",
+      "cost_m": 5.8,
+      "next": 2.48,
+      "six_weeks": 11.21,
+      "start_probability": 0.53
+    },
+    {
+      "player_id": 420,
+      "name": "Yoro",
+      "position": "DEF",
+      "team": "Man Utd",
+      "cost_m": 4.8,
+      "next": 2.71,
+      "six_weeks": 11.17,
+      "start_probability": 0.68
+    },
+    {
+      "player_id": 393,
+      "name": "Khusanov",
+      "position": "DEF",
+      "team": "Man City",
+      "cost_m": 5.3,
+      "next": 2.79,
+      "six_weeks": 11.12,
+      "start_probability": 0.64
+    },
+    {
+      "player_id": 401,
+      "name": "Marmoush",
+      "position": "FWD",
+      "team": "Spurs",
+      "cost_m": 7.0,
+      "next": 2.46,
+      "six_weeks": 11.1,
+      "start_probability": 0.69
+    },
+    {
+      "player_id": 579,
+      "name": "Araujo",
+      "position": "DEF",
+      "team": "Liverpool",
+      "cost_m": 5.4,
+      "next": 2.7,
+      "six_weeks": 11.08,
+      "start_probability": 0.63
+    },
+    {
+      "player_id": 151,
+      "name": "Acheampong",
+      "position": "DEF",
+      "team": "Chelsea",
+      "cost_m": 4.5,
+      "next": 2.7,
+      "six_weeks": 11.06,
+      "start_probability": 0.82
+    },
+    {
+      "player_id": 53,
+      "name": "Manzambi",
+      "position": "MID",
+      "team": "Aston Villa",
+      "cost_m": 6.1,
+      "next": 2.18,
+      "six_weeks": 11.01,
+      "start_probability": 0.58
+    },
+    {
+      "player_id": 619,
+      "name": "Palacios",
+      "position": "MID",
+      "team": "Ipswich Town",
+      "cost_m": 5.0,
+      "next": 2.51,
+      "six_weeks": 10.99,
+      "start_probability": 0.89
+    },
+    {
+      "player_id": 345,
+      "name": "Tanaka",
+      "position": "MID",
+      "team": "Leeds",
+      "cost_m": 4.9,
+      "next": 2.93,
+      "six_weeks": 10.98,
+      "start_probability": 0.68
+    },
+    {
+      "player_id": 522,
+      "name": "Gray",
+      "position": "MID",
+      "team": "Spurs",
+      "cost_m": 4.9,
+      "next": 2.39,
+      "six_weeks": 10.94,
+      "start_probability": 0.69
+    },
+    {
+      "player_id": 447,
+      "name": "Botman",
+      "position": "DEF",
+      "team": "Newcastle",
+      "cost_m": 5.0,
+      "next": 2.82,
+      "six_weeks": 10.93,
+      "start_probability": 0.63
+    },
+    {
+      "player_id": 558,
+      "name": "Schlager",
+      "position": "MID",
+      "team": "Nott'm Forest",
+      "cost_m": 5.0,
+      "next": 2.36,
+      "six_weeks": 10.88,
+      "start_probability": 0.71
+    },
+    {
+      "player_id": 316,
+      "name": "Emersonn",
+      "position": "FWD",
+      "team": "Ipswich Town",
+      "cost_m": 5.5,
+      "next": 2.54,
+      "six_weeks": 10.85,
+      "start_probability": 0.58
+    },
+    {
+      "player_id": 211,
+      "name": "Yeremy",
+      "position": "MID",
+      "team": "Crystal Palace",
+      "cost_m": 5.5,
+      "next": 2.43,
+      "six_weeks": 10.74,
+      "start_probability": 0.55
+    },
+    {
+      "player_id": 428,
+      "name": "Cunha",
+      "position": "MID",
+      "team": "Man Utd",
+      "cost_m": 7.8,
+      "next": 2.62,
+      "six_weeks": 10.7,
+      "start_probability": 0.5
+    },
+    {
+      "player_id": 304,
+      "name": "O'Shea",
+      "position": "DEF",
+      "team": "Ipswich Town",
+      "cost_m": 4.0,
+      "next": 2.32,
+      "six_weeks": 10.66,
+      "start_probability": 0.89
+    },
+    {
+      "player_id": 483,
+      "name": "Ndoye",
+      "position": "MID",
+      "team": "Nott'm Forest",
+      "cost_m": 5.5,
+      "next": 2.28,
+      "six_weeks": 10.66,
+      "start_probability": 0.55
+    },
+    {
+      "player_id": 242,
+      "name": "George",
+      "position": "MID",
+      "team": "Everton",
+      "cost_m": 5.5,
+      "next": 2.74,
+      "six_weeks": 10.64,
+      "start_probability": 0.61
+    },
+    {
+      "player_id": 94,
+      "name": "Schade",
+      "position": "MID",
+      "team": "Brentford",
+      "cost_m": 6.2,
+      "next": 2.5,
+      "six_weeks": 10.59,
+      "start_probability": 0.71
+    },
+    {
+      "player_id": 254,
+      "name": "Robinson",
+      "position": "DEF",
+      "team": "Fulham",
+      "cost_m": 4.4,
+      "next": 2.85,
+      "six_weeks": 10.58,
+      "start_probability": 0.88
+    },
+    {
+      "player_id": 41,
+      "name": "Buend\u00eda",
+      "position": "MID",
+      "team": "Aston Villa",
+      "cost_m": 5.9,
+      "next": 2.11,
+      "six_weeks": 10.43,
+      "start_probability": 0.46
+    },
+    {
+      "player_id": 114,
+      "name": "Boscagli",
+      "position": "DEF",
+      "team": "Brighton",
+      "cost_m": 4.5,
+      "next": 2.52,
+      "six_weeks": 10.43,
+      "start_probability": 0.64
+    },
+    {
+      "player_id": 110,
+      "name": "Rushworth",
+      "position": "GK",
+      "team": "Coventry City",
+      "cost_m": 4.5,
+      "next": 2.49,
+      "six_weeks": 10.42,
+      "start_probability": 0.93
+    },
+    {
+      "player_id": 159,
+      "name": "Caicedo",
+      "position": "MID",
+      "team": "Chelsea",
+      "cost_m": 5.3,
+      "next": 2.51,
+      "six_weeks": 10.36,
+      "start_probability": 0.73
+    },
+    {
+      "player_id": 534,
+      "name": "Hume",
+      "position": "DEF",
+      "team": "Sunderland",
+      "cost_m": 4.2,
+      "next": 2.41,
+      "six_weeks": 10.36,
+      "start_probability": 0.68
+    },
+    {
+      "player_id": 572,
+      "name": "Tzolakis",
+      "position": "GK",
+      "team": "Hull City",
+      "cost_m": 4.7,
+      "next": 2.02,
+      "six_weeks": 10.36,
+      "start_probability": 0.96
+    },
+    {
+      "player_id": 185,
+      "name": "Sakamoto",
+      "position": "MID",
+      "team": "Coventry City",
+      "cost_m": 4.8,
+      "next": 2.34,
+      "six_weeks": 10.27,
+      "start_probability": 0.68
+    },
+    {
+      "player_id": 259,
+      "name": "Diop",
+      "position": "DEF",
+      "team": "Ipswich Town",
+      "cost_m": 3.9,
+      "next": 2.23,
+      "six_weeks": 10.23,
+      "start_probability": 0.9
+    },
+    {
+      "player_id": 545,
+      "name": "Sadiki",
+      "position": "MID",
+      "team": "Sunderland",
+      "cost_m": 4.8,
+      "next": 2.39,
+      "six_weeks": 10.21,
+      "start_probability": 0.79
+    },
+    {
+      "player_id": 650,
+      "name": "Affengruber",
+      "position": "DEF",
+      "team": "Fulham",
+      "cost_m": 4.5,
+      "next": 2.74,
+      "six_weeks": 10.19,
+      "start_probability": 0.87
+    },
+    {
+      "player_id": 25,
+      "name": "Gy\u00f6keres",
+      "position": "FWD",
+      "team": "Arsenal",
+      "cost_m": 7.0,
+      "next": 2.66,
+      "six_weeks": 10.01,
+      "start_probability": 0.4
+    },
+    {
+      "player_id": 539,
+      "name": "O'Nien",
+      "position": "DEF",
+      "team": "Sunderland",
+      "cost_m": 3.9,
+      "next": 2.33,
+      "six_weeks": 9.93,
+      "start_probability": 0.64
+    },
+    {
+      "player_id": 176,
+      "name": "Dasilva",
+      "position": "DEF",
+      "team": "Coventry City",
+      "cost_m": 4.0,
+      "next": 2.29,
+      "six_weeks": 9.9,
+      "start_probability": 0.89
+    },
+    {
+      "player_id": 398,
+      "name": "Foden",
+      "position": "MID",
+      "team": "Man City",
+      "cost_m": 6.8,
+      "next": 2.43,
+      "six_weeks": 9.77,
+      "start_probability": 0.5
+    },
+    {
+      "player_id": 105,
+      "name": "Anthony",
+      "position": "MID",
+      "team": "Brentford",
+      "cost_m": 5.9,
+      "next": 2.27,
+      "six_weeks": 9.66,
+      "start_probability": 0.44
+    },
+    {
+      "player_id": 71,
+      "name": "Cook",
+      "position": "MID",
+      "team": "Bournemouth",
+      "cost_m": 5.0,
+      "next": 2.43,
+      "six_weeks": 9.64,
+      "start_probability": 0.5
+    },
+    {
+      "player_id": 331,
+      "name": "Gudmundsson",
+      "position": "DEF",
+      "team": "Leeds",
+      "cost_m": 4.5,
+      "next": 2.66,
+      "six_weeks": 9.63,
+      "start_probability": 0.71
+    },
+    {
+      "player_id": 161,
+      "name": "Lavia",
+      "position": "MID",
+      "team": "Chelsea",
+      "cost_m": 5.0,
+      "next": 2.31,
+      "six_weeks": 9.62,
+      "start_probability": 0.44
+    },
+    {
+      "player_id": 230,
+      "name": "Branthwaite",
+      "position": "DEF",
+      "team": "Everton",
+      "cost_m": 5.5,
+      "next": 2.03,
+      "six_weeks": 9.56,
+      "start_probability": 0.66
+    },
+    {
+      "player_id": 592,
+      "name": "Ouattara",
+      "position": "DEF",
+      "team": "Ipswich Town",
+      "cost_m": 4.0,
+      "next": 2.13,
+      "six_weeks": 9.56,
+      "start_probability": 0.87
+    },
+    {
+      "player_id": 335,
+      "name": "Stach",
+      "position": "MID",
+      "team": "Leeds",
+      "cost_m": 6.0,
+      "next": 2.5,
+      "six_weeks": 9.54,
+      "start_probability": 0.6
+    },
+    {
+      "player_id": 70,
+      "name": "Kluivert",
+      "position": "MID",
+      "team": "Bournemouth",
+      "cost_m": 5.9,
+      "next": 2.47,
+      "six_weeks": 9.53,
+      "start_probability": 0.53
+    },
+    {
+      "player_id": 290,
+      "name": "Slater",
+      "position": "MID",
+      "team": "Hull City",
+      "cost_m": 4.5,
+      "next": 1.89,
+      "six_weeks": 9.53,
+      "start_probability": 0.79
+    },
+    {
+      "player_id": 367,
+      "name": "Gakpo",
+      "position": "MID",
+      "team": "Liverpool",
+      "cost_m": 7.1,
+      "next": 2.24,
+      "six_weeks": 9.53,
+      "start_probability": 0.48
+    },
+    {
+      "player_id": 10,
+      "name": "White",
+      "position": "DEF",
+      "team": "Arsenal",
+      "cost_m": 5.4,
+      "next": 2.57,
+      "six_weeks": 9.51,
+      "start_probability": 0.56
+    },
+    {
+      "player_id": 399,
+      "name": "Cherki",
+      "position": "MID",
+      "team": "Man City",
+      "cost_m": 7.9,
+      "next": 2.32,
+      "six_weeks": 9.45,
+      "start_probability": 0.35
+    },
+    {
+      "player_id": 194,
+      "name": "Thomas-Asante",
+      "position": "FWD",
+      "team": "Coventry City",
+      "cost_m": 5.0,
+      "next": 2.13,
+      "six_weeks": 9.4,
+      "start_probability": 0.54
+    },
+    {
+      "player_id": 474,
+      "name": "Jair Cunha",
+      "position": "DEF",
+      "team": "Nott'm Forest",
+      "cost_m": 4.4,
+      "next": 1.93,
+      "six_weeks": 9.29,
+      "start_probability": 0.8
+    },
+    {
+      "player_id": 460,
+      "name": "Willock",
+      "position": "MID",
+      "team": "Newcastle",
+      "cost_m": 5.0,
+      "next": 2.27,
+      "six_weeks": 9.23,
+      "start_probability": 0.5
+    },
+    {
+      "player_id": 85,
+      "name": "Van den Berg",
+      "position": "DEF",
+      "team": "Brentford",
+      "cost_m": 4.9,
+      "next": 2.13,
+      "six_weeks": 9.18,
+      "start_probability": 0.72
+    },
+    {
+      "player_id": 75,
+      "name": "Christie",
+      "position": "MID",
+      "team": "Bournemouth",
+      "cost_m": 5.0,
+      "next": 2.32,
+      "six_weeks": 9.14,
+      "start_probability": 0.36
+    },
+    {
+      "player_id": 98,
+      "name": "Janelt",
+      "position": "MID",
+      "team": "Brentford",
+      "cost_m": 5.0,
+      "next": 2.02,
+      "six_weeks": 8.99,
+      "start_probability": 0.64
+    },
+    {
+      "player_id": 184,
+      "name": "Grimes",
+      "position": "MID",
+      "team": "Coventry City",
+      "cost_m": 4.8,
+      "next": 2.02,
+      "six_weeks": 8.9,
+      "start_probability": 0.73
+    },
+    {
+      "player_id": 241,
+      "name": "McNeil",
+      "position": "MID",
+      "team": "Crystal Palace",
+      "cost_m": 5.3,
+      "next": 1.97,
+      "six_weeks": 8.84,
+      "start_probability": 0.47
+    },
+    {
+      "player_id": 605,
+      "name": "Yalcouy\u00e9",
+      "position": "MID",
+      "team": "Brighton",
+      "cost_m": 4.5,
+      "next": 2.09,
+      "six_weeks": 8.79,
+      "start_probability": 0.34
+    },
+    {
+      "player_id": 536,
+      "name": "Reinildo",
+      "position": "DEF",
+      "team": "Sunderland",
+      "cost_m": 4.4,
+      "next": 2.06,
+      "six_weeks": 8.77,
+      "start_probability": 0.78
+    },
+    {
+      "player_id": 377,
+      "name": "Munoz",
+      "position": "MID",
+      "team": "Liverpool",
+      "cost_m": 6.5,
+      "next": 2.05,
+      "six_weeks": 8.71,
+      "start_probability": 0.52
+    },
+    {
+      "player_id": 101,
+      "name": "Henderson",
+      "position": "MID",
+      "team": "Chelsea",
+      "cost_m": 4.9,
+      "next": 1.65,
+      "six_weeks": 8.66,
+      "start_probability": 0.61
+    },
+    {
+      "player_id": 145,
+      "name": "Fofana",
+      "position": "DEF",
+      "team": "Chelsea",
+      "cost_m": 5.0,
+      "next": 2.08,
+      "six_weeks": 8.61,
+      "start_probability": 0.47
+    },
+    {
+      "player_id": 502,
+      "name": "Robertson",
+      "position": "DEF",
+      "team": "Spurs",
+      "cost_m": 4.3,
+      "next": 1.81,
+      "six_weeks": 8.61,
+      "start_probability": 0.6
+    },
+    {
+      "player_id": 560,
+      "name": "Penders",
+      "position": "GK",
+      "team": "Chelsea",
+      "cost_m": 4.4,
+      "next": 2.09,
+      "six_weeks": 8.61,
+      "start_probability": 0.63
+    },
+    {
+      "player_id": 639,
+      "name": "Andr\u00e9s",
+      "position": "MID",
+      "team": "Brighton",
+      "cost_m": 5.5,
+      "next": 2.07,
+      "six_weeks": 8.55,
+      "start_probability": 0.56
+    },
+    {
+      "player_id": 552,
+      "name": "Brobbey",
+      "position": "FWD",
+      "team": "Sunderland",
+      "cost_m": 5.7,
+      "next": 2.11,
+      "six_weeks": 8.48,
+      "start_probability": 0.48
+    },
+    {
+      "player_id": 588,
+      "name": "Khalaili",
+      "position": "DEF",
+      "team": "Crystal Palace",
+      "cost_m": 5.0,
+      "next": 1.8,
+      "six_weeks": 8.46,
+      "start_probability": 0.54
+    },
+    {
+      "player_id": 300,
+      "name": "Walton",
+      "position": "GK",
+      "team": "Ipswich Town",
+      "cost_m": 4.4,
+      "next": 1.96,
+      "six_weeks": 8.45,
+      "start_probability": 0.88
+    },
+    {
+      "player_id": 431,
+      "name": "Amad",
+      "position": "MID",
+      "team": "Man Utd",
+      "cost_m": 5.7,
+      "next": 1.61,
+      "six_weeks": 8.37,
+      "start_probability": 0.55
+    },
+    {
+      "player_id": 562,
+      "name": "Maeda",
+      "position": "MID",
+      "team": "Ipswich Town",
+      "cost_m": 5.3,
+      "next": 1.95,
+      "six_weeks": 8.29,
+      "start_probability": 0.47
+    },
+    {
+      "player_id": 238,
+      "name": "Grealish",
+      "position": "MID",
+      "team": "Everton",
+      "cost_m": 6.5,
+      "next": 2.12,
+      "six_weeks": 8.22,
+      "start_probability": 0.49
+    },
+    {
+      "player_id": 575,
+      "name": "Yirenkyi",
+      "position": "MID",
+      "team": "Coventry City",
+      "cost_m": 4.8,
+      "next": 1.85,
+      "six_weeks": 8.1,
+      "start_probability": 0.51
+    },
+    {
+      "player_id": 36,
+      "name": "Maatsen",
+      "position": "DEF",
+      "team": "Aston Villa",
+      "cost_m": 4.4,
+      "next": 1.5,
+      "six_weeks": 8.06,
+      "start_probability": 0.58
+    },
+    {
+      "player_id": 34,
+      "name": "Pau",
+      "position": "DEF",
+      "team": "Aston Villa",
+      "cost_m": 4.4,
+      "next": 1.53,
+      "six_weeks": 8.04,
+      "start_probability": 0.53
+    },
+    {
+      "player_id": 457,
+      "name": "J.Murphy",
+      "position": "MID",
+      "team": "Newcastle",
+      "cost_m": 5.9,
+      "next": 1.92,
+      "six_weeks": 7.97,
+      "start_probability": 0.37
+    },
+    {
+      "player_id": 175,
+      "name": "van Ewijk",
+      "position": "DEF",
+      "team": "Coventry City",
+      "cost_m": 3.9,
+      "next": 1.82,
+      "six_weeks": 7.95,
+      "start_probability": 0.85
+    },
+    {
+      "player_id": 371,
+      "name": "Gravenberch",
+      "position": "MID",
+      "team": "Liverpool",
+      "cost_m": 5.8,
+      "next": 1.91,
+      "six_weeks": 7.91,
+      "start_probability": 0.45
+    },
+    {
+      "player_id": 279,
+      "name": "Ajayi",
+      "position": "DEF",
+      "team": "Hull City",
+      "cost_m": 4.2,
+      "next": 1.38,
+      "six_weeks": 7.87,
+      "start_probability": 0.87
+    },
+    {
+      "player_id": 388,
+      "name": "Gu\u00e9hi",
+      "position": "DEF",
+      "team": "Man City",
+      "cost_m": 6.0,
+      "next": 2.01,
+      "six_weeks": 7.87,
+      "start_probability": 0.44
+    },
+    {
+      "player_id": 224,
+      "name": "Nketiah",
+      "position": "FWD",
+      "team": "Crystal Palace",
+      "cost_m": 5.4,
+      "next": 1.79,
+      "six_weeks": 7.86,
+      "start_probability": 0.22
+    },
+    {
+      "player_id": 7,
+      "name": "Lewis-Skelly",
+      "position": "MID",
+      "team": "Arsenal",
+      "cost_m": 5.4,
+      "next": 2.05,
+      "six_weeks": 7.76,
+      "start_probability": 0.36
+    },
+    {
+      "player_id": 445,
+      "name": "Thiaw",
+      "position": "DEF",
+      "team": "Newcastle",
+      "cost_m": 5.0,
+      "next": 2.0,
+      "six_weeks": 7.73,
+      "start_probability": 0.51
+    },
+    {
+      "player_id": 233,
+      "name": "Mykolenko",
+      "position": "DEF",
+      "team": "Everton",
+      "cost_m": 4.6,
+      "next": 2.04,
+      "six_weeks": 7.71,
+      "start_probability": 0.59
+    },
+    {
+      "player_id": 277,
+      "name": "Egan",
+      "position": "DEF",
+      "team": "Hull City",
+      "cost_m": 4.1,
+      "next": 1.39,
+      "six_weeks": 7.7,
+      "start_probability": 0.62
+    },
+    {
+      "player_id": 43,
+      "name": "Tielemans",
+      "position": "MID",
+      "team": "Man Utd",
+      "cost_m": 5.7,
+      "next": 1.87,
+      "six_weeks": 7.67,
+      "start_probability": 0.39
+    },
+    {
+      "player_id": 593,
+      "name": "Dedi\u0107",
+      "position": "DEF",
+      "team": "Newcastle",
+      "cost_m": 4.5,
+      "next": 1.94,
+      "six_weeks": 7.61,
+      "start_probability": 0.62
+    },
+    {
+      "player_id": 54,
+      "name": "Gomes",
+      "position": "MID",
+      "team": "Aston Villa",
+      "cost_m": 5.5,
+      "next": 1.58,
+      "six_weeks": 7.56,
+      "start_probability": 0.47
+    },
+    {
+      "player_id": 209,
+      "name": "Johnson",
+      "position": "MID",
+      "team": "Everton",
+      "cost_m": 5.8,
+      "next": 1.93,
+      "six_weeks": 7.52,
+      "start_probability": 0.31
+    },
+    {
+      "player_id": 471,
+      "name": "Milenkovi\u0107",
+      "position": "DEF",
+      "team": "Nott'm Forest",
+      "cost_m": 5.4,
+      "next": 1.57,
+      "six_weeks": 7.51,
+      "start_probability": 0.6
+    },
+    {
+      "player_id": 640,
+      "name": "Flemming",
+      "position": "FWD",
+      "team": "Ipswich Town",
+      "cost_m": 5.5,
+      "next": 1.77,
+      "six_weeks": 7.49,
+      "start_probability": 0.23
+    },
+    {
+      "player_id": 327,
+      "name": "Bijol",
+      "position": "DEF",
+      "team": "Leeds",
+      "cost_m": 5.0,
+      "next": 2.0,
+      "six_weeks": 7.45,
+      "start_probability": 0.43
+    },
+    {
+      "player_id": 631,
+      "name": "Mbaye",
+      "position": "MID",
+      "team": "Aston Villa",
+      "cost_m": 6.0,
+      "next": 1.6,
+      "six_weeks": 7.43,
+      "start_probability": 0.23
+    },
+    {
+      "player_id": 17,
+      "name": "Merino",
+      "position": "MID",
+      "team": "Arsenal",
+      "cost_m": 5.7,
+      "next": 1.92,
+      "six_weeks": 7.27,
+      "start_probability": 0.26
+    },
+    {
+      "player_id": 515,
+      "name": "Maddison",
+      "position": "MID",
+      "team": "Spurs",
+      "cost_m": 6.2,
+      "next": 1.63,
+      "six_weeks": 7.27,
+      "start_probability": 0.42
+    },
+    {
+      "player_id": 153,
+      "name": "Disasi",
+      "position": "DEF",
+      "team": "Crystal Palace",
+      "cost_m": 4.4,
+      "next": 1.56,
+      "six_weeks": 7.26,
+      "start_probability": 0.5
+    },
+    {
+      "player_id": 246,
+      "name": "R\u00f6hl",
+      "position": "MID",
+      "team": "Everton",
+      "cost_m": 4.9,
+      "next": 1.81,
+      "six_weeks": 7.25,
+      "start_probability": 0.47
+    },
+    {
+      "player_id": 232,
+      "name": "O'Brien",
+      "position": "DEF",
+      "team": "Everton",
+      "cost_m": 4.8,
+      "next": 1.85,
+      "six_weeks": 7.24,
+      "start_probability": 0.44
+    },
+    {
+      "player_id": 14,
+      "name": "Eze",
+      "position": "MID",
+      "team": "Arsenal",
+      "cost_m": 6.2,
+      "next": 1.9,
+      "six_weeks": 7.23,
+      "start_probability": 0.28
+    },
+    {
+      "player_id": 240,
+      "name": "Iroegbunam",
+      "position": "MID",
+      "team": "Hull City",
+      "cost_m": 5.0,
+      "next": 1.56,
+      "six_weeks": 7.21,
+      "start_probability": 0.59
+    },
+    {
+      "player_id": 492,
+      "name": "Awoniyi",
+      "position": "FWD",
+      "team": "Coventry City",
+      "cost_m": 5.4,
+      "next": 1.65,
+      "six_weeks": 7.18,
+      "start_probability": 0.36
+    },
+    {
+      "player_id": 571,
+      "name": "Florentino",
+      "position": "MID",
+      "team": "Ipswich Town",
+      "cost_m": 4.8,
+      "next": 1.69,
+      "six_weeks": 7.17,
+      "start_probability": 0.57
+    },
+    {
+      "player_id": 260,
+      "name": "Wilson",
+      "position": "MID",
+      "team": "Leeds",
+      "cost_m": 6.2,
+      "next": 1.85,
+      "six_weeks": 7.15,
+      "start_probability": 0.44
+    },
+    {
+      "player_id": 598,
+      "name": "Elvedi",
+      "position": "DEF",
+      "team": "Leeds",
+      "cost_m": 4.5,
+      "next": 1.97,
+      "six_weeks": 7.15,
+      "start_probability": 0.59
+    },
+    {
+      "player_id": 519,
+      "name": "Gallagher",
+      "position": "MID",
+      "team": "Spurs",
+      "cost_m": 5.3,
+      "next": 1.6,
+      "six_weeks": 7.14,
+      "start_probability": 0.25
+    },
+    {
+      "player_id": 157,
+      "name": "Est\u00eav\u00e3o",
+      "position": "MID",
+      "team": "Chelsea",
+      "cost_m": 6.3,
+      "next": 1.69,
+      "six_weeks": 7.06,
+      "start_probability": 0.28
+    },
+    {
+      "player_id": 616,
+      "name": "Bouaddi",
+      "position": "MID",
+      "team": "Man City",
+      "cost_m": 5.5,
+      "next": 1.75,
+      "six_weeks": 7.06,
+      "start_probability": 0.32
+    },
+    {
+      "player_id": 198,
+      "name": "Henderson",
+      "position": "GK",
+      "team": "Crystal Palace",
+      "cost_m": 4.9,
+      "next": 1.5,
+      "six_weeks": 6.97,
+      "start_probability": 0.55
+    },
+    {
+      "player_id": 599,
+      "name": "Cherif",
+      "position": "FWD",
+      "team": "Coventry City",
+      "cost_m": 5.0,
+      "next": 1.61,
+      "six_weeks": 6.95,
+      "start_probability": 0.35
+    },
+    {
+      "player_id": 656,
+      "name": "Mfuni",
+      "position": "DEF",
+      "team": "Coventry City",
+      "cost_m": 4.0,
+      "next": 1.59,
+      "six_weeks": 6.95,
+      "start_probability": 0.5
+    },
+    {
+      "player_id": 315,
+      "name": "Fatawu",
+      "position": "MID",
+      "team": "Ipswich Town",
+      "cost_m": 5.4,
+      "next": 1.64,
+      "six_weeks": 6.94,
+      "start_probability": 0.49
+    },
+    {
+      "player_id": 282,
+      "name": "Giles",
+      "position": "DEF",
+      "team": "Hull City",
+      "cost_m": 4.0,
+      "next": 1.27,
+      "six_weeks": 6.92,
+      "start_probability": 0.61
+    },
+    {
+      "player_id": 649,
+      "name": "Maitland-Niles",
+      "position": "DEF",
+      "team": "Everton",
+      "cost_m": 4.5,
+      "next": 1.85,
+      "six_weeks": 6.92,
+      "start_probability": 0.41
+    },
+    {
+      "player_id": 369,
+      "name": "Ngumoha",
+      "position": "MID",
+      "team": "Liverpool",
+      "cost_m": 5.7,
+      "next": 1.66,
+      "six_weeks": 6.9,
+      "start_probability": 0.25
+    },
+    {
+      "player_id": 458,
+      "name": "Joelinton",
+      "position": "MID",
+      "team": "Newcastle",
+      "cost_m": 5.4,
+      "next": 1.68,
+      "six_weeks": 6.9,
+      "start_probability": 0.42
+    },
+    {
+      "player_id": 123,
+      "name": "Hinshelwood",
+      "position": "MID",
+      "team": "Brighton",
+      "cost_m": 5.9,
+      "next": 1.6,
+      "six_weeks": 6.75,
+      "start_probability": 0.23
+    },
+    {
+      "player_id": 576,
+      "name": "Stroud",
+      "position": "MID",
+      "team": "Hull City",
+      "cost_m": 4.9,
+      "next": 1.44,
+      "six_weeks": 6.75,
+      "start_probability": 0.43
+    },
+    {
+      "player_id": 119,
+      "name": "Costinha",
+      "position": "DEF",
+      "team": "Brighton",
+      "cost_m": 4.5,
+      "next": 1.61,
+      "six_weeks": 6.7,
+      "start_probability": 0.37
+    },
+    {
+      "player_id": 381,
+      "name": "Koumas",
+      "position": "MID",
+      "team": "Liverpool",
+      "cost_m": 5.0,
+      "next": 1.61,
+      "six_weeks": 6.65,
+      "start_probability": 0.26
+    },
+    {
+      "player_id": 548,
+      "name": "Rigg",
+      "position": "MID",
+      "team": "Sunderland",
+      "cost_m": 4.8,
+      "next": 1.58,
+      "six_weeks": 6.63,
+      "start_probability": 0.33
+    },
+    {
+      "player_id": 387,
+      "name": "O'Reilly",
+      "position": "DEF",
+      "team": "Man City",
+      "cost_m": 6.2,
+      "next": 1.65,
+      "six_weeks": 6.52,
+      "start_probability": 0.35
+    },
+    {
+      "player_id": 97,
+      "name": "Jensen",
+      "position": "MID",
+      "team": "Brentford",
+      "cost_m": 5.4,
+      "next": 1.5,
+      "six_weeks": 6.51,
+      "start_probability": 0.45
+    },
+    {
+      "player_id": 465,
+      "name": "Osula",
+      "position": "FWD",
+      "team": "Newcastle",
+      "cost_m": 5.8,
+      "next": 0.88,
+      "six_weeks": 6.43,
+      "start_probability": 0.35
+    },
+    {
+      "player_id": 213,
+      "name": "Lerma",
+      "position": "MID",
+      "team": "Crystal Palace",
+      "cost_m": 4.8,
+      "next": 1.48,
+      "six_weeks": 6.41,
+      "start_probability": 0.16
+    },
+    {
+      "player_id": 347,
+      "name": "Nmecha",
+      "position": "FWD",
+      "team": "Leeds",
+      "cost_m": 5.3,
+      "next": 1.59,
+      "six_weeks": 6.41,
+      "start_probability": 0.15
+    },
+    {
+      "player_id": 33,
+      "name": "Mings",
+      "position": "DEF",
+      "team": "Aston Villa",
+      "cost_m": 4.5,
+      "next": 1.2,
+      "six_weeks": 6.36,
+      "start_probability": 0.37
+    },
+    {
+      "player_id": 375,
+      "name": "Nyoni",
+      "position": "MID",
+      "team": "Liverpool",
+      "cost_m": 4.8,
+      "next": 1.54,
+      "six_weeks": 6.35,
+      "start_probability": 0.2
+    },
+    {
+      "player_id": 131,
+      "name": "Baleba",
+      "position": "MID",
+      "team": "Man Utd",
+      "cost_m": 4.9,
+      "next": 1.55,
+      "six_weeks": 6.33,
+      "start_probability": 0.35
+    },
+    {
+      "player_id": 570,
+      "name": "Palacios",
+      "position": "MID",
+      "team": "Fulham",
+      "cost_m": 5.3,
+      "next": 1.58,
+      "six_weeks": 6.33,
+      "start_probability": 0.2
+    },
+    {
+      "player_id": 459,
+      "name": "L.Miley",
+      "position": "MID",
+      "team": "Newcastle",
+      "cost_m": 5.5,
+      "next": 1.24,
+      "six_weeks": 6.32,
+      "start_probability": 0.47
+    },
+    {
+      "player_id": 125,
+      "name": "Georginio",
+      "position": "FWD",
+      "team": "Brighton",
+      "cost_m": 5.3,
+      "next": 1.5,
+      "six_weeks": 6.31,
+      "start_probability": 0.16
+    },
+    {
+      "player_id": 46,
+      "name": "Barkley",
+      "position": "MID",
+      "team": "Aston Villa",
+      "cost_m": 5.0,
+      "next": 1.29,
+      "six_weeks": 6.28,
+      "start_probability": 0.29
+    },
+    {
+      "player_id": 96,
+      "name": "Damsgaard",
+      "position": "MID",
+      "team": "Brentford",
+      "cost_m": 5.3,
+      "next": 1.45,
+      "six_weeks": 6.25,
+      "start_probability": 0.3
+    },
+    {
+      "player_id": 389,
+      "name": "Matheus N.",
+      "position": "DEF",
+      "team": "Man City",
+      "cost_m": 5.9,
+      "next": 1.56,
+      "six_weeks": 6.21,
+      "start_probability": 0.42
+    },
+    {
+      "player_id": 336,
+      "name": "Okafor",
+      "position": "MID",
+      "team": "Leeds",
+      "cost_m": 5.8,
+      "next": 1.26,
+      "six_weeks": 6.19,
+      "start_probability": 0.37
+    },
+    {
+      "player_id": 104,
+      "name": "Onyeka",
+      "position": "MID",
+      "team": "Coventry City",
+      "cost_m": 4.8,
+      "next": 1.43,
+      "six_weeks": 6.16,
+      "start_probability": 0.29
+    },
+    {
+      "player_id": 448,
+      "name": "Burn",
+      "position": "DEF",
+      "team": "Newcastle",
+      "cost_m": 4.8,
+      "next": 1.54,
+      "six_weeks": 6.13,
+      "start_probability": 0.43
+    },
+    {
+      "player_id": 313,
+      "name": "Clarke",
+      "position": "MID",
+      "team": "Ipswich Town",
+      "cost_m": 5.3,
+      "next": 1.44,
+      "six_weeks": 6.1,
+      "start_probability": 0.24
+    },
+    {
+      "player_id": 551,
+      "name": "N.Angulo",
+      "position": "MID",
+      "team": "Sunderland",
+      "cost_m": 5.0,
+      "next": 1.46,
+      "six_weeks": 6.08,
+      "start_probability": 0.33
+    },
+    {
+      "player_id": 90,
+      "name": "Hickey",
+      "position": "DEF",
+      "team": "Brentford",
+      "cost_m": 4.5,
+      "next": 1.4,
+      "six_weeks": 6.07,
+      "start_probability": 0.41
+    },
+    {
+      "player_id": 634,
+      "name": "Fernandez-Pardo",
+      "position": "FWD",
+      "team": "Newcastle",
+      "cost_m": 5.9,
+      "next": 1.17,
+      "six_weeks": 6.06,
+      "start_probability": 0.33
+    },
+    {
+      "player_id": 430,
+      "name": "Mount",
+      "position": "MID",
+      "team": "Man Utd",
+      "cost_m": 5.4,
+      "next": 1.45,
+      "six_weeks": 5.99,
+      "start_probability": 0.26
+    },
+    {
+      "player_id": 446,
+      "name": "Sch\u00e4r",
+      "position": "DEF",
+      "team": "Newcastle",
+      "cost_m": 4.9,
+      "next": 1.5,
+      "six_weeks": 5.88,
+      "start_probability": 0.37
+    },
+    {
+      "player_id": 231,
+      "name": "Keane",
+      "position": "DEF",
+      "team": "Everton",
+      "cost_m": 4.7,
+      "next": 1.54,
+      "six_weeks": 5.81,
+      "start_probability": 0.36
+    },
+    {
+      "player_id": 337,
+      "name": "Aaronson",
+      "position": "MID",
+      "team": "Leeds",
+      "cost_m": 5.2,
+      "next": 1.47,
+      "six_weeks": 5.77,
+      "start_probability": 0.25
+    },
+    {
+      "player_id": 499,
+      "name": "Pedro Porro",
+      "position": "DEF",
+      "team": "Spurs",
+      "cost_m": 5.3,
+      "next": 1.26,
+      "six_weeks": 5.75,
+      "start_probability": 0.37
+    },
+    {
+      "player_id": 52,
+      "name": "Alysson",
+      "position": "MID",
+      "team": "Aston Villa",
+      "cost_m": 4.9,
+      "next": 1.17,
+      "six_weeks": 5.7,
+      "start_probability": 0.3
+    },
+    {
+      "player_id": 618,
+      "name": "Goretzka",
+      "position": "MID",
+      "team": "Aston Villa",
+      "cost_m": 5.9,
+      "next": 1.26,
+      "six_weeks": 5.66,
+      "start_probability": 0.23
+    },
+    {
+      "player_id": 173,
+      "name": "Thomas",
+      "position": "DEF",
+      "team": "Coventry City",
+      "cost_m": 4.0,
+      "next": 0.74,
+      "six_weeks": 5.61,
+      "start_probability": 0.49
+    },
+    {
+      "player_id": 5,
+      "name": "J.Timber",
+      "position": "DEF",
+      "team": "Arsenal",
+      "cost_m": 6.5,
+      "next": 1.47,
+      "six_weeks": 5.57,
+      "start_probability": 0.26
+    },
+    {
+      "player_id": 454,
+      "name": "Elanga",
+      "position": "MID",
+      "team": "Newcastle",
+      "cost_m": 6.0,
+      "next": 1.36,
+      "six_weeks": 5.53,
+      "start_probability": 0.26
+    },
+    {
+      "player_id": 280,
+      "name": "Coyle",
+      "position": "DEF",
+      "team": "Hull City",
+      "cost_m": 4.0,
+      "next": 1.02,
+      "six_weeks": 5.51,
+      "start_probability": 0.59
+    },
+    {
+      "player_id": 490,
+      "name": "Wood",
+      "position": "FWD",
+      "team": "Nott'm Forest",
+      "cost_m": 5.7,
+      "next": 1.28,
+      "six_weeks": 5.51,
+      "start_probability": 0.11
+    },
+    {
+      "player_id": 320,
+      "name": "Akpom",
+      "position": "FWD",
+      "team": "Ipswich Town",
+      "cost_m": 5.0,
+      "next": 1.3,
+      "six_weeks": 5.45,
+      "start_probability": 0.09
+    },
+    {
+      "player_id": 647,
+      "name": "Osorio",
+      "position": "MID",
+      "team": "Crystal Palace",
+      "cost_m": 5.4,
+      "next": 1.24,
+      "six_weeks": 5.29,
+      "start_probability": 0.1
+    },
+    {
+      "player_id": 186,
+      "name": "Mason-Clark",
+      "position": "MID",
+      "team": "Coventry City",
+      "cost_m": 5.3,
+      "next": 1.23,
+      "six_weeks": 5.26,
+      "start_probability": 0.21
+    },
+    {
+      "player_id": 81,
+      "name": "Rodr\u00edguez",
+      "position": "FWD",
+      "team": "Bournemouth",
+      "cost_m": 6.0,
+      "next": 1.29,
+      "six_weeks": 5.25,
+      "start_probability": 0.09
+    },
+    {
+      "player_id": 108,
+      "name": "Wilson",
+      "position": "FWD",
+      "team": "Brentford",
+      "cost_m": 5.4,
+      "next": 1.25,
+      "six_weeks": 5.22,
+      "start_probability": 0.08
+    },
+    {
+      "player_id": 136,
+      "name": "Welbeck",
+      "position": "FWD",
+      "team": "Chelsea",
+      "cost_m": 5.8,
+      "next": 1.25,
+      "six_weeks": 5.22,
+      "start_probability": 0.08
+    },
+    {
+      "player_id": 318,
+      "name": "Philogene",
+      "position": "MID",
+      "team": "Ipswich Town",
+      "cost_m": 5.4,
+      "next": 1.22,
+      "six_weeks": 5.14,
+      "start_probability": 0.28
+    },
+    {
+      "player_id": 247,
+      "name": "Hackney",
+      "position": "MID",
+      "team": "Everton",
+      "cost_m": 5.3,
+      "next": 1.29,
+      "six_weeks": 5.12,
+      "start_probability": 0.15
+    },
+    {
+      "player_id": 306,
+      "name": "Greaves",
+      "position": "DEF",
+      "team": "Ipswich Town",
+      "cost_m": 3.9,
+      "next": 1.14,
+      "six_weeks": 5.06,
+      "start_probability": 0.41
+    },
+    {
+      "player_id": 461,
+      "name": "Tour\u00e9",
+      "position": "MID",
+      "team": "Newcastle",
+      "cost_m": 5.7,
+      "next": 1.22,
+      "six_weeks": 5.04,
+      "start_probability": 0.19
+    },
+    {
+      "player_id": 549,
+      "name": "Talbi",
+      "position": "MID",
+      "team": "Sunderland",
+      "cost_m": 5.2,
+      "next": 1.2,
+      "six_weeks": 5.01,
+      "start_probability": 0.14
+    },
+    {
+      "player_id": 72,
+      "name": "Gannon-Doak",
+      "position": "MID",
+      "team": "Bournemouth",
+      "cost_m": 4.8,
+      "next": 1.22,
+      "six_weeks": 4.98,
+      "start_probability": 0.11
+    },
+    {
+      "player_id": 339,
+      "name": "Longstaff",
+      "position": "MID",
+      "team": "Leeds",
+      "cost_m": 4.8,
+      "next": 1.24,
+      "six_weeks": 4.97,
+      "start_probability": 0.15
+    },
+    {
+      "player_id": 617,
+      "name": "Cho",
+      "position": "MID",
+      "team": "Hull City",
+      "cost_m": 5.0,
+      "next": 1.13,
+      "six_weeks": 4.93,
+      "start_probability": 0.2
+    },
+    {
+      "player_id": 271,
+      "name": "Muniz",
+      "position": "FWD",
+      "team": "Fulham",
+      "cost_m": 5.3,
+      "next": 1.19,
+      "six_weeks": 4.88,
+      "start_probability": 0.08
+    },
+    {
+      "player_id": 188,
+      "name": "Torp",
+      "position": "MID",
+      "team": "Coventry City",
+      "cost_m": 5.3,
+      "next": 1.13,
+      "six_weeks": 4.87,
+      "start_probability": 0.22
+    },
+    {
+      "player_id": 581,
+      "name": "Diomande",
+      "position": "DEF",
+      "team": "Nott'm Forest",
+      "cost_m": 5.3,
+      "next": 1.03,
+      "six_weeks": 4.78,
+      "start_probability": 0.29
+    },
+    {
+      "player_id": 586,
+      "name": "Mendy",
+      "position": "DEF",
+      "team": "Hull City",
+      "cost_m": 4.1,
+      "next": 0.9,
+      "six_weeks": 4.72,
+      "start_probability": 0.4
+    },
+    {
+      "player_id": 199,
+      "name": "Benitez",
+      "position": "GK",
+      "team": "Crystal Palace",
+      "cost_m": 4.5,
+      "next": 1.05,
+      "six_weeks": 4.69,
+      "start_probability": 0.32
+    },
+    {
+      "player_id": 440,
+      "name": "Zirkzee",
+      "position": "FWD",
+      "team": "Man Utd",
+      "cost_m": 5.3,
+      "next": 1.09,
+      "six_weeks": 4.52,
+      "start_probability": 0.09
+    },
+    {
+      "player_id": 340,
+      "name": "Gelhardt",
+      "position": "MID",
+      "team": "Hull City",
+      "cost_m": 5.0,
+      "next": 1.08,
+      "six_weeks": 4.51,
+      "start_probability": 0.08
+    },
+    {
+      "player_id": 368,
+      "name": "Szoboszlai",
+      "position": "MID",
+      "team": "Liverpool",
+      "cost_m": 6.7,
+      "next": 1.07,
+      "six_weeks": 4.46,
+      "start_probability": 0.23
+    },
+    {
+      "player_id": 482,
+      "name": "Hudson-Odoi",
+      "position": "MID",
+      "team": "Nott'm Forest",
+      "cost_m": 5.7,
+      "next": 1.03,
+      "six_weeks": 4.46,
+      "start_probability": 0.11
+    },
+    {
+      "player_id": 668,
+      "name": "Tutierov",
+      "position": "MID",
+      "team": "Sunderland",
+      "cost_m": 5.0,
+      "next": 1.06,
+      "six_weeks": 4.44,
+      "start_probability": 0.15
+    },
+    {
+      "player_id": 432,
+      "name": "Mainoo",
+      "position": "MID",
+      "team": "Man Utd",
+      "cost_m": 5.5,
+      "next": 1.07,
+      "six_weeks": 4.43,
+      "start_probability": 0.21
+    },
+    {
+      "player_id": 638,
+      "name": "Norton-Cuffy",
+      "position": "DEF",
+      "team": "Hull City",
+      "cost_m": 3.9,
+      "next": 0.86,
+      "six_weeks": 4.43,
+      "start_probability": 0.44
+    },
+    {
+      "player_id": 152,
+      "name": "Palestra",
+      "position": "DEF",
+      "team": "Chelsea",
+      "cost_m": 5.3,
+      "next": 1.08,
+      "six_weeks": 4.41,
+      "start_probability": 0.31
+    },
+    {
+      "player_id": 256,
+      "name": "Tete",
+      "position": "DEF",
+      "team": "Fulham",
+      "cost_m": 4.4,
+      "next": 1.14,
+      "six_weeks": 4.4,
+      "start_probability": 0.24
+    },
+    {
+      "player_id": 533,
+      "name": "Mukiele",
+      "position": "DEF",
+      "team": "Sunderland",
+      "cost_m": 5.4,
+      "next": 0.81,
+      "six_weeks": 4.39,
+      "start_probability": 0.34
+    },
+    {
+      "player_id": 212,
+      "name": "Hughes",
+      "position": "MID",
+      "team": "Crystal Palace",
+      "cost_m": 4.3,
+      "next": 0.97,
+      "six_weeks": 4.34,
+      "start_probability": 0.12
+    },
+    {
+      "player_id": 422,
+      "name": "Mazraoui",
+      "position": "DEF",
+      "team": "Man Utd",
+      "cost_m": 4.3,
+      "next": 1.05,
+      "six_weeks": 4.34,
+      "start_probability": 0.27
+    },
+    {
+      "player_id": 620,
+      "name": "Diouf",
+      "position": "DEF",
+      "team": "Brentford",
+      "cost_m": 4.5,
+      "next": 0.99,
+      "six_weeks": 4.28,
+      "start_probability": 0.24
+    },
+    {
+      "player_id": 584,
+      "name": "Hamer",
+      "position": "MID",
+      "team": "Coventry City",
+      "cost_m": 5.3,
+      "next": 1.0,
+      "six_weeks": 4.22,
+      "start_probability": 0.12
+    },
+    {
+      "player_id": 473,
+      "name": "Aina",
+      "position": "DEF",
+      "team": "Nott'm Forest",
+      "cost_m": 4.3,
+      "next": 0.86,
+      "six_weeks": 4.19,
+      "start_probability": 0.27
+    },
+    {
+      "player_id": 614,
+      "name": "Hadjam",
+      "position": "DEF",
+      "team": "Brighton",
+      "cost_m": 4.5,
+      "next": 0.99,
+      "six_weeks": 4.18,
+      "start_probability": 0.18
+    },
+    {
+      "player_id": 635,
+      "name": "Larsson",
+      "position": "MID",
+      "team": "Fulham",
+      "cost_m": 5.0,
+      "next": 1.0,
+      "six_weeks": 4.06,
+      "start_probability": 0.14
+    },
+    {
+      "player_id": 395,
+      "name": "Lewis",
+      "position": "DEF",
+      "team": "Man City",
+      "cost_m": 4.3,
+      "next": 1.02,
+      "six_weeks": 4.01,
+      "start_probability": 0.2
+    },
+    {
+      "player_id": 585,
+      "name": "Herrington",
+      "position": "DEF",
+      "team": "Hull City",
+      "cost_m": 4.0,
+      "next": 0.77,
+      "six_weeks": 3.98,
+      "start_probability": 0.34
+    },
+    {
+      "player_id": 245,
+      "name": "Dibling",
+      "position": "MID",
+      "team": "Everton",
+      "cost_m": 5.3,
+      "next": 0.97,
+      "six_weeks": 3.96,
+      "start_probability": 0.06
+    },
+    {
+      "player_id": 642,
+      "name": "Thomas",
+      "position": "MID",
+      "team": "Hull City",
+      "cost_m": 5.5,
+      "next": 0.92,
+      "six_weeks": 3.95,
+      "start_probability": 0.16
+    },
+    {
+      "player_id": 493,
+      "name": "Kalimuendo",
+      "position": "FWD",
+      "team": "Nott'm Forest",
+      "cost_m": 5.4,
+      "next": 0.96,
+      "six_weeks": 3.94,
+      "start_probability": 0.06
+    },
+    {
+      "player_id": 646,
+      "name": "Fofana",
+      "position": "MID",
+      "team": "Sunderland",
+      "cost_m": 5.5,
+      "next": 0.95,
+      "six_weeks": 3.93,
+      "start_probability": 0.07
+    },
+    {
+      "player_id": 563,
+      "name": "Morita",
+      "position": "MID",
+      "team": "Hull City",
+      "cost_m": 4.9,
+      "next": 0.93,
+      "six_weeks": 3.92,
+      "start_probability": 0.14
+    },
+    {
+      "player_id": 489,
+      "name": "Yates",
+      "position": "MID",
+      "team": "Nott'm Forest",
+      "cost_m": 4.4,
+      "next": 0.88,
+      "six_weeks": 3.9,
+      "start_probability": 0.14
+    },
+    {
+      "player_id": 113,
+      "name": "F.Kad\u0131o\u011flu",
+      "position": "DEF",
+      "team": "Brighton",
+      "cost_m": 4.4,
+      "next": 0.73,
+      "six_weeks": 3.81,
+      "start_probability": 0.26
+    },
+    {
+      "player_id": 77,
+      "name": "Adli",
+      "position": "MID",
+      "team": "Bournemouth",
+      "cost_m": 4.8,
+      "next": 0.91,
+      "six_weeks": 3.77,
+      "start_probability": 0.04
+    },
+    {
+      "player_id": 553,
+      "name": "Isidor",
+      "position": "FWD",
+      "team": "Sunderland",
+      "cost_m": 5.4,
+      "next": 0.9,
+      "six_weeks": 3.76,
+      "start_probability": 0.1
+    },
+    {
+      "player_id": 501,
+      "name": "Danso",
+      "position": "DEF",
+      "team": "Sunderland",
+      "cost_m": 5.0,
+      "next": 0.86,
+      "six_weeks": 3.74,
+      "start_probability": 0.23
+    },
+    {
+      "player_id": 488,
+      "name": "I.Sangar\u00e9",
+      "position": "MID",
+      "team": "Nott'm Forest",
+      "cost_m": 4.7,
+      "next": 0.86,
+      "six_weeks": 3.73,
+      "start_probability": 0.12
+    },
+    {
+      "player_id": 78,
+      "name": "Kroupi.Jr",
+      "position": "MID",
+      "team": "Bournemouth",
+      "cost_m": 7.3,
+      "next": 0.91,
+      "six_weeks": 3.69,
+      "start_probability": 0.1
+    },
+    {
+      "player_id": 19,
+      "name": "Zubimendi",
+      "position": "MID",
+      "team": "Arsenal",
+      "cost_m": 5.2,
+      "next": 0.94,
+      "six_weeks": 3.66,
+      "start_probability": 0.12
+    },
+    {
+      "player_id": 310,
+      "name": "Matusiwa",
+      "position": "MID",
+      "team": "Ipswich Town",
+      "cost_m": 4.9,
+      "next": 0.88,
+      "six_weeks": 3.66,
+      "start_probability": 0.09
+    },
+    {
+      "player_id": 406,
+      "name": "Kova\u010di\u0107",
+      "position": "MID",
+      "team": "Man City",
+      "cost_m": 5.3,
+      "next": 0.9,
+      "six_weeks": 3.65,
+      "start_probability": 0.15
+    },
+    {
+      "player_id": 421,
+      "name": "Heaven",
+      "position": "DEF",
+      "team": "Man Utd",
+      "cost_m": 4.3,
+      "next": 0.88,
+      "six_weeks": 3.62,
+      "start_probability": 0.25
+    },
+    {
+      "player_id": 637,
+      "name": "Vaz",
+      "position": "FWD",
+      "team": "Hull City",
+      "cost_m": 5.0,
+      "next": 0.84,
+      "six_weeks": 3.61,
+      "start_probability": 0.09
+    },
+    {
+      "player_id": 508,
+      "name": "Davies",
+      "position": "DEF",
+      "team": "Spurs",
+      "cost_m": 3.9,
+      "next": 0.8,
+      "six_weeks": 3.55,
+      "start_probability": 0.17
+    },
+    {
+      "player_id": 93,
+      "name": "Schuster",
+      "position": "DEF",
+      "team": "Brentford",
+      "cost_m": 4.5,
+      "next": 0.82,
+      "six_weeks": 3.49,
+      "start_probability": 0.17
+    },
+    {
+      "player_id": 144,
+      "name": "Gusto",
+      "position": "DEF",
+      "team": "Chelsea",
+      "cost_m": 4.8,
+      "next": 0.87,
+      "six_weeks": 3.48,
+      "start_probability": 0.16
+    },
+    {
+      "player_id": 456,
+      "name": "J.Ramsey",
+      "position": "MID",
+      "team": "Newcastle",
+      "cost_m": 4.8,
+      "next": 0.86,
+      "six_weeks": 3.48,
+      "start_probability": 0.12
+    },
+    {
+      "player_id": 613,
+      "name": "Ahoka",
+      "position": "MID",
+      "team": "Sunderland",
+      "cost_m": 4.4,
+      "next": 0.83,
+      "six_weeks": 3.48,
+      "start_probability": 0.11
+    },
+    {
+      "player_id": 543,
+      "name": "Diarra",
+      "position": "MID",
+      "team": "Sunderland",
+      "cost_m": 5.3,
+      "next": 0.67,
+      "six_weeks": 3.47,
+      "start_probability": 0.08
+    },
+    {
+      "player_id": 462,
+      "name": "Steur",
+      "position": "MID",
+      "team": "Newcastle",
+      "cost_m": 4.8,
+      "next": 0.83,
+      "six_weeks": 3.38,
+      "start_probability": 0.09
+    },
+    {
+      "player_id": 243,
+      "name": "Alcaraz",
+      "position": "MID",
+      "team": "Everton",
+      "cost_m": 4.8,
+      "next": 0.82,
+      "six_weeks": 3.3,
+      "start_probability": 0.05
+    },
+    {
+      "player_id": 582,
+      "name": "Madjo",
+      "position": "FWD",
+      "team": "Aston Villa",
+      "cost_m": 5.4,
+      "next": 0.73,
+      "six_weeks": 3.21,
+      "start_probability": 0.04
+    },
+    {
+      "player_id": 164,
+      "name": "Quenda",
+      "position": "MID",
+      "team": "Chelsea",
+      "cost_m": 5.2,
+      "next": 0.75,
+      "six_weeks": 3.18,
+      "start_probability": 0.07
+    },
+    {
+      "player_id": 521,
+      "name": "Kulusevski",
+      "position": "MID",
+      "team": "Spurs",
+      "cost_m": 6.5,
+      "next": 0.75,
+      "six_weeks": 3.14,
+      "start_probability": 0.04
+    },
+    {
+      "player_id": 343,
+      "name": "James",
+      "position": "MID",
+      "team": "Leeds",
+      "cost_m": 4.9,
+      "next": 0.79,
+      "six_weeks": 3.12,
+      "start_probability": 0.15
+    },
+    {
+      "player_id": 364,
+      "name": "Tsimikas",
+      "position": "DEF",
+      "team": "Liverpool",
+      "cost_m": 4.9,
+      "next": 0.76,
+      "six_weeks": 3.09,
+      "start_probability": 0.13
+    },
+    {
+      "player_id": 633,
+      "name": "Ahanor",
+      "position": "DEF",
+      "team": "Crystal Palace",
+      "cost_m": 4.5,
+      "next": 0.68,
+      "six_weeks": 3.08,
+      "start_probability": 0.15
+    },
+    {
+      "player_id": 655,
+      "name": "Gboho",
+      "position": "MID",
+      "team": "Coventry City",
+      "cost_m": 5.5,
+      "next": 0.73,
+      "six_weeks": 3.08,
+      "start_probability": 0.09
+    },
+    {
+      "player_id": 541,
+      "name": "Meunier",
+      "position": "DEF",
+      "team": "Sunderland",
+      "cost_m": 4.4,
+      "next": 0.72,
+      "six_weeks": 3.05,
+      "start_probability": 0.17
+    },
+    {
+      "player_id": 130,
+      "name": "Wieffer",
+      "position": "DEF",
+      "team": "Brighton",
+      "cost_m": 4.8,
+      "next": 0.71,
+      "six_weeks": 3.03,
+      "start_probability": 0.16
+    },
+    {
+      "player_id": 51,
+      "name": "George Hemmings",
+      "position": "MID",
+      "team": "Aston Villa",
+      "cost_m": 4.4,
+      "next": 0.61,
+      "six_weeks": 3.01,
+      "start_probability": 0.12
+    },
+    {
+      "player_id": 62,
+      "name": "Diakit\u00e9",
+      "position": "DEF",
+      "team": "Bournemouth",
+      "cost_m": 4.9,
+      "next": 0.75,
+      "six_weeks": 3.01,
+      "start_probability": 0.1
+    },
+    {
+      "player_id": 222,
+      "name": "Strand Larsen",
+      "position": "FWD",
+      "team": "Crystal Palace",
+      "cost_m": 6.0,
+      "next": 0.54,
+      "six_weeks": 2.96,
+      "start_probability": 0.13
+    },
+    {
+      "player_id": 487,
+      "name": "Dominguez",
+      "position": "MID",
+      "team": "Nott'm Forest",
+      "cost_m": 4.8,
+      "next": 0.56,
+      "six_weeks": 2.96,
+      "start_probability": 0.12
+    },
+    {
+      "player_id": 435,
+      "name": "Lacey",
+      "position": "MID",
+      "team": "Man Utd",
+      "cost_m": 4.9,
+      "next": 0.71,
+      "six_weeks": 2.95,
+      "start_probability": 0.06
+    },
+    {
+      "player_id": 628,
+      "name": "Allan",
+      "position": "MID",
+      "team": "Man City",
+      "cost_m": 6.0,
+      "next": 0.72,
+      "six_weeks": 2.91,
+      "start_probability": 0.02
+    },
+    {
+      "player_id": 568,
+      "name": "Barco",
+      "position": "MID",
+      "team": "Chelsea",
+      "cost_m": 5.4,
+      "next": 0.7,
+      "six_weeks": 2.89,
+      "start_probability": 0.06
+    },
+    {
+      "player_id": 621,
+      "name": "McAidoo",
+      "position": "MID",
+      "team": "Man City",
+      "cost_m": 4.4,
+      "next": 0.71,
+      "six_weeks": 2.87,
+      "start_probability": 0.09
+    },
+    {
+      "player_id": 9,
+      "name": "Hincapie",
+      "position": "DEF",
+      "team": "Arsenal",
+      "cost_m": 5.2,
+      "next": 0.73,
+      "six_weeks": 2.77,
+      "start_probability": 0.12
+    },
+    {
+      "player_id": 583,
+      "name": "Chavarria",
+      "position": "DEF",
+      "team": "Chelsea",
+      "cost_m": 4.9,
+      "next": 0.67,
+      "six_weeks": 2.75,
+      "start_probability": 0.14
+    },
+    {
+      "player_id": 253,
+      "name": "Andersen",
+      "position": "DEF",
+      "team": "Fulham",
+      "cost_m": 5.0,
+      "next": 0.68,
+      "six_weeks": 2.73,
+      "start_probability": 0.12
+    },
+    {
+      "player_id": 120,
+      "name": "Svoboda",
+      "position": "DEF",
+      "team": "Brighton",
+      "cost_m": 5.0,
+      "next": 0.63,
+      "six_weeks": 2.66,
+      "start_probability": 0.08
+    },
+    {
+      "player_id": 506,
+      "name": "Udogie",
+      "position": "DEF",
+      "team": "Spurs",
+      "cost_m": 4.4,
+      "next": 0.61,
+      "six_weeks": 2.66,
+      "start_probability": 0.14
+    },
+    {
+      "player_id": 557,
+      "name": "Tzolis",
+      "position": "MID",
+      "team": "Arsenal",
+      "cost_m": 6.1,
+      "next": 0.69,
+      "six_weeks": 2.61,
+      "start_probability": 0.1
+    },
+    {
+      "player_id": 207,
+      "name": "Mingueza",
+      "position": "DEF",
+      "team": "Crystal Palace",
+      "cost_m": 4.3,
+      "next": 0.57,
+      "six_weeks": 2.6,
+      "start_probability": 0.13
+    },
+    {
+      "player_id": 160,
+      "name": "Garnacho",
+      "position": "MID",
+      "team": "Aston Villa",
+      "cost_m": 5.7,
+      "next": 0.59,
+      "six_weeks": 2.58,
+      "start_probability": 0.05
+    },
+    {
+      "player_id": 498,
+      "name": "Senesi",
+      "position": "DEF",
+      "team": "Spurs",
+      "cost_m": 5.7,
+      "next": 0.57,
+      "six_weeks": 2.5,
+      "start_probability": 0.11
+    },
+    {
+      "player_id": 266,
+      "name": "Cairney",
+      "position": "MID",
+      "team": "Fulham",
+      "cost_m": 4.9,
+      "next": 0.61,
+      "six_weeks": 2.49,
+      "start_probability": 0.06
+    },
+    {
+      "player_id": 84,
+      "name": "Collins",
+      "position": "DEF",
+      "team": "Brentford",
+      "cost_m": 5.4,
+      "next": 0.58,
+      "six_weeks": 2.47,
+      "start_probability": 0.1
+    },
+    {
+      "player_id": 269,
+      "name": "Sessegnon",
+      "position": "DEF",
+      "team": "Fulham",
+      "cost_m": 4.3,
+      "next": 0.62,
+      "six_weeks": 2.44,
+      "start_probability": 0.15
+    },
+    {
+      "player_id": 102,
+      "name": "Yarmoliuk",
+      "position": "MID",
+      "team": "Brentford",
+      "cost_m": 4.7,
+      "next": 0.5,
+      "six_weeks": 2.17,
+      "start_probability": 0.12
+    },
+    {
+      "player_id": 429,
+      "name": "Rashford",
+      "position": "MID",
+      "team": "Man Utd",
+      "cost_m": 6.8,
+      "next": 0.41,
+      "six_weeks": 2.13,
+      "start_probability": 0.08
+    },
+    {
+      "player_id": 35,
+      "name": "Bogarde",
+      "position": "MID",
+      "team": "Aston Villa",
+      "cost_m": 4.9,
+      "next": 0.45,
+      "six_weeks": 2.02,
+      "start_probability": 0.04
+    },
+    {
+      "player_id": 42,
+      "name": "Guessand",
+      "position": "MID",
+      "team": "Crystal Palace",
+      "cost_m": 5.4,
+      "next": 0.48,
+      "six_weeks": 2.0,
+      "start_probability": 0.02
+    },
+    {
+      "player_id": 516,
+      "name": "Bentancur",
+      "position": "MID",
+      "team": "Spurs",
+      "cost_m": 5.4,
+      "next": 0.45,
+      "six_weeks": 1.97,
+      "start_probability": 0.08
+    },
+    {
+      "player_id": 643,
+      "name": "Chilwell",
+      "position": "DEF",
+      "team": "Crystal Palace",
+      "cost_m": 4.4,
+      "next": 0.43,
+      "six_weeks": 1.94,
+      "start_probability": 0.07
+    },
+    {
+      "player_id": 267,
+      "name": "Luki\u0107",
+      "position": "MID",
+      "team": "Ipswich Town",
+      "cost_m": 4.9,
+      "next": 0.36,
+      "six_weeks": 1.93,
+      "start_probability": 0.1
+    },
+    {
+      "player_id": 190,
+      "name": "Tchaouna",
+      "position": "MID",
+      "team": "Coventry City",
+      "cost_m": 5.3,
+      "next": 0.43,
+      "six_weeks": 1.83,
+      "start_probability": 0.06
+    },
+    {
+      "player_id": 195,
+      "name": "Simms",
+      "position": "FWD",
+      "team": "Coventry City",
+      "cost_m": 4.9,
+      "next": 0.43,
+      "six_weeks": 1.81,
+      "start_probability": 0.03
+    },
+    {
+      "player_id": 218,
+      "name": "Doucour\u00e9",
+      "position": "MID",
+      "team": "Crystal Palace",
+      "cost_m": 4.8,
+      "next": 0.43,
+      "six_weeks": 1.81,
+      "start_probability": 0.01
+    },
+    {
+      "player_id": 573,
+      "name": "Sanchez",
+      "position": "DEF",
+      "team": "Bournemouth",
+      "cost_m": 4.4,
+      "next": 0.46,
+      "six_weeks": 1.81,
+      "start_probability": 0.07
+    },
+    {
+      "player_id": 601,
+      "name": "Williams-Barnett",
+      "position": "MID",
+      "team": "Spurs",
+      "cost_m": 4.4,
+      "next": 0.39,
+      "six_weeks": 1.66,
+      "start_probability": 0.03
+    },
+    {
+      "player_id": 648,
+      "name": "Bahoya",
+      "position": "MID",
+      "team": "Leeds",
+      "cost_m": 4.9,
+      "next": 0.39,
+      "six_weeks": 1.62,
+      "start_probability": 0.02
+    },
+    {
+      "player_id": 11,
+      "name": "Mosquera",
+      "position": "DEF",
+      "team": "Arsenal",
+      "cost_m": 5.2,
+      "next": 0.44,
+      "six_weeks": 1.6,
+      "start_probability": 0.07
+    },
+    {
+      "player_id": 644,
+      "name": "Timber",
+      "position": "MID",
+      "team": "Crystal Palace",
+      "cost_m": 5.0,
+      "next": 0.27,
+      "six_weeks": 1.52,
+      "start_probability": 0.07
+    },
+    {
+      "player_id": 359,
+      "name": "Gomez",
+      "position": "DEF",
+      "team": "Liverpool",
+      "cost_m": 4.9,
+      "next": 0.37,
+      "six_weeks": 1.48,
+      "start_probability": 0.04
+    },
+    {
+      "player_id": 550,
+      "name": "Jocelin.T",
+      "position": "MID",
+      "team": "Sunderland",
+      "cost_m": 4.9,
+      "next": 0.35,
+      "six_weeks": 1.47,
+      "start_probability": 0.02
+    },
+    {
+      "player_id": 559,
+      "name": "Bamba",
+      "position": "MID",
+      "team": "Newcastle",
+      "cost_m": 4.8,
+      "next": 0.37,
+      "six_weeks": 1.47,
+      "start_probability": 0.04
+    },
+    {
+      "player_id": 478,
+      "name": "Netz",
+      "position": "DEF",
+      "team": "Nott'm Forest",
+      "cost_m": 4.4,
+      "next": 0.31,
+      "six_weeks": 1.33,
+      "start_probability": 0.05
+    },
+    {
+      "player_id": 321,
+      "name": "Walle Egeli",
+      "position": "FWD",
+      "team": "Ipswich Town",
+      "cost_m": 4.5,
+      "next": 0.32,
+      "six_weeks": 1.32,
+      "start_probability": 0.02
+    },
+    {
+      "player_id": 21,
+      "name": "N\u00f8rgaard",
+      "position": "MID",
+      "team": "Everton",
+      "cost_m": 4.8,
+      "next": 0.31,
+      "six_weeks": 1.27,
+      "start_probability": 0.01
+    },
+    {
+      "player_id": 608,
+      "name": "Jebbison",
+      "position": "FWD",
+      "team": "Bournemouth",
+      "cost_m": 5.0,
+      "next": 0.31,
+      "six_weeks": 1.24,
+      "start_probability": 0.02
+    },
+    {
+      "player_id": 309,
+      "name": "N\u00fa\u00f1ez",
+      "position": "MID",
+      "team": "Ipswich Town",
+      "cost_m": 4.8,
+      "next": 0.29,
+      "six_weeks": 1.21,
+      "start_probability": 0.04
+    },
+    {
+      "player_id": 29,
+      "name": "M.Bizot",
+      "position": "GK",
+      "team": "Aston Villa",
+      "cost_m": 4.5,
+      "next": 0.21,
+      "six_weeks": 1.14,
+      "start_probability": 0.07
+    },
+    {
+      "player_id": 56,
+      "name": "Abraham",
+      "position": "FWD",
+      "team": "Aston Villa",
+      "cost_m": 5.5,
+      "next": 0.26,
+      "six_weeks": 1.13,
+      "start_probability": 0.02
+    },
+    {
+      "player_id": 126,
+      "name": "O'Riley",
+      "position": "MID",
+      "team": "Brighton",
+      "cost_m": 5.4,
+      "next": 0.27,
+      "six_weeks": 1.13,
+      "start_probability": 0.02
+    },
+    {
+      "player_id": 262,
+      "name": "Smith Rowe",
+      "position": "MID",
+      "team": "Fulham",
+      "cost_m": 5.2,
+      "next": 0.27,
+      "six_weeks": 1.11,
+      "start_probability": 0.03
+    },
+    {
+      "player_id": 370,
+      "name": "Chiesa",
+      "position": "MID",
+      "team": "Liverpool",
+      "cost_m": 5.3,
+      "next": 0.27,
+      "six_weeks": 1.1,
+      "start_probability": 0.01
+    },
+    {
+      "player_id": 589,
+      "name": "Gourna-Douath",
+      "position": "MID",
+      "team": "Hull City",
+      "cost_m": 4.9,
+      "next": 0.22,
+      "six_weeks": 1.1,
+      "start_probability": 0.03
+    },
+    {
+      "player_id": 612,
+      "name": "Methalie",
+      "position": "DEF",
+      "team": "Sunderland",
+      "cost_m": 4.5,
+      "next": 0.26,
+      "six_weeks": 1.1,
+      "start_probability": 0.05
+    },
+    {
+      "player_id": 564,
+      "name": "Scherpen",
+      "position": "GK",
+      "team": "Ipswich Town",
+      "cost_m": 4.4,
+      "next": 0.23,
+      "six_weeks": 1.04,
+      "start_probability": 0.1
+    },
+    {
+      "player_id": 323,
+      "name": "McAteer",
+      "position": "MID",
+      "team": "Ipswich Town",
+      "cost_m": 4.4,
+      "next": 0.24,
+      "six_weeks": 1.01,
+      "start_probability": 0.03
+    },
+    {
+      "player_id": 263,
+      "name": "Kevin",
+      "position": "MID",
+      "team": "Fulham",
+      "cost_m": 5.2,
+      "next": 0.24,
+      "six_weeks": 1.0,
+      "start_probability": 0.01
     }
   ],
   "transfer_plan": {
@@ -2172,7 +6094,7 @@
             "player_id": 8,
             "name": "Calafiori",
             "sell_price_m": 5.9,
-            "predicted_points": 2.91,
+            "predicted_points": 3.88,
             "position": "DEF",
             "team": "Arsenal"
           }
@@ -2221,8 +6143,8 @@
           {
             "player_id": 166,
             "name": "N.Jackson",
-            "cost_m": 6.9,
-            "predicted_points": 5.63,
+            "cost_m": 7.0,
+            "predicted_points": 5.5,
             "position": "FWD",
             "team": "Aston Villa"
           }
@@ -2241,8 +6163,8 @@
         "free_transfers": 1,
         "hits": 0,
         "hit_cost": 0,
-        "bank_m": 2.6,
-        "predicted_points": 51.44,
+        "bank_m": 2.5,
+        "predicted_points": 51.2,
         "captain_id": 166
       },
       {
@@ -2271,8 +6193,8 @@
         "free_transfers": 1,
         "hits": 0,
         "hit_cost": 0,
-        "bank_m": 0.1,
-        "predicted_points": 56.48,
+        "bank_m": 0.0,
+        "predicted_points": 56.36,
         "captain_id": 411
       },
       {
@@ -2301,8 +6223,8 @@
         "free_transfers": 1,
         "hits": 0,
         "hit_cost": 0,
-        "bank_m": 0.4,
-        "predicted_points": 60.5,
+        "bank_m": 0.3,
+        "predicted_points": 60.41,
         "captain_id": 4
       },
       {
@@ -2331,8 +6253,8 @@
         "free_transfers": 1,
         "hits": 0,
         "hit_cost": 0,
-        "bank_m": 0.2,
-        "predicted_points": 54.74,
+        "bank_m": 0.1,
+        "predicted_points": 54.61,
         "captain_id": 411
       }
     ]
