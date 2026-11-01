@@ -82,7 +82,8 @@ def build_output_json(bootstrap: dict, predictions_df, result: dict,
                       captain_override: dict = None, wildcard_option: dict = None,
                       pmfs: dict = None, captain_odds: list = None, chip_plan: dict = None,
                       news_view: dict = None, other_view: dict = None,
-                      pick_checks: list = None, locked: dict = None) -> dict:
+                      pick_checks: list = None, locked: dict = None,
+                      reasons: dict = None) -> dict:
     """Assembles the final clean JSON contract the frontend will consume."""
     teams_lookup = {t["id"]: t["name"] for t in bootstrap["teams"]}
     pos_lookup = config.POSITIONS
@@ -173,7 +174,8 @@ def build_output_json(bootstrap: dict, predictions_df, result: dict,
           "cost_m": round(float(r.get("now_cost", 0)) / 10, 1),
           "next": round(float(r.get("predicted_points", 0)), 2),
           "six_weeks": round(float(r.get("horizon_points", 0)), 2),
-          "start_probability": round(float(r.get("p_full", 1.0)), 2)}
+          "start_probability": round(float(r.get("p_full", 1.0)), 2),
+          **(reasons or {}).get(int(pid), {})}
          for pid, r in pred_lookup.items() if float(r.get("horizon_points", 0)) >= 1.0),
         key=lambda p: -p["six_weeks"])
     if locked:
@@ -373,6 +375,13 @@ def run_pipeline(team_id: int = None) -> None:
         except Exception as e:                              # never fatal to the refresh
             logger.warning("Pick checks skipped: %s", e)
 
+    # 5b''. Why each player is projected where he is, for the projections list.
+    reasons = {}
+    try:
+        reasons = _projection_reasons(d["fixture_predictions"], model_bundle, upcoming_gw)
+    except Exception as e:                                  # never fatal to the refresh
+        logger.warning("Projection reasons skipped: %s", e)
+
     # 5c. A full points distribution per player, and the captaincy odds.
     pmfs, captain_odds = {}, None
     tables = distributions.load_tables()
@@ -440,7 +449,8 @@ def run_pipeline(team_id: int = None) -> None:
                                news_view=_news_payload(news, news_applied, d, team_state,
                                                        history_df, bootstrap),
                                other_view=other_view,
-                               pick_checks=d.get("pick_checks"), locked=locked)
+                               pick_checks=d.get("pick_checks"), locked=locked,
+                               reasons=reasons)
 
     config.OUTPUT_JSON_PATH.write_text(json.dumps(output, indent=2))
     config.FRONTEND_JSON_PATH.write_text(json.dumps(output, indent=2))
@@ -566,6 +576,46 @@ def _attach_other_matches(df, bootstrap: dict) -> None:
 PICK_FORM_GAP = 1.5        # projected this much above his points per game this season
 PICK_PRICE_PUSH = 0.5      # his price alone adds this much to his points-if-he-plays
 PICK_START = 0.70          # below this chance of starting
+
+
+def _reason_group(col: str) -> str:
+    """The plain-words group a model input belongs to."""
+    if col in ("now_cost", "selected_by_percent"):
+        return "price and ownership"
+    if (col.startswith(("team_strength", "opp_strength", "odds_")) or col in ("fixture_difficulty", "was_home")):
+        return "team and fixture"
+    if col.endswith(("_10", "_season")):
+        return "season form"
+    if col.startswith(("minutes_avg", "starts_avg", "xm_")) or col == "days_since_last_match":
+        return "minutes and rotation"
+    if col.startswith(("dc_avg", "cs_avg", "saves_avg", "gc_avg", "xgc_avg")):
+        return "defending"
+    if col.endswith(("_3", "_5")) or col == "form":
+        return "recent form"
+    return "other"
+
+
+def _projection_reasons(fixture_predictions: pd.DataFrame, bundle, gw: int) -> dict:
+    """{player_id: {"if_he_plays", "why"}} for the coming gameweek: his
+    points if he plays an hour, and how far each group of inputs moves that
+    from the average player's (tree contributions, averaged over the bag and
+    over a double gameweek's two matches). Explains the projection; changes
+    nothing."""
+    rows = fixture_predictions
+    rows = rows[rows["gw"] == gw] if "gw" in rows.columns else rows
+    if rows.empty:
+        return {}
+    X = train_model._prep_X(rows)
+    contrib = np.mean([m["points_reg"].get_booster().predict(xgb.DMatrix(X), pred_contribs=True)
+                       for m in train_model._members(bundle)], axis=0)
+    groups = [_reason_group(c) for c in X.columns]
+    by_group = pd.DataFrame(contrib[:, :-1], columns=X.columns).T.groupby(groups).sum().T
+    by_group["player_id"] = rows["player_id"].to_numpy()
+    by_group["if_he_plays"] = rows["pts_if_60"].to_numpy() if "pts_if_60" in rows.columns else np.nan
+    per_player = by_group.groupby("player_id").mean()
+    return {int(pid): {"if_he_plays": round(float(r.pop("if_he_plays")), 2),
+                       "why": {g: round(float(v), 2) for g, v in r.items()}}
+            for pid, r in per_player.iterrows()}
 
 
 def _pick_checks(d: dict, history_df, bundle, team_state, gw: int, bootstrap: dict) -> None:
