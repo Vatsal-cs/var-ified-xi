@@ -116,7 +116,31 @@ ROLLING_FEATURE_SPEC = [
     ("expected_goal_involvements", "xgi_avg", LONG_FORM_WINDOWS),
     ("bps", "bps_avg", LONG_FORM_WINDOWS),
     ("defensive_contribution", "dc_avg", LONG_FORM_WINDOWS),
+    # The same windows for the rest of the form stats. Under test in
+    # research/2026-10-model-batch; computed always, used only if it passes.
+    ("starts", "starts_avg", LONG_FORM_WINDOWS),
+    ("expected_goals", "xg_avg", LONG_FORM_WINDOWS),
+    ("expected_assists", "xa_avg", LONG_FORM_WINDOWS),
+    ("clean_sheets", "cs_avg", LONG_FORM_WINDOWS),
+    ("saves", "saves_avg", LONG_FORM_WINDOWS),
+    ("expected_goals_conceded", "xgc_avg", LONG_FORM_WINDOWS),
 ]
+
+
+def _derived_form(df: pd.DataFrame) -> None:
+    """Breakout and per-90 inputs, from windows already on the frame (in
+    place). Trees split on one input at a time, so "well above his season
+    level" or "per 90 minutes played" is hard for them to piece together from
+    two separate averages. Under test in research/2026-10-model-batch."""
+    for short, season, name in (("xgi_avg_3", "xgi_avg_season", "xgi_trend"),
+                                ("minutes_avg_3", "minutes_avg_season", "minutes_trend"),
+                                ("points_avg_3", "points_avg_season", "points_trend")):
+        df[name] = df[short] - df[season]
+    total_minutes = df["minutes_avg_season"] * df["matches_played"]
+    enough = total_minutes >= 450      # five full matches; fewer is mostly cameo noise
+    for src, name in (("points_avg_season", "points_per90_season"), ("xgi_avg_season", "xgi_per90_season"),
+                      ("bps_avg_season", "bps_per90_season"), ("dc_avg_season", "dc_per90_season")):
+        df[name] = (df[src] / df["minutes_avg_season"].where(enough) * 90).fillna(0.0)
 
 
 def _team_strength_lookup(bootstrap: dict) -> dict:
@@ -419,6 +443,7 @@ def add_rolling_features(df: pd.DataFrame) -> pd.DataFrame:
     # learn how far to trust the form features, rather than treating a
     # one-game average and a twenty-game average as equally solid.
     df["matches_played"] = grp["minutes"].apply(lambda s: s.shift(1).expanding().count())
+    _derived_form(df)
 
     # 'form' as FPL defines it loosely: average points over last 5 played gameweeks
     df["form"] = df["points_avg_5"]
@@ -487,6 +512,7 @@ def latest_form_snapshot(df: pd.DataFrame) -> pd.DataFrame:
                 out[name] = 0.0
 
     out["matches_played"] = grp["minutes"].apply(lambda s: s.expanding().count())
+    _derived_form(out)
 
     out["form"] = out["points_avg_5"]
     if "age" in out.columns:

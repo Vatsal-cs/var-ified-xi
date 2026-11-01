@@ -215,8 +215,61 @@ def fetch_season(season: str, season_index: int):
         team_form.attach(out, start)
     if config.OWNERSHIP_FEATURE:
         out["selected_by_percent"] = out["ownership"].astype(float) * 100.0
+    if config.LAST_SEASON_PRIOR:
+        _attach_last_season(out, season)
 
     return out
+
+
+def _players_raw(season: str):
+    """The archive's season totals per player (players_raw.csv), or None."""
+    try:
+        return pd.read_csv(io.StringIO(_fetch_csv_text(
+            f"{HISTORICAL_DATA_BASE_URL}/{season}/players_raw.csv",
+            _season_cache_path(season, "players_raw"))))
+    except requests.RequestException as e:
+        logger.warning("players_raw for %s unavailable: %s", season, e)
+        return None
+
+
+def last_season_stats(raw: pd.DataFrame) -> pd.DataFrame:
+    """config.LAST_SEASON_COLUMNS from one season's players_raw, indexed by
+    FPL's lifetime player code. Per-90 rates are zero below 900 minutes,
+    where a few cameos would read as a star's rate."""
+    minutes = pd.to_numeric(raw["minutes"], errors="coerce").fillna(0.0)
+
+    def per90(col):
+        if col not in raw.columns:      # xGI only from 2022-23
+            return pd.Series(0.0, index=raw.index)
+        total = pd.to_numeric(raw[col], errors="coerce").fillna(0.0)
+        return (total / minutes.where(minutes >= 900) * 90).fillna(0.0)
+
+    stats = pd.DataFrame({
+        "prev_minutes": minutes,
+        "prev_points_per90": per90("total_points"),
+        "prev_xgi_per90": per90("expected_goal_involvements"),
+        "prev_bps_per90": per90("bps"),
+    })
+    stats.index = raw["code"].astype(int)
+    return stats[~stats.index.duplicated()]
+
+
+def _attach_last_season(out: pd.DataFrame, season: str) -> None:
+    """Each player's previous Premier League season (config.LAST_SEASON_PRIOR):
+    this season's players_raw maps the season's element id to FPL's lifetime
+    code, and last season's gives the totals. Zero for anyone new to the
+    league. Research only."""
+    for c in config.LAST_SEASON_COLUMNS:
+        out[c] = 0.0
+    now, prev = _players_raw(season), _players_raw(_previous_season(season))
+    if now is None or prev is None:
+        return
+    code = out["element"].map(dict(zip(now["id"].astype(int), now["code"].astype(int))))
+    stats = last_season_stats(prev)
+    for c in config.LAST_SEASON_COLUMNS:
+        out[c] = code.map(stats[c]).fillna(0.0).to_numpy()
+    logger.info("Last season %s -> %s: %.0f%% of rows matched", _previous_season(season), season,
+                100 * out["prev_minutes"].gt(0).mean())
 
 
 def _lagged_strengths(season: str, teams_df: pd.DataFrame):

@@ -200,7 +200,7 @@ def _recency_weights(part: pd.DataFrame) -> "np.ndarray | None":
 def _points_regressor() -> "xgb.XGBRegressor":
     return xgb.XGBRegressor(
         n_estimators=400,
-        max_depth=4,
+        max_depth=config.TREE_MAX_DEPTH,
         learning_rate=0.03,
         subsample=0.8,
         colsample_bytree=0.8,
@@ -218,7 +218,7 @@ def _ceiling_regressor() -> "xgb.XGBRegressor":
     want under it is the biggest realistic upside, not the steadiest return.
     """
     return xgb.XGBRegressor(
-        n_estimators=400, max_depth=4, learning_rate=0.03,
+        n_estimators=400, max_depth=config.TREE_MAX_DEPTH, learning_rate=0.03,
         subsample=0.8, colsample_bytree=0.8, reg_lambda=1.5,
         objective="reg:quantileerror", quantile_alpha=CAPTAIN_QUANTILE,
         random_state=config.MODEL_SEED, n_jobs=-1,
@@ -251,7 +251,7 @@ def _fit_bundle(part: pd.DataFrame, per_position: bool = False,
     y_minutes = _minutes_class(part["minutes"])
     minutes_clf = xgb.XGBClassifier(
         n_estimators=300,
-        max_depth=4,
+        max_depth=config.TREE_MAX_DEPTH,
         learning_rate=0.05,
         subsample=0.8,
         colsample_bytree=0.8,
@@ -375,7 +375,7 @@ def train_models(
     # ---- Flat baseline (the old single-regressor approach), for honest
     #      side-by-side comparison on the SAME holdout every run ----
     flat_reg = xgb.XGBRegressor(
-        n_estimators=400, max_depth=4, learning_rate=0.03,
+        n_estimators=400, max_depth=config.TREE_MAX_DEPTH, learning_rate=0.03,
         subsample=0.8, colsample_bytree=0.8, reg_lambda=1.5,
         objective="reg:squarederror", random_state=config.MODEL_SEED, n_jobs=-1,
     )

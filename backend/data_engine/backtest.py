@@ -396,6 +396,18 @@ class _extra_features:
 LONG_FORM_FEATURES = list(config.LONG_FORM_COLUMNS)
 
 
+class _config_values:
+    """Sets config values for the variant, restoring the old ones after."""
+    def __init__(self, **values): self.values = values
+    def __enter__(self):
+        self._old = {k: getattr(config, k) for k in self.values}
+        for k, v in self.values.items():
+            setattr(config, k, v)
+    def __exit__(self, *a):
+        for k, v in self._old.items():
+            setattr(config, k, v)
+
+
 # The residual corrector for each simulated season, fitted on OTHER seasons'
 # misses (research/2026-10-residual-model).
 RESIDUAL_BY_SEASON = {"2024-25": "from_2025-26", "2025-26": "from_2024-25",
@@ -615,6 +627,49 @@ VARIANTS = {
         fit=lambda df: train_model.train_models(df, save=False),
         predict=_bundle_predict,
         context=lambda: _nested(_lagged_ratings_ctx(), _extra_features(LONG_FORM_FEATURES)),
+    ),
+    # research/2026-10-model-batch: five changes pre-registered together, each
+    # against lagged_ratings.
+    "form_trend": Variant(
+        name="form_trend",
+        description="lagged_ratings plus breakout inputs: xGI, minutes and points over the "
+                    "last three gameweeks minus their season level (research/2026-10-model-batch)",
+        fit=lambda df: train_model.train_models(df, save=False),
+        predict=_bundle_predict,
+        context=lambda: _nested(_lagged_ratings_ctx(), _extra_features(config.FORM_TREND_COLUMNS)),
+    ),
+    "per90": Variant(
+        name="per90",
+        description="lagged_ratings plus season-so-far points, xGI, BPS and defensive "
+                    "contributions per 90 minutes played (research/2026-10-model-batch)",
+        fit=lambda df: train_model.train_models(df, save=False),
+        predict=_bundle_predict,
+        context=lambda: _nested(_lagged_ratings_ctx(), _extra_features(config.PER90_COLUMNS)),
+    ),
+    "long_form_rest": Variant(
+        name="long_form_rest",
+        description="lagged_ratings plus ten-gameweek and season windows for starts, xG, xA, "
+                    "clean sheets, saves and xGC (research/2026-10-model-batch)",
+        fit=lambda df: train_model.train_models(df, save=False),
+        predict=_bundle_predict,
+        context=lambda: _nested(_lagged_ratings_ctx(), _extra_features(config.LONG_FORM_REST_COLUMNS)),
+    ),
+    "last_season": Variant(
+        name="last_season",
+        description="lagged_ratings plus each player's previous Premier League season: "
+                    "minutes, and points, xGI and BPS per 90 (research/2026-10-model-batch)",
+        fit=lambda df: train_model.train_models(df, save=False),
+        predict=_bundle_predict,
+        context=lambda: _nested(_lagged_ratings_ctx(), _config_values(LAST_SEASON_PRIOR=True),
+                                _extra_features(config.LAST_SEASON_COLUMNS)),
+    ),
+    "deeper_trees": Variant(
+        name="deeper_trees",
+        description="lagged_ratings with trees six deep instead of four in the minutes and "
+                    "points models (research/2026-10-model-batch)",
+        fit=lambda df: train_model.train_models(df, save=False),
+        predict=_bundle_predict,
+        context=lambda: _nested(_lagged_ratings_ctx(), _config_values(TREE_MAX_DEPTH=6)),
     ),
     "team_form": Variant(
         name="team_form",
