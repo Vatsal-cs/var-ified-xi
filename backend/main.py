@@ -164,6 +164,18 @@ def build_output_json(bootstrap: dict, predictions_df, result: dict,
         output["other_matches"] = other_view
     if pick_checks:
         output["pick_checks"] = pick_checks
+    # Every player worth a look, not just the fifteen picked, so "why not
+    # him?" has an answer: his projection next to the players chosen.
+    output["projections"] = sorted(
+        ({"player_id": int(pid), "name": r.get("web_name"),
+          "position": pos_lookup.get(r.get("element_type")),
+          "team": teams_lookup.get(r.get("team"), ""),
+          "cost_m": round(float(r.get("now_cost", 0)) / 10, 1),
+          "next": round(float(r.get("predicted_points", 0)), 2),
+          "six_weeks": round(float(r.get("horizon_points", 0)), 2),
+          "start_probability": round(float(r.get("p_full", 1.0)), 2)}
+         for pid, r in pred_lookup.items() if float(r.get("horizon_points", 0)) >= 1.0),
+        key=lambda p: -p["six_weeks"])
     if locked:
         output["active_chip"] = {"chip": locked["chip"], "gameweek": locked["gameweek"]}
         output["lineup_check"] = locked.get("check")
