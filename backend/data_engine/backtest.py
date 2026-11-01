@@ -671,6 +671,16 @@ VARIANTS = {
         predict=_bundle_predict,
         context=lambda: _nested(_lagged_ratings_ctx(), _config_values(TREE_MAX_DEPTH=6)),
     ),
+    "understat": Variant(
+        name="understat",
+        description="lagged_ratings plus Understat's shots, key passes, non-penalty xG, "
+                    "xGChain and xGBuildup over five gameweeks and the season so far "
+                    "(research/2026-10-understat)",
+        fit=lambda df: train_model.train_models(df, save=False),
+        predict=_bundle_predict,
+        context=lambda: _nested(_lagged_ratings_ctx(), _config_values(UNDERSTAT=True),
+                                _extra_features(config.UNDERSTAT_COLUMNS)),
+    ),
     "team_form": Variant(
         name="team_form",
         description="team quality from each team's recent expected goals for and "

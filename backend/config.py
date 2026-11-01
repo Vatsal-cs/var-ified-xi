@@ -297,6 +297,12 @@ LONG_FORM_REST_COLUMNS = [f"{p}_{w}" for p in ("starts_avg", "xg_avg", "xa_avg",
 # are built, so it is a flag rather than a column list alone.
 LAST_SEASON_PRIOR = False
 LAST_SEASON_COLUMNS = ["prev_minutes", "prev_points_per90", "prev_xgi_per90", "prev_bps_per90"]
+# Research only: Understat's per-match shots, key passes, non-penalty xG,
+# xGChain and xGBuildup (understat_data.py), averaged over five gameweeks and
+# the season so far. Under test in research/2026-10-understat.
+UNDERSTAT = False
+UNDERSTAT_COLUMNS = [f"{p}_{w}" for p in ("us_shots_avg", "us_key_passes_avg", "us_npxg_avg",
+                                           "us_xgchain_avg", "us_xgbuildup_avg") for w in (5, "season")]
 
 # How much each club has been rotating: the average number of starters changed
 # from the previous match, over its last five (team_changes_avg5). The minutes

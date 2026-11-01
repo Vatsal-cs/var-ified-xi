@@ -217,6 +217,9 @@ def fetch_season(season: str, season_index: int):
         out["selected_by_percent"] = out["ownership"].astype(float) * 100.0
     if config.LAST_SEASON_PRIOR:
         _attach_last_season(out, season)
+    if config.UNDERSTAT:
+        from data_engine import understat_data
+        understat_data.attach(out, season, dict(zip(out["player_id"], out["web_name"])), gw_df["team"])
 
     return out
 

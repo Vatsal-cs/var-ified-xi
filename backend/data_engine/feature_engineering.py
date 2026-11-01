@@ -124,6 +124,13 @@ ROLLING_FEATURE_SPEC = [
     ("clean_sheets", "cs_avg", LONG_FORM_WINDOWS),
     ("saves", "saves_avg", LONG_FORM_WINDOWS),
     ("expected_goals_conceded", "xgc_avg", LONG_FORM_WINDOWS),
+    # Understat's shot data (config.UNDERSTAT, research/2026-10-understat):
+    # zero unless that join is on.
+    ("us_shots", "us_shots_avg", [5, SEASON]),
+    ("us_key_passes", "us_key_passes_avg", [5, SEASON]),
+    ("us_npxg", "us_npxg_avg", [5, SEASON]),
+    ("us_xgchain", "us_xgchain_avg", [5, SEASON]),
+    ("us_xgbuildup", "us_xgbuildup_avg", [5, SEASON]),
 ]
 
 
