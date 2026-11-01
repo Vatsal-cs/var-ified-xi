@@ -115,6 +115,10 @@ class Variant:
     # Returns a Series of captain-selection values aligned to the gw rows.
     # None => captain on predicted_points (the pre-ceiling behaviour).
     captain_values: Callable[[object, pd.DataFrame], pd.Series] = None
+    # (result, gw rows) -> (captain, vice), applied after the squad is solved
+    # (captaincy never changes which fifteen or which eleven). None keeps the
+    # optimizer's pick.
+    captain_rule: Callable[[dict, pd.DataFrame], tuple] = None
     # A context manager held open for the WHOLE variant, data loading
     # included. Anything that changes how rows are BUILT — an optional
     # feature join, a flag read inside historical_data — has to be active
@@ -390,6 +394,23 @@ class _extra_features:
         config.FEATURE_COLUMNS = list(self._old) + [c for c in self.columns if c not in self._old]
     def __exit__(self, *a):
         config.FEATURE_COLUMNS = self._old
+
+
+# research/2026-10-captain-crowd: how close to the best projection a player
+# must be for the crowd's favourite to take the armband.
+CROWD_CAPTAIN_MARGIN = 1.0
+
+
+def crowd_captain(result: dict, rows: pd.DataFrame) -> tuple:
+    """The XI's most-owned player among those projected within
+    CROWD_CAPTAIN_MARGIN of its best, as captain; the model's own pick as
+    vice (or, if they agree, the model's vice)."""
+    xi = rows[rows["player_id"].isin(result["starting_ids"])]
+    best = xi["predicted_points"].max()
+    close = xi[xi["predicted_points"] >= best - CROWD_CAPTAIN_MARGIN]
+    captain = int(close.sort_values(["selected_by_percent", "predicted_points"], ascending=False)["player_id"].iloc[0])
+    vice = result["captain_id"] if captain != result["captain_id"] else result["vice_captain_id"]
+    return captain, vice
 
 
 # Ten-gameweek and season-so-far averages (research/2026-10-long-form).
@@ -680,6 +701,15 @@ VARIANTS = {
         predict=_bundle_predict,
         context=lambda: _nested(_lagged_ratings_ctx(), _config_values(UNDERSTAT=True),
                                 _extra_features(config.UNDERSTAT_COLUMNS)),
+    ),
+    "captain_crowd": Variant(
+        name="captain_crowd",
+        description="lagged_ratings, but the armband goes to the XI's most-owned player "
+                    "among those projected within 1 point of its best (research/2026-10-captain-crowd)",
+        fit=lambda df: train_model.train_models(df, save=False),
+        predict=_bundle_predict,
+        context=_lagged_ratings_ctx,
+        captain_rule=crowd_captain,
     ),
     "team_form": Variant(
         name="team_form",
@@ -1103,6 +1133,8 @@ def simulate_season(
             result = optimizer.optimize_squad(gw_rows, captain_col="ceiling_points")
         else:
             result = optimizer.optimize_squad(gw_rows, captain_col="predicted_points")
+        if variant.captain_rule is not None:
+            result["captain_id"], result["vice_captain_id"] = variant.captain_rule(result, gw_rows)
         pred_lookup = gw_rows.set_index("player_id")["predicted_points"].to_dict()
         scored = score_gameweek(result, gw_rows, pred_lookup)
         captain_col = "ceiling_points" if variant.captain_values is not None else "predicted_points"
