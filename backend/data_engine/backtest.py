@@ -396,6 +396,15 @@ class _extra_features:
         config.FEATURE_COLUMNS = self._old
 
 
+def _upside_predict(weight: float):
+    """Picks on the mean projection pulled toward the 80th-percentile "good
+    day" one by `weight` (0 = mean, 1 = good day), for research/2026-11-upside."""
+    def predict(bundle, predict_df: pd.DataFrame) -> pd.Series:
+        out = train_model.predict_points(bundle, predict_df)
+        return out["predicted_points"] + weight * (out["ceiling_points"] - out["predicted_points"])
+    return predict
+
+
 # research/2026-10-captain-crowd: how close to the best projection a player
 # must be for the crowd's favourite to take the armband.
 CROWD_CAPTAIN_MARGIN = 1.0
@@ -701,6 +710,35 @@ VARIANTS = {
         predict=_bundle_predict,
         context=lambda: _nested(_lagged_ratings_ctx(), _config_values(UNDERSTAT=True),
                                 _extra_features(config.UNDERSTAT_COLUMNS)),
+    ),
+    # research/2026-11-upside: aim for big seasons rather than the best
+    # average. Judged on how often a season reaches the reference's top 1%.
+    "upside_captain": Variant(
+        name="upside_captain",
+        description="lagged_ratings with the armband on the 80th-percentile good-day "
+                    "projection (research/2026-11-upside)",
+        fit=lambda df: train_model.train_models(df, save=False),
+        predict=_bundle_predict,
+        context=_lagged_ratings_ctx,
+        captain_values=_bundle_ceiling,
+    ),
+    "upside_half": Variant(
+        name="upside_half",
+        description="lagged_ratings picking on the mean halfway to the good-day projection, "
+                    "armband on the good day (research/2026-11-upside)",
+        fit=lambda df: train_model.train_models(df, save=False),
+        predict=_upside_predict(0.5),
+        context=_lagged_ratings_ctx,
+        captain_values=_bundle_ceiling,
+    ),
+    "upside_full": Variant(
+        name="upside_full",
+        description="lagged_ratings picking and captaining on the good-day projection "
+                    "(research/2026-11-upside)",
+        fit=lambda df: train_model.train_models(df, save=False),
+        predict=_upside_predict(1.0),
+        context=_lagged_ratings_ctx,
+        captain_values=_bundle_ceiling,
     ),
     "captain_crowd": Variant(
         name="captain_crowd",
