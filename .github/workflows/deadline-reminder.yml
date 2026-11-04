@@ -1,0 +1,45 @@
+name: Deadline reminder
+
+# Posts the week's plan 4-5 hours before each FPL deadline, as a comment that
+# mentions you on one GitHub issue. GitHub emails it and pushes it to its
+# mobile app (backend/deadline_reminder.py). Needs no secrets. Outside that
+# window a run does nothing but check the time.
+on:
+  schedule:
+    # Hourly, and away from the top of the hour, when GitHub's scheduler is
+    # busiest and most likely to run late (see weekly.yml).
+    - cron: "23 * * * *"
+  workflow_dispatch:
+    inputs:
+      test:
+        description: "Send a test now (doesn't use up the week's reminder)"
+        type: boolean
+        default: true
+
+concurrency:
+  group: deadline-reminder
+  cancel-in-progress: false
+
+jobs:
+  remind:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install requests
+
+      - name: Send the reminder if it's time
+        working-directory: backend
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          TEST: ${{ inputs.test }}
+        run: python deadline_reminder.py

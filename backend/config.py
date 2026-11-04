@@ -66,6 +66,17 @@ TEAM_NEWS_LOG_PATH = DATA_DIR / "team_news_log.json"
 TEAM_NEWS_CALLS_PATH = DATA_DIR / "team_news_calls.json"
 
 # ---------------------------------------------------------------------------
+# Deadline reminder (deadline_reminder.py)
+# ---------------------------------------------------------------------------
+# The plan, posted where GitHub will email it, this long before each deadline.
+REMINDER_HOURS = 5
+REMINDER_ISSUE_TITLE = "FPL deadline reminders"
+SITE_URL = "https://var-ified-xi.vercel.app"
+# Your clock, for the time in the message. A fixed offset, not "America/Edmonton":
+# Alberta stays on UTC-6 all year now, and a runner's time-zone data may predate that.
+REMINDER_UTC_OFFSET = -6
+
+# ---------------------------------------------------------------------------
 # FPL public API (no auth required)
 # ---------------------------------------------------------------------------
 FPL_BASE_URL = "https://fantasy.premierleague.com/api"

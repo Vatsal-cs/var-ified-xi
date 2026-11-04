@@ -28,7 +28,7 @@ It predicts every player's points, plans transfers, lineup and captain six gamew
 | **~87,000** | real gameweek results the model learns from |
 | **6 gameweeks** | of transfers, lineups and captains planned at once by a mixed-integer solver |
 | **24 studies** | run on the model, 22 of them pre-registered: the pass/fail rule committed before the first result |
-| **101 tests** | guarding FPL's rules, both test harnesses, the planner and the team-news reader |
+| **133 tests** | guarding FPL's rules, both test harnesses, the planner and the team-news reader |
 | **$0 a month** | free public data, a free AI model, GitHub Actions and Vercel |
 
 ---
@@ -51,6 +51,7 @@ So VAR-ified XI is two separate pieces that can't flatter each other: a **model*
 - **Reads your mini-league** — what the managers ahead of you own, and which chips they've already burned
 - **Reads team news** — a free AI model reads the week's headlines and has to cite the one behind every call; each call is scored after the gameweek
 - **Runs itself** — GitHub Actions checks every four hours, re-plans before each deadline and redeploys the site
+- **Reminds you** — 4-5 hours before each deadline it posts the week's plan where GitHub emails it to you, with no mail account and no key
 
 ---
 
@@ -234,7 +235,7 @@ The most useful things this project taught me came from bugs that never crashed 
 | `news-check.yml` | Manual | A one-minute check that the team-news reader works |
 | `simulate.yml` | Manual | Runs a season-long policy race in the cloud and posts the result table |
 
-- **Tests.** 101 unit tests cover each season's transfer rules, both harnesses, the planner, chip timing, the deadline gate, Wildcard/Free Hit handling and the news parser.
+- **Tests.** 133 unit tests cover each season's transfer rules, both harnesses, the planner, chip timing, the deadline gate, Wildcard/Free Hit handling and the news parser.
 - **Team news with guardrails.** Within 48 hours of a deadline, Google News and BBC Sport headlines are read by a free Gemini model. A call only counts if it cites a headline that names the player; "out" and "doubt" can lower a projection, while "rotation" stays display-only until it's been right 60% of the time over 30 checked calls.
 - **Your chip team.** FPL hides a Wildcard or Free Hit team until the deadline, so `backend/overrides.json` can hold the team you've set; the dashboard shows it and keeps re-checking it, suggesting any change worth a point or more.
 - **Run now.** The dashboard can trigger a fresh run through a server-side route with a scoped token, limited to one run at a time, 10 minutes apart and 6 a day.
@@ -324,7 +325,7 @@ var-ified-xi/
 │   │   ├── season_sim.py            # harness 2: decision quality
 │   │   └── evaluation.py            # multi-seed verdicts with confidence intervals
 │   ├── research/                    # one folder per study: pre-registration, code, results
-│   └── tests/                       # 101 unit tests
+│   └── tests/                       # 133 unit tests
 ├── frontend/
 │   ├── app/                         # This week · Plan & chips · League · Other games · How it works
 │   ├── components/                  # pitch, captain odds, coin flips, team news…
