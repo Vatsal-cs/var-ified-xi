@@ -3108,5 +3108,155 @@
     "source_title": null
    }
   ]
+ },
+ {
+  "gameweek": 10,
+  "fetched_at": "2026-11-05T20:44:54.915003+00:00",
+  "model": "gemini-3.5-flash-lite",
+  "items": [
+   {
+    "player_id": 1,
+    "name": "David Raya Mart\u00edn",
+    "club": "Arsenal",
+    "status": "no_news",
+    "start_chance": null,
+    "reason": "No news in the headlines regarding this player.",
+    "source_url": null,
+    "source_date": null,
+    "source_title": null
+   },
+   {
+    "player_id": 4,
+    "name": "Gabriel dos Santos Magalh\u00e3es",
+    "club": "Arsenal",
+    "status": "no_news",
+    "start_chance": null,
+    "reason": "No news in the headlines regarding this player.",
+    "source_url": null,
+    "source_date": null,
+    "source_title": null
+   },
+   {
+    "player_id": 8,
+    "name": "Riccardo Calafiori",
+    "club": "Arsenal",
+    "status": "no_news",
+    "start_chance": null,
+    "reason": "No news in the headlines regarding this player.",
+    "source_url": null,
+    "source_date": null,
+    "source_title": null
+   },
+   {
+    "player_id": 31,
+    "name": "Ezri Konsa Ngoyo",
+    "club": "Arsenal",
+    "status": "no_news",
+    "start_chance": null,
+    "reason": "No news in the headlines regarding this player.",
+    "source_url": null,
+    "source_date": null,
+    "source_title": null
+   },
+   {
+    "player_id": 67,
+    "name": "Rayan Vitor Simpl\u00edcio Rocha",
+    "club": "Bournemouth",
+    "status": "no_news",
+    "start_chance": null,
+    "reason": "No news in the headlines regarding this player.",
+    "source_url": null,
+    "source_date": null,
+    "source_title": null
+   },
+   {
+    "player_id": 106,
+    "name": "Igor Thiago Nascimento Rodrigues",
+    "club": "Brentford",
+    "status": "no_news",
+    "start_chance": null,
+    "reason": "No news in the headlines regarding this player.",
+    "source_url": null,
+    "source_date": null,
+    "source_title": null
+   },
+   {
+    "player_id": 109,
+    "name": "Bart Verbruggen",
+    "club": "Brighton",
+    "status": "no_news",
+    "start_chance": 100,
+    "reason": "No news in the headlines.",
+    "source_url": null,
+    "source_date": null,
+    "source_title": null
+   },
+   {
+    "player_id": 40,
+    "name": "Morgan Rogers",
+    "club": "Chelsea",
+    "status": "no_news",
+    "start_chance": 100,
+    "reason": "No news in the headlines.",
+    "source_url": null,
+    "source_date": null,
+    "source_title": null
+   },
+   {
+    "player_id": 249,
+    "name": "Thierno Barry",
+    "club": "Everton",
+    "status": "no_news",
+    "start_chance": 100,
+    "reason": "No news in the headlines.",
+    "source_url": null,
+    "source_date": null,
+    "source_title": null
+   },
+   {
+    "player_id": 411,
+    "name": "Erling Haaland",
+    "club": "Man City",
+    "status": "no_news",
+    "start_chance": 100,
+    "reason": "No mention in the headlines.",
+    "source_url": null,
+    "source_date": null,
+    "source_title": null
+   },
+   {
+    "player_id": 453,
+    "name": "Harvey Barnes",
+    "club": "Newcastle",
+    "status": "no_news",
+    "start_chance": 100,
+    "reason": "No mention in the headlines.",
+    "source_url": null,
+    "source_date": null,
+    "source_title": null
+   },
+   {
+    "player_id": 447,
+    "name": "Sven Botman",
+    "club": "Newcastle",
+    "status": "no_news",
+    "start_chance": 100,
+    "reason": "No mention in the headlines.",
+    "source_url": null,
+    "source_date": null,
+    "source_title": null
+   },
+   {
+    "player_id": 472,
+    "name": "Murillo Costa dos Santos",
+    "club": "Nott'm Forest",
+    "status": "no_news",
+    "start_chance": 100,
+    "reason": "No mention in the headlines.",
+    "source_url": null,
+    "source_date": null,
+    "source_title": null
+   }
+  ]
  }
 ]
