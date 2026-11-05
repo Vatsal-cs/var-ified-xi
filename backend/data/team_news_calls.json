@@ -333,5 +333,56 @@
    "chance": 50,
    "at": "2026-10-31T06:55:02.103382+00:00"
   }
+ },
+ "10": {
+  "411": {
+   "name": "Erling Haaland",
+   "club": "Man City",
+   "status": "no_news",
+   "chance": 100,
+   "at": "2026-11-05T13:07:07.171460+00:00"
+  },
+  "453": {
+   "name": "Harvey Barnes",
+   "club": "Newcastle",
+   "status": "no_news",
+   "chance": 100,
+   "at": "2026-11-05T13:07:07.171460+00:00"
+  },
+  "447": {
+   "name": "Sven Botman",
+   "club": "Newcastle",
+   "status": "no_news",
+   "chance": 100,
+   "at": "2026-11-05T13:07:07.171460+00:00"
+  },
+  "472": {
+   "name": "Murillo Costa dos Santos",
+   "club": "Nott'm Forest",
+   "status": "no_news",
+   "chance": 100,
+   "at": "2026-11-05T13:07:07.171460+00:00"
+  },
+  "403": {
+   "name": "Sávio Moreira de Oliveira",
+   "club": "Spurs",
+   "status": "doubtful",
+   "chance": 50,
+   "at": "2026-11-05T13:07:07.171460+00:00"
+  },
+  "544": {
+   "name": "Granit Xhaka",
+   "club": "Sunderland",
+   "status": "no_news",
+   "chance": null,
+   "at": "2026-11-05T13:07:07.171460+00:00"
+  },
+  "533": {
+   "name": "Nordi Mukiele",
+   "club": "Sunderland",
+   "status": "no_news",
+   "chance": null,
+   "at": "2026-11-05T13:07:07.171460+00:00"
+  }
  }
 }

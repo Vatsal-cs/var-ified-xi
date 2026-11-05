@@ -3024,5 +3024,89 @@
     "source_title": "R\u00e9gis Le Bris relieved by Omar Alderete upturn, Nordi Mukiele a doubt for Coventry - OneFootball"
    }
   ]
+ },
+ {
+  "gameweek": 10,
+  "fetched_at": "2026-11-05T13:07:07.171460+00:00",
+  "model": "gemini-3.5-flash-lite",
+  "items": [
+   {
+    "player_id": 411,
+    "name": "Erling Haaland",
+    "club": "Man City",
+    "status": "no_news",
+    "start_chance": 100,
+    "reason": "",
+    "source_url": null,
+    "source_date": null,
+    "source_title": null
+   },
+   {
+    "player_id": 453,
+    "name": "Harvey Barnes",
+    "club": "Newcastle",
+    "status": "no_news",
+    "start_chance": 100,
+    "reason": "",
+    "source_url": null,
+    "source_date": null,
+    "source_title": null
+   },
+   {
+    "player_id": 447,
+    "name": "Sven Botman",
+    "club": "Newcastle",
+    "status": "no_news",
+    "start_chance": 100,
+    "reason": "",
+    "source_url": null,
+    "source_date": null,
+    "source_title": null
+   },
+   {
+    "player_id": 472,
+    "name": "Murillo Costa dos Santos",
+    "club": "Nott'm Forest",
+    "status": "no_news",
+    "start_chance": 100,
+    "reason": "",
+    "source_url": null,
+    "source_date": null,
+    "source_title": null
+   },
+   {
+    "player_id": 403,
+    "name": "S\u00e1vio Moreira de Oliveira",
+    "club": "Spurs",
+    "status": "doubtful",
+    "start_chance": 50,
+    "reason": "Edges back to fitness and steps up injury rehab ahead of Leeds",
+    "source_url": "https://news.google.com/rss/articles/CBMitwFBVV95cUxNRk5BV0ZFOTk4ZEV4blpia3RTU09FMno0ZzVlUDdrZHZ0ZUhQSkVuVHNPb0FjUVhrejFMb2ZqZ0dNOTJWLVhkWllCWnJ4RTRoRzFSaUJoaDNpVWt6c19hYjVZTnZ6MjJxYXBzWENubk9nZl9LcEdpMHRCdlZaRFB0RmJQM0xFUXY5cWhDcnpHMDBMVk9mMDlNckQ0ODVJaFZ6T0FLSGRJbkdqeWRlZDRKSDZ1N0pscUU?oc=5",
+    "source_date": "2026-11-04",
+    "source_title": "Tottenham handed fitness lift as Savio edges back and duo near Leeds return - OneFootball"
+   },
+   {
+    "player_id": 544,
+    "name": "Granit Xhaka",
+    "club": "Sunderland",
+    "status": "no_news",
+    "start_chance": null,
+    "reason": "No news in the headlines.",
+    "source_url": null,
+    "source_date": null,
+    "source_title": null
+   },
+   {
+    "player_id": 533,
+    "name": "Nordi Mukiele",
+    "club": "Sunderland",
+    "status": "no_news",
+    "start_chance": null,
+    "reason": "No news in the headlines.",
+    "source_url": null,
+    "source_date": null,
+    "source_title": null
+   }
+  ]
  }
 ]
