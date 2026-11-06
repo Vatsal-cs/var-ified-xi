@@ -1,6 +1,6 @@
 {
  "gameweek": 10,
- "fetched_at": "2026-11-06T01:33:26.480852+00:00",
+ "fetched_at": "2026-11-06T12:54:03.661524+00:00",
  "model": "gemini-3.5-flash-lite",
  "prompt_version": 3,
  "clubs": [
@@ -21,9 +21,9 @@
    "player_id": 1,
    "name": "David Raya Mart\u00edn",
    "club": "Arsenal",
-   "status": "expected_to_start",
+   "status": "no_news",
    "start_chance": 100,
-   "reason": "No negative news reported.",
+   "reason": "No relevant news found in headlines",
    "source_url": null,
    "source_date": null,
    "source_title": null
@@ -32,9 +32,9 @@
    "player_id": 4,
    "name": "Gabriel dos Santos Magalh\u00e3es",
    "club": "Arsenal",
-   "status": "expected_to_start",
+   "status": "no_news",
    "start_chance": 100,
-   "reason": "No negative news reported.",
+   "reason": "No relevant news found in headlines",
    "source_url": null,
    "source_date": null,
    "source_title": null
@@ -43,9 +43,9 @@
    "player_id": 8,
    "name": "Riccardo Calafiori",
    "club": "Arsenal",
-   "status": "expected_to_start",
+   "status": "no_news",
    "start_chance": 100,
-   "reason": "No negative news reported.",
+   "reason": "No relevant news found in headlines",
    "source_url": null,
    "source_date": null,
    "source_title": null
@@ -56,7 +56,7 @@
    "club": "Arsenal",
    "status": "doubtful",
    "start_chance": 50,
-   "reason": "Arteta cites 'some issues' and defender limped off during Slavia Prague victory.",
+   "reason": "Mikel Arteta provides Ezri Konsa injury update as defender limps off and faces injury dilemma",
    "source_url": "https://news.google.com/rss/articles/CBMiowFBVV95cUxOWXljNHJYR1JLZ1lpWF95TWp2dzY3RVFiYndZWWlUZk5RcjNpY1BNckMxQzRpZkRGYUxGaUtpanpaS3M0OXZZSk1HekVTNjIwQmFnMU9BeXB4WEVEZmMwUUsxVFFiV1hWN3B6ZVB0aFhUYUxEdmZ4WU16ZTNjNGo2TjlzSXlBSFYtT0ZQT2Q4UzhTS21SbWhKa291VTJqQWRFVFdJ?oc=5",
    "source_date": "2026-11-05",
    "source_title": "Mikel Arteta provides Ezri Konsa injury update as Arsenal defender limps off during Slavia Prague victory - Goal.com"
@@ -67,7 +67,7 @@
    "club": "Bournemouth",
    "status": "no_news",
    "start_chance": 100,
-   "reason": "No news mentions this player.",
+   "reason": "No relevant news found in headlines",
    "source_url": null,
    "source_date": null,
    "source_title": null
@@ -76,9 +76,9 @@
    "player_id": 106,
    "name": "Igor Thiago Nascimento Rodrigues",
    "club": "Brentford",
-   "status": "expected_to_start",
+   "status": "no_news",
    "start_chance": 100,
-   "reason": "No negative news reported.",
+   "reason": "No relevant news found in headlines",
    "source_url": null,
    "source_date": null,
    "source_title": null
@@ -88,8 +88,8 @@
    "name": "Bart Verbruggen",
    "club": "Brighton",
    "status": "no_news",
-   "start_chance": 100,
-   "reason": "No recent injury news or rotation reports found in headlines.",
+   "start_chance": null,
+   "reason": "No relevant news found in headlines",
    "source_url": null,
    "source_date": null,
    "source_title": null
@@ -99,8 +99,8 @@
    "name": "Morgan Rogers",
    "club": "Chelsea",
    "status": "no_news",
-   "start_chance": 100,
-   "reason": "No recent injury news or rotation reports found in headlines.",
+   "start_chance": null,
+   "reason": "No relevant news found in headlines",
    "source_url": null,
    "source_date": null,
    "source_title": null
@@ -109,12 +109,12 @@
    "player_id": 249,
    "name": "Thierno Barry",
    "club": "Everton",
-   "status": "no_news",
+   "status": "expected_to_start",
    "start_chance": 100,
-   "reason": "No injury or fitness doubts reported in the headlines.",
-   "source_url": null,
-   "source_date": null,
-   "source_title": null
+   "reason": "Predicted to lead the attack against Coventry",
+   "source_url": "https://news.google.com/rss/articles/CBMia0FVX3lxTFBBM21IUjV0RFBZZDlqVVNUNEJhMHZ2U0MydzE0SnJhS0V4ejNSdDJ1ZXFGNzYySDRBS3F5NUViTThSeThuSlpvZzYxbmRsZVFhT2lLWTl5aklHeTFVTHY2aC05dFZuRzhPN0FN?oc=5",
+   "source_date": "2026-11-06",
+   "source_title": "Everton vs Coventry predicted line-ups: Barry leads attack, Grealish absent - Dave.Sport"
   },
   {
    "player_id": 411,
@@ -122,7 +122,7 @@
    "club": "Man City",
    "status": "no_news",
    "start_chance": null,
-   "reason": "No relevant news found in headlines",
+   "reason": "No relevant news found in the headlines",
    "source_url": null,
    "source_date": null,
    "source_title": null
@@ -133,7 +133,7 @@
    "club": "Newcastle",
    "status": "no_news",
    "start_chance": null,
-   "reason": "No relevant news found in headlines",
+   "reason": "No relevant news found in the headlines",
    "source_url": null,
    "source_date": null,
    "source_title": null
@@ -144,7 +144,7 @@
    "club": "Newcastle",
    "status": "no_news",
    "start_chance": null,
-   "reason": "No relevant news found in headlines",
+   "reason": "No relevant news found in the headlines",
    "source_url": null,
    "source_date": null,
    "source_title": null
@@ -155,7 +155,7 @@
    "club": "Nott'm Forest",
    "status": "no_news",
    "start_chance": null,
-   "reason": "No relevant news found in headlines",
+   "reason": "No relevant news found in the headlines",
    "source_url": null,
    "source_date": null,
    "source_title": null
@@ -164,20 +164,20 @@
    "player_id": 403,
    "name": "S\u00e1vio Moreira de Oliveira",
    "club": "Spurs",
-   "status": "doubtful",
-   "start_chance": 50,
-   "reason": "Big Savio injury update ahead of Tottenham\u2019s trip to Leeds United.",
-   "source_url": "https://news.google.com/rss/articles/CBMipAFBVV95cUxQcE1lZWt3VDN0MkhuUzJaeW4zNjRocmhTLTY1dzcwNjZEUXcwUDNDdnZUMW9adEtsTmZ4cHV0a1pQTk9WVjhBWUtwZVBmNmlSYkZwOG5XNmdRZ2lSYnp0RjhxVi1wcjdoS1N6QTB5ZkJCaEZQQlAyTDdsRFM1bVlZSWZfZnRlOXFqU1pNLTA1cFdreVlSbEtnRGhnLXY0aG92OHdXYg?oc=5",
-   "source_date": "2026-11-05",
-   "source_title": "Big Savio injury update ahead of Tottenham\u2019s trip to Leeds United - Spurs Web"
+   "status": "no_news",
+   "start_chance": null,
+   "reason": "No news in the headlines",
+   "source_url": null,
+   "source_date": null,
+   "source_title": null
   },
   {
    "player_id": 544,
    "name": "Granit Xhaka",
    "club": "Sunderland",
    "status": "no_news",
-   "start_chance": 100,
-   "reason": "",
+   "start_chance": null,
+   "reason": "No news in the headlines",
    "source_url": null,
    "source_date": null,
    "source_title": null
@@ -187,8 +187,8 @@
    "name": "Nordi Mukiele",
    "club": "Sunderland",
    "status": "no_news",
-   "start_chance": 100,
-   "reason": "",
+   "start_chance": null,
+   "reason": "No news in the headlines",
    "source_url": null,
    "source_date": null,
    "source_title": null
