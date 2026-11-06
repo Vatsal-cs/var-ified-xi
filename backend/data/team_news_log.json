@@ -3708,5 +3708,188 @@
     "source_title": "Sunderland predicted lineup vs. Chelsea: Seven changes as Nordi Mukiele returns - Sports Mole"
    }
   ]
+ },
+ {
+  "gameweek": 10,
+  "fetched_at": "2026-11-06T16:35:40.808468+00:00",
+  "model": "gemini-3.5-flash-lite",
+  "items": [
+   {
+    "player_id": 1,
+    "name": "David Raya Mart\u00edn",
+    "club": "Arsenal",
+    "status": "no_news",
+    "start_chance": null,
+    "reason": "No news mentioned in the headlines.",
+    "source_url": null,
+    "source_date": null,
+    "source_title": null
+   },
+   {
+    "player_id": 4,
+    "name": "Gabriel dos Santos Magalh\u00e3es",
+    "club": "Arsenal",
+    "status": "no_news",
+    "start_chance": null,
+    "reason": "No news mentioned in the headlines.",
+    "source_url": null,
+    "source_date": null,
+    "source_title": null
+   },
+   {
+    "player_id": 8,
+    "name": "Riccardo Calafiori",
+    "club": "Arsenal",
+    "status": "no_news",
+    "start_chance": null,
+    "reason": "No news mentioned in the headlines.",
+    "source_url": null,
+    "source_date": null,
+    "source_title": null
+   },
+   {
+    "player_id": 31,
+    "name": "Ezri Konsa Ngoyo",
+    "club": "Arsenal",
+    "status": "expected_to_start",
+    "start_chance": 75,
+    "reason": "Mikel Arteta offers reassuring injury update, saying he is 'much better' after injury worry.",
+    "source_url": "https://news.google.com/rss/articles/CBMijgFBVV95cUxOSmFETUFMaE9GZC1FODl4T2I3NVFibnBPcThWOEtyTDBGRjJwY1JSc1JEOW9ibWJCTlpuc082OU8xV3AzRDBoZDBMcUVqeklDd3E0ZFNwNjNpSF9IemJXNm1EVFZNZ1YwbWFESTR4X0NyY2dEdU9oU3J5WEZyQjdhV0NrXzVMS2ZvYlVOT3Zn?oc=5",
+    "source_date": "2026-11-06",
+    "source_title": "Arsenal\u2019s Ezri Konsa \u2018much better\u2019 after injury worry vs. Slavia Prague \u2013 Mikel Arteta - The New York Times"
+   },
+   {
+    "player_id": 67,
+    "name": "Rayan Vitor Simpl\u00edcio Rocha",
+    "club": "Bournemouth",
+    "status": "no_news",
+    "start_chance": null,
+    "reason": "No news mentioned in the headlines.",
+    "source_url": null,
+    "source_date": null,
+    "source_title": null
+   },
+   {
+    "player_id": 106,
+    "name": "Igor Thiago Nascimento Rodrigues",
+    "club": "Brentford",
+    "status": "no_news",
+    "start_chance": null,
+    "reason": "No news mentioned in the headlines.",
+    "source_url": null,
+    "source_date": null,
+    "source_title": null
+   },
+   {
+    "player_id": 109,
+    "name": "Bart Verbruggen",
+    "club": "Brighton",
+    "status": "no_news",
+    "start_chance": 100,
+    "reason": "no news in headlines",
+    "source_url": null,
+    "source_date": null,
+    "source_title": null
+   },
+   {
+    "player_id": 40,
+    "name": "Morgan Rogers",
+    "club": "Chelsea",
+    "status": "no_news",
+    "start_chance": 100,
+    "reason": "no news in headlines",
+    "source_url": null,
+    "source_date": null,
+    "source_title": null
+   },
+   {
+    "player_id": 249,
+    "name": "Thierno Barry",
+    "club": "Everton",
+    "status": "no_news",
+    "start_chance": 100,
+    "reason": "no news in headlines",
+    "source_url": null,
+    "source_date": null,
+    "source_title": null
+   },
+   {
+    "player_id": 411,
+    "name": "Erling Haaland",
+    "club": "Man City",
+    "status": "expected_to_start",
+    "start_chance": 100,
+    "reason": "Predicted to start or lead the line against Nottingham Forest.",
+    "source_url": "https://news.google.com/rss/articles/CBMi3wFBVV95cUxNN1hBckM0NWRnUEJMMG5xZDRtbXMwQzQ1RV8tbFI1ODRlRXYxZVB2emVGcTFxcmVMU292LS16ckRkalBwUkl3UzBRUEJOZ1Z2NjJMYjhTRlZiaXJselE0T0YwcEtIRzlHQ3dUUXBfQ2JwN1pzZW1kLXlFVm5Ta2hoUzFzNmNMU1RwaWpxZThaYTNlUmFRV2dCc285VUtlSG5LZ0lyX2c1aVR0LXUxZjQtaDROQ1RzVlhFSHM3akNRckZzLXNIeVlwMTRYc3RFaEFmdE1QRk92by1aNV9YMGJN?oc=5",
+    "source_date": "2026-11-06",
+    "source_title": "Man City Predicted Lineup vs. Nottingham Forest: Haaland Leads Line, Changes in Defense - LiveScore"
+   },
+   {
+    "player_id": 453,
+    "name": "Harvey Barnes",
+    "club": "Newcastle",
+    "status": "no_news",
+    "start_chance": null,
+    "reason": "No news in the headlines.",
+    "source_url": null,
+    "source_date": null,
+    "source_title": null
+   },
+   {
+    "player_id": 447,
+    "name": "Sven Botman",
+    "club": "Newcastle",
+    "status": "no_news",
+    "start_chance": null,
+    "reason": "No news in the headlines.",
+    "source_url": null,
+    "source_date": null,
+    "source_title": null
+   },
+   {
+    "player_id": 472,
+    "name": "Murillo Costa dos Santos",
+    "club": "Nott'm Forest",
+    "status": "no_news",
+    "start_chance": null,
+    "reason": "No news in the headlines.",
+    "source_url": null,
+    "source_date": null,
+    "source_title": null
+   },
+   {
+    "player_id": 403,
+    "name": "S\u00e1vio Moreira de Oliveira",
+    "club": "Spurs",
+    "status": "no_news",
+    "start_chance": null,
+    "reason": "No news in the headlines.",
+    "source_url": null,
+    "source_date": null,
+    "source_title": null
+   },
+   {
+    "player_id": 544,
+    "name": "Granit Xhaka",
+    "club": "Sunderland",
+    "status": "no_news",
+    "start_chance": null,
+    "reason": "No news in the headlines.",
+    "source_url": null,
+    "source_date": null,
+    "source_title": null
+   },
+   {
+    "player_id": 533,
+    "name": "Nordi Mukiele",
+    "club": "Sunderland",
+    "status": "expected_to_start",
+    "start_chance": 100,
+    "reason": "Nordi Mukiele returns",
+    "source_url": "https://news.google.com/rss/articles/CBMi4AFBVV95cUxQaktWRW4tRlVUNU56UTJpV1BTb1lNX0d2RlV5VVVWcEJ2UUpZMzJsQVdqWTZJU0ZNckF4UnZwc2ZSWFBIRGdWYjVpMkFEQXhncU5EMm5zUVlnYklyZHJxRTRzVUJqLUpnOUJ2QWlGNE0zSnBQTXNkTUVZa3NpVkJ2c0hKQVk1bTMtb29pRjd3cF9uekNkVWctUXI2djByRDNfNG12YjVfUndDNzktU1BMMnp6cDA5bWFZX2NQUkRtc0RVdlJ6R3JPU0l0N3FJN1hqbjNHWkdvSXZkdjQ1a2dlUw?oc=5",
+    "source_date": "2026-11-06",
+    "source_title": "Sunderland predicted lineup vs. Chelsea: Seven changes as Nordi Mukiele returns - Sports Mole"
+   }
+  ]
  }
 ]
