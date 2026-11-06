@@ -59,6 +59,14 @@ class WhenItFires(unittest.TestCase):
         """GitHub's scheduler can run hours late: better late than not at all."""
         self.assertTrue(dr.is_due(DEADLINE, DEADLINE - timedelta(minutes=20)))
 
+    def test_a_run_shortly_before_the_window_waits_for_it(self):
+        """GitHub ran the hourly schedule every 5-8 hours, so the window can pass unseen."""
+        self.assertEqual(dr.time_to_wait(DEADLINE, DEADLINE - timedelta(hours=8)), timedelta(hours=3))
+
+    def test_no_waiting_days_ahead_or_once_it_is_open(self):
+        self.assertIsNone(dr.time_to_wait(DEADLINE, DEADLINE - timedelta(hours=11)))
+        self.assertIsNone(dr.time_to_wait(DEADLINE, DEADLINE - timedelta(hours=4)))
+
     def _deadline(self, now, get):
         with mock.patch.object(dr.requests, "get", get):
             return dr.next_deadline(_plan(), now)
@@ -180,6 +188,17 @@ class OncePerGameweek(unittest.TestCase):
         posts, _ = self._run([{"body": dr._marker(10)}], now=DEADLINE - timedelta(hours=30), test=True)
         self.assertEqual(len(posts), 1)
         self.assertNotIn(dr._marker(10), posts[0][2]["body"])
+
+    def test_waiting_sleeps_and_sends_nothing(self):
+        with mock.patch.object(dr.time, "sleep") as sleep:
+            _, calls = self._run([], now=DEADLINE - timedelta(hours=8), argv=["--wait"])
+        sleep.assert_called_once_with(3 * 3600)
+        self.assertEqual(calls, [])
+
+    def test_a_test_never_waits(self):
+        with mock.patch.object(dr.time, "sleep") as sleep:
+            self._run([], now=DEADLINE - timedelta(hours=8), test=True, argv=["--wait"])
+        sleep.assert_not_called()
 
     def test_preview_sends_nothing(self):
         with mock.patch("builtins.print"):

@@ -4,27 +4,34 @@ Path: var-ified-xi/backend/deadline_reminder.py
 
 Tells you what to do before each FPL deadline, without opening the site.
 
-Runs hourly on GitHub Actions (.github/workflows/deadline-reminder.yml). The
-first run inside the last REMINDER_HOURS before a deadline posts the week's
-plan as a comment on one GitHub issue, mentioning the repo's owner. GitHub
-turns the mention into an email and a push on its mobile app, so this needs no
-mail account, no key and no money: the workflow's own token is enough.
+Runs on GitHub Actions (.github/workflows/deadline-reminder.yml). The first run
+inside the last REMINDER_HOURS before a deadline posts the week's plan as a
+comment on one GitHub issue, mentioning the repo's owner. GitHub turns the
+mention into an email and a push on its mobile app, so this needs no mail
+account, no key and no money: the workflow's own token is enough.
+
+The schedule asks for hourly, but GitHub's scheduler doesn't keep to that: in
+the first days the job ran every 5-8 hours. So a run that lands in the hours
+before the window waits for it (--wait), and then reads the newest plan.
 
 One reminder per gameweek, however many runs land in the window. The comments
 already on the issue are the record of that, so there's no state to commit.
 
     python deadline_reminder.py --preview    # prints the message, sends nothing
+    python deadline_reminder.py --wait       # sleeps until the window, if it opens soon
 """
 
 import json
 import os
 import sys
+import time
 from datetime import datetime, timedelta, timezone
 
 import requests
 
 from config import (BOOTSTRAP_URL, FRONTEND_JSON_PATH, REMINDER_HOURS, REMINDER_ISSUE_TITLE,
-                    REMINDER_UTC_OFFSET, REQUEST_HEADERS, REQUEST_TIMEOUT, SITE_URL)
+                    REMINDER_MAX_WAIT_HOURS, REMINDER_UTC_OFFSET, REQUEST_HEADERS, REQUEST_TIMEOUT,
+                    SITE_URL)
 
 GITHUB_API = "https://api.github.com"
 CHIP_NAMES = {"bboost": "Bench Boost", "3xc": "Triple Captain", "freehit": "Free Hit",
@@ -57,6 +64,12 @@ def next_deadline(plan: dict, now: datetime) -> tuple | None:
 
 def is_due(deadline: datetime, now: datetime) -> bool:
     return deadline - now <= timedelta(hours=REMINDER_HOURS)
+
+
+def time_to_wait(deadline: datetime, now: datetime) -> timedelta | None:
+    """How long until the window opens, if a run should wait that long."""
+    wait = deadline - now - timedelta(hours=REMINDER_HOURS)
+    return wait if timedelta(0) < wait <= timedelta(hours=REMINDER_MAX_WAIT_HOURS) else None
 
 
 def _clock(deadline: datetime) -> str:
@@ -181,7 +194,8 @@ def _already_sent(issue: int, gameweek: int, deadline: datetime) -> bool:
 
 
 def main(argv: list | None = None) -> int:
-    preview = "--preview" in (sys.argv[1:] if argv is None else argv)
+    argv = sys.argv[1:] if argv is None else argv
+    preview, wait = "--preview" in argv, "--wait" in argv
     test = os.environ.get("TEST", "").lower() == "true"
     now = datetime.now(timezone.utc)
     plan = json.loads(FRONTEND_JSON_PATH.read_text())
@@ -191,6 +205,12 @@ def main(argv: list | None = None) -> int:
         print("No deadlines left this season.", file=sys.stderr)
         return 0
     gameweek, deadline = found
+    if wait:
+        pause = None if test else time_to_wait(deadline, now)
+        if pause:
+            print(f"GW{gameweek}: waiting {_span(pause)} for the window to open.", file=sys.stderr)
+            time.sleep(pause.total_seconds())
+        return 0
     if not (preview or test or is_due(deadline, now)):
         print(f"GW{gameweek} deadline in {_span(deadline - now)}: too early to remind.", file=sys.stderr)
         return 0

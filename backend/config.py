@@ -70,6 +70,8 @@ TEAM_NEWS_CALLS_PATH = DATA_DIR / "team_news_calls.json"
 # ---------------------------------------------------------------------------
 # The plan, posted where GitHub will email it, this long before each deadline.
 REMINDER_HOURS = 5
+# A run this close before that waits for it. GitHub stops a job at 6 hours.
+REMINDER_MAX_WAIT_HOURS = 5.5
 REMINDER_ISSUE_TITLE = "FPL deadline reminders"
 SITE_URL = "https://var-ified-xi.vercel.app"
 # Your clock, for the time in the message. A fixed offset, not "America/Edmonton":
