@@ -57,6 +57,7 @@ def _now():
 
 
 GEMINI_URL = "https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent"
+GEMINI_BUSY = (500, 502, 503, 504)
 
 
 def provider() -> str | None:
@@ -181,7 +182,11 @@ def _call_gemini(prompt: str) -> str:
             "generationConfig": {"temperature": 0.1, "maxOutputTokens": 8192,
                                  "responseMimeType": "application/json"}}
     headers = {"x-goog-api-key": os.environ["GEMINI_API_KEY"], "content-type": "application/json"}
-    models = [_gemini_model[0]] if _gemini_model[0] else list(config.TEAM_NEWS_GEMINI_MODELS)
+    # The model that last answered goes first, the others stay as a fallback:
+    # GW10's 9:55 read lost six clubs to the first model's 503s with no second try.
+    pinned = _gemini_model[0]
+    models = [m for m in [pinned, *config.TEAM_NEWS_GEMINI_MODELS] if m]
+    models = list(dict.fromkeys(models))
     last = None
     for model in models:
         # Reading headlines needs little reasoning; long "thinking" only makes
@@ -202,8 +207,15 @@ def _call_gemini(prompt: str) -> str:
             if r.status_code == 400 and payload is think and "thinking" in r.text.lower():
                 payload = body                         # this model won't take the setting
                 continue
+            if r.status_code in GEMINI_BUSY and attempt < 2:
+                time.sleep(20 * (attempt + 1))
+                continue
             break
         if r is None:
+            continue
+        if r.status_code in GEMINI_BUSY:
+            last = f"{model}: {r.status_code}"
+            logger.info("Team news: %s is busy, trying the next", model)
             continue
         if r.status_code in (400, 403, 404):
             last = f"{model}: {r.status_code} {r.text[:160]}"
@@ -311,7 +323,7 @@ def parse(text: str, known_ids: set) -> list:
 def fetch(clubs: list, gameweek: int, deadline: str) -> dict:
     """clubs: [{"club", "fixture", "players": [{player_id, name, position}]}]."""
     known = {p["player_id"] for c in clubs for p in c["players"]}
-    items, errors = [], []
+    items, errors, failed = [], [], []
     for i in range(0, len(clubs), CLUBS_PER_CALL):
         chunk = clubs[i:i + CLUBS_PER_CALL]
         try:
@@ -329,10 +341,11 @@ def fetch(clubs: list, gameweek: int, deadline: str) -> dict:
             time.sleep(5)                                # stay inside the free per-minute limit
         except Exception as e:                       # one club group failing isn't fatal
             errors.append(f"{', '.join(c['club'] for c in chunk)}: {e}")
+            failed += [c["club"] for c in chunk]
             logger.warning("Team news for %s failed: %s", [c["club"] for c in chunk], e)
     return {"gameweek": gameweek, "fetched_at": _now().isoformat(), "model": model_name(),
             "prompt_version": PROMPT_VERSION,
-            "clubs": [c["club"] for c in clubs], "items": items, "errors": errors}
+            "clubs": [c["club"] for c in clubs], "items": items, "errors": errors, "failed_clubs": failed}
 
 
 def load_cached(gameweek: int) -> dict | None:
@@ -364,10 +377,20 @@ def get(clubs: list, gameweek: int, deadline: datetime, force: bool = False) -> 
         return cached
     logger.info("Reading team news for %d clubs...", len(clubs))
     news = fetch(clubs, gameweek, deadline.isoformat())
+    _keep_earlier_calls(news, cached)
     config.TEAM_NEWS_PATH.write_text(json.dumps(news, indent=1))
     _log_calls(news)
     _keep_calls(news)
     return news
+
+
+def _keep_earlier_calls(news: dict, cached: dict | None) -> None:
+    """A club whose read failed keeps its last calls. GW10's 9:55 read lost
+    Arsenal to a Gemini 503, which forgot that Konsa was doubtful and put his
+    projection back up. apply() still drops a call once its source is too old."""
+    failed = set(news.get("failed_clubs", []))
+    if cached and failed:
+        news["items"] += [i for i in cached.get("items", []) if i.get("club") in failed]
 
 
 def _keep_calls(news: dict) -> None:

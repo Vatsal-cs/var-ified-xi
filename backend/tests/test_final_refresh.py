@@ -75,5 +75,53 @@ class TheForcedRead(unittest.TestCase):
         self.assertFalse(self._get(MARK + timedelta(minutes=1), MARK + timedelta(minutes=30)))
 
 
+class WhenGeminiIsBusy(unittest.TestCase):
+    """GW10's 9:55 read: 503s lost six clubs and forgot that Konsa was doubtful."""
+
+    def setUp(self):
+        team_news._gemini_model[0] = None
+        self.addCleanup(lambda: team_news._gemini_model.__setitem__(0, None))
+
+    def _reply(self, status):
+        r = mock.Mock(status_code=status, text="")
+        r.json.return_value = {"candidates": [{"content": {"parts": [{"text": "ok"}]}}]}
+        r.raise_for_status.side_effect = None if status == 200 else RuntimeError(str(status))
+        return r
+
+    def _call(self, statuses):
+        with mock.patch.dict("os.environ", {"GEMINI_API_KEY": "x"}), \
+             mock.patch.object(config, "TEAM_NEWS_GEMINI_MODELS", ["a", "b"]), \
+             mock.patch.object(team_news.time, "sleep"), \
+             mock.patch.object(team_news.requests, "post",
+                               side_effect=[self._reply(s) for s in statuses]) as post:
+            return team_news._call_gemini("prompt"), post
+
+    def test_tries_again(self):
+        text, post = self._call([503, 200])
+        self.assertEqual(text, "ok")
+        self.assertEqual(post.call_count, 2)
+
+    def test_falls_back_to_the_next_model(self):
+        text, _ = self._call([503, 503, 503, 200])
+        self.assertEqual(text, "ok")
+        self.assertEqual(team_news._gemini_model[0], "b")
+
+    def test_says_so_if_every_model_is_busy(self):
+        with self.assertRaises(RuntimeError):
+            self._call([503] * 6)
+
+    def test_a_failed_club_keeps_its_last_calls(self):
+        konsa = {"name": "Konsa", "club": "Arsenal", "status": "doubtful"}
+        other = {"name": "Barnes", "club": "Newcastle", "status": "no_news"}
+        news = {"items": [], "failed_clubs": ["Arsenal"]}
+        team_news._keep_earlier_calls(news, {"items": [konsa, other]})
+        self.assertEqual(news["items"], [konsa])
+
+    def test_nothing_to_keep_if_the_read_worked(self):
+        news = {"items": [], "failed_clubs": []}
+        team_news._keep_earlier_calls(news, {"items": [{"club": "Arsenal"}]})
+        self.assertEqual(news["items"], [])
+
+
 if __name__ == "__main__":
     unittest.main()
