@@ -1,12 +1,12 @@
 {
-  "generated_at": "2026-11-06T12:54:17.618363+00:00",
+  "generated_at": "2026-11-06T16:01:33.218811+00:00",
   "gameweek": 10,
   "deadline": "2026-11-06T18:30:00Z",
   "horizon_gws": 6,
   "mode": "transfer_plan",
   "budget_used_m": 101.1,
   "budget_total_m": 100.0,
-  "predicted_total_points": 55.01,
+  "predicted_total_points": 57.31,
   "starting_xi": [
     {
       "player_id": 1,
@@ -197,10 +197,10 @@
       "position": "DEF",
       "team": "Arsenal",
       "now_cost_m": 4.8,
-      "predicted_points": 2.29,
-      "horizon_points": 13.59,
+      "predicted_points": 4.59,
+      "horizon_points": 15.89,
       "xp_by_gw": {
-        "10": 2.29,
+        "10": 4.59,
         "11": 3.91,
         "12": 2.86,
         "13": 3.76,
@@ -211,30 +211,30 @@
       "is_captain": false,
       "is_vice_captain": false,
       "dist": {
-        "mean": 2.03,
+        "mean": 4.12,
         "p10": 0,
-        "p90": 7,
-        "p_blank": 0.736,
-        "p_return": 0.189,
-        "p_haul": 0.047,
+        "p90": 9,
+        "p_blank": 0.466,
+        "p_return": 0.383,
+        "p_haul": 0.094,
         "pmf": [
-          0.6156,
-          0.0504,
-          0.0703,
+          0.2221,
+          0.1021,
+          0.1422,
+          0.0308,
+          0.0559,
+          0.0644,
+          0.16,
+          0.0384,
+          0.0498,
+          0.0401,
           0.0152,
-          0.0276,
-          0.0318,
-          0.0791,
-          0.019,
-          0.0246,
-          0.0198,
-          0.0075,
-          0.0182,
-          0.0104,
-          0.0038,
-          0.0032,
-          0.0032,
-          0.0003,
+          0.0367,
+          0.0211,
+          0.0076,
+          0.0065,
+          0.0065,
+          0.0006,
           0.0,
           0.0,
           0.0,
@@ -381,14 +381,14 @@
       "team": "Sunderland",
       "now_cost_m": 5.4,
       "predicted_points": 3.39,
-      "horizon_points": 14.84,
+      "horizon_points": 14.83,
       "xp_by_gw": {
         "10": 3.39,
         "11": 3.66,
-        "12": 3.98,
+        "12": 3.97,
         "13": 2.97,
         "14": 3.61,
-        "15": 3.95
+        "15": 3.94
       },
       "start_probability": 0.94,
       "is_captain": false,
@@ -401,19 +401,19 @@
         "p_return": 0.169,
         "p_haul": 0.063,
         "pmf": [
-          0.0406,
-          0.125,
+          0.0405,
+          0.1255,
           0.3721,
-          0.1616,
-          0.0706,
+          0.1608,
+          0.0708,
           0.0609,
-          0.0357,
+          0.0358,
           0.0179,
-          0.0236,
-          0.0296,
+          0.0235,
+          0.0297,
           0.0253,
-          0.0086,
-          0.0023,
+          0.0085,
+          0.0022,
           0.011,
           0.0043,
           0.0067,
@@ -1311,21 +1311,21 @@
           {
             "chip": "freehit",
             "gameweek": 10,
-            "value": 7.5,
+            "value": 5.2,
             "player": null,
             "firm": true,
             "now": true
           }
         ],
-        "total": 30.0,
+        "total": 27.7,
         "weeks": [
           {
             "gameweek": 10,
             "3xc": 6.7,
             "3xc_player": "Gabriel",
             "bboost": 5.1,
-            "freehit": 7.5,
-            "xi_points": 55.0,
+            "freehit": 5.2,
+            "xi_points": 57.3,
             "firm": true,
             "fixtures": {
               "doubles": 0,
@@ -1457,82 +1457,27 @@
   },
   "team_news": {
     "enabled": true,
-    "fetched_at": "2026-11-06T12:54:03.661524+00:00",
+    "fetched_at": "2026-11-06T16:01:20.868822+00:00",
     "model": "gemini-3.5-flash-lite",
     "items": [
-      {
-        "player_id": 31,
-        "name": "Ezri Konsa Ngoyo",
-        "club": "Arsenal",
-        "status": "doubtful",
-        "start_chance": 50,
-        "reason": "Mikel Arteta provides Ezri Konsa injury update as defender limps off and faces injury dilemma",
-        "source_url": "https://news.google.com/rss/articles/CBMiowFBVV95cUxOWXljNHJYR1JLZ1lpWF95TWp2dzY3RVFiYndZWWlUZk5RcjNpY1BNckMxQzRpZkRGYUxGaUtpanpaS3M0OXZZSk1HekVTNjIwQmFnMU9BeXB4WEVEZmMwUUsxVFFiV1hWN3B6ZVB0aFhUYUxEdmZ4WU16ZTNjNGo2TjlzSXlBSFYtT0ZQT2Q4UzhTS21SbWhKa291VTJqQWRFVFdJ?oc=5",
-        "source_date": "2026-11-05",
-        "source_title": "Mikel Arteta provides Ezri Konsa injury update as Arsenal defender limps off during Slavia Prague victory - Goal.com"
-      },
-      {
-        "player_id": 249,
-        "name": "Thierno Barry",
-        "club": "Everton",
-        "status": "expected_to_start",
-        "start_chance": 100,
-        "reason": "Predicted to lead the attack against Coventry",
-        "source_url": "https://news.google.com/rss/articles/CBMia0FVX3lxTFBBM21IUjV0RFBZZDlqVVNUNEJhMHZ2U0MydzE0SnJhS0V4ejNSdDJ1ZXFGNzYySDRBS3F5NUViTThSeThuSlpvZzYxbmRsZVFhT2lLWTl5aklHeTFVTHY2aC05dFZuRzhPN0FN?oc=5",
-        "source_date": "2026-11-06",
-        "source_title": "Everton vs Coventry predicted line-ups: Barry leads attack, Grealish absent - Dave.Sport"
-      },
-      {
-        "player_id": 109,
-        "name": "Bart Verbruggen",
-        "club": "Brighton",
-        "status": "no_news",
-        "start_chance": null,
-        "reason": "No relevant news found in headlines",
-        "source_url": null,
-        "source_date": null,
-        "source_title": null
-      },
-      {
-        "player_id": 1,
-        "name": "David Raya Mart\u00edn",
-        "club": "Arsenal",
-        "status": "no_news",
-        "start_chance": 100,
-        "reason": "No relevant news found in headlines",
-        "source_url": null,
-        "source_date": null,
-        "source_title": null
-      },
       {
         "player_id": 411,
         "name": "Erling Haaland",
         "club": "Man City",
-        "status": "no_news",
-        "start_chance": null,
-        "reason": "No relevant news found in the headlines",
-        "source_url": null,
-        "source_date": null,
-        "source_title": null
-      },
-      {
-        "player_id": 4,
-        "name": "Gabriel dos Santos Magalh\u00e3es",
-        "club": "Arsenal",
-        "status": "no_news",
+        "status": "expected_to_start",
         "start_chance": 100,
-        "reason": "No relevant news found in headlines",
-        "source_url": null,
-        "source_date": null,
-        "source_title": null
+        "reason": "Predicted to lead the line for Manchester City against Nottingham Forest.",
+        "source_url": "https://news.google.com/rss/articles/CBMi3wFBVV95cUxNN1hBckM0NWRnUEJMMG5xZDRtbXMwQzQ1RV8tbFI1ODRlRXYxZVB2emVGcTFxcmVMU292LS16ckRkalBwUkl3UzBRUEJOZ1Z2NjJMYjhTRlZiaXJselE0T0YwcEtIRzlHQ3dUUXBfQ2JwN1pzZW1kLXlFVm5Ta2hoUzFzNmNMU1RwaWpxZThaYTNlUmFRV2dCc285VUtlSG5LZ0lyX2c1aVR0LXUxZjQtaDROQ1RzVlhFSHM3akNRckZzLXNIeVlwMTRYc3RFaEFmdE1QRk92by1aNV9YMGJN?oc=5",
+        "source_date": "2026-11-06",
+        "source_title": "Man City Predicted Lineup vs. Nottingham Forest: Haaland Leads Line, Changes in Defense - LiveScore"
       },
       {
         "player_id": 544,
         "name": "Granit Xhaka",
         "club": "Sunderland",
         "status": "no_news",
-        "start_chance": null,
-        "reason": "No news in the headlines",
+        "start_chance": 100,
+        "reason": "No relevant news found in headlines",
         "source_url": null,
         "source_date": null,
         "source_title": null
@@ -1542,30 +1487,8 @@
         "name": "Harvey Barnes",
         "club": "Newcastle",
         "status": "no_news",
-        "start_chance": null,
-        "reason": "No relevant news found in the headlines",
-        "source_url": null,
-        "source_date": null,
-        "source_title": null
-      },
-      {
-        "player_id": 106,
-        "name": "Igor Thiago Nascimento Rodrigues",
-        "club": "Brentford",
-        "status": "no_news",
-        "start_chance": 100,
-        "reason": "No relevant news found in headlines",
-        "source_url": null,
-        "source_date": null,
-        "source_title": null
-      },
-      {
-        "player_id": 40,
-        "name": "Morgan Rogers",
-        "club": "Chelsea",
-        "status": "no_news",
-        "start_chance": null,
-        "reason": "No relevant news found in headlines",
+        "start_chance": 50,
+        "reason": "None",
         "source_url": null,
         "source_date": null,
         "source_title": null
@@ -1575,8 +1498,8 @@
         "name": "Murillo Costa dos Santos",
         "club": "Nott'm Forest",
         "status": "no_news",
-        "start_chance": null,
-        "reason": "No relevant news found in the headlines",
+        "start_chance": 50,
+        "reason": "None",
         "source_url": null,
         "source_date": null,
         "source_title": null
@@ -1586,41 +1509,19 @@
         "name": "Nordi Mukiele",
         "club": "Sunderland",
         "status": "no_news",
-        "start_chance": null,
-        "reason": "No news in the headlines",
-        "source_url": null,
-        "source_date": null,
-        "source_title": null
-      },
-      {
-        "player_id": 67,
-        "name": "Rayan Vitor Simpl\u00edcio Rocha",
-        "club": "Bournemouth",
-        "status": "no_news",
         "start_chance": 100,
-        "reason": "No relevant news found in headlines",
-        "source_url": null,
-        "source_date": null,
-        "source_title": null
-      },
-      {
-        "player_id": 8,
-        "name": "Riccardo Calafiori",
-        "club": "Arsenal",
-        "status": "no_news",
-        "start_chance": 100,
-        "reason": "No relevant news found in headlines",
-        "source_url": null,
-        "source_date": null,
-        "source_title": null
+        "reason": "Nordi Mukiele returns mentioned",
+        "source_url": "https://news.google.com/rss/articles/CBMi4AFBVV95cUxQaktWRW4tRlVUNU56UTJpV1BTb1lNX0d2RlV5VVVWcEJ2UUpZMzJsQVdqWTZJU0ZNckF4UnZwc2ZSWFBIRGdWYjVpMkFEQXhncU5EMm5zUVlnYklyZHJxRTRzVUJqLUpnOUJ2QWlGNE0zSnBQTXNkTUVZa3NpVkJ2c0hKQVk1bTMtb29pRjd3cF9uekNkVWctUXI2djByRDNfNG12YjVfUndDNzktU1BMMnp6cDA5bWFZX2NQUkRtc0RVdlJ6R3JPU0l0N3FJN1hqbjNHWkdvSXZkdjQ1a2dlUw?oc=5",
+        "source_date": "2026-11-06",
+        "source_title": "Sunderland predicted lineup vs. Chelsea: Seven changes as Nordi Mukiele returns - Sports Mole"
       },
       {
         "player_id": 447,
         "name": "Sven Botman",
         "club": "Newcastle",
         "status": "no_news",
-        "start_chance": null,
-        "reason": "No relevant news found in the headlines",
+        "start_chance": 50,
+        "reason": "None",
         "source_url": null,
         "source_date": null,
         "source_title": null
@@ -1630,22 +1531,15 @@
         "name": "S\u00e1vio Moreira de Oliveira",
         "club": "Spurs",
         "status": "no_news",
-        "start_chance": null,
-        "reason": "No news in the headlines",
+        "start_chance": 100,
+        "reason": "No relevant news found in headlines",
         "source_url": null,
         "source_date": null,
         "source_title": null
       }
     ],
-    "applied": [
-      {
-        "player_id": 31,
-        "status": "doubtful",
-        "chance": 50,
-        "fpl_chance": 75
-      }
-    ],
-    "errors": 0,
+    "applied": [],
+    "errors": 2,
     "record": {
       "gameweeks": [
         7,
@@ -1747,7 +1641,7 @@
     }
   },
   "other_matches": {
-    "from": "2026-11-06T12:54:17.570653",
+    "from": "2026-11-06T16:01:33.152872",
     "to": "2026-12-19T11:00:00",
     "clubs": [
       {
@@ -2729,7 +2623,7 @@
       "team": "Everton",
       "cost_m": 6.6,
       "next": 4.53,
-      "six_weeks": 16.49,
+      "six_weeks": 16.48,
       "start_probability": 0.91,
       "if_he_plays": 4.92,
       "why": {
@@ -2809,7 +2703,7 @@
       "team": "Chelsea",
       "cost_m": 6.6,
       "next": 3.82,
-      "six_weeks": 16.03,
+      "six_weeks": 16.05,
       "start_probability": 0.88,
       "if_he_plays": 4.21,
       "why": {
@@ -2823,23 +2717,23 @@
       }
     },
     {
-      "player_id": 426,
-      "name": "B.Fernandes",
-      "position": "MID",
-      "team": "Man Utd",
-      "cost_m": 11.7,
-      "next": 3.77,
-      "six_weeks": 15.72,
-      "start_probability": 0.7,
-      "if_he_plays": 5.22,
+      "player_id": 31,
+      "name": "Konsa",
+      "position": "DEF",
+      "team": "Arsenal",
+      "cost_m": 4.8,
+      "next": 4.59,
+      "six_weeks": 15.89,
+      "start_probability": 0.89,
+      "if_he_plays": 6.03,
       "why": {
-        "defending": -0.08,
-        "minutes and rotation": -0.16,
-        "other": 0.01,
-        "price and ownership": 1.25,
-        "recent form": 0.06,
-        "season form": 0.51,
-        "team and fixture": 0.03
+        "defending": 0.01,
+        "minutes and rotation": 0.05,
+        "other": 0.04,
+        "price and ownership": 0.06,
+        "recent form": 0.44,
+        "season form": 0.1,
+        "team and fixture": 1.75
       }
     },
     {
@@ -2856,10 +2750,30 @@
         "defending": 0.13,
         "minutes and rotation": 0.09,
         "other": 0.01,
-        "price and ownership": -0.04,
-        "recent form": -0.45,
+        "price and ownership": -0.03,
+        "recent form": -0.44,
         "season form": 0.62,
         "team and fixture": 0.63
+      }
+    },
+    {
+      "player_id": 426,
+      "name": "B.Fernandes",
+      "position": "MID",
+      "team": "Man Utd",
+      "cost_m": 11.7,
+      "next": 3.76,
+      "six_weeks": 15.7,
+      "start_probability": 0.7,
+      "if_he_plays": 5.21,
+      "why": {
+        "defending": -0.07,
+        "minutes and rotation": -0.16,
+        "other": 0.01,
+        "price and ownership": 1.23,
+        "recent form": 0.06,
+        "season form": 0.52,
+        "team and fixture": 0.03
       }
     },
     {
@@ -2963,26 +2877,6 @@
       }
     },
     {
-      "player_id": 542,
-      "name": "E.Le F\u00e9e",
-      "position": "MID",
-      "team": "Sunderland",
-      "cost_m": 5.7,
-      "next": 3.71,
-      "six_weeks": 15.31,
-      "start_probability": 0.89,
-      "if_he_plays": 4.08,
-      "why": {
-        "defending": 0.02,
-        "minutes and rotation": -0.04,
-        "other": 0.02,
-        "price and ownership": 0.17,
-        "recent form": -0.07,
-        "season form": 0.51,
-        "team and fixture": -0.11
-      }
-    },
-    {
       "player_id": 390,
       "name": "R\u00faben",
       "position": "DEF",
@@ -3000,6 +2894,26 @@
         "recent form": 0.06,
         "season form": 0.09,
         "team and fixture": 0.63
+      }
+    },
+    {
+      "player_id": 542,
+      "name": "E.Le F\u00e9e",
+      "position": "MID",
+      "team": "Sunderland",
+      "cost_m": 5.7,
+      "next": 3.69,
+      "six_weeks": 15.2,
+      "start_probability": 0.89,
+      "if_he_plays": 4.06,
+      "why": {
+        "defending": 0.02,
+        "minutes and rotation": -0.04,
+        "other": 0.02,
+        "price and ownership": 0.15,
+        "recent form": -0.07,
+        "season form": 0.51,
+        "team and fixture": -0.11
       }
     },
     {
@@ -3063,6 +2977,26 @@
       }
     },
     {
+      "player_id": 26,
+      "name": "Havertz",
+      "position": "FWD",
+      "team": "Arsenal",
+      "cost_m": 7.4,
+      "next": 4.26,
+      "six_weeks": 14.88,
+      "start_probability": 0.65,
+      "if_he_plays": 6.09,
+      "why": {
+        "defending": 0.0,
+        "minutes and rotation": -0.06,
+        "other": 0.05,
+        "price and ownership": 0.58,
+        "recent form": 0.12,
+        "season form": 0.42,
+        "team and fixture": 1.38
+      }
+    },
+    {
       "player_id": 268,
       "name": "King",
       "position": "MID",
@@ -3080,26 +3014,6 @@
         "recent form": 0.34,
         "season form": 0.38,
         "team and fixture": 0.11
-      }
-    },
-    {
-      "player_id": 26,
-      "name": "Havertz",
-      "position": "FWD",
-      "team": "Arsenal",
-      "cost_m": 7.4,
-      "next": 4.25,
-      "six_weeks": 14.85,
-      "start_probability": 0.64,
-      "if_he_plays": 6.09,
-      "why": {
-        "defending": 0.0,
-        "minutes and rotation": -0.06,
-        "other": 0.05,
-        "price and ownership": 0.58,
-        "recent form": 0.12,
-        "season form": 0.42,
-        "team and fixture": 1.38
       }
     },
     {
@@ -3129,9 +3043,9 @@
       "team": "Sunderland",
       "cost_m": 5.4,
       "next": 3.39,
-      "six_weeks": 14.84,
+      "six_weeks": 14.83,
       "start_probability": 0.94,
-      "if_he_plays": 3.59,
+      "if_he_plays": 3.58,
       "why": {
         "defending": 0.1,
         "minutes and rotation": -0.05,
@@ -3363,33 +3277,13 @@
       }
     },
     {
-      "player_id": 569,
-      "name": "Gonzalo",
-      "position": "FWD",
-      "team": "Fulham",
-      "cost_m": 5.9,
-      "next": 3.72,
-      "six_weeks": 14.36,
-      "start_probability": 0.78,
-      "if_he_plays": 4.45,
-      "why": {
-        "defending": -0.08,
-        "minutes and rotation": -0.03,
-        "other": 0.08,
-        "price and ownership": 0.18,
-        "recent form": 0.16,
-        "season form": 0.45,
-        "team and fixture": 0.11
-      }
-    },
-    {
       "player_id": 362,
       "name": "Jacquet",
       "position": "DEF",
       "team": "Liverpool",
       "cost_m": 5.1,
       "next": 3.65,
-      "six_weeks": 14.3,
+      "six_weeks": 14.32,
       "start_probability": 0.88,
       "if_he_plays": 4.1,
       "why": {
@@ -3403,13 +3297,33 @@
       }
     },
     {
+      "player_id": 569,
+      "name": "Gonzalo",
+      "position": "FWD",
+      "team": "Fulham",
+      "cost_m": 5.9,
+      "next": 3.71,
+      "six_weeks": 14.29,
+      "start_probability": 0.78,
+      "if_he_plays": 4.43,
+      "why": {
+        "defending": -0.08,
+        "minutes and rotation": -0.03,
+        "other": 0.08,
+        "price and ownership": 0.16,
+        "recent form": 0.16,
+        "season form": 0.45,
+        "team and fixture": 0.11
+      }
+    },
+    {
       "player_id": 418,
       "name": "Maguire",
       "position": "DEF",
       "team": "Man Utd",
       "cost_m": 4.6,
-      "next": 3.46,
-      "six_weeks": 14.25,
+      "next": 3.45,
+      "six_weeks": 14.24,
       "start_probability": 0.89,
       "if_he_plays": 3.83,
       "why": {
@@ -3780,26 +3694,6 @@
         "recent form": 0.06,
         "season form": 0.01,
         "team and fixture": 0.2
-      }
-    },
-    {
-      "player_id": 31,
-      "name": "Konsa",
-      "position": "DEF",
-      "team": "Arsenal",
-      "cost_m": 4.8,
-      "next": 2.29,
-      "six_weeks": 13.59,
-      "start_probability": 0.89,
-      "if_he_plays": 6.03,
-      "why": {
-        "defending": 0.01,
-        "minutes and rotation": 0.05,
-        "other": 0.04,
-        "price and ownership": 0.06,
-        "recent form": 0.44,
-        "season form": 0.1,
-        "team and fixture": 1.75
       }
     },
     {
@@ -4283,6 +4177,26 @@
       }
     },
     {
+      "player_id": 16,
+      "name": "Madueke",
+      "position": "MID",
+      "team": "Arsenal",
+      "cost_m": 6.2,
+      "next": 3.54,
+      "six_weeks": 12.45,
+      "start_probability": 0.57,
+      "if_he_plays": 5.48,
+      "why": {
+        "defending": -0.09,
+        "minutes and rotation": -0.03,
+        "other": -0.0,
+        "price and ownership": -0.1,
+        "recent form": 0.36,
+        "season form": 0.25,
+        "team and fixture": 1.5
+      }
+    },
+    {
       "player_id": 393,
       "name": "Khusanov",
       "position": "DEF",
@@ -4309,7 +4223,7 @@
       "team": "Nott'm Forest",
       "cost_m": 5.4,
       "next": 2.67,
-      "six_weeks": 12.43,
+      "six_weeks": 12.42,
       "start_probability": 0.66,
       "if_he_plays": 3.46,
       "why": {
@@ -4319,27 +4233,7 @@
         "price and ownership": -0.07,
         "recent form": 0.13,
         "season form": 0.34,
-        "team and fixture": -0.63
-      }
-    },
-    {
-      "player_id": 16,
-      "name": "Madueke",
-      "position": "MID",
-      "team": "Arsenal",
-      "cost_m": 6.2,
-      "next": 3.52,
-      "six_weeks": 12.41,
-      "start_probability": 0.57,
-      "if_he_plays": 5.47,
-      "why": {
-        "defending": -0.09,
-        "minutes and rotation": -0.02,
-        "other": -0.0,
-        "price and ownership": -0.11,
-        "recent form": 0.36,
-        "season form": 0.25,
-        "team and fixture": 1.5
+        "team and fixture": -0.62
       }
     },
     {
@@ -4703,6 +4597,26 @@
       }
     },
     {
+      "player_id": 53,
+      "name": "Manzambi",
+      "position": "MID",
+      "team": "Aston Villa",
+      "cost_m": 6.2,
+      "next": 2.22,
+      "six_weeks": 11.41,
+      "start_probability": 0.61,
+      "if_he_plays": 3.68,
+      "why": {
+        "defending": 0.03,
+        "minutes and rotation": -0.16,
+        "other": 0.02,
+        "price and ownership": 0.2,
+        "recent form": 0.17,
+        "season form": 0.34,
+        "team and fixture": -0.5
+      }
+    },
+    {
       "player_id": 244,
       "name": "Armstrong",
       "position": "MID",
@@ -4760,26 +4674,6 @@
         "recent form": -0.31,
         "season form": -0.3,
         "team and fixture": 0.15
-      }
-    },
-    {
-      "player_id": 53,
-      "name": "Manzambi",
-      "position": "MID",
-      "team": "Aston Villa",
-      "cost_m": 6.2,
-      "next": 2.2,
-      "six_weeks": 11.32,
-      "start_probability": 0.61,
-      "if_he_plays": 3.66,
-      "why": {
-        "defending": 0.03,
-        "minutes and rotation": -0.16,
-        "other": 0.02,
-        "price and ownership": 0.18,
-        "recent form": 0.17,
-        "season form": 0.34,
-        "team and fixture": -0.5
       }
     },
     {
@@ -5089,7 +4983,7 @@
       "team": "Brighton",
       "cost_m": 4.5,
       "next": 2.57,
-      "six_weeks": 10.74,
+      "six_weeks": 10.73,
       "start_probability": 0.67,
       "if_he_plays": 3.63,
       "why": {
@@ -5098,7 +4992,7 @@
         "other": -0.02,
         "price and ownership": -0.17,
         "recent form": -0.17,
-        "season form": 0.1,
+        "season form": 0.09,
         "team and fixture": 0.28
       }
     },
@@ -5120,26 +5014,6 @@
         "recent form": 0.4,
         "season form": 0.21,
         "team and fixture": -0.31
-      }
-    },
-    {
-      "player_id": 159,
-      "name": "Caicedo",
-      "position": "MID",
-      "team": "Chelsea",
-      "cost_m": 5.3,
-      "next": 2.55,
-      "six_weeks": 10.65,
-      "start_probability": 0.75,
-      "if_he_plays": 3.71,
-      "why": {
-        "defending": 0.15,
-        "minutes and rotation": -0.03,
-        "other": 0.01,
-        "price and ownership": -0.05,
-        "recent form": -0.12,
-        "season form": 0.05,
-        "team and fixture": 0.12
       }
     },
     {
@@ -5340,6 +5214,26 @@
         "recent form": 0.05,
         "season form": -0.0,
         "team and fixture": -1.29
+      }
+    },
+    {
+      "player_id": 159,
+      "name": "Caicedo",
+      "position": "MID",
+      "team": "Chelsea",
+      "cost_m": 5.3,
+      "next": 1.91,
+      "six_weeks": 10.01,
+      "start_probability": 0.75,
+      "if_he_plays": 3.71,
+      "why": {
+        "defending": 0.15,
+        "minutes and rotation": -0.03,
+        "other": 0.01,
+        "price and ownership": -0.05,
+        "recent form": -0.12,
+        "season form": 0.05,
+        "team and fixture": 0.12
       }
     },
     {
@@ -5563,26 +5457,6 @@
       }
     },
     {
-      "player_id": 399,
-      "name": "Cherki",
-      "position": "MID",
-      "team": "Man City",
-      "cost_m": 7.9,
-      "next": 2.38,
-      "six_weeks": 9.58,
-      "start_probability": 0.35,
-      "if_he_plays": 5.42,
-      "why": {
-        "defending": 0.07,
-        "minutes and rotation": 0.08,
-        "other": 0.01,
-        "price and ownership": 1.06,
-        "recent form": -0.06,
-        "season form": 0.21,
-        "team and fixture": 0.46
-      }
-    },
-    {
       "player_id": 7,
       "name": "Lewis-Skelly",
       "position": "MID",
@@ -5600,6 +5474,26 @@
         "recent form": 0.03,
         "season form": 0.17,
         "team and fixture": 1.45
+      }
+    },
+    {
+      "player_id": 399,
+      "name": "Cherki",
+      "position": "MID",
+      "team": "Man City",
+      "cost_m": 7.9,
+      "next": 2.36,
+      "six_weeks": 9.51,
+      "start_probability": 0.34,
+      "if_he_plays": 5.42,
+      "why": {
+        "defending": 0.07,
+        "minutes and rotation": 0.08,
+        "other": 0.01,
+        "price and ownership": 1.06,
+        "recent form": -0.06,
+        "season form": 0.21,
+        "team and fixture": 0.46
       }
     },
     {
@@ -5898,7 +5792,7 @@
         "other": 0.01,
         "price and ownership": -0.07,
         "recent form": 0.0,
-        "season form": 0.12,
+        "season form": 0.13,
         "team and fixture": 0.09
       }
     },
@@ -5923,26 +5817,6 @@
       }
     },
     {
-      "player_id": 10,
-      "name": "White",
-      "position": "DEF",
-      "team": "Arsenal",
-      "cost_m": 5.4,
-      "next": 2.42,
-      "six_weeks": 8.71,
-      "start_probability": 0.52,
-      "if_he_plays": 5.23,
-      "why": {
-        "defending": 0.07,
-        "minutes and rotation": -0.03,
-        "other": 0.03,
-        "price and ownership": 0.05,
-        "recent form": -0.12,
-        "season form": 0.12,
-        "team and fixture": 1.53
-      }
-    },
-    {
       "player_id": 36,
       "name": "Maatsen",
       "position": "DEF",
@@ -5960,6 +5834,26 @@
         "recent form": 0.07,
         "season form": 0.04,
         "team and fixture": -0.51
+      }
+    },
+    {
+      "player_id": 10,
+      "name": "White",
+      "position": "DEF",
+      "team": "Arsenal",
+      "cost_m": 5.4,
+      "next": 2.42,
+      "six_weeks": 8.7,
+      "start_probability": 0.52,
+      "if_he_plays": 5.22,
+      "why": {
+        "defending": 0.07,
+        "minutes and rotation": -0.03,
+        "other": 0.03,
+        "price and ownership": 0.05,
+        "recent form": -0.12,
+        "season form": 0.12,
+        "team and fixture": 1.53
       }
     },
     {
@@ -6083,26 +5977,6 @@
       }
     },
     {
-      "player_id": 593,
-      "name": "Dedi\u0107",
-      "position": "DEF",
-      "team": "Newcastle",
-      "cost_m": 4.5,
-      "next": 2.01,
-      "six_weeks": 8.27,
-      "start_probability": 0.71,
-      "if_he_plays": 3.11,
-      "why": {
-        "defending": -0.18,
-        "minutes and rotation": -0.07,
-        "other": -0.02,
-        "price and ownership": -0.15,
-        "recent form": -0.04,
-        "season form": 0.13,
-        "team and fixture": -0.15
-      }
-    },
-    {
       "player_id": 560,
       "name": "Penders",
       "position": "GK",
@@ -6180,6 +6054,26 @@
         "recent form": 0.0,
         "season form": 0.03,
         "team and fixture": -0.58
+      }
+    },
+    {
+      "player_id": 593,
+      "name": "Dedi\u0107",
+      "position": "DEF",
+      "team": "Newcastle",
+      "cost_m": 4.5,
+      "next": 2.0,
+      "six_weeks": 8.25,
+      "start_probability": 0.71,
+      "if_he_plays": 3.11,
+      "why": {
+        "defending": -0.18,
+        "minutes and rotation": -0.07,
+        "other": -0.02,
+        "price and ownership": -0.15,
+        "recent form": -0.04,
+        "season form": 0.13,
+        "team and fixture": -0.15
       }
     },
     {
@@ -7463,26 +7357,6 @@
       }
     },
     {
-      "player_id": 131,
-      "name": "Baleba",
-      "position": "MID",
-      "team": "Man Utd",
-      "cost_m": 4.9,
-      "next": 0.77,
-      "six_weeks": 5.53,
-      "start_probability": 0.34,
-      "if_he_plays": 3.6,
-      "why": {
-        "defending": 0.12,
-        "minutes and rotation": -0.02,
-        "other": 0.01,
-        "price and ownership": -0.25,
-        "recent form": -0.14,
-        "season form": 0.13,
-        "team and fixture": 0.18
-      }
-    },
-    {
       "player_id": 490,
       "name": "Wood",
       "position": "FWD",
@@ -7500,6 +7374,26 @@
         "recent form": -0.04,
         "season form": -0.13,
         "team and fixture": -0.58
+      }
+    },
+    {
+      "player_id": 81,
+      "name": "Rodr\u00edguez",
+      "position": "FWD",
+      "team": "Bournemouth",
+      "cost_m": 6.0,
+      "next": 1.34,
+      "six_weeks": 5.46,
+      "start_probability": 0.1,
+      "if_he_plays": 4.03,
+      "why": {
+        "defending": 0.04,
+        "minutes and rotation": 0.38,
+        "other": 0.07,
+        "price and ownership": -0.07,
+        "recent form": -0.13,
+        "season form": -0.27,
+        "team and fixture": 0.43
       }
     },
     {
@@ -7540,26 +7434,6 @@
         "recent form": -0.19,
         "season form": 0.12,
         "team and fixture": -0.58
-      }
-    },
-    {
-      "player_id": 81,
-      "name": "Rodr\u00edguez",
-      "position": "FWD",
-      "team": "Bournemouth",
-      "cost_m": 6.0,
-      "next": 1.33,
-      "six_weeks": 5.41,
-      "start_probability": 0.1,
-      "if_he_plays": 4.02,
-      "why": {
-        "defending": 0.04,
-        "minutes and rotation": 0.38,
-        "other": 0.07,
-        "price and ownership": -0.08,
-        "recent form": -0.13,
-        "season form": -0.27,
-        "team and fixture": 0.43
       }
     },
     {
@@ -7669,14 +7543,14 @@
       "team": "Chelsea",
       "cost_m": 5.8,
       "next": 1.25,
-      "six_weeks": 5.22,
+      "six_weeks": 5.21,
       "start_probability": 0.08,
-      "if_he_plays": 3.95,
+      "if_he_plays": 3.91,
       "why": {
         "defending": 0.02,
         "minutes and rotation": 0.34,
         "other": 0.08,
-        "price and ownership": 0.13,
+        "price and ownership": 0.1,
         "recent form": -0.09,
         "season form": -0.15,
         "team and fixture": 0.03
@@ -8843,6 +8717,26 @@
       }
     },
     {
+      "player_id": 611,
+      "name": "Wan-Bissaka",
+      "position": "DEF",
+      "team": "Aston Villa",
+      "cost_m": 4.5,
+      "next": 0.36,
+      "six_weeks": 3.4,
+      "start_probability": 0.25,
+      "if_he_plays": 2.7,
+      "why": {
+        "defending": 0.01,
+        "minutes and rotation": -0.0,
+        "other": -0.02,
+        "price and ownership": -0.29,
+        "recent form": -0.25,
+        "season form": 0.13,
+        "team and fixture": -0.47
+      }
+    },
+    {
       "player_id": 364,
       "name": "Tsimikas",
       "position": "DEF",
@@ -8963,6 +8857,26 @@
       }
     },
     {
+      "player_id": 147,
+      "name": "Tosin",
+      "position": "DEF",
+      "team": "Spurs",
+      "cost_m": 4.3,
+      "next": 0.71,
+      "six_weeks": 3.22,
+      "start_probability": 0.24,
+      "if_he_plays": 2.71,
+      "why": {
+        "defending": 0.0,
+        "minutes and rotation": 0.17,
+        "other": -0.02,
+        "price and ownership": -0.34,
+        "recent form": -0.23,
+        "season form": -0.17,
+        "team and fixture": -0.29
+      }
+    },
+    {
       "player_id": 164,
       "name": "Quenda",
       "position": "MID",
@@ -9020,6 +8934,26 @@
         "recent form": -0.23,
         "season form": -0.13,
         "team and fixture": -0.37
+      }
+    },
+    {
+      "player_id": 28,
+      "name": "Martinez",
+      "position": "GK",
+      "team": "Chelsea",
+      "cost_m": 4.9,
+      "next": 0.63,
+      "six_weeks": 3.16,
+      "start_probability": 0.27,
+      "if_he_plays": 3.56,
+      "why": {
+        "defending": 0.19,
+        "minutes and rotation": 0.01,
+        "other": 0.05,
+        "price and ownership": -0.1,
+        "recent form": -0.1,
+        "season form": -0.23,
+        "team and fixture": 0.16
       }
     },
     {
@@ -9423,26 +9357,6 @@
       }
     },
     {
-      "player_id": 429,
-      "name": "Rashford",
-      "position": "MID",
-      "team": "Man Utd",
-      "cost_m": 6.8,
-      "next": 0.41,
-      "six_weeks": 2.13,
-      "start_probability": 0.08,
-      "if_he_plays": 4.96,
-      "why": {
-        "defending": 0.05,
-        "minutes and rotation": 0.78,
-        "other": -0.01,
-        "price and ownership": 0.29,
-        "recent form": -0.05,
-        "season form": 0.22,
-        "team and fixture": 0.09
-      }
-    },
-    {
       "player_id": 601,
       "name": "Williams-Barnett",
       "position": "MID",
@@ -9460,6 +9374,26 @@
         "recent form": -0.23,
         "season form": -0.32,
         "team and fixture": -0.31
+      }
+    },
+    {
+      "player_id": 69,
+      "name": "Scott",
+      "position": "MID",
+      "team": "Bournemouth",
+      "cost_m": 5.9,
+      "next": 0.42,
+      "six_weeks": 2.01,
+      "start_probability": 0.09,
+      "if_he_plays": 5.68,
+      "why": {
+        "defending": 0.16,
+        "minutes and rotation": 0.82,
+        "other": -0.0,
+        "price and ownership": 0.14,
+        "recent form": 0.1,
+        "season form": 0.3,
+        "team and fixture": 0.57
       }
     },
     {
@@ -9723,6 +9657,26 @@
       }
     },
     {
+      "player_id": 415,
+      "name": "Dorgu",
+      "position": "MID",
+      "team": "Man Utd",
+      "cost_m": 5.7,
+      "next": 0.29,
+      "six_weeks": 1.52,
+      "start_probability": 0.04,
+      "if_he_plays": 4.49,
+      "why": {
+        "defending": 0.04,
+        "minutes and rotation": 0.63,
+        "other": -0.01,
+        "price and ownership": -0.02,
+        "recent form": 0.01,
+        "season form": 0.14,
+        "team and fixture": 0.11
+      }
+    },
+    {
       "player_id": 478,
       "name": "Netz",
       "position": "DEF",
@@ -9971,12 +9925,12 @@
       "next": 0.0,
       "six_weeks": 1.02,
       "start_probability": 0.84,
-      "if_he_plays": 2.92,
+      "if_he_plays": 2.9,
       "why": {
-        "defending": 0.03,
+        "defending": 0.04,
         "minutes and rotation": -0.03,
         "other": -0.02,
-        "price and ownership": -0.14,
+        "price and ownership": -0.16,
         "recent form": 0.04,
         "season form": 0.02,
         "team and fixture": -0.57
@@ -10032,7 +9986,7 @@
         "hits": 0,
         "hit_cost": 0,
         "bank_m": 0.2,
-        "predicted_points": 55.01,
+        "predicted_points": 57.31,
         "captain_id": 4
       },
       {
@@ -10092,7 +10046,7 @@
         "hits": 0,
         "hit_cost": 0,
         "bank_m": 1.5,
-        "predicted_points": 50.84,
+        "predicted_points": 50.83,
         "captain_id": 334
       },
       {

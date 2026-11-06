@@ -1,6 +1,6 @@
 {
  "gameweek": 10,
- "fetched_at": "2026-11-06T12:54:03.661524+00:00",
+ "fetched_at": "2026-11-06T16:01:20.868822+00:00",
  "model": "gemini-3.5-flash-lite",
  "prompt_version": 3,
  "clubs": [
@@ -18,122 +18,23 @@
  ],
  "items": [
   {
-   "player_id": 1,
-   "name": "David Raya Mart\u00edn",
-   "club": "Arsenal",
-   "status": "no_news",
-   "start_chance": 100,
-   "reason": "No relevant news found in headlines",
-   "source_url": null,
-   "source_date": null,
-   "source_title": null
-  },
-  {
-   "player_id": 4,
-   "name": "Gabriel dos Santos Magalh\u00e3es",
-   "club": "Arsenal",
-   "status": "no_news",
-   "start_chance": 100,
-   "reason": "No relevant news found in headlines",
-   "source_url": null,
-   "source_date": null,
-   "source_title": null
-  },
-  {
-   "player_id": 8,
-   "name": "Riccardo Calafiori",
-   "club": "Arsenal",
-   "status": "no_news",
-   "start_chance": 100,
-   "reason": "No relevant news found in headlines",
-   "source_url": null,
-   "source_date": null,
-   "source_title": null
-  },
-  {
-   "player_id": 31,
-   "name": "Ezri Konsa Ngoyo",
-   "club": "Arsenal",
-   "status": "doubtful",
-   "start_chance": 50,
-   "reason": "Mikel Arteta provides Ezri Konsa injury update as defender limps off and faces injury dilemma",
-   "source_url": "https://news.google.com/rss/articles/CBMiowFBVV95cUxOWXljNHJYR1JLZ1lpWF95TWp2dzY3RVFiYndZWWlUZk5RcjNpY1BNckMxQzRpZkRGYUxGaUtpanpaS3M0OXZZSk1HekVTNjIwQmFnMU9BeXB4WEVEZmMwUUsxVFFiV1hWN3B6ZVB0aFhUYUxEdmZ4WU16ZTNjNGo2TjlzSXlBSFYtT0ZQT2Q4UzhTS21SbWhKa291VTJqQWRFVFdJ?oc=5",
-   "source_date": "2026-11-05",
-   "source_title": "Mikel Arteta provides Ezri Konsa injury update as Arsenal defender limps off during Slavia Prague victory - Goal.com"
-  },
-  {
-   "player_id": 67,
-   "name": "Rayan Vitor Simpl\u00edcio Rocha",
-   "club": "Bournemouth",
-   "status": "no_news",
-   "start_chance": 100,
-   "reason": "No relevant news found in headlines",
-   "source_url": null,
-   "source_date": null,
-   "source_title": null
-  },
-  {
-   "player_id": 106,
-   "name": "Igor Thiago Nascimento Rodrigues",
-   "club": "Brentford",
-   "status": "no_news",
-   "start_chance": 100,
-   "reason": "No relevant news found in headlines",
-   "source_url": null,
-   "source_date": null,
-   "source_title": null
-  },
-  {
-   "player_id": 109,
-   "name": "Bart Verbruggen",
-   "club": "Brighton",
-   "status": "no_news",
-   "start_chance": null,
-   "reason": "No relevant news found in headlines",
-   "source_url": null,
-   "source_date": null,
-   "source_title": null
-  },
-  {
-   "player_id": 40,
-   "name": "Morgan Rogers",
-   "club": "Chelsea",
-   "status": "no_news",
-   "start_chance": null,
-   "reason": "No relevant news found in headlines",
-   "source_url": null,
-   "source_date": null,
-   "source_title": null
-  },
-  {
-   "player_id": 249,
-   "name": "Thierno Barry",
-   "club": "Everton",
-   "status": "expected_to_start",
-   "start_chance": 100,
-   "reason": "Predicted to lead the attack against Coventry",
-   "source_url": "https://news.google.com/rss/articles/CBMia0FVX3lxTFBBM21IUjV0RFBZZDlqVVNUNEJhMHZ2U0MydzE0SnJhS0V4ejNSdDJ1ZXFGNzYySDRBS3F5NUViTThSeThuSlpvZzYxbmRsZVFhT2lLWTl5aklHeTFVTHY2aC05dFZuRzhPN0FN?oc=5",
-   "source_date": "2026-11-06",
-   "source_title": "Everton vs Coventry predicted line-ups: Barry leads attack, Grealish absent - Dave.Sport"
-  },
-  {
    "player_id": 411,
    "name": "Erling Haaland",
    "club": "Man City",
-   "status": "no_news",
-   "start_chance": null,
-   "reason": "No relevant news found in the headlines",
-   "source_url": null,
-   "source_date": null,
-   "source_title": null
+   "status": "expected_to_start",
+   "start_chance": 100,
+   "reason": "Predicted to lead the line for Manchester City against Nottingham Forest.",
+   "source_url": "https://news.google.com/rss/articles/CBMi3wFBVV95cUxNN1hBckM0NWRnUEJMMG5xZDRtbXMwQzQ1RV8tbFI1ODRlRXYxZVB2emVGcTFxcmVMU292LS16ckRkalBwUkl3UzBRUEJOZ1Z2NjJMYjhTRlZiaXJselE0T0YwcEtIRzlHQ3dUUXBfQ2JwN1pzZW1kLXlFVm5Ta2hoUzFzNmNMU1RwaWpxZThaYTNlUmFRV2dCc285VUtlSG5LZ0lyX2c1aVR0LXUxZjQtaDROQ1RzVlhFSHM3akNRckZzLXNIeVlwMTRYc3RFaEFmdE1QRk92by1aNV9YMGJN?oc=5",
+   "source_date": "2026-11-06",
+   "source_title": "Man City Predicted Lineup vs. Nottingham Forest: Haaland Leads Line, Changes in Defense - LiveScore"
   },
   {
    "player_id": 453,
    "name": "Harvey Barnes",
    "club": "Newcastle",
    "status": "no_news",
-   "start_chance": null,
-   "reason": "No relevant news found in the headlines",
+   "start_chance": 50,
+   "reason": "None",
    "source_url": null,
    "source_date": null,
    "source_title": null
@@ -143,8 +44,8 @@
    "name": "Sven Botman",
    "club": "Newcastle",
    "status": "no_news",
-   "start_chance": null,
-   "reason": "No relevant news found in the headlines",
+   "start_chance": 50,
+   "reason": "None",
    "source_url": null,
    "source_date": null,
    "source_title": null
@@ -154,8 +55,8 @@
    "name": "Murillo Costa dos Santos",
    "club": "Nott'm Forest",
    "status": "no_news",
-   "start_chance": null,
-   "reason": "No relevant news found in the headlines",
+   "start_chance": 50,
+   "reason": "None",
    "source_url": null,
    "source_date": null,
    "source_title": null
@@ -165,8 +66,8 @@
    "name": "S\u00e1vio Moreira de Oliveira",
    "club": "Spurs",
    "status": "no_news",
-   "start_chance": null,
-   "reason": "No news in the headlines",
+   "start_chance": 100,
+   "reason": "No relevant news found in headlines",
    "source_url": null,
    "source_date": null,
    "source_title": null
@@ -176,8 +77,8 @@
    "name": "Granit Xhaka",
    "club": "Sunderland",
    "status": "no_news",
-   "start_chance": null,
-   "reason": "No news in the headlines",
+   "start_chance": 100,
+   "reason": "No relevant news found in headlines",
    "source_url": null,
    "source_date": null,
    "source_title": null
@@ -187,12 +88,15 @@
    "name": "Nordi Mukiele",
    "club": "Sunderland",
    "status": "no_news",
-   "start_chance": null,
-   "reason": "No news in the headlines",
-   "source_url": null,
-   "source_date": null,
-   "source_title": null
+   "start_chance": 100,
+   "reason": "Nordi Mukiele returns mentioned",
+   "source_url": "https://news.google.com/rss/articles/CBMi4AFBVV95cUxQaktWRW4tRlVUNU56UTJpV1BTb1lNX0d2RlV5VVVWcEJ2UUpZMzJsQVdqWTZJU0ZNckF4UnZwc2ZSWFBIRGdWYjVpMkFEQXhncU5EMm5zUVlnYklyZHJxRTRzVUJqLUpnOUJ2QWlGNE0zSnBQTXNkTUVZa3NpVkJ2c0hKQVk1bTMtb29pRjd3cF9uekNkVWctUXI2djByRDNfNG12YjVfUndDNzktU1BMMnp6cDA5bWFZX2NQUkRtc0RVdlJ6R3JPU0l0N3FJN1hqbjNHWkdvSXZkdjQ1a2dlUw?oc=5",
+   "source_date": "2026-11-06",
+   "source_title": "Sunderland predicted lineup vs. Chelsea: Seven changes as Nordi Mukiele returns - Sports Mole"
   }
  ],
- "errors": []
+ "errors": [
+  "Arsenal, Bournemouth, Brentford: 503 Server Error: Service Unavailable for url: https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent",
+  "Brighton, Chelsea, Everton: 503 Server Error: Service Unavailable for url: https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent"
+ ]
 }
