@@ -214,6 +214,108 @@ class OncePerGameweek(unittest.TestCase):
         self.assertEqual(calls, [])
 
 
+class TheSecondReminder(unittest.TestCase):
+    """After the last news read, about two hours out, a second email says what changed."""
+    MARK = DEADLINE - timedelta(hours=2)
+    LATE = MARK + timedelta(minutes=10)
+
+    def _first(self, plan=None):
+        return dr.message(plan or _plan(), 10, DEADLINE, NOW)
+
+    def test_due_only_once_the_last_read_is_in(self):
+        self.assertTrue(dr.is_final(DEADLINE, self.LATE, self.MARK + timedelta(minutes=5)))
+        self.assertFalse(dr.is_final(DEADLINE, self.LATE, self.MARK - timedelta(minutes=5)))
+        self.assertFalse(dr.is_final(DEADLINE, self.LATE, None))
+        self.assertFalse(dr.is_final(DEADLINE, self.MARK - timedelta(minutes=5), self.MARK - timedelta(minutes=9)))
+
+    def _final(self, plan, earlier=None):
+        return dr.message(plan, 10, DEADLINE, self.LATE, "owner", final=True,
+                          earlier=self._first() if earlier is None else earlier)
+
+    def test_says_when_nothing_changed(self):
+        first = self._final(_plan()).splitlines()[0]
+        self.assertEqual(first, "@owner GW10 final plan, deadline in 1h 50m: nothing changed since your "
+                                "last reminder. Calafiori out, Gabriel in. Gabriel captain.")
+
+    def test_says_what_changed(self):
+        first = self._final(_plan(captain_id=411, vice_captain_id=4)).splitlines()[0]
+        self.assertIn("changed since your last reminder: captain.", first)
+        self.assertIn("Haaland captain.", first)
+
+    def test_warns_a_new_transfer_costs_a_hit(self):
+        plan = _plan()
+        _week(plan).update(transfers_out=[{"name": "Murillo"}], transfers_in=[{"name": "Hill"}])
+        text = self._final(plan)
+        self.assertIn("changed since your last reminder: transfers", text.splitlines()[0])
+        self.assertIn("another one costs a −4", text)
+
+    def test_the_same_xi_in_another_order_is_no_change(self):
+        plan = _plan()
+        plan["starting_xi"] = [plan["starting_xi"][i] for i in (0, 2, 1, 3)]
+        self.assertIn("nothing changed", self._final(plan).splitlines()[0])
+
+    def test_a_new_bench_order_is_a_change(self):
+        plan = _plan()
+        plan["bench"] = plan["bench"][::-1]
+        self.assertIn("changed since your last reminder: bench order", self._final(plan).splitlines()[0])
+
+    def test_a_free_hits_rated_value_moving_is_no_change(self):
+        chip = lambda v: {"scenarios": [{"plan": [{"chip": "freehit", "now": True, "value": v, "player": None}]}]}
+        earlier = self._first(_plan(chip_plan=chip(7.5)))
+        self.assertIn("nothing changed", self._final(_plan(chip_plan=chip(7.4)), earlier).splitlines()[0])
+
+    def test_without_a_first_reminder_it_just_gives_the_plan(self):
+        text = dr.message(_plan(), 10, DEADLINE, self.LATE, "owner", final=True)
+        self.assertEqual(text.splitlines()[0], "@owner GW10 final plan, deadline in 1h 50m. "
+                                               "Calafiori out, Gabriel in. Gabriel captain.")
+
+    def test_markers_do_not_match_each_other(self):
+        self.assertNotIn(dr._marker(10), dr._marker(10, final=True))
+        self.assertNotIn(dr._marker(1), dr._marker(10))
+
+    def _run(self, comments, read_at):
+        posts = []
+
+        def github(method, path, **kwargs):
+            if method == "POST":
+                posts.append(kwargs["json"]["body"])
+                return {"number": 7}
+            return [{"number": 7, "title": dr.REMINDER_ISSUE_TITLE}] if path == "issues" else comments
+
+        real = dr.datetime
+        clock = mock.Mock(wraps=real)
+        clock.now.return_value = self.LATE
+        with tempfile.TemporaryDirectory() as d:
+            path = Path(d) / "optimized_team.json"
+            path.write_text(json.dumps(_plan()))
+            with mock.patch.object(dr, "FRONTEND_JSON_PATH", path), \
+                 mock.patch.object(dr, "datetime", clock), \
+                 mock.patch.object(dr, "next_deadline", return_value=(10, DEADLINE)), \
+                 mock.patch.object(dr, "last_read", return_value=read_at), \
+                 mock.patch.object(dr, "_github", github), \
+                 mock.patch.dict(os.environ, {"TEST": ""}):
+                dr.main([])
+        return posts
+
+    def test_sends_after_the_first(self):
+        posts = self._run([{"body": self._first()}], self.MARK + timedelta(minutes=5))
+        self.assertEqual(len(posts), 1)
+        self.assertIn("final plan", posts[0])
+        self.assertIn(dr._marker(10, final=True), posts[0])
+
+    def test_only_once(self):
+        posts = self._run([{"body": self._first()}, {"body": dr._marker(10, final=True)}],
+                          self.MARK + timedelta(minutes=5))
+        self.assertEqual(posts, [])
+
+    def test_waits_for_the_last_read(self):
+        posts = self._run([{"body": self._first()}], self.MARK - timedelta(minutes=30))
+        self.assertEqual(posts, [])
+
+    def test_a_late_first_reminder_goes_out_if_the_read_never_came(self):
+        self.assertEqual(len(self._run([], self.MARK - timedelta(minutes=30))), 1)
+
+
 class TheIssue(unittest.TestCase):
     def test_reuses_the_issue_even_if_closed(self):
         issues = [{"number": 3, "title": "Something else"},

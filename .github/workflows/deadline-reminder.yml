@@ -1,7 +1,8 @@
 name: Deadline reminder
 
-# Posts the week's plan 4-5 hours before each FPL deadline, as a comment that
-# mentions you on one GitHub issue. GitHub emails it and pushes it to its
+# Posts the week's plan about 5 hours before each FPL deadline, and again after
+# the last news read about 2 hours before it (final-refresh.yml), as comments
+# that mention you on one GitHub issue. GitHub emails them and pushes them to its
 # mobile app (backend/deadline_reminder.py). Needs no secrets. Far from a
 # deadline a run does nothing but check the time.
 on:

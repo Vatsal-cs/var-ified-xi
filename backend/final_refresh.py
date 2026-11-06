@@ -10,7 +10,8 @@ the deadline, and the next would have come two hours after it, so that
 morning's press conferences would never have been read. This job
 (.github/workflows/final-refresh.yml) waits until TEAM_NEWS_FINAL_READ_HOURS
 before the deadline and starts a refresh then, unless the news has already been
-read since. team_news.get() won't reuse an older read inside that window.
+read since. team_news.get() won't reuse an older read inside that window, and
+deadline_reminder.py sends its second email once that read is in.
 
     python final_refresh.py --wait    # sleeps until the window, if it opens soon
     python final_refresh.py           # writes should_refresh to $GITHUB_OUTPUT
@@ -22,8 +23,8 @@ import sys
 import time
 from datetime import datetime, timedelta, timezone
 
-from config import FRONTEND_JSON_PATH, TEAM_NEWS_FINAL_READ_HOURS, TEAM_NEWS_PATH
-from deadline_reminder import _span, _utc, next_deadline, time_to_wait
+from config import FRONTEND_JSON_PATH, TEAM_NEWS_FINAL_READ_HOURS
+from deadline_reminder import _span, last_read, next_deadline, time_to_wait
 
 # A refresh takes minutes and the site redeploys after it. Later than this, it
 # would land too close to the deadline to act on.
@@ -35,13 +36,6 @@ def should_refresh(deadline: datetime, now: datetime, last_read: datetime | None
     if now < window or deadline - now < TOO_LATE:
         return False
     return last_read is None or last_read < window
-
-
-def _last_read() -> datetime | None:
-    try:
-        return _utc(json.loads(TEAM_NEWS_PATH.read_text())["fetched_at"])
-    except (OSError, KeyError, ValueError):
-        return None
 
 
 def _emit(refresh: bool) -> None:
@@ -69,7 +63,7 @@ def main(argv: list | None = None) -> int:
             print(f"GW{gameweek}: waiting {_span(pause)} for the final read.", file=sys.stderr)
             time.sleep(pause.total_seconds())
         return 0
-    refresh = should_refresh(deadline, now, _last_read())
+    refresh = should_refresh(deadline, now, last_read())
     print(f"GW{gameweek} deadline in {_span(deadline - now)}: "
           f"{'starting the final refresh' if refresh else 'no refresh needed'}.", file=sys.stderr)
     _emit(refresh)

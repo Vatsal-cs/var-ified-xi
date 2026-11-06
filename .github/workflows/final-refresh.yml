@@ -22,7 +22,7 @@ jobs:
   final:
     if: github.event_name != 'workflow_run' || github.event.workflow_run.event == 'schedule'
     runs-on: ubuntu-latest
-    timeout-minutes: 350
+    timeout-minutes: 355
     permissions:
       contents: read
       actions: write
@@ -64,3 +64,18 @@ jobs:
           else
             echo "A refresh is already running."
           fi
+
+      # Your second email goes out once the refresh is in. It only sends once.
+      - name: Send the second reminder when the refresh is done
+        if: steps.gate.outputs.should_refresh == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          sleep 30
+          for i in $(seq 1 30); do
+            active=$(gh run list --workflow=weekly.yml --limit 5 --json status \
+              -q '[.[] | select(.status != "completed")] | length')
+            [ "$active" = "0" ] && break
+            sleep 30
+          done
+          gh workflow run deadline-reminder.yml -f test=false
