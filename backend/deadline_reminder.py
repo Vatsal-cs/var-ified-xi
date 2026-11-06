@@ -168,7 +168,7 @@ def message(plan: dict, gameweek: int, deadline: datetime, now: datetime, owner:
             lines.append(f"**News:** {news}")
         age = now - _utc(plan["generated_at"])
         lines += ["",
-                  f"Plan from {_span(age)} ago. It refreshes every 4 hours and can still change, "
+                  f"Plan from {_span(age)} ago. It can still change before the deadline, "
                   f"so the site has the final word: {SITE_URL}"]
         if age > STALE_AFTER and not test:     # a test can run days before the refreshes start
             lines.append("That's older than it should be, so the refresh may be stuck.")
