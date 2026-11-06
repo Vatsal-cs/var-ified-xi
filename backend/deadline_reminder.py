@@ -90,14 +90,24 @@ def _moves(week: dict) -> str:
     return f"{moves} (a −{week['hit_cost']} hit)" if week.get("hits") else moves
 
 
-def _chip(plan: dict) -> str | None:
-    """The chip the planner says to play this week, if any."""
+def _chip(plan: dict) -> tuple:
+    """(the chip to play with this plan's XI, or None; what to say about chips).
+
+    The planner only prices a Free Hit, it doesn't pick the team, and the XI in
+    the message is the one without it. So "play it" would be an order nobody
+    could follow: GW10 2026-27 said so over a normal XI, for a gain of 2.4 points
+    over playing it another week."""
     scenarios = (plan.get("chip_plan") or {}).get("scenarios") or [{}]
     for p in scenarios[0].get("plan", []):
-        if p.get("now"):
-            name = CHIP_NAMES.get(p["chip"], p["chip"])
-            return f"{name} on {p['player']}" if p.get("player") else name
-    return None
+        if not p.get("now"):
+            continue
+        if p["chip"] == "freehit":
+            return None, (f"none. The planner rates a Free Hit +{p['value']} this week, "
+                          "but it doesn't build that team, so this plan is without it")
+        name = CHIP_NAMES.get(p["chip"], p["chip"])
+        chip = f"{name} on {p['player']}" if p.get("player") else name
+        return chip, chip
+    return None, "none this week"
 
 
 def _lineup(xi: list) -> str:
@@ -139,14 +149,15 @@ def message(plan: dict, gameweek: int, deadline: datetime, now: datetime, owner:
         players = plan["starting_xi"] + plan["bench"]
         names = {p["player_id"]: p["name"] for p in players}
         captain, vice = names.get(plan.get("captain_id"), "?"), names.get(plan.get("vice_captain_id"), "?")
-        moves, chip = _moves(week), _chip(plan)
+        moves = _moves(week)
+        chip, chip_line = _chip(plan)
         play = f" Play {chip}." if chip else ""
         lines = [f"{start}{mention}GW{gameweek} deadline in {left}: {moves}. {captain} captain.{play}",
                  "",
                  f"**Deadline:** {_clock(deadline)}",
                  f"**Transfers:** {moves}",
                  f"**Captain:** {captain}, **vice:** {vice}",
-                 f"**Chip:** {chip or 'none this week'}",
+                 f"**Chip:** {chip_line}",
                  f"**XI:** {_lineup(plan['starting_xi'])}",
                  f"**Bench, in order:** {', '.join(p['name'] for p in plan['bench'])}"]
         hit = (plan.get("transfer_plan") or {}).get("hit_recommendation")

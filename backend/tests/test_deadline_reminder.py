@@ -112,10 +112,18 @@ class TheMessage(unittest.TestCase):
         self.assertIn("Calafiori out, Gabriel in (a −4 hit)", dr.message(plan, 10, DEADLINE, NOW))
 
     def test_says_when_to_play_a_chip(self):
-        plan = _plan(chip_plan={"scenarios": [{"plan": [{"chip": "3xc", "now": True, "player": "Haaland"}]}]})
+        plan = _plan(chip_plan={"scenarios": [{"plan": [{"chip": "3xc", "now": True, "player": "Haaland",
+                                                         "value": 8.0}]}]})
         text = dr.message(plan, 10, DEADLINE, NOW)
         self.assertIn("Play Triple Captain on Haaland.", text.splitlines()[0])
         self.assertIn("**Chip:** Triple Captain on Haaland", text)
+
+    def test_never_orders_a_free_hit_it_has_no_team_for(self):
+        plan = _plan(chip_plan={"scenarios": [{"plan": [{"chip": "freehit", "now": True, "value": 7.5,
+                                                         "player": None}]}]})
+        text = dr.message(plan, 10, DEADLINE, NOW)
+        self.assertNotIn("Play", text.splitlines()[0])
+        self.assertIn("**Chip:** none. The planner rates a Free Hit +7.5", text)
 
     def test_no_chip_plan_is_no_chip(self):
         self.assertIn("**Chip:** none this week", dr.message(_plan(chip_plan=None), 10, DEADLINE, NOW))
