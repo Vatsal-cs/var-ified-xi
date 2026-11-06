@@ -66,9 +66,9 @@ def is_due(deadline: datetime, now: datetime) -> bool:
     return deadline - now <= timedelta(hours=REMINDER_HOURS)
 
 
-def time_to_wait(deadline: datetime, now: datetime) -> timedelta | None:
+def time_to_wait(deadline: datetime, now: datetime, hours: float = REMINDER_HOURS) -> timedelta | None:
     """How long until the window opens, if a run should wait that long."""
-    wait = deadline - now - timedelta(hours=REMINDER_HOURS)
+    wait = deadline - now - timedelta(hours=hours)
     return wait if timedelta(0) < wait <= timedelta(hours=REMINDER_MAX_WAIT_HOURS) else None
 
 

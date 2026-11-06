@@ -59,6 +59,9 @@ TEAM_NEWS_ADJUST = True
 TEAM_NEWS_GEMINI_MODELS = ["gemini-3.5-flash-lite", "gemini-3.8-flash"]
 TEAM_NEWS_WINDOW_HOURS = 48         # only read the news this close to a deadline
 TEAM_NEWS_TTL_HOURS = 3             # reuse a result this fresh instead of paying again
+# One last read this close to the deadline, after the day's press conferences,
+# however fresh the one before it. final_refresh.py starts a refresh for it.
+TEAM_NEWS_FINAL_READ_HOURS = 2
 TEAM_NEWS_PATH = DATA_DIR / "team_news.json"
 TEAM_NEWS_LOG_PATH = DATA_DIR / "team_news_log.json"
 # The last call per player per gameweek, kept for the whole season (the log

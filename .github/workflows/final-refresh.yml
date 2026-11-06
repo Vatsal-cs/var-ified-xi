@@ -1,0 +1,66 @@
+name: Final refresh before the deadline
+
+# Starts a refresh two hours before each FPL deadline, so the last plan has read
+# that day's team news (backend/final_refresh.py). The refresh's own schedule
+# can't promise that: GitHub runs it about three times a day. A run up to 5.5
+# hours before the two-hour mark waits for it. Outside that, it only checks the time.
+on:
+  schedule:
+    - cron: "43 * * * *"
+  # A scheduled refresh is another chance to catch the window. One this job
+  # started isn't, or a refresh that failed could start itself over and over.
+  workflow_run:
+    workflows: ["Refresh squad"]
+    types: [completed]
+  workflow_dispatch:
+
+concurrency:
+  group: final-refresh
+  cancel-in-progress: false
+
+jobs:
+  final:
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.event == 'schedule'
+    runs-on: ubuntu-latest
+    timeout-minutes: 350
+    permissions:
+      contents: read
+      actions: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install requests
+
+      - name: Wait for the two-hour mark if it's soon
+        working-directory: backend
+        run: python final_refresh.py --wait
+
+      # The wait can be hours long, and the news may have been read meanwhile.
+      - name: Get the newest plan and news
+        run: |
+          git fetch --depth=1 origin main
+          git checkout --force FETCH_HEAD
+
+      - name: Decide
+        id: gate
+        working-directory: backend
+        run: python final_refresh.py
+
+      - name: Start the refresh, unless one is already going
+        if: steps.gate.outputs.should_refresh == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          active=$(gh run list --workflow=weekly.yml --limit 5 --json status \
+            -q '[.[] | select(.status != "completed")] | length')
+          if [ "$active" = "0" ]; then
+            gh workflow run weekly.yml -f force=true
+          else
+            echo "A refresh is already running."
+          fi

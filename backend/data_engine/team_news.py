@@ -356,6 +356,9 @@ def get(clubs: list, gameweek: int, deadline: datetime, force: bool = False) -> 
     # Nor is one read under an older prompt: a prompt fix should act at once.
     fresh = cached and not cached.get("errors") and cached.get("prompt_version") == PROMPT_VERSION and \
         _now() - datetime.fromisoformat(cached["fetched_at"]) < timedelta(hours=config.TEAM_NEWS_TTL_HOURS)
+    final = deadline - timedelta(hours=config.TEAM_NEWS_FINAL_READ_HOURS)
+    if fresh and _now() >= final and datetime.fromisoformat(cached["fetched_at"]) < final:
+        fresh = False
     near = deadline - _now() < timedelta(hours=config.TEAM_NEWS_WINDOW_HOURS)
     if fresh or not (near or force):
         return cached
