@@ -676,6 +676,14 @@ VARIANTS = {
         predict=_bundle_predict,
         context=lambda: _nested(_lagged_ratings_ctx(), _extra_features(config.PER90_COLUMNS)),
     ),
+    "bookings": Variant(
+        name="bookings",
+        description="lagged_ratings plus yellow cards over ten gameweeks and the season, and red cards over the "
+                    "season (research/2026-11-bookings)",
+        fit=lambda df: train_model.train_models(df, save=False),
+        predict=_bundle_predict,
+        context=lambda: _nested(_lagged_ratings_ctx(), _extra_features(config.BOOKINGS_COLUMNS)),
+    ),
     "long_form_rest": Variant(
         name="long_form_rest",
         description="NO DETECTABLE EFFECT (Nov 2026, 5 seeds): -66 [-157, +27]. lagged_ratings plus ten-gameweek and season windows for starts, xG, xA, "

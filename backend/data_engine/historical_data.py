@@ -157,6 +157,9 @@ def fetch_season(season: str, season_index: int):
         "saves": _numeric(gw_df, "saves"),
         "clean_sheets": _numeric(gw_df, "clean_sheets"),
         "goals_conceded": _numeric(gw_df, "goals_conceded"),
+        # Bookings (research/2026-11-bookings).
+        "yellow_cards": _numeric(gw_df, "yellow_cards"),
+        "red_cards": _numeric(gw_df, "red_cards"),
         # FPL's own published expected-points figure. Never a model feature
         # (it's a forecast, not an observation) and no longer used as a
         # benchmark either: a squad built from these values scores ~99 points

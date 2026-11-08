@@ -337,6 +337,11 @@ LAST_SEASON_COLUMNS = ["prev_minutes", "prev_points_per90", "prev_xgi_per90", "p
 UNDERSTAT = False
 UNDERSTAT_COLUMNS = [f"{p}_{w}" for p in ("us_shots_avg", "us_key_passes_avg", "us_npxg_avg",
                                            "us_xgchain_avg", "us_xgbuildup_avg") for w in (5, "season")]
+# Research only: yellow cards over the last ten gameweeks and the season, and
+# red cards over the season. Card points (-1, -3) are in every score the
+# model learns from, but nothing tells it which players get booked. Under
+# test (research/2026-11-bookings) after GW10's Thiago red card.
+BOOKINGS_COLUMNS = ["yellow_avg_10", "yellow_avg_season", "red_avg_season"]
 
 # How much each club has been rotating: the average number of starters changed
 # from the previous match, over its last five (team_changes_avg5). The minutes

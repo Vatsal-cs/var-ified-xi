@@ -131,6 +131,11 @@ ROLLING_FEATURE_SPEC = [
     ("us_npxg", "us_npxg_avg", [5, SEASON]),
     ("us_xgchain", "us_xgchain_avg", [5, SEASON]),
     ("us_xgbuildup", "us_xgbuildup_avg", [5, SEASON]),
+    # Bookings: how often he's carded, over ten gameweeks and the season.
+    # Under test in research/2026-11-bookings; computed always, used only if
+    # it passes.
+    ("yellow_cards", "yellow_avg", LONG_FORM_WINDOWS),
+    ("red_cards", "red_avg", [SEASON]),
 ]
 
 
@@ -320,6 +325,8 @@ def build_gameweek_history_df(bootstrap: dict, player_histories: dict,
                 "saves": float(gw.get("saves", 0) or 0),
                 "clean_sheets": float(gw.get("clean_sheets", 0) or 0),
                 "goals_conceded": float(gw.get("goals_conceded", 0) or 0),
+                "yellow_cards": float(gw.get("yellow_cards", 0) or 0),
+                "red_cards": float(gw.get("red_cards", 0) or 0),
                 "selected": float(gw.get("selected", 0) or 0),
                 "transfers_in": float(gw.get("transfers_in", 0) or 0),
                 "transfers_balance": float(gw.get("transfers_balance", 0) or 0),
