@@ -132,8 +132,8 @@ ROLLING_FEATURE_SPEC = [
     ("us_xgchain", "us_xgchain_avg", [5, SEASON]),
     ("us_xgbuildup", "us_xgbuildup_avg", [5, SEASON]),
     # Bookings: how often he's carded, over ten gameweeks and the season.
-    # Under test in research/2026-11-bookings; computed always, used only if
-    # it passes.
+    # Tested in research/2026-11-bookings (no detectable effect); computed
+    # always, not a model input.
     ("yellow_cards", "yellow_avg", LONG_FORM_WINDOWS),
     ("red_cards", "red_avg", [SEASON]),
 ]

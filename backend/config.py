@@ -339,8 +339,10 @@ UNDERSTAT_COLUMNS = [f"{p}_{w}" for p in ("us_shots_avg", "us_key_passes_avg", "
                                            "us_xgchain_avg", "us_xgbuildup_avg") for w in (5, "season")]
 # Research only: yellow cards over the last ten gameweeks and the season, and
 # red cards over the season. Card points (-1, -3) are in every score the
-# model learns from, but nothing tells it which players get booked. Under
-# test (research/2026-11-bookings) after GW10's Thiago red card.
+# model learns from, but nothing tells it which players get booked. Asked
+# after GW10's Thiago red card. TESTED (Nov 2026, research/2026-11-bookings,
+# 5 seeds): −31 [−116, +52], +4 and −35 by season — no detectable effect.
+# Built, not a model input.
 BOOKINGS_COLUMNS = ["yellow_avg_10", "yellow_avg_season", "red_avg_season"]
 
 # How much each club has been rotating: the average number of starters changed

@@ -1,0 +1,18 @@
+
+============================================================================================
+POOLED RESULTS (10 file(s))
+============================================================================================
+variant             season    seeds  GWs     mean     sd        range    MAE  rank-r  Brier60
+--------------------------------------------------------------------------------------------
+bookings            2024-25       5   37   2448.4   37.3    2401-2501  0.993   0.720   0.0858
+bookings            2025-26       5   37   2262.2   37.5    2201-2295  0.910   0.753   0.0770
+lagged_ratings      2024-25       5   37   2444.2   27.0    2412-2480  0.994   0.720   0.0858
+lagged_ratings      2025-26       5   37   2297.2   59.1    2209-2341  0.912   0.752   0.0771
+--------------------------------------------------------------------------------------------
+Paired against lagged_ratings, per-gameweek, averaged over seeds (block bootstrap, 2-GW blocks, 95% CI):
+  bookings           pooled   -30.8 [-116, +52]  won 4/10 cells  -> NO DETECTABLE EFFECT
+                     2024-25 +4 [-57,+60]  2025-26 -35 [-95,+24]
+============================================================================================
+better = pooled CI above zero and ahead in every season; worse = the
+mirror image; anything else is no detectable effect, not a rejection.
+

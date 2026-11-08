@@ -678,7 +678,8 @@ VARIANTS = {
     ),
     "bookings": Variant(
         name="bookings",
-        description="lagged_ratings plus yellow cards over ten gameweeks and the season, and red cards over the "
+        description="NO DETECTABLE EFFECT (Nov 2026, 5 seeds): -31 [-116, +52]. lagged_ratings plus yellow cards over ten "
+                    "gameweeks and the season, and red cards over the "
                     "season (research/2026-11-bookings)",
         fit=lambda df: train_model.train_models(df, save=False),
         predict=_bundle_predict,
