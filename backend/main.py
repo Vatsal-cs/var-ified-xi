@@ -206,6 +206,9 @@ def _free_hit_payload(fh: dict, chip_plan: dict, player_payload, pred_lookup: di
     sc = (chip_plan.get("scenarios") or [{}])[0]
     play = any(p["chip"] == "freehit" and p["now"] for p in sc.get("plan", []))
     week = next((w for w in sc.get("weeks", []) if w["gameweek"] == fh.get("gameweek")), {})
+    row = lambda p: pred_lookup.get(p, {})
+    xi = sorted(fh["starting_ids"], key=lambda p: (row(p).get("element_type", 9),
+                                                    -float(row(p).get("predicted_points", 0))))
     return {
         "gameweek": fh.get("gameweek"),
         "play": play,
@@ -215,7 +218,7 @@ def _free_hit_payload(fh: dict, chip_plan: dict, player_payload, pred_lookup: di
         "captain_id": fh["captain_id"],
         "vice_captain_id": fh["vice_captain_id"],
         "starting_xi": [player_payload(p, is_captain=p == fh["captain_id"], is_vice=p == fh["vice_captain_id"])
-                        for p in fh["starting_ids"]],
+                        for p in xi],
         "bench": [player_payload(p) for p in order_bench(fh["bench_ids"], pred_lookup)],
     }
 
