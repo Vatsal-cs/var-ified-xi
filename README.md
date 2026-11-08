@@ -171,6 +171,7 @@ Every verdict below was first decided on **one seed**. The October 2026 audit re
 | Understat shot data: shots, key passes, non-penalty xG, xGChain, xGBuildup (new) | — | **−111** [−198, −27] · −14 and −97 by season | ❌ worse — not used |
 | The crowd's captain: the most-owned player within 1 point of the best projection takes the armband (new) | — | +11 [−23, +44] · +20 and −10 by season · armband moved in 24% of weeks | no detectable effect — captain stays on the projection |
 | Upside mode for big seasons: captain, half or all picks on the 80th-percentile good day (new) | — | tuning: none passed (best: huge seasons 1.8% / 2.6% vs 1%) · held back: huge seasons **0.3% / 0.2%**, **−61 and −72** | ❌ closed — chasing upside gave fewer big seasons, not more |
+| Bookings: yellow cards over ten gameweeks and the season, red cards over the season (new) | — | −31 [−116, +52] · +4 and −35 by season, 4 of 10 runs | no detectable effect — not used |
 | Planner discounts later weeks 5% instead of 15%, simulator branch test (new) | — | +60 [−109, +239] · +110 and −49 by season | no detectable effect — stays 0.85 |
 | Split training populations, vs starters-only for both stages | +7 | starters-only **+56** [+11, +103] on the tuning seasons — then +18 and −17 on the held-back seasons | ⚠️ **unconfirmed**: split populations stay |
 
