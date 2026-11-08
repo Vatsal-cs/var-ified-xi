@@ -69,6 +69,16 @@ class Bagging(unittest.TestCase):
         out = train_model.predict_points(self.bag, flagged)["predicted_points"]
         self.assertTrue((out == 0).all())
 
+    def test_start_floor_only_raises(self):
+        base = train_model.predict_points(self.bag, self.pred)
+        floored = train_model.predict_points(self.bag, self.pred.assign(start_floor=0.9))
+        self.assertTrue((floored["p_full"] >= 0.9 - 1e-9).all())
+        self.assertTrue((floored["predicted_points"] >= base["predicted_points"] - 0.011).all())
+        probs = floored[["p_dnp", "p_cameo", "p_full"]].sum(axis=1)
+        np.testing.assert_allclose(probs, 1.0, atol=0.002)
+        unset = train_model.predict_points(self.bag, self.pred.assign(start_floor=np.nan))
+        np.testing.assert_allclose(unset["predicted_points"], base["predicted_points"])
+
 
 if __name__ == "__main__":
     unittest.main()

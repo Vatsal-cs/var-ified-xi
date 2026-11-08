@@ -28,7 +28,7 @@ It predicts every player's points, plans transfers, lineup and captain six gamew
 | **~87,000** | real gameweek results the model learns from |
 | **6 gameweeks** | of transfers, lineups and captains planned at once by a mixed-integer solver |
 | **24 studies** | run on the model, 22 of them pre-registered: the pass/fail rule committed before the first result |
-| **166 tests** | guarding FPL's rules, both test harnesses, the planner and the team-news reader |
+| **169 tests** | guarding FPL's rules, both test harnesses, the planner and the team-news reader |
 | **$0 a month** | free public data, a free AI model, GitHub Actions and Vercel |
 
 ---
@@ -235,8 +235,8 @@ The most useful things this project taught me came from bugs that never crashed 
 | `news-check.yml` | Manual | A one-minute check that the team-news reader works |
 | `simulate.yml` | Manual | Runs a season-long policy race in the cloud and posts the result table |
 
-- **Tests.** 166 unit tests cover each season's transfer rules, both harnesses, the planner, chip timing, the deadline gate, Wildcard/Free Hit handling and the news parser.
-- **Team news with guardrails.** Within 48 hours of a deadline, Google News and BBC Sport headlines are read by a free Gemini model. A call only counts if it cites a headline that names the player; "out" and "doubt" can lower a projection, while "rotation" stays display-only until it's been right 60% of the time over 30 checked calls.
+- **Tests.** 169 unit tests cover each season's transfer rules, both harnesses, the planner, chip timing, the deadline gate, Wildcard/Free Hit handling and the news parser.
+- **Team news with guardrails.** Within 48 hours of a deadline, Google News and BBC Sport headlines are read by a free Gemini model. A call only counts if it cites a headline that names the player; "out" and "doubt" can lower a projection, "starts" can raise one the model had as a doubtful starter, while "rotation" stays display-only until it's been right 60% of the time over 30 checked calls.
 - **Your chip team.** FPL hides a Wildcard or Free Hit team until the deadline, so `backend/overrides.json` can hold the team you've set; the dashboard shows it and keeps re-checking it, suggesting any change worth a point or more.
 - **Run now.** The dashboard can trigger a fresh run through a server-side route with a scoped token, limited to one run at a time, 10 minutes apart and 6 a day.
 - **Free by design.** Every dependency is a free tier: FPL's public API, ESPN's public feed, Gemini's free tier in a project with no billing, GitHub Actions and Vercel.
@@ -325,7 +325,7 @@ var-ified-xi/
 │   │   ├── season_sim.py            # harness 2: decision quality
 │   │   └── evaluation.py            # multi-seed verdicts with confidence intervals
 │   ├── research/                    # one folder per study: pre-registration, code, results
-│   └── tests/                       # 166 unit tests
+│   └── tests/                       # 169 unit tests
 ├── frontend/
 │   ├── app/                         # This week · Plan & chips · League · Other games · How it works
 │   ├── components/                  # pitch, captain odds, coin flips, team news…

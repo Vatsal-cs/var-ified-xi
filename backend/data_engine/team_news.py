@@ -17,6 +17,11 @@ What it changes, deliberately narrow:
     (chance of playing 0, or the reported chance), but only when they're
     WORSE than FPL's own flag and come with a source from the last few days.
     That's the information FPL itself would publish a few hours later.
+  * "expected to start" raises his chance of starting to the one reported,
+    never lowers it, for this gameweek only, on the same sourcing rules and
+    never over an FPL injury or suspension flag. Added after GW10, when the
+    news said Mukiele would start and he sat on the bench at 32%; all seven
+    such calls up to then had started (TEAM_NEWS_RAISE).
   * "rotation risk" is shown, never applied. Predicted line-ups are guesses,
     and nothing here has been tested against what happened.
 There are no archived press conferences to backtest on, so the reader is
@@ -49,6 +54,7 @@ logger = logging.getLogger(__name__)
 
 STATUSES = ("out", "doubtful", "rotation_risk", "expected_to_start", "no_news")
 APPLIED = ("out", "doubtful")
+RAISES = ("expected_to_start",)
 CLUBS_PER_CALL = 3
 
 
@@ -462,19 +468,43 @@ def _log_calls(news: dict) -> None:
     path.write_text(json.dumps(log[-60:], indent=1))
 
 
-def apply(predict_df, news: dict | None, gameweek: int, max_age_days: int = 4) -> list:
+def _raise(predict_df, mask, item, fpl_chance: float, full: dict | None) -> dict | None:
+    """An "expected to start" call: the start chance it reports (times how
+    often a starter lasts 60 minutes) becomes the floor on P(60+) for this
+    gameweek's rows, and FPL's chance of playing goes up to it. Never over an
+    injury or suspension flag, and None when it would change nothing."""
+    if "status" in predict_df.columns and predict_df.loc[mask, "status"].iloc[0] not in ("a", "d"):
+        return None
+    reported = item.get("start_chance")
+    reported = 100 if reported is None else reported
+    floor = reported / 100 * config.TEAM_NEWS_FULL_IF_STARTS
+    chance = max(fpl_chance, reported)
+    if chance == fpl_chance and full is not None and full.get(item["player_id"], 0) >= floor:
+        return None                                   # the model already has him starting
+    predict_df.loc[mask, "chance_of_playing"] = chance
+    predict_df.loc[mask, "start_floor"] = floor
+    return {"player_id": item["player_id"], "status": item["status"], "chance": int(chance),
+            "fpl_chance": int(fpl_chance), "start": round(floor * 100)}
+
+
+def apply(predict_df, news: dict | None, gameweek: int, max_age_days: int = 4,
+          full: dict | None = None) -> list:
     """Out / doubtful calls lower FPL's chance of playing for this gameweek's
     rows, in place, when they're worse than FPL's own flag and recent; "out"
     also marks him injured for the rest of the plan, as an FPL flag would.
-    Returns what was applied, for the dashboard."""
+    "Expected to start" calls raise his start chance (_raise) when
+    TEAM_NEWS_RAISE is on. full: {player_id: the model's own P(60+) this
+    gameweek}, so a call that agrees with the model isn't listed. Returns
+    what was applied, for the dashboard."""
     if not news or not config.TEAM_NEWS_ADJUST or predict_df is None or predict_df.empty:
         return []
     applied = []
     today = _now().date()
     rows_gw = predict_df["gw"] == gameweek if "gw" in predict_df.columns else True
+    acted = APPLIED + (RAISES if config.TEAM_NEWS_RAISE else ())
     for item in news.get("items", []):
         pid, status = item.get("player_id"), item.get("status")
-        if pid is None or status not in APPLIED or not item.get("source_url"):
+        if pid is None or status not in acted or not item.get("source_url"):
             continue
         # Checked again here so a cached read from before the rule can't act.
         if item.get("source_title") and not _names_him(item["source_title"], item.get("name", "")):
@@ -485,12 +515,17 @@ def apply(predict_df, news: dict | None, gameweek: int, max_age_days: int = 4) -
             continue
         if age > max_age_days:
             continue
-        chance = 0 if status == "out" else max(25, min(75, item.get("start_chance") or 50))
         mask = (predict_df["player_id"] == pid) & rows_gw
         if not mask.any():
             continue
         fpl = predict_df.loc[mask, "chance_of_playing"].iloc[0]
         fpl_chance = 100 if fpl is None or fpl != fpl else float(fpl)      # NaN -> fit
+        if status in RAISES:
+            raised = _raise(predict_df, mask, item, fpl_chance, full)
+            if raised:
+                applied.append(raised)
+            continue
+        chance = 0 if status == "out" else max(25, min(75, item.get("start_chance") or 50))
         if chance >= fpl_chance:
             continue
         predict_df.loc[mask, "chance_of_playing"] = chance

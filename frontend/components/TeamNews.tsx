@@ -3,7 +3,8 @@
 //
 // What the team-news reader (backend team_news.py) found for the players in
 // this decision, worst first, each with its source. "Out" and "doubtful"
-// calls worse than FPL's own flag have already lowered the projection; those
+// calls worse than FPL's own flag have already lowered the projection, and
+// "starts" calls above the model's own start chance have raised it; those
 // are marked. Rotation risk is information only.
 
 import type { NewsItem, NewsRecord, NewsStatus, TeamNewsView } from "@/lib/types";
@@ -27,7 +28,7 @@ function host(url: string) {
   }
 }
 
-function Row({ item, applied }: { item: NewsItem; applied?: { chance: number; fpl_chance: number } }) {
+function Row({ item, applied }: { item: NewsItem; applied?: { chance: number; fpl_chance: number; start?: number } }) {
   const s = STATUS[item.status];
   return (
     <li className="flex items-start gap-3 py-2.5">
@@ -48,7 +49,13 @@ function Row({ item, applied }: { item: NewsItem; applied?: { chance: number; fp
             "no source"
           )}
           {item.source_date && <> &middot; {item.source_date}</>}
-          {applied && (
+          {applied && applied.start != null && (
+            <span className="text-pts">
+              {" "}
+              &middot; projection counts him as starting ({applied.start}% to play 60+ minutes)
+            </span>
+          )}
+          {applied && applied.start == null && (
             <span className="text-warn">
               {" "}
               &middot; projection uses {applied.chance}% to play (FPL said {applied.fpl_chance}%)

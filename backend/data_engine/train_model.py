@@ -156,14 +156,29 @@ def _predict_conditional_points(bundle: dict, X: pd.DataFrame, element_types: pd
     return np.clip(_calibrate(_shrink(bundle, out, element_types), element_types), 0, None)
 
 
+def _floor_full(proba: np.ndarray, floor) -> np.ndarray:
+    """P(60+) raised to at least floor where one is set (team news says he
+    starts), the difference taken from P(DNP) first, then P(cameo)."""
+    if floor is None:
+        return proba
+    p = proba.copy()
+    gap = np.clip(np.nan_to_num(np.asarray(floor, dtype=float)) - p[:, FULL], 0, None)
+    from_dnp = np.minimum(gap, p[:, DNP])
+    p[:, DNP] -= from_dnp
+    p[:, CAMEO] -= gap - from_dnp
+    p[:, FULL] += gap
+    return p
+
+
 def _decomposed_xp(bundle: dict, X: pd.DataFrame, element_types: pd.Series,
-                   ceiling: bool = False) -> np.ndarray:
+                   ceiling: bool = False, floor=None) -> np.ndarray:
     """Combine the two stages into a single expected-points array.
 
     ceiling=True swaps the mean points-if-full regressor for the high-quantile
-    one, giving an upside estimate used only for the captain decision.
+    one, giving an upside estimate used only for the captain decision. floor
+    is a per-row minimum on P(60+) (_floor_full).
     """
-    proba = bundle["minutes_clf"].predict_proba(X)  # columns: DNP, CAMEO, FULL
+    proba = _floor_full(bundle["minutes_clf"].predict_proba(X), floor)  # columns: DNP, CAMEO, FULL
     if ceiling and bundle.get("ceiling_reg") is not None:
         pts_if_full = np.clip(bundle["ceiling_reg"].predict(X), 0, None)
     else:
@@ -477,11 +492,14 @@ def predict_points(bundle: dict, prediction_df: pd.DataFrame, flag_counts: dict 
     rather than crudely multiplying final points. Hard status flags
     (injured/suspended/unavailable) still floor the prediction, and repeat
     fitness-flag history (injury_log) applies its caution multiplier on top.
+    A start_floor column (team_news.apply, from an "expected to start" call)
+    is a minimum on P(60+) for its rows.
     """
     X = _prep_X(prediction_df)
     out = prediction_df.copy()
+    floor = out["start_floor"].to_numpy() if "start_floor" in out.columns else None
 
-    proba = play_probability(bundle, X)
+    proba = _bag_mean(bundle, lambda m: _floor_full(m["minutes_clf"].predict_proba(X), floor))
     out["p_dnp"] = proba[:, DNP].round(3)
     out["p_cameo"] = proba[:, CAMEO].round(3)
     out["p_full"] = proba[:, FULL].round(3)
@@ -524,7 +542,7 @@ def predict_points(bundle: dict, prediction_df: pd.DataFrame, flag_counts: dict 
     # A bag's members are averaged on the raw projection, before the
     # availability and blank-week adjustments, so those apply exactly once.
     out["predicted_points"] = _apply(
-        _bag_mean(bundle, lambda m: _decomposed_xp(m, X, out["element_type"])))
+        _bag_mean(bundle, lambda m: _decomposed_xp(m, X, out["element_type"], floor=floor)))
 
     # What distributions.py builds a full points distribution from: the
     # points-if-60+ regressor on its own, and the availability multiplier
@@ -540,7 +558,7 @@ def predict_points(bundle: dict, prediction_df: pd.DataFrame, flag_counts: dict 
     # the ceiling model.
     if all(m.get("ceiling_reg") is not None for m in _members(bundle)):
         out["ceiling_points"] = _apply(_bag_mean(
-            bundle, lambda m: _decomposed_xp(m, X, out["element_type"], ceiling=True)))
+            bundle, lambda m: _decomposed_xp(m, X, out["element_type"], ceiling=True, floor=floor)))
     else:
         out["ceiling_points"] = out["predicted_points"]
 

@@ -351,13 +351,17 @@ def run_pipeline(team_id: int = None) -> None:
     d = decide(predict_df)
 
     # 5b. Team news, read for the clubs this decision involves. Out/doubtful
-    # calls worse than FPL's own flags re-run the decision with them.
+    # calls worse than FPL's own flags, and "expected to start" calls above
+    # the model's own start chance, re-run the decision with them.
     news, news_applied = None, []
     if team_state:
         try:
             clubs = _news_targets(d, team_state, bootstrap, fixtures, upcoming_gw)
             news = team_news.get(clubs, upcoming_gw, _deadline(bootstrap, upcoming_gw))
-            news_applied = team_news.apply(predict_df, news, upcoming_gw)
+            fp = d["fixture_predictions"]
+            full = fp[fp["gw"] == upcoming_gw].groupby("player_id")["p_full"].min().to_dict() \
+                if "gw" in fp.columns else fp.set_index("player_id")["p_full"].to_dict()
+            news_applied = team_news.apply(predict_df, news, upcoming_gw, full=full)
             if news_applied:
                 logger.info("Team news changes %d projection(s); deciding again.", len(news_applied))
                 d = decide(predict_df)

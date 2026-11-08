@@ -26,3 +26,29 @@ For every applied call, against the gameweek's real minutes:
 
 If "out" or "doubtful" misses its bar, TEAM_NEWS_ADJUST goes off for that
 status and the reader stays display-only for it.
+
+## Addendum, 2026-11-08: "expected to start" raises (written before it runs)
+Why: in GW10 the reader said Mukiele would start, the model gave him a 32%
+chance of playing 60+ minutes, and he started and scored 9 on the bench.
+Up to then all 7 "expected to start" calls had started, but Mukiele was the
+only one that disagreed with the model, so this is one case, not evidence.
+
+What changes (`config.TEAM_NEWS_RAISE = True`): an "expected to start" call
+with a source at most 4 days old that names him sets his chance of playing
+to the reported start chance (when above FPL's) and his chance of playing
+60+ to at least that chance × 0.93 (how often a starter lasts 60 minutes,
+2024-25 and 2025-26). This gameweek only. Never when FPL flags him injured,
+suspended or unavailable. A call that agrees with the model changes nothing
+and isn't listed.
+
+How it's judged, at the GW19 deadline (or 20 applied raises, whichever
+first), from the "applied" list in each deadline's plan
+(frontend/public/optimized_team.json in git history):
+- **Raise accuracy:** share of applied raises where the player started.
+  Keep raising only if that share is at least the average start chance used
+  minus 15 points.
+- Also reported: the raised players' points against their raised and
+  unraised projections, and how often a raise changed the XI.
+
+If it misses the bar, TEAM_NEWS_RAISE goes off and "expected to start" is
+display-only again.

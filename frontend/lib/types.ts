@@ -113,7 +113,8 @@ export interface TeamNewsView {
   model?: string;
   items: NewsItem[];
   /** Calls that lowered a projection (worse than FPL's own flag). */
-  applied: { player_id: number; status: NewsStatus; chance: number; fpl_chance: number }[];
+  /** start: the % to play 60+ an "expected to start" call raised him to. */
+  applied: { player_id: number; status: NewsStatus; chance: number; fpl_chance: number; start?: number }[];
   errors?: number;
   /** The reader's record: each finished gameweek's calls against who played. */
   record?: NewsRecord | null;

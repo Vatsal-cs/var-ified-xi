@@ -30,7 +30,7 @@ const QA: { q: string; a: string }[] = [
   },
   {
     q: "Where does the team news come from?",
-    a: "Within 48 hours of the deadline, the last six days of Google News and BBC Sport headlines for your players' clubs are read by Google's free Gemini model, which cites the headline behind every call. 'Out' and 'doubt' calls that are worse than FPL's own flag lower the projection, as an FPL flag would a few hours later. 'Rotation' is shown, never applied — predicted line-ups are guesses.",
+    a: "Within 48 hours of the deadline, the last six days of Google News and BBC Sport headlines for your players' clubs are read by Google's free Gemini model, which cites the headline behind every call. 'Out' and 'doubt' calls that are worse than FPL's own flag lower the projection, as an FPL flag would a few hours later. 'Starts' calls raise a player's chance of starting when the model had it lower; all 7 such calls before November 2026 were right. 'Rotation' is shown, never applied — it has not been tested.",
   },
   {
     q: "How good is the model, honestly?",

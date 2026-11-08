@@ -216,6 +216,37 @@ class TeamNews(unittest.TestCase):
         news = {"items": team_news.parse(self._reply(days_ago=9), known_ids={380})}
         self.assertEqual(team_news.apply(rows, news, 7), [])
 
+    def _starts(self, chance=100, days_ago=0):
+        d = (datetime.now(timezone.utc) - timedelta(days=days_ago)).date().isoformat()
+        return {"items": [{"player_id": 533, "name": "Nordi Mukiele", "club": "Sunderland",
+                           "status": "expected_to_start", "start_chance": chance,
+                           "source_url": "https://x/y", "source_date": d,
+                           "source_title": "Sunderland predicted lineup: Nordi Mukiele returns"}]}
+
+    def _mukiele(self, status="d", chance=75.0):
+        return pd.DataFrame({"player_id": [533, 533], "gw": [10, 11], "status": [status, status],
+                             "chance_of_playing": [chance, None]})
+
+    def test_starts_call_raises_this_week_only(self):
+        rows = self._mukiele()
+        applied = team_news.apply(rows, self._starts(), 10, full={533: 0.32})
+        self.assertEqual(applied, [{"player_id": 533, "status": "expected_to_start", "chance": 100,
+                                    "fpl_chance": 75, "start": 93}])
+        self.assertEqual(rows.loc[0, "chance_of_playing"], 100)
+        self.assertAlmostEqual(rows.loc[0, "start_floor"], config.TEAM_NEWS_FULL_IF_STARTS)
+        self.assertTrue(pd.isna(rows.loc[1, "start_floor"]))                # next week untouched
+
+    def test_starts_call_never_lowers_or_beats_an_fpl_flag(self):
+        rows = self._mukiele(status="a", chance=None)
+        self.assertEqual(team_news.apply(rows, self._starts(), 10, full={533: 0.95}), [])
+        rows = self._mukiele(status="s", chance=0.0)                       # suspended: FPL knows
+        self.assertEqual(team_news.apply(rows, self._starts(), 10, full={533: 0.0}), [])
+        self.assertEqual(rows.loc[0, "chance_of_playing"], 0)
+        rows = self._mukiele()
+        self.assertEqual(team_news.apply(rows, self._starts(days_ago=9), 10), [])   # stale
+        with mock.patch.object(config, "TEAM_NEWS_RAISE", False):
+            self.assertEqual(team_news.apply(self._mukiele(), self._starts(), 10), [])
+
     def test_switch_turns_adjustments_off(self):
         rows = self._rows()
         news = {"items": team_news.parse(self._reply(), known_ids={380})}

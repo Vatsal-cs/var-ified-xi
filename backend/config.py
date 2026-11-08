@@ -45,11 +45,22 @@ OVERRIDES_PATH = BACKEND_ROOT / "overrides.json"
 # matter to you: Gemini 2.5 Flash with Google Search (free; GEMINI_API_KEY, a
 # GitHub Actions secret in the cloud). Off without it. "Out" and "doubtful" calls lower the projection like an FPL flag
 # would (TEAM_NEWS_ADJUST), only when worse than FPL's own flag and sourced
-# from the last few days; "rotation risk" is shown, never applied. Untestable
+# from the last few days; "expected to start" raises the start chance
+# (TEAM_NEWS_RAISE); "rotation risk" is shown, never applied. Untestable
 # on past seasons (no archived press conferences), so every call is logged to
 # TEAM_NEWS_LOG_PATH and judged live against who actually played.
 TEAM_NEWS_ENABLED = True
 TEAM_NEWS_ADJUST = True
+# "Expected to start" calls raise the projection the same narrow way: this
+# gameweek only, sourced from the last few days, never over an FPL injury or
+# suspension flag. The start chance reported, times how often a starter lasts
+# 60 minutes (0.93 in 2024-25 and 2025-26), becomes the floor on his chance of
+# playing 60+. Added 2026-11-08 after GW10's Mukiele: the news said he'd
+# start, the model gave him 32%, and he scored 9 on our bench. All 7 such
+# calls so far had started.
+# Judged live like the rest (research/2026-10-team-news/PREREGISTRATION.md).
+TEAM_NEWS_RAISE = True
+TEAM_NEWS_FULL_IF_STARTS = 0.93
 # Free-tier Gemini text models, tried in order. They read headlines we fetch
 # (Google News, BBC Sport) — on the free tier only the 2.5 models can search,
 # and those are closed to new projects. The key's project has no billing, so
