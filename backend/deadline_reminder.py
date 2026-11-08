@@ -10,6 +10,10 @@ comment on one GitHub issue, mentioning the repo's owner. GitHub turns the
 mention into an email and a push on its mobile app, so this needs no mail
 account, no key and no money: the workflow's own token is enough.
 
+A deadline before REMINDER_EARLY_HOUR your time would put that in the night, so
+the first one goes out at REMINDER_EVENING_HOUR the evening before instead
+(config.evening_before), once the news has been read just before it.
+
 The schedule asks for hourly, but GitHub's scheduler doesn't keep to that: in
 the first days the job ran every 5-8 hours. So a run that lands in the hours
 before the window waits for it (--wait), and then reads the newest plan.
@@ -34,9 +38,9 @@ from datetime import datetime, timedelta, timezone
 
 import requests
 
-from config import (BOOTSTRAP_URL, FRONTEND_JSON_PATH, REMINDER_HOURS, REMINDER_ISSUE_TITLE,
-                    REMINDER_MAX_WAIT_HOURS, REMINDER_UTC_OFFSET, REQUEST_HEADERS, REQUEST_TIMEOUT,
-                    SITE_URL, TEAM_NEWS_FINAL_READ_HOURS, TEAM_NEWS_PATH)
+from config import (BOOTSTRAP_URL, FRONTEND_JSON_PATH, REMINDER_EVENING_READ_MINUTES, REMINDER_HOURS,
+                    REMINDER_ISSUE_TITLE, REMINDER_MAX_WAIT_HOURS, REMINDER_UTC_OFFSET, REQUEST_HEADERS,
+                    REQUEST_TIMEOUT, SITE_URL, TEAM_NEWS_FINAL_READ_HOURS, TEAM_NEWS_PATH, evening_before)
 
 GITHUB_API = "https://api.github.com"
 CHIP_NAMES = {"bboost": "Bench Boost", "3xc": "Triple Captain", "freehit": "Free Hit",
@@ -67,13 +71,24 @@ def next_deadline(plan: dict, now: datetime) -> tuple | None:
     return gameweek, deadline
 
 
-def is_due(deadline: datetime, now: datetime) -> bool:
-    return deadline - now <= timedelta(hours=REMINDER_HOURS)
+def first_reminder_at(deadline: datetime) -> datetime:
+    return evening_before(deadline) or deadline - timedelta(hours=REMINDER_HOURS)
 
 
-def time_to_wait(deadline: datetime, now: datetime, hours: float = REMINDER_HOURS) -> timedelta | None:
-    """How long until the window opens, if a run should wait that long."""
-    wait = deadline - now - timedelta(hours=hours)
+def is_due(deadline: datetime, now: datetime, read_at: datetime | None = None) -> bool:
+    """Is the first reminder due? An evening one goes out as soon as the news
+    read just before it is in (final_refresh.py starts it), or at the hour
+    without it if that read never came."""
+    at = first_reminder_at(deadline)
+    if evening_before(deadline):
+        read_by = at - timedelta(minutes=REMINDER_EVENING_READ_MINUTES)
+        return now >= at or (now >= read_by and read_at is not None and read_at >= read_by)
+    return now >= at
+
+
+def time_to_wait(at: datetime, now: datetime) -> timedelta | None:
+    """How long until `at`, if a run should wait that long."""
+    wait = at - now
     return wait if timedelta(0) < wait <= timedelta(hours=REMINDER_MAX_WAIT_HOURS) else None
 
 
@@ -109,13 +124,21 @@ def _moves(week: dict) -> str:
     return f"{moves} (a −{week['hit_cost']} hit)" if week.get("hits") else moves
 
 
-def _chip(plan: dict) -> tuple:
-    """(the chip to play with this plan's XI, or None; what to say about chips).
+def _free_hit(plan: dict) -> dict | None:
+    """The Free Hit team, when the chip plan says to play it this week."""
+    fh = plan.get("free_hit") or {}
+    return fh if fh.get("play") and fh.get("gameweek") == plan.get("gameweek") and fh.get("starting_xi") else None
 
-    The planner only prices a Free Hit, it doesn't pick the team, and the XI in
-    the message is the one without it. So "play it" would be an order nobody
-    could follow: GW10 2026-27 said so over a normal XI, for a gain of 2.4 points
-    over playing it another week."""
+
+def _chip(plan: dict) -> tuple:
+    """(the chip to play, or None; what to say about chips).
+
+    A Free Hit is only ordered with its team (plan["free_hit"]), which the
+    message then gives in place of your own XI. Without one, "play it" would be
+    an order nobody could follow: GW10 2026-27 said so over a normal XI."""
+    fh = _free_hit(plan)
+    if fh:
+        return "your Free Hit", f"Free Hit, +{fh['gain']} on your own XI this week"
     scenarios = (plan.get("chip_plan") or {}).get("scenarios") or [{}]
     for p in scenarios[0].get("plan", []):
         if not p.get("now"):
@@ -188,23 +211,31 @@ def message(plan: dict, gameweek: int, deadline: datetime, now: datetime, owner:
                  "",
                  f"The refresh may be stuck, so check the site: {SITE_URL}"]
     else:
-        players = plan["starting_xi"] + plan["bench"]
+        fh = _free_hit(plan)
+        team = fh or plan
+        players = team["starting_xi"] + team["bench"]
         names = {p["player_id"]: p["name"] for p in players}
-        captain, vice = names.get(plan.get("captain_id"), "?"), names.get(plan.get("vice_captain_id"), "?")
-        moves = _moves(week)
+        captain, vice = names.get(team.get("captain_id"), "?"), names.get(team.get("vice_captain_id"), "?")
         chip, chip_line = _chip(plan)
-        play = f" Play {chip}." if chip else ""
-        call = f"{moves}. {captain} captain.{play}"
+        if fh:
+            free = (plan.get("team") or {}).get("free_transfers", 1)
+            moves = (f"None of your own. The Free Hit team is for this week only: your squad comes "
+                     f"back for GW{gameweek + 1} with {free} free transfer{'s' if free != 1 else ''}, as now")
+            call = f"Play your Free Hit. {captain} captain."
+        else:
+            moves = _moves(week)
+            play = f" Play {chip}." if chip else ""
+            call = f"{moves}. {captain} captain.{play}"
         lines = [f"{start}{mention}GW{gameweek} deadline in {left}: {call}",
                  "",
                  f"**Deadline:** {_clock(deadline)}",
                  f"**Transfers:** {moves}",
                  f"**Captain:** {captain}, **vice:** {vice}",
                  f"**Chip:** {chip_line}",
-                 f"**XI:** {_lineup(plan['starting_xi'])}",
-                 f"**Bench, in order:** {', '.join(p['name'] for p in plan['bench'])}"]
+                 f"**XI:** {_lineup(team['starting_xi'])}",
+                 f"**Bench, in order:** {', '.join(p['name'] for p in team['bench'])}"]
         hit = (plan.get("transfer_plan") or {}).get("hit_recommendation")
-        if hit and hit.get("worth_it"):
+        if hit and hit.get("worth_it") and not fh:
             lines.append(f"**Also worth a −{hit['hit_cost']}:** {hit['verdict']}")
         news = _news(plan, players)
         if news:
@@ -248,8 +279,8 @@ def _issue() -> int:
         if issue["title"] == REMINDER_ISSUE_TITLE and "pull_request" not in issue:
             return issue["number"]
     body = ("Each comment here is the plan as it stood before that gameweek's deadline: first "
-            "about 5 hours before it, then after the last news read about 2 hours before it. "
-            "Posted by `backend/deadline_reminder.py`.")
+            "about 5 hours before it (9pm the evening before, for a deadline before 9am), then "
+            "after the last news read about 2 hours before it. Posted by `backend/deadline_reminder.py`.")
     return _github("POST", "issues", json={"title": REMINDER_ISSUE_TITLE, "body": body})["number"]
 
 
@@ -273,12 +304,12 @@ def main(argv: list | None = None) -> int:
         return 0
     gameweek, deadline = found
     if wait:
-        pause = None if test else time_to_wait(deadline, now)
+        pause = None if test else time_to_wait(first_reminder_at(deadline), now)
         if pause:
             print(f"GW{gameweek}: waiting {_span(pause)} for the window to open.", file=sys.stderr)
             time.sleep(pause.total_seconds())
         return 0
-    if not (preview or test or is_due(deadline, now)):
+    if not (preview or test or is_due(deadline, now, last_read())):
         print(f"GW{gameweek} deadline in {_span(deadline - now)}: too early to remind.", file=sys.stderr)
         return 0
 

@@ -6,6 +6,7 @@ Central configuration: API endpoints, squad rules, MILP weights, and file paths.
 Nothing in this file makes network calls — pure constants.
 """
 
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 # ---------------------------------------------------------------------------
@@ -91,6 +92,36 @@ SITE_URL = "https://var-ified-xi.vercel.app"
 # Your clock, for the time in the message. A fixed offset, not "America/Edmonton":
 # Alberta stays on UTC-6 all year now, and a runner's time-zone data may predate that.
 REMINDER_UTC_OFFSET = -6
+# A deadline before REMINDER_EARLY_HOUR your time put both emails in the night
+# (GW11 2026-27: a 5am deadline, so midnight and 3am). Then the first goes out
+# at REMINDER_EVENING_HOUR the evening before instead, after a news read
+# REMINDER_EVENING_READ_MINUTES earlier (final_refresh.py).
+REMINDER_EARLY_HOUR = 9
+REMINDER_EVENING_HOUR = 21
+REMINDER_EVENING_READ_MINUTES = 30
+
+
+def evening_before(deadline: datetime) -> datetime | None:
+    """REMINDER_EVENING_HOUR the evening before a deadline that falls before
+    REMINDER_EARLY_HOUR your time (in UTC), if that's earlier than the usual
+    REMINDER_HOURS; otherwise None."""
+    local = deadline.astimezone(timezone(timedelta(hours=REMINDER_UTC_OFFSET)))
+    if local.hour >= REMINDER_EARLY_HOUR:
+        return None
+    evening = (local - timedelta(days=1)).replace(hour=REMINDER_EVENING_HOUR, minute=0, second=0,
+                                                   microsecond=0).astimezone(timezone.utc)
+    return evening if evening < deadline - timedelta(hours=REMINDER_HOURS) else None
+
+
+def news_read_marks(deadline: datetime) -> list:
+    """When the team news must be read again, however fresh the last read:
+    before the evening reminder of an early deadline, and
+    TEAM_NEWS_FINAL_READ_HOURS before every deadline. Earliest first."""
+    marks = [deadline - timedelta(hours=TEAM_NEWS_FINAL_READ_HOURS)]
+    evening = evening_before(deadline)
+    if evening:
+        marks.insert(0, evening - timedelta(minutes=REMINDER_EVENING_READ_MINUTES))
+    return marks
 
 # ---------------------------------------------------------------------------
 # FPL public API (no auth required)

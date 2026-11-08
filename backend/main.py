@@ -158,7 +158,10 @@ def build_output_json(bootstrap: dict, predictions_df, result: dict,
         # the same recalibration the backend uses.
         output["odds_calibration"] = {"pair_logit_scale": distributions.PAIR_LOGIT_SCALE}
     if chip_plan:
+        fh = chip_plan.pop("free_hit", None)
         output["chip_plan"] = chip_plan
+        if fh and not locked:
+            output["free_hit"] = _free_hit_payload(fh, chip_plan, player_payload, pred_lookup)
     if news_view:
         output["team_news"] = news_view
     if other_view:
@@ -194,6 +197,27 @@ def build_output_json(bootstrap: dict, predictions_df, result: dict,
         }
 
     return output
+
+
+def _free_hit_payload(fh: dict, chip_plan: dict, player_payload, pred_lookup: dict) -> dict:
+    """The Free Hit team for the coming week (chip_planner.free_hit_squads),
+    and whether the chip plan says to play it now. When it does, that team is
+    the week's call: no transfer, and your own squad comes back after it."""
+    sc = (chip_plan.get("scenarios") or [{}])[0]
+    play = any(p["chip"] == "freehit" and p["now"] for p in sc.get("plan", []))
+    week = next((w for w in sc.get("weeks", []) if w["gameweek"] == fh.get("gameweek")), {})
+    return {
+        "gameweek": fh.get("gameweek"),
+        "play": play,
+        "gain": week.get("freehit"),
+        "points": round(fh["points"], 2),
+        "cost_m": round(fh["total_cost"] / 10, 1),
+        "captain_id": fh["captain_id"],
+        "vice_captain_id": fh["vice_captain_id"],
+        "starting_xi": [player_payload(p, is_captain=p == fh["captain_id"], is_vice=p == fh["vice_captain_id"])
+                        for p in fh["starting_ids"]],
+        "bench": [player_payload(p) for p in order_bench(fh["bench_ids"], pred_lookup)],
+    }
 
 
 def _plan_payload(plan: dict, pred_lookup: dict, pos_lookup: dict, teams_lookup: dict) -> dict:
@@ -865,8 +889,11 @@ def _chip_plan(model_bundle, flag_counts, bootstrap, history_df, histories, fixt
     n_teams = len(bootstrap["teams"])
     fixtures_by_gw = {gw: {"doubles": sum(1 for n in counts.get(gw, {}).values() if n >= 2),
                            "blanks": n_teams - len(counts.get(gw, {}))} for gw in gameweeks}
+    # A Free Hit spends what your squad sells for, not its market value.
+    sells = [team_state.sell_prices.get(p) for p in team_state.squad]
+    value = sum(sells) if sells and None not in sells else team_state.squad_value
     out = chip_planner.plan(long, xp, gameweeks, held, scenarios,
-                            budget=team_state.squad_value + team_state.bank,
+                            budget=value + team_state.bank,
                             fixtures_by_gw=fixtures_by_gw)
     out["deadline_gw"] = deadline
     return out

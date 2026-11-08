@@ -91,7 +91,23 @@ export interface ChipPlan {
   scenarios: ChipScenario[];
 }
 
-export type NewsStatus = "out" | "doubtful" | "rotation_risk" | "expected_to_start" | "no_news";
+/** The best one-week squad your budget buys for this gameweek (backend
+ *  chip_planner.free_hit_squads). When `play` is set, the chip plan puts your
+ *  Free Hit here, and this team is the week's call. */
+export interface FreeHitTeam {
+  gameweek: number;
+  play: boolean;
+  /** Projected points over your own XI this week. */
+  gain: number | null;
+  points: number;
+  cost_m: number;
+  captain_id: number;
+  vice_captain_id: number;
+  starting_xi: Player[];
+  bench: Player[];
+}
+
+export type NewsStatus ="out" | "doubtful" | "rotation_risk" | "expected_to_start" | "no_news";
 
 export interface NewsItem {
   player_id: number | null;
@@ -392,6 +408,8 @@ export interface OptimizedTeam {
   odds_calibration?: { pair_logit_scale: number };
   /** Chip placement up to the chip deadline. */
   chip_plan?: ChipPlan;
+  /** The Free Hit team for this gameweek, and whether to play it now. */
+  free_hit?: FreeHitTeam | null;
   /** Team news for your squad, planned buys and the Wildcard squad. */
   team_news?: TeamNewsView;
   /** Cup, European and international games for the same players. */

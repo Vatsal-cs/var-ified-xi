@@ -10,7 +10,8 @@
 import type { LineupCheck, OptimizedTeam, PickCheck, Player, PlannedWeek, TransferMove } from "@/lib/types";
 import Crest from "@/components/Crest";
 import Shirt, { Hanger } from "@/components/Shirt";
-import { Figures, Term } from "./ui";
+import { ChipToken, Figures, Term } from "./ui";
+import { freeHitNow } from "@/lib/freeHit";
 import CaptainOdds from "./CaptainOdds";
 import TeamNews from "./TeamNews";
 import CoinFlips from "./CoinFlips";
@@ -173,6 +174,14 @@ function decision(team: OptimizedTeam, week?: PlannedWeek): { headline: string; 
       }`,
     };
   }
+  const fh = freeHitNow(team);
+  if (fh) {
+    const gain = fh.gain != null ? `${fh.gain.toFixed(1)} points more than your own XI` : "more than your own XI";
+    return {
+      headline: "Play your Free Hit.",
+      lede: `Its team, below, is projected ${gain} this week, the chip's best week before it expires after GW${team.chip_plan?.deadline_gw}. Make no transfer: your own squad comes back next week with the same free transfers.`,
+    };
+  }
   if (team.mode !== "transfer_plan" || !week) {
     return {
       headline: "Your optimal squad.",
@@ -214,8 +223,9 @@ function decision(team: OptimizedTeam, week?: PlannedWeek): { headline: string; 
 export default function ThisWeek({ team }: { team: OptimizedTeam }) {
   const week = team.transfer_plan?.weeks[0];
   const chip = activeChip(team);
+  const fh = freeHitNow(team);
   const { headline, lede } = decision(team, week);
-  const checks = (week?.transfers_in ?? [])
+  const checks = (fh ? [] : week?.transfers_in ?? [])
     .map((inn) => team.pick_checks?.find((c) => c.player_id === inn.player_id && c.transfer))
     .filter((c): c is PickCheck => !!c);
   const hit = team.transfer_plan?.hit_recommendation;
@@ -224,13 +234,13 @@ export default function ThisWeek({ team }: { team: OptimizedTeam }) {
   // beside a squad that already has the new signings in it added up to less
   // than FPL's team value.
   const bankNow = team.team?.bank_m ?? 0;
-  const bankAfter = week?.bank_m ?? bankNow;
+  const bankAfter = fh ? bankNow : week?.bank_m ?? bankNow;
   const bankMoves = Math.abs(bankAfter - bankNow) >= 0.05;
 
   const numbers: { label: string; value: React.ReactNode }[] =
     team.mode === "transfer_plan" && week
       ? [
-          { label: "Projected", value: <><CountUp value={week.predicted_points} /><small className="ml-1 font-body text-[14px] font-medium text-ink-400">pts</small></> },
+          { label: "Projected", value: <><CountUp value={fh ? fh.points : week.predicted_points} /><small className="ml-1 font-body text-[14px] font-medium text-ink-400">pts</small></> },
           { label: "Free transfers", value: chip ? "∞" : team.team?.free_transfers ?? "—" },
           { label: bankMoves ? "Bank after moves" : "Bank", value: `£${bankAfter.toFixed(1)}m` },
           league?.your_rank
@@ -283,7 +293,7 @@ export default function ThisWeek({ team }: { team: OptimizedTeam }) {
         </p>
       ))}
 
-      {hit?.worth_it && !chip && (
+      {hit?.worth_it && !chip && !fh && (
         <div className="callout mt-6 border-warn">
           <p className="text-[14px] font-semibold text-warn">
             <Term explain="FPL charges 4 points for each transfer beyond your free ones. Only worth it if the extra points clearly beat that cost.">
@@ -317,6 +327,12 @@ export default function ThisWeek({ team }: { team: OptimizedTeam }) {
       <OnView className="depth-recede relative">
         {chip ? (
           <LockedCheck check={team.lineup_check} chip={chip} />
+        ) : fh ? (
+          <div className="flex flex-col items-center py-6 text-center">
+            <ChipToken chip="freehit" size={72} />
+            <p className="mt-4 font-display text-[26px] font-extrabold uppercase text-ink-100">Free Hit</p>
+            <p className="mt-1 max-w-[30ch] text-[14px] text-ink-400">One week only. Set the team below in the FPL app and play the chip.</p>
+          </div>
         ) : week && week.transfers_out.length > 0 ? (
           <SwapRail week={week} />
         ) : (

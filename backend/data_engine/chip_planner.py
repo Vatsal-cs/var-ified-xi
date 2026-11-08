@@ -75,9 +75,10 @@ def _week_values(gw, squad, xp_gw, pos, fh_points):
     }
 
 
-def free_hit_points(players: pd.DataFrame, xp_by_gw: dict, gameweeks: list, budget: int) -> dict:
-    """{gw: XI + captain points of the best one-week squad within budget}.
-    The same for every scenario — a Free Hit ignores the squad you own."""
+def free_hit_squads(players: pd.DataFrame, xp_by_gw: dict, gameweeks: list, budget: int) -> dict:
+    """{gw: the best one-week squad within budget (optimizer.optimize_squad's
+    result, plus "points": its XI and captain), or None}. The same for every
+    scenario — a Free Hit ignores the squad you own."""
     out = {}
     for gw in gameweeks:
         pool = players[["player_id", "web_name", "element_type", "team", "now_cost"]].copy()
@@ -87,11 +88,18 @@ def free_hit_points(players: pd.DataFrame, xp_by_gw: dict, gameweeks: list, budg
         try:
             r = optimizer.optimize_squad(pool, bench_weight=0.0, budget=budget)
             xp = pool.set_index("player_id")["predicted_points"]
-            out[gw] = float(sum(xp.get(p, 0) for p in r["starting_ids"]) + xp.get(r["captain_id"], 0))
+            r["points"] = float(sum(xp.get(p, 0) for p in r["starting_ids"]) + xp.get(r["captain_id"], 0))
+            out[gw] = r
         except Exception as e:                       # one bad week shouldn't sink the plan
             logger.warning("Free Hit value for GW%d skipped: %s", gw, e)
             out[gw] = None
     return out
+
+
+def free_hit_points(players: pd.DataFrame, xp_by_gw: dict, gameweeks: list, budget: int) -> dict:
+    """{gw: XI + captain points of the best one-week squad within budget}."""
+    return {gw: r["points"] if r else None
+            for gw, r in free_hit_squads(players, xp_by_gw, gameweeks, budget).items()}
 
 
 def assign(weeks: list, chips: list, blocked: set = frozenset()) -> list:
@@ -113,13 +121,18 @@ def plan(players: pd.DataFrame, xp_by_gw: dict, gameweeks: list, chips: list,
          scenarios: dict, budget: int, fixtures_by_gw: dict = None, names: dict = None) -> dict:
     """scenarios: {key: {"label", "weeks": [{gameweek, squad_ids}], "blocked": {gw}}}
     — the squads you'd hold week by week under each choice (with or without a
-    Wildcard now). Returns the chip plan for the dashboard."""
+    Wildcard now). Returns the chip plan for the dashboard, with the Free Hit
+    squad for the coming week ("free_hit") so it can be played, not just
+    priced."""
     pos = players.set_index("player_id")["element_type"].astype(int).to_dict()
     names = names or players.set_index("player_id")["web_name"].to_dict()
-    fh = free_hit_points(players, xp_by_gw, gameweeks, budget) if "freehit" in chips else {}
+    squads = free_hit_squads(players, xp_by_gw, gameweeks, budget) if "freehit" in chips else {}
+    fh = {gw: r["points"] if r else None for gw, r in squads.items()}
     fixtures_by_gw = fixtures_by_gw or {}
 
-    out = {"gameweeks": gameweeks, "chips": [c for c in chips if c in PLANNED], "scenarios": []}
+    first = squads.get(gameweeks[0]) if gameweeks else None
+    out = {"gameweeks": gameweeks, "chips": [c for c in chips if c in PLANNED], "scenarios": [],
+           "free_hit": {**first, "gameweek": gameweeks[0]} if first else None}
     for key, sc in scenarios.items():
         planned = {w["gameweek"]: w["squad_ids"] for w in sc["weeks"]}
         firm_through = max(planned) if planned else gameweeks[0]

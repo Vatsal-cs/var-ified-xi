@@ -163,6 +163,23 @@ class ChipPlanner(unittest.TestCase):
         self.assertEqual(placed, {"3xc": 9, "bboost": 8, "freehit": 7})
         self.assertEqual(len(set(placed.values())), 3)
 
+    def test_the_free_hit_team_comes_back_with_its_value(self):
+        # A market of 30, the 15 you own among them: the Free Hit buys better.
+        types = ([1] * 4 + [2] * 10 + [3] * 10 + [4] * 6)
+        p = pd.DataFrame({"player_id": range(1, 31), "element_type": types,
+                          "web_name": [f"p{i}" for i in range(1, 31)],
+                          "team": range(1, 31), "now_cost": [50] * 30})
+        xp = {i: {7: float(i % 7 + 1), 8: 1.0} for i in range(1, 31)}
+        squad = [1, 2, 5, 6, 7, 8, 9, 15, 16, 17, 18, 19, 25, 26, 27]
+        out = chip_planner.plan(p, xp, [7, 8], ["freehit"], {"free": {"label": "x", "weeks": [
+            {"gameweek": 7, "squad_ids": squad}]}}, budget=1000)
+        fh = out["free_hit"]
+        self.assertEqual(fh["gameweek"], 7)
+        self.assertEqual(len(fh["starting_ids"]) + len(fh["bench_ids"]), 15)
+        self.assertIn(fh["captain_id"], fh["starting_ids"])
+        week = out["scenarios"][0]["weeks"][0]
+        self.assertAlmostEqual(week["freehit"], round(fh["points"] - week["xi_points"], 1))
+
     def test_wildcard_week_is_blocked(self):
         weeks = [{"gameweek": 7, "3xc": 20.0, "bboost": 1.0},
                  {"gameweek": 8, "3xc": 5.0, "bboost": 1.0}]

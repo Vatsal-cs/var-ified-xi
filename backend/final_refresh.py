@@ -11,7 +11,9 @@ morning's press conferences would never have been read. This job
 (.github/workflows/final-refresh.yml) waits until TEAM_NEWS_FINAL_READ_HOURS
 before the deadline and starts a refresh then, unless the news has already been
 read since. team_news.get() won't reuse an older read inside that window, and
-deadline_reminder.py sends its second email once that read is in.
+deadline_reminder.py sends its second email once that read is in. A deadline
+before REMINDER_EARLY_HOUR gets one more, just before the evening reminder
+(config.news_read_marks).
 
     python final_refresh.py --wait    # sleeps until the window, if it opens soon
     python final_refresh.py           # writes should_refresh to $GITHUB_OUTPUT
@@ -23,7 +25,7 @@ import sys
 import time
 from datetime import datetime, timedelta, timezone
 
-from config import FRONTEND_JSON_PATH, TEAM_NEWS_FINAL_READ_HOURS
+from config import FRONTEND_JSON_PATH, news_read_marks
 from deadline_reminder import _span, last_read, next_deadline, time_to_wait
 
 # A refresh takes minutes and the site redeploys after it. Later than this, it
@@ -32,10 +34,11 @@ TOO_LATE = timedelta(minutes=20)
 
 
 def should_refresh(deadline: datetime, now: datetime, last_read: datetime | None) -> bool:
-    window = deadline - timedelta(hours=TEAM_NEWS_FINAL_READ_HOURS)
-    if now < window or deadline - now < TOO_LATE:
+    """Has a read mark passed with no read since it?"""
+    passed = [m for m in news_read_marks(deadline) if m <= now]
+    if not passed or deadline - now < TOO_LATE:
         return False
-    return last_read is None or last_read < window
+    return last_read is None or last_read < passed[-1]
 
 
 def _emit(refresh: bool) -> None:
@@ -58,9 +61,10 @@ def main(argv: list | None = None) -> int:
         return 0
     gameweek, deadline = found
     if wait:
-        pause = time_to_wait(deadline, now, TEAM_NEWS_FINAL_READ_HOURS)
+        mark = next((m for m in news_read_marks(deadline) if m > now), None)
+        pause = time_to_wait(mark, now) if mark else None
         if pause:
-            print(f"GW{gameweek}: waiting {_span(pause)} for the final read.", file=sys.stderr)
+            print(f"GW{gameweek}: waiting {_span(pause)} for the next news read.", file=sys.stderr)
             time.sleep(pause.total_seconds())
         return 0
     refresh = should_refresh(deadline, now, last_read())

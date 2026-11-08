@@ -61,11 +61,38 @@ class WhenItFires(unittest.TestCase):
 
     def test_a_run_shortly_before_the_window_waits_for_it(self):
         """GitHub ran the hourly schedule every 5-8 hours, so the window can pass unseen."""
-        self.assertEqual(dr.time_to_wait(DEADLINE, DEADLINE - timedelta(hours=8)), timedelta(hours=3))
+        at = dr.first_reminder_at(DEADLINE)
+        self.assertEqual(at, DEADLINE - timedelta(hours=5))
+        self.assertEqual(dr.time_to_wait(at, DEADLINE - timedelta(hours=8)), timedelta(hours=3))
 
     def test_no_waiting_days_ahead_or_once_it_is_open(self):
-        self.assertIsNone(dr.time_to_wait(DEADLINE, DEADLINE - timedelta(hours=11)))
-        self.assertIsNone(dr.time_to_wait(DEADLINE, DEADLINE - timedelta(hours=4)))
+        at = dr.first_reminder_at(DEADLINE)
+        self.assertIsNone(dr.time_to_wait(at, DEADLINE - timedelta(hours=11)))
+        self.assertIsNone(dr.time_to_wait(at, DEADLINE - timedelta(hours=4)))
+
+
+EARLY = datetime(2026, 11, 21, 11, 0, tzinfo=timezone.utc)      # GW11: Sat 5am your time
+EVENING = datetime(2026, 11, 21, 3, 0, tzinfo=timezone.utc)     # Fri 9pm your time
+
+
+class AnEarlyDeadline(unittest.TestCase):
+    """A 5am deadline put both emails in the night: the first moves to 9pm."""
+
+    def test_the_first_goes_out_the_evening_before(self):
+        self.assertEqual(dr.first_reminder_at(EARLY), EVENING)
+        self.assertFalse(dr.is_due(EARLY, EVENING - timedelta(hours=1)))
+        self.assertTrue(dr.is_due(EARLY, EVENING))
+
+    def test_as_soon_as_the_news_before_it_is_read(self):
+        read = EVENING - timedelta(minutes=25)
+        self.assertTrue(dr.is_due(EARLY, read + timedelta(minutes=8), read))
+        self.assertFalse(dr.is_due(EARLY, read + timedelta(minutes=8), read - timedelta(hours=3)))
+
+    def test_says_its_time(self):
+        self.assertIn("Sat 21 Nov, 5:00am", dr.message(_plan(gameweek=11), 11, EARLY, EVENING))
+
+    def test_a_midday_deadline_keeps_five_hours(self):
+        self.assertIsNone(dr.evening_before(DEADLINE))
 
     def _deadline(self, now, get):
         with mock.patch.object(dr.requests, "get", get):
@@ -124,6 +151,26 @@ class TheMessage(unittest.TestCase):
         text = dr.message(plan, 10, DEADLINE, NOW)
         self.assertNotIn("Play", text.splitlines()[0])
         self.assertIn("**Chip:** none. The planner rates a Free Hit +7.5", text)
+
+    def test_a_free_hit_comes_with_its_team(self):
+        fh = {"gameweek": 10, "play": True, "gain": 7.6, "captain_id": 7, "vice_captain_id": 411,
+              "starting_xi": [_player(9, "Sánchez", "GKP"), _player(7, "Saka", "MID"), _player(411, "Haaland", "FWD")],
+              "bench": [_player(8, "Henderson", "GKP")]}
+        plan = _plan(free_hit=fh, team={"free_transfers": 1},
+                     chip_plan={"scenarios": [{"plan": [{"chip": "freehit", "now": True, "value": 7.6,
+                                                         "player": None}]}]})
+        text = dr.message(plan, 10, DEADLINE, NOW)
+        self.assertEqual(text.splitlines()[0], "GW10 deadline in 4h 40m: Play your Free Hit. Saka captain.")
+        self.assertIn("**Chip:** Free Hit, +7.6 on your own XI this week", text)
+        self.assertIn("**XI:** Sánchez; Saka; Haaland", text)
+        self.assertIn("comes back for GW11 with 1 free transfer, as now", text)
+        self.assertNotIn("Calafiori", text)
+
+    def test_a_free_hit_for_later_is_not_this_weeks_team(self):
+        fh = {"gameweek": 10, "play": False, "gain": 2.0, "captain_id": 7, "vice_captain_id": 411,
+              "starting_xi": [_player(7, "Saka", "MID")], "bench": []}
+        text = dr.message(_plan(free_hit=fh), 10, DEADLINE, NOW)
+        self.assertIn("Calafiori out, Gabriel in. Gabriel captain.", text.splitlines()[0])
 
     def test_no_chip_plan_is_no_chip(self):
         self.assertIn("**Chip:** none this week", dr.message(_plan(chip_plan=None), 10, DEADLINE, NOW))

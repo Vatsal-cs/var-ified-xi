@@ -41,10 +41,19 @@ class WhenItRefreshes(unittest.TestCase):
         self.assertFalse(fr.should_refresh(DEADLINE, DEADLINE - timedelta(minutes=10), None))
 
     def test_a_run_before_the_mark_waits_for_it(self):
-        self.assertEqual(dr.time_to_wait(DEADLINE, MARK - timedelta(hours=3), 2), timedelta(hours=3))
+        self.assertEqual(config.news_read_marks(DEADLINE), [MARK])
+        self.assertEqual(dr.time_to_wait(MARK, MARK - timedelta(hours=3)), timedelta(hours=3))
 
     def test_a_run_days_before_does_not_wait(self):
-        self.assertIsNone(dr.time_to_wait(DEADLINE, MARK - timedelta(hours=10), 2))
+        self.assertIsNone(dr.time_to_wait(MARK, MARK - timedelta(hours=10)))
+
+    def test_an_early_deadline_reads_before_the_evening_email_too(self):
+        early = datetime(2026, 11, 21, 11, 0, tzinfo=timezone.utc)        # Sat 5am your time
+        evening = datetime(2026, 11, 21, 2, 30, tzinfo=timezone.utc)      # Fri 8:30pm
+        self.assertEqual(config.news_read_marks(early), [evening, early - timedelta(hours=2)])
+        self.assertTrue(fr.should_refresh(early, evening, evening - timedelta(hours=1)))
+        self.assertFalse(fr.should_refresh(early, evening + timedelta(hours=2), evening + timedelta(minutes=3)))
+        self.assertTrue(fr.should_refresh(early, early - timedelta(hours=2), evening + timedelta(minutes=3)))
 
 
 class TheForcedRead(unittest.TestCase):

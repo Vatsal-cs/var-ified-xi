@@ -11,11 +11,15 @@ import ThisWeek, { Armband, CloseCalls, NewsDesk } from "@/components/ThisWeek";
 import PitchView from "@/components/PitchView";
 import BenchStrip from "@/components/BenchStrip";
 import { coinFlips } from "@/lib/odds";
+import { freeHitNow, weekTeam } from "@/lib/freeHit";
 import { OnView } from "@/components/motion";
 
 export default function Home() {
-  const team = getTeamData();
-  if (!team) return <NoData />;
+  const data = getTeamData();
+  if (!data) return <NoData />;
+  // The XI on show: your own, or the Free Hit team when that's this week's call.
+  const team = weekTeam(data);
+  const freeHit = freeHitNow(data);
 
   const formation = deriveFormation(team.starting_xi);
   const flipIds = coinFlips(team.starting_xi, team.bench, team.odds_calibration?.pair_logit_scale ?? 1)
@@ -27,7 +31,7 @@ export default function Home() {
         ? "Free Hit"
         : "Wildcard"
       : null;
-  const title = chipTeam ? `Your ${chipTeam} team` : isPlan ? "The dressing room" : "The starting XI";
+  const title = chipTeam ? `Your ${chipTeam} team` : freeHit ? "Your Free Hit team" : isPlan ? "The dressing room" : "The starting XI";
   const captain = team.starting_xi.find((p) => p.is_captain);
   const board = [
     `Gameweek ${team.gameweek}`,
@@ -40,7 +44,7 @@ export default function Home() {
   return (
     <PageShell team={team}>
       {/* The decision that's due */}
-      <ThisWeek team={team} />
+      <ThisWeek team={data} />
 
       {/* The squad it produces */}
       <section id="squad" aria-label={title} className="scroll-mt-32">
@@ -50,7 +54,9 @@ export default function Home() {
             <h2 className="headline mt-2 text-[40px] sm:text-[52px]">{title}</h2>
           </div>
           <p className="max-w-[40ch] text-[14px] text-ink-400">
-            {isPlan ? (
+            {freeHit ? (
+              <>Costs &pound;{freeHit.cost_m.toFixed(1)}m, for this week only.</>
+            ) : isPlan ? (
               // FPL's team value counts the bank: this squad's prices plus
               // what this week's moves leave in it.
               <>
@@ -62,7 +68,7 @@ export default function Home() {
                 Budget used &pound;{team.budget_used_m.toFixed(1)}m of &pound;{team.budget_total_m.toFixed(1)}m
               </>
             )}{" "}
-            &middot; {`planned ${team.horizon_gws} gameweeks ahead. Tap a shirt for the player's full projection.`}
+            &middot; {freeHit ? "Tap a shirt for the player's full projection." : `planned ${team.horizon_gws} gameweeks ahead. Tap a shirt for the player's full projection.`}
           </p>
         </div>
         <div className="grid items-start gap-12 lg:grid-cols-[1.2fr_1fr] lg:gap-14">

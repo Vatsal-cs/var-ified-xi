@@ -1,9 +1,11 @@
 name: Final refresh before the deadline
 
 # Starts a refresh two hours before each FPL deadline, so the last plan has read
-# that day's team news (backend/final_refresh.py). The refresh's own schedule
-# can't promise that: GitHub runs it about three times a day. A run up to 5.5
-# hours before the two-hour mark waits for it. Outside that, it only checks the time.
+# that day's team news (backend/final_refresh.py), and for a deadline before 9am
+# your time one more at 8:30pm the evening before, ahead of that night's email.
+# The refresh's own schedule can't promise either: GitHub runs it about three
+# times a day. A run up to 5.5 hours before a mark waits for it. Outside that,
+# it only checks the time.
 on:
   schedule:
     - cron: "43 * * * *"
@@ -37,7 +39,7 @@ jobs:
       - name: Install dependencies
         run: pip install requests
 
-      - name: Wait for the two-hour mark if it's soon
+      - name: Wait for the next news-read mark if it's soon
         working-directory: backend
         run: python final_refresh.py --wait
 
@@ -65,8 +67,8 @@ jobs:
             echo "A refresh is already running."
           fi
 
-      # Your second email goes out once the refresh is in. It only sends once.
-      - name: Send the second reminder when the refresh is done
+      # The email that's due goes out once the refresh is in. Each only sends once.
+      - name: Send the reminder when the refresh is done
         if: steps.gate.outputs.should_refresh == 'true'
         env:
           GH_TOKEN: ${{ github.token }}
