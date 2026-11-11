@@ -78,8 +78,8 @@ export default function LabPage() {
       >
         <LabChart />
         <p className="callout mt-8 max-w-[68ch] text-[14px] leading-relaxed text-ink-300">
-          About the dates. Each study&rsquo;s plan and result are separate files, and the history shows when each went in.
-          For {planFirst} of {studies} studies the plan is there first. For the other {studies - planFirst} they went in
+          About the dates. Each study&rsquo;s plan and result are separate files, and the history shows when each went in:
+          every commit on this page opens on GitHub. For {planFirst} of {studies} studies the plan is there first. For the other {studies - planFirst} they went in
           together, so for those the order rests on my word.
         </p>
       </Section>

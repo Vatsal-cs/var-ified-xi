@@ -127,7 +127,17 @@ function Axis() {
 
 /** When the plan and the result went into the history, in words. */
 export function ProofLine({ proof }: { proof: Proof }): ReactNode {
-  const hash = (h: string) => <code className="font-mono text-[12.5px] text-ink-300">{h}</code>;
+  // Each commit opens on GitHub, where its date and contents can be checked.
+  const hash = (h: string) => (
+    <a
+      href={`https://github.com/Vatsal-cs/var-ified-xi/commit/${h}`}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="font-mono text-[12.5px] text-ink-300 underline decoration-line-strong underline-offset-2 transition-colors hover:text-ink-100 hover:decoration-ink-300"
+    >
+      {h}
+    </a>
+  );
   if (!proof.plan) return null;
   if (!proof.result)
     return (
