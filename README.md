@@ -6,7 +6,7 @@
 
 It predicts every player's points, plans transfers, lineup and captain six gameweeks ahead under FPL's real rules, and re-plans itself before every deadline.
 
-[**Live dashboard →**](https://var-ified-xi.vercel.app) &nbsp;·&nbsp; [How it works](https://var-ified-xi.vercel.app/how) &nbsp;·&nbsp; [Project handbook](docs/HANDBOOK.md)
+[**Live dashboard →**](https://var-ified-xi.vercel.app) &nbsp;·&nbsp; [How it works](https://var-ified-xi.vercel.app/how) &nbsp;·&nbsp; [Research lab](https://var-ified-xi.vercel.app/lab) &nbsp;·&nbsp; [Project handbook](docs/HANDBOOK.md)
 
 ![Python](https://img.shields.io/badge/Python-3776AB?style=flat-square&logo=python&logoColor=white)
 ![XGBoost](https://img.shields.io/badge/XGBoost-EB1834?style=flat-square)
@@ -27,7 +27,7 @@ It predicts every player's points, plans transfers, lineup and captain six gamew
 | **+15%** | more points per gameweek than picking by recent form — 64.6 vs 57.7 and 61.7 vs 51.9 across two replayed seasons |
 | **~87,000** | real gameweek results the model learns from |
 | **6 gameweeks** | of transfers, lineups and captains planned at once by a mixed-integer solver |
-| **24 studies** | run on the model, 22 of them pre-registered: the pass/fail rule committed before the first result |
+| **35 studies** | run on the model, each judged on a pass/fail rule written before the result; for 29 the plan is in the history first. All of them, failures included, are on the [research lab](https://var-ified-xi.vercel.app/lab) page |
 | **177 tests** | guarding FPL's rules, both test harnesses, the planner and the team-news reader |
 | **$0 a month** | free public data, a free AI model, GitHub Actions and Vercel |
 
@@ -328,7 +328,7 @@ var-ified-xi/
 │   ├── research/                    # one folder per study: pre-registration, code, results
 │   └── tests/                       # 177 unit tests
 ├── frontend/
-│   ├── app/                         # This week · Plan & chips · League · Other games · How it works
+│   ├── app/                         # This week · Plan & chips · League · Other games · How it works · Lab
 │   ├── components/                  # pitch, captain odds, coin flips, team news…
 │   └── public/optimized_team.json   # written by the backend
 └── docs/HANDBOOK.md                 # the full technical write-up

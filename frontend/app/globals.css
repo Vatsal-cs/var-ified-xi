@@ -27,6 +27,12 @@
   --c-coral: 194 90 60;
   --c-warn: 168 116 15;
   --c-risk: 200 52 31;
+  /* The lab's verdicts (app/lab): shipped, worse, no detectable effect.
+     Checked for contrast and colour-blind separation on the page colour;
+     the marker shapes carry the verdict too. */
+  --c-lab-good: 46 125 74;
+  --c-lab-bad: 200 52 31;
+  --c-lab-none: 109 105 99;
   --c-grass: 58 122 64;
   --c-grass-dark: 45 103 55;
   --c-plate: 21 23 27;
@@ -79,6 +85,9 @@
   --c-coral: 229 138 111;
   --c-warn: 217 164 65;
   --c-risk: 236 106 85;
+  --c-lab-good: 75 168 108;
+  --c-lab-bad: 226 84 60;
+  --c-lab-none: 134 130 123;
   --c-grass: 39 91 49;
   --c-grass-dark: 28 72 40;
   --c-plate: 242 240 236;

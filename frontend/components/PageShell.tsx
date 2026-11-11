@@ -164,6 +164,7 @@ export function pagesFor(team: OptimizedTeam): NavPage[] {
   if (team.league) pages.push({ href: "/league", label: "League" });
   if (team.other_matches) pages.push({ href: "/other", label: "Other games" });
   pages.push({ href: "/how", label: "How it works" });
+  pages.push({ href: "/lab", label: "Lab" });
   return pages;
 }
 
