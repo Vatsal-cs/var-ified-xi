@@ -104,17 +104,21 @@ def free_hit_points(players: pd.DataFrame, xp_by_gw: dict, gameweeks: list, budg
 
 def assign(weeks: list, chips: list, blocked: set = frozenset()) -> list:
     """Best placement of the chips in different weeks: every placement tried
-    (a handful of chips over at most ~19 weeks is a few thousand)."""
+    (a handful of chips over at most ~19 weeks is a few thousand). With fewer
+    weeks left than chips, the best of them fill the weeks there are; the
+    rest can't be played before their deadline."""
     chips = [c for c in chips if c in PLANNED]
     gws = [w["gameweek"] for w in weeks if w["gameweek"] not in blocked]
     val = {(w["gameweek"], c): (w.get(c) or 0.0) for w in weeks for c in chips}
-    best, best_total = (), -1.0
-    for combo in itertools.permutations(gws, len(chips)):
-        total = sum(val[(gw, c)] for gw, c in zip(combo, chips))
-        if total > best_total:
-            best, best_total = combo, total
+    n = min(len(chips), len(gws))
+    best, best_chips, best_total = (), (), -1.0
+    for playing in itertools.combinations(chips, n):
+        for combo in itertools.permutations(gws, n):
+            total = sum(val[(gw, c)] for gw, c in zip(combo, playing))
+            if total > best_total:
+                best, best_chips, best_total = combo, playing, total
     return [{"chip": c, "gameweek": gw, "value": round(val[(gw, c)], 1)}
-            for c, gw in zip(chips, best)]
+            for c, gw in zip(best_chips, best)]
 
 
 def plan(players: pd.DataFrame, xp_by_gw: dict, gameweeks: list, chips: list,

@@ -94,6 +94,7 @@ import config
 from config import TRANSFER_HIT_COST, HORIZON_GWS, HORIZON_DECAY
 from data_engine import (
     backtest,
+    chip_sim,
     entry_data,
     evaluation,
     feature_engineering,
@@ -794,7 +795,7 @@ def _branch_value(pre: ManagerState, weeks: list, per_gw: pd.DataFrame, gw: int,
 def simulate(season_df: pd.DataFrame, policies: list, prior_seasons_df=None,
              start_gw: int = DEFAULT_START_GW, stride: int = 1, rules=None,
              legacy_prices: bool = False, branches: list = None,
-             end_gw: int = None, lineup_rule: bool = False) -> dict:
+             end_gw: int = None, lineup_rule: bool = False, chips: bool = False) -> dict:
     """Plays one season through, for every policy, off a shared model.
 
     branches: [(reference policy name, candidate Policy)]. Each gameweek the
@@ -803,6 +804,10 @@ def simulate(season_df: pd.DataFrame, policies: list, prior_seasons_df=None,
     decide the same thing contribute exactly zero, so this sees a decision
     rule's effect through far less noise than two full seasons that drift
     apart after their first different transfer.
+
+    chips: also score Bench Boost, Triple Captain and Free Hit on production's
+    squads and race when to play them (chip_sim), as production+POLICY_chips.
+    The squad and every decision are untouched.
     """
     rules = rules or season_rules.SeasonRules(max_free_transfers=config.MAX_FREE_TRANSFERS)
     branches = branches or []
@@ -820,6 +825,7 @@ def simulate(season_df: pd.DataFrame, policies: list, prior_seasons_df=None,
     positions = dict(zip(season_df["player_id"], season_df["element_type"]))
     view_rules = sorted({p.horizon_availability for p in policies}
                         | {c.horizon_availability for _, c in branches})
+    ledger = chip_sim.ChipLedger(rounds, chip_sim.fixture_counts(season_df)) if chips else None
 
     for gw in rounds:
         history = season_df[season_df["round"] < gw]
@@ -873,6 +879,7 @@ def simulate(season_df: pd.DataFrame, policies: list, prior_seasons_df=None,
             per_gw, players = views[policy.horizon_availability]
 
             hit_cost = 0
+            chip_budget = None
             if not state.squad:
                 result = _open_squad(state, players, prices, policy)
                 available, used_free = 0, 0
@@ -883,6 +890,9 @@ def simulate(season_df: pd.DataFrame, policies: list, prior_seasons_df=None,
             else:
                 available = season_rules.free_transfers_for(rules, gw, state.free_transfers)
                 pre = _copy_state(state)
+                # A Free Hit spends what the squad sells for before this
+                # week's moves, plus the bank (as main._chip_plan does).
+                chip_budget = sum(pre.sell_prices(prices).values()) + pre.bank
                 weeks = decide(pre, policy, available)
                 for ref_name, cand in branches:
                     if ref_name != policy.name:
@@ -921,6 +931,16 @@ def simulate(season_df: pd.DataFrame, policies: list, prior_seasons_df=None,
                 result, _pad_for_squad(gw_rows, state.squad, positions), bench_value
             )
             net = scored["points"] - hit_cost
+            if (ledger is not None and policy.name == "production" and chip_budget is not None
+                    and gw >= chip_sim.FIRST_CHIP_GW):
+                # Projections out to this half's chip deadline, from the same model.
+                horizon = chip_sim.deadline_for(gw, ledger.last_gw) - gw + 1
+                long = build_horizon_predictions(bundle, history, season_df, gw, horizon,
+                                                 legacy_prices=legacy_prices,
+                                                 horizon_rule=policy.horizon_availability)
+                ledger.week(gw, long, season_df, state.squad, result, chip_budget,
+                            lambda ids: _pad_for_squad(gw_rows, ids, positions),
+                            bench_value, scored["points"])
 
             state.points += scored["points"]
             state.captain_points += scored["captain_points"]
@@ -952,6 +972,18 @@ def simulate(season_df: pd.DataFrame, policies: list, prior_seasons_df=None,
         }
         for name, s in states.items()
     }
+    if ledger is not None and "production" in states:
+        summary = ledger.summary()
+        for name, weeks in ledger.per_gw(states["production"].per_gw).items():
+            out[f"production+{name}_chips"] = {
+                "points": sum(g["points"] for g in weeks), "captain_points": 0,
+                "differential_points": 0.0, "transfers": states["production"].transfers_made,
+                "hits": 0, "hit_cost": 0, "gameweeks": len(weeks), "per_gw": weeks,
+                "chips": summary[name],
+            }
+            logger.info("  chips %-13s %s", name, "  ".join(
+                f"{chip}@GW{gw}={pts:+d}" for chip, _, gw, pts in summary[name]))
+        out["production"]["chips_unplayed"] = ledger.unplayed()
     for name, log in lineup_log.items():
         out[f"{name}@lineup"] = {
             "points": sum(g["points"] for g in log), "captain_points": 0,
@@ -1049,6 +1081,9 @@ def main():
     parser.add_argument("--lineup", action="store_true",
                         help="also score each policy's squad fielded by lineup.choose_lineup "
                              "(XI and bench order valued after autosubs), as POLICY@lineup")
+    parser.add_argument("--chips", action="store_true",
+                        help="also race when to play Bench Boost, Triple Captain and Free Hit "
+                             "on production's squads (chip_sim), as production+POLICY_chips")
     parser.add_argument("--end-gw", type=int, default=None,
                         help="last gameweek to simulate (default: the season's last)")
     parser.add_argument("--stride", type=int, default=1,
@@ -1141,7 +1176,7 @@ def main():
                                        start_gw=args.start_gw, stride=args.stride,
                                        rules=rules, legacy_prices=args.legacy_prices,
                                        branches=branches, end_gw=args.end_gw,
-                                       lineup_rule=args.lineup)
+                                       lineup_rule=args.lineup, chips=args.chips)
             _report(res, policies, title=f"SEASON {season} · seed {seed}")
             for name, r in res.items():
                 runs.append({
@@ -1153,6 +1188,8 @@ def main():
                     "transfers": r["transfers"],
                     "captain": r["captain_points"],
                     "per_gw": [[int(g["gw"]), int(g["points"])] for g in r["per_gw"]],
+                    **({"chips": r["chips"]} if "chips" in r else {}),
+                    **({"chips_unplayed": r["chips_unplayed"]} if "chips_unplayed" in r else {}),
                 })
             for (ref_name, cand), log in zip(branches, branch_log.values()):
                 for side, name in (("reference", ref_name), ("candidate", cand.name)):
@@ -1171,6 +1208,11 @@ def main():
     evaluation.print_report([r for r in runs if not r["variant"].startswith("branch:")],
                             reference=reference + args.tag, block=args.block,
                             title="SEASON SIMULATION — pooled over seeds")
+    if args.chips:
+        names = [f"production+{p}_chips{args.tag}" for p in ("fixture_rule", "planner")]
+        evaluation.print_report([r for r in runs if r["variant"] in names],
+                                reference=names[0], block=args.block,
+                                title="CHIP TIMING — the planner against the fixture rule")
     for ref_name, cand in branches:
         pair = [r for r in runs if r["variant"] in (f"branch:{ref_name}{args.tag}",
                                                     f"branch:{cand.name}{args.tag}")]
