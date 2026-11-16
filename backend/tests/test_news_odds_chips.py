@@ -136,6 +136,17 @@ class OtherMatches(unittest.TestCase):
         self.assertAlmostEqual(f.loc[2, "xm_ga_adj_30"], 1.2 + 0.25)   # goal v strong side, assist v weak
         self.assertAlmostEqual(f.loc[2, "xm_opp_30"], (1.2 + 0.25 + 1.0) / 3)
 
+    def test_live_rows_are_measured_from_the_fixture_ahead(self):
+        # A live row keeps its last match's kickoff_time; the inputs must
+        # describe the fixture in fixture_kickoff, as a training row's do.
+        from data_engine import other_matches as om
+        t = pd.Timestamp
+        rows = pd.DataFrame({"kickoff_time": ["2025-10-04T14:00:00Z", "2025-10-04T14:00:00Z"],
+                             "fixture_kickoff": [t("2025-10-25 14:00"), pd.NaT]})
+        self.assertEqual(list(om.match_kickoff(rows)), [t("2025-10-25 14:00"), t("2025-10-04 14:00")])
+        trained = pd.DataFrame({"kickoff_time": ["2025-10-04T14:00:00Z"]})
+        self.assertEqual(list(om.match_kickoff(trained)), [t("2025-10-04 14:00")])
+
 
 class ChipPlanner(unittest.TestCase):
     def _players(self):

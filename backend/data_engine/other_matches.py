@@ -593,6 +593,19 @@ def features(rows: pd.DataFrame, club_matches: pd.DataFrame, apps: pd.DataFrame,
     return out
 
 
+def match_kickoff(df: pd.DataFrame) -> pd.Series:
+    """The kickoff of the match each row is about. A training row's own
+    kickoff_time; a live prediction row keeps its last match's kickoff_time
+    and names the fixture it's for in fixture_kickoff. Until 2026-11-15 live
+    rows were measured from that last match, so every one of these inputs
+    described the week before the one being predicted."""
+    when = _naive(df["kickoff_time"])
+    if "fixture_kickoff" in df.columns:
+        fixture = _naive(df["fixture_kickoff"])
+        when = fixture.where(fixture.notna(), when)
+    return when
+
+
 def attach(df: pd.DataFrame, season: str, names: dict, clubs: dict) -> float:
     """Adds FEATURES to df in place. names: {player_id: full name};
     clubs: {team id in df: FPL club name}. Returns the share of players
@@ -603,7 +616,7 @@ def attach(df: pd.DataFrame, season: str, names: dict, clubs: dict) -> float:
     team_ids = pl_team_ids(season)
     espn_id = link_players(players, squads(season, team_ids))
     club_matches, apps = season_tables(season, sorted(players["club"].unique()))
-    feats = features(df, club_matches, apps, espn_id)
+    feats = features(df.assign(kickoff_time=match_kickoff(df)), club_matches, apps, espn_id)
     for col in FEATURES:
         df[col] = feats[col].to_numpy()
     df.drop(columns=["club"], inplace=True)

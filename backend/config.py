@@ -482,6 +482,12 @@ MODEL_SEED = 42
 # held-back 2022-23 and 2023-24 — positive in both, as pre-registered. Form in
 # those games (goals, shots) was tested alongside: +81 [-4, +168], not better,
 # so only the rest-and-load inputs are used.
+# BUG, fixed 2026-11-15: live rows were measured from each player's LAST match
+# (their kickoff_time), not the fixture being predicted, so from 15 Oct until
+# then every one of these inputs described the week before. The backtest took
+# them from each match's own row and was right; live now matches it
+# (other_matches.match_kickoff). Found by comparing every input in training
+# and live rows.
 OTHER_MATCHES = True
 OTHER_MATCH_COLUMNS = ["xm_days_before", "xm_days_after", "xm_count_14", "xm_started_before",
                        "xm_rested_before", "intl_apps_14", "intl_starts_14", "intl_far_14",
