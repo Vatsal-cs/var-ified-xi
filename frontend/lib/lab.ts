@@ -86,6 +86,7 @@ const P = {
   upside: { plan: c("b53f571", "2026-11-01T12:16:03-06:00"), result: c("59f336d", "2026-11-01T13:11:22-06:00") },
   earlyHits: { plan: c("652ddfe", "2026-10-26T15:30:13-06:00"), result: c("2a74d6f", "2026-10-26T16:05:37-06:00") },
   teamNews: { plan: c("0774190", "2026-10-14T19:15:53-06:00") },
+  chipTiming: { plan: c("a1211d4", "2026-11-15T08:49:49-06:00"), result: c("c525f8a", "2026-11-15T19:17:20-06:00") },
 } satisfies Record<string, Proof>;
 
 export const LAB_TESTS: LabTest[] = [
@@ -183,6 +184,19 @@ export const LAB_TESTS: LabTest[] = [
     question: "Should the six-week planner discount later weeks less?",
     finding: "Helped in 2024-25 and hurt in 2025-26. The 0.85 stays, now as a tested setting rather than an argued one.",
     harness: BRANCH, proof: P.horizonDecay,
+  },
+  {
+    label: "Save chips for blank and double gameweeks",
+    note: "simulator",
+    est: 26, lo: -44, hi: 103, seasons: [18, 8],
+    verdict: "none",
+    question:
+      "Should Free Hit, Bench Boost and Triple Captain follow the fixture calendar (Free Hit in the biggest blank, Bench Boost in the biggest double) instead of the chip planner's projections?",
+    finding:
+      "Ahead in 9 of 10 runs, by less than the test can tell from noise, so the planner stays. Nearly all of the gap is the second-half Free Hit: +24 in the biggest blank, +11 where the planner put it, mostly a double. A first-half Free Hit was worth about nothing either way. Perfect hindsight would add about 150 a season.",
+    harness:
+      "Season simulator with chips: each chip's realised gain scored in every week of the model's own season, 5 seeds a season.",
+    proof: P.chipTiming,
   },
   {
     label: "Count the bench at 3%, not 12%",
