@@ -133,5 +133,27 @@ class Placements(unittest.TestCase):
         self.assertEqual(ledger.unplayed(), [("3xc", 0), ("freehit", 0)])
 
 
+class Hybrid(unittest.TestCase):
+    def test_free_hit_week_is_the_fixture_rules(self):
+        counts = {25: {"blanks": 4, "doubles": 0}, 28: {"blanks": 6, "doubles": 0},
+                  32: {"blanks": 6, "doubles": 0}}
+        second = list(range(20, 39))
+        self.assertEqual(chip_sim.biggest_blank(second, counts), 28)
+        self.assertEqual(chip_sim.fixture_rule(second, counts)["freehit"], 28)
+        self.assertIsNone(chip_sim.biggest_blank(list(range(3, 20)), counts))
+
+    def test_it_is_the_planner_in_a_half_with_no_blank(self):
+        ledger = chip_sim.ChipLedger(rounds=list(range(2, 39)),
+                                     counts={25: {"blanks": 4, "doubles": 0}})
+        self.assertEqual(ledger.blank_week, {0: None, 1: 25})
+        ledger.gains = {g: {"3xc": 1, "bboost": 2, "freehit": 3} for g in range(3, 39)}
+        ledger.planner = {("freehit", 0): 5, ("bboost", 0): 9,
+                          ("freehit", 1): 33, ("bboost", 1): 30}
+        ledger.hybrid = {("freehit", 1): 25, ("bboost", 1): 31}
+        self.assertEqual(ledger.placements()["hybrid"],
+                         {("freehit", 0): 5, ("bboost", 0): 9,
+                          ("freehit", 1): 25, ("bboost", 1): 31})
+
+
 if __name__ == "__main__":
     unittest.main()

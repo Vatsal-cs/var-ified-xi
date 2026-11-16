@@ -1213,6 +1213,10 @@ def main():
         evaluation.print_report([r for r in runs if r["variant"] in names],
                                 reference=names[0], block=args.block,
                                 title="CHIP TIMING — the planner against the fixture rule")
+        names = [f"production+{p}_chips{args.tag}" for p in ("planner", "hybrid")]
+        evaluation.print_report([r for r in runs if r["variant"] in names],
+                                reference=names[0], block=args.block,
+                                title="FREE HIT SAVED FOR THE BLANK — the hybrid against the planner")
     for ref_name, cand in branches:
         pair = [r for r in runs if r["variant"] in (f"branch:{ref_name}{args.tag}",
                                                     f"branch:{cand.name}{args.tag}")]

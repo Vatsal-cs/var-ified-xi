@@ -16,7 +16,10 @@ they are compared on the same squads, week by week:
   * fixture_rule: the habit of saving chips for blank and double gameweeks,
     fixed per half from the fixture calendar;
   * hindsight: each half's best placement on the realised gains, an upper
-    bound no policy can reach.
+    bound no policy can reach;
+  * hybrid: the Free Hit in the half's biggest blank, the planner timing the
+    other chips (research/2026-11-freehit-blank). In a half with no blank it
+    is the planner.
 
 Chip rules as in 2025-26 and 2026-27: one of each per half, the first half's
 by FIRST_HALF_DEADLINE. The Wildcard changes the squad, so it isn't here.
@@ -33,7 +36,7 @@ CHIPS = chip_planner.PLANNED                  # ("3xc", "bboost", "freehit")
 FIRST_HALF_DEADLINE = 19
 # GW2 builds the opening squad; chips are played from the first week it's carried.
 FIRST_CHIP_GW = 3
-POLICIES = ("planner", "fixture_rule", "hindsight")
+POLICIES = ("planner", "fixture_rule", "hindsight", "hybrid")
 
 
 def deadline_for(gw: int, last_gw: int) -> int:
@@ -58,6 +61,13 @@ def fixture_counts(season_df: pd.DataFrame) -> dict:
         out[int(gw)] = {"doubles": int((per_club >= 2).sum()),
                         "blanks": int(clubs - len(per_club))}
     return out
+
+
+def biggest_blank(gws: list, counts: dict):
+    """The week with the most blank clubs, ties to the earlier; None without
+    a blank. The fixture rule's Free Hit week."""
+    weeks = [g for g in gws if counts.get(g, {}).get("blanks", 0) > 0]
+    return max(weeks, key=lambda g: (counts[g]["blanks"], -g)) if weeks else None
 
 
 def fixture_rule(gws: list, counts: dict) -> dict:
@@ -151,11 +161,16 @@ class ChipLedger:
     gains: dict = field(default_factory=dict)        # gw -> {chip: points}
     planner: dict = field(default_factory=dict)      # chip, half -> gw
     held: list = field(default_factory=list)
+    hybrid: dict = field(default_factory=dict)       # chip, half -> gw, halves with a blank
+    hybrid_held: list = field(default_factory=list)
 
     def __post_init__(self):
         self.last_gw = max(self.rounds)
         self.half_weeks = halves(self.rounds)
         self._half = None
+        # half -> the hybrid's Free Hit week, None where the half has no blank
+        self.blank_week = {self.half_of(gws[0]): biggest_blank(gws, self.counts)
+                           for gws in self.half_weeks}
 
     def half_of(self, gw: int) -> int:
         return 0 if gw <= FIRST_HALF_DEADLINE else 1
@@ -169,9 +184,11 @@ class ChipLedger:
         """
         if gw < FIRST_CHIP_GW:
             return
-        if self.half_of(gw) != self._half:               # a new half, a new set
-            self._half = self.half_of(gw)
+        half = self.half_of(gw)
+        if half != self._half:                           # a new half, a new set
+            self._half = half
             self.held = list(CHIPS)
+            self.hybrid_held = [c for c in CHIPS if c != "freehit"]
         deadline = deadline_for(gw, self.last_gw)
         gameweeks = list(range(gw, deadline + 1))
         xp = xp_by_gw(per_gw)
@@ -186,8 +203,25 @@ class ChipLedger:
         placed = plan["scenarios"][0]["plan"] if plan["scenarios"] else []
         for p in placed:
             if p["now"]:
-                self.planner[(p["chip"], self.half_of(gw))] = int(gw)
+                self.planner[(p["chip"], half)] = int(gw)
                 self.held.remove(p["chip"])
+
+        blank = self.blank_week.get(half)
+        if blank is not None:
+            # The Free Hit is fixed to the blank; the planner times the other
+            # chips around it, never in that week.
+            if gw == blank:
+                self.hybrid[("freehit", half)] = int(gw)
+            elif self.hybrid_held:
+                hplan = chip_planner.plan(
+                    players, xp, gameweeks, self.hybrid_held,
+                    {"now": {"label": "", "weeks": [{"gameweek": gw, "squad_ids": squad}],
+                             "blocked": {blank}}},
+                    budget)
+                for p in (hplan["scenarios"][0]["plan"] if hplan["scenarios"] else []):
+                    if p["now"]:
+                        self.hybrid[(p["chip"], half)] = int(gw)
+                        self.hybrid_held.remove(p["chip"])
 
         fh = None
         if free_hit:
@@ -197,7 +231,10 @@ class ChipLedger:
 
     def placements(self) -> dict:
         """{policy: {(chip, half): gw}}."""
-        out = {"planner": dict(self.planner), "fixture_rule": {}, "hindsight": {}}
+        out = {"planner": dict(self.planner), "fixture_rule": {}, "hindsight": {},
+               "hybrid": {**{k: gw for k, gw in self.planner.items()
+                             if self.blank_week.get(k[1]) is None},
+                          **self.hybrid}}
         for half, gws in enumerate(self.half_weeks):
             gws = [g for g in gws if g in self.gains]
             for chip, gw in fixture_rule(gws, self.counts).items():
