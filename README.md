@@ -27,7 +27,7 @@ It predicts every player's points, plans transfers, lineup and captain six gamew
 | **+15%** | more points per gameweek than picking by recent form — 64.6 vs 57.7 and 61.7 vs 51.9 across two replayed seasons |
 | **~87,000** | real gameweek results the model learns from |
 | **6 gameweeks** | of transfers, lineups and captains planned at once by a mixed-integer solver |
-| **36 studies** | run on the model, each judged on a pass/fail rule written before the result; for 30 the plan is in the history first. All of them, failures included, are on the [research lab](https://var-ified-xi.vercel.app/lab) page |
+| **37 studies** | run on the model, each judged on a pass/fail rule written before the result; for 31 the plan is in the history first. All of them, failures included, are on the [research lab](https://var-ified-xi.vercel.app/lab) page |
 | **177 tests** | guarding FPL's rules, both test harnesses, the planner and the team-news reader |
 | **$0 a month** | free public data, a free AI model, GitHub Actions and Vercel |
 

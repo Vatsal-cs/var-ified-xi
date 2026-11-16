@@ -87,6 +87,7 @@ const P = {
   earlyHits: { plan: c("652ddfe", "2026-10-26T15:30:13-06:00"), result: c("2a74d6f", "2026-10-26T16:05:37-06:00") },
   teamNews: { plan: c("0774190", "2026-10-14T19:15:53-06:00") },
   chipTiming: { plan: c("a1211d4", "2026-11-15T08:49:49-06:00"), result: c("c525f8a", "2026-11-15T19:17:20-06:00") },
+  freeHitBlank: { plan: c("09ad754", "2026-11-15T19:21:38-06:00"), result: c("e3600bc", "2026-11-15T20:56:44-06:00") },
 } satisfies Record<string, Proof>;
 
 export const LAB_TESTS: LabTest[] = [
@@ -283,6 +284,19 @@ export const LAB_TESTS: LabTest[] = [
     finding:
       "The archive keeps only FPL's end-of-season ratings, which made fresh ratings look worth about 100 points a season. Rated with the versions published before each kickoff, the gap vanished: it was hindsight (+202 [+42, +367]). Team-ratings work stopped here.",
     harness: BACKTEST, proof: P.ratingsHindsight,
+  },
+  {
+    label: "Free Hit saved for the biggest blank",
+    note: "simulator, held back",
+    est: -3, lo: -98, hi: 75, heldBack: [21, -24],
+    verdict: "none",
+    question:
+      "The chip timing test found the second-half Free Hit doing better in the biggest blank gameweek. Should it always go there, with the planner timing the other chips?",
+    finding:
+      "The idea came from 2024-25 and 2025-26 (+29 there), so it was decided on the two held-back seasons, run once. The pattern reversed: the planner's late double gameweeks beat the blank by 15 a play, and 2023-24's 12-club blank was worth only +11 to a Free Hit. The planner stays.",
+    harness:
+      "Season simulator with chips: each chip's realised gain scored in every week of the model's own season, 5 seeds a season, decided on 2022-23 and 2023-24.",
+    proof: P.freeHitBlank,
   },
   {
     label: "Season stage (matches played)",
