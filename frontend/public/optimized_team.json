@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-20T04:58:06.705654+00:00",
+  "generated_at": "2026-11-20T08:22:55.400335+00:00",
   "gameweek": 11,
   "deadline": "2026-11-21T11:00:00Z",
   "horizon_gws": 6,
@@ -2361,19 +2361,19 @@
   },
   "team_news": {
     "enabled": true,
-    "fetched_at": "2026-11-20T04:57:47.392648+00:00",
+    "fetched_at": "2026-11-20T08:22:36.066471+00:00",
     "model": "gemini-3.5-flash-lite",
     "items": [
       {
-        "player_id": null,
-        "name": "Brian Brobbey",
+        "player_id": 544,
+        "name": "Granit Xhaka",
         "club": "Sunderland",
         "status": "out",
         "start_chance": 0,
-        "reason": "Thigh knock rules him out at Villa.",
-        "source_url": "https://news.google.com/rss/articles/CBMijwFBVV95cUxQNjM3R1VXWWlLSFR2RFY1aS1iX29ZOUNBME5yTlNmX2NmY3cwaXRsWW95a0xma3oyblZ1UFVSOHhCYXp2aVFOdjJ4VDNyWVpCUk9xdGxRUjZQdDZYTVFaaUFCb09aWnpWTW1UeUVsOEJ0cHdoWVd3UHlNOWkwcm9zWHpJZ3hGd3VrQXl0eV9QTQ?oc=5",
+        "reason": "Missed training ahead of Aston Villa match",
+        "source_url": "https://news.google.com/rss/articles/CBMikgFBVV95cUxNUEhxbjM2MThZMThuSXJLUlI0QXloRmFueVVXTjJ3SDFyQ2l4d0R5Q1hBWVREOFJVd2hDVHN3RnFNVnZhcm5LN01GbWVocm9ZeWpsZFZJNkpJZUNDZmR4NzJVWExoWkoyQmI3WDREVm16YkpyZWhCTTZpeGhpcEFtc2VfRVF3NTBWN2hqcmNEbkhRdw?oc=5",
         "source_date": "2026-11-19",
-        "source_title": "Brian Brobbey Injury Update: Thigh Knock Rules Him Out at Villa (19 November) - The False 9"
+        "source_title": "Sky Sports: Xhaka and Brobbey miss Sunderland training ahead of Aston Villa match - AllFootball"
       },
       {
         "player_id": 106,
@@ -2381,40 +2381,29 @@
         "club": "Brentford",
         "status": "out",
         "start_chance": 0,
-        "reason": "Ruled out for the Everton fixture",
+        "reason": "Everton to face Brentford without Igor Thiago",
         "source_url": "https://news.google.com/rss/articles/CBMikAFBVV95cUxPNVlJRjRVd192TFpOb0VxaG1udUxjUEhtVlU2eGtNMHRZY3VQbzlhSjY5eFFUSks3M052Z09kTy1PbjV1N3U1VDZxQTVoTkVNWHdRaFBveTBVSjY4ajlWMkJWVkpEUEl0TVVVQTcyMTk5bE5aVGpEakFoWHktekk0NnM3UE1yRXZhVGhOUlludVU?oc=5",
         "source_date": "2026-11-18",
         "source_title": "Everton to face Brentford without Igor Thiago as Nathan Collins injury concern grows - Read Everton"
       },
       {
-        "player_id": 544,
-        "name": "Granit Xhaka",
-        "club": "Sunderland",
+        "player_id": 67,
+        "name": "Rayan Vitor Simpl\u00edcio Rocha",
+        "club": "Bournemouth",
         "status": "doubtful",
         "start_chance": 50,
-        "reason": "Granit Xhaka missed Sunderland training ahead of the Aston Villa match and faces a fitness update.",
-        "source_url": "https://news.google.com/rss/articles/CBMikgFBVV95cUxNUEhxbjM2MThZMThuSXJLUlI0QXloRmFueVVXTjJ3SDFyQ2l4d0R5Q1hBWVREOFJVd2hDVHN3RnFNVnZhcm5LN01GbWVocm9ZeWpsZFZJNkpJZUNDZmR4NzJVWExoWkoyQmI3WDREVm16YkpyZWhCTTZpeGhpcEFtc2VfRVF3NTBWN2hqcmNEbkhRdw?oc=5",
-        "source_date": "2026-11-19",
-        "source_title": "Sky Sports: Xhaka and Brobbey miss Sunderland training ahead of Aston Villa match - AllFootball"
-      },
-      {
-        "player_id": 403,
-        "name": "S\u00e1vio Moreira de Oliveira",
-        "club": "Spurs",
-        "status": "doubtful",
-        "start_chance": 50,
-        "reason": "Savio returns to training and is part of injury return updates ahead of the Ipswich clash.",
-        "source_url": "https://news.google.com/rss/articles/CBMiwwFBVV95cUxPbmpsZ2JJdnBMSXlYcW5wQXpFN3h6QVVpeWNvajJMUVdreC1GMGd6a3I5Zl80TDhIY1FOdWx6NUVmby04cWlXQ0pvOFdQVXhBb3cyWlZOWWtHQTFBcjdlZ0l1Ny1wTnJLUWlKMHBSQXdtSGhVWnhRZGdrcmhrcUxRT3E4MUs3dWlKcE1JZDBOTXlqYWFOR1QxVjVlTF9pR2JMNE9FT1gzeHpwbmJJWXJOZTRyX1FzNF84MHFyd0dSLWpvcEU?oc=5",
-        "source_date": "2026-11-19",
-        "source_title": "Savio returns to Spurs training: Tottenham handed double fitness boost for Ipswich clash - Spurs Web"
+        "reason": "Missed Japan game through injury",
+        "source_url": "https://news.google.com/rss/articles/CBMi5AFBVV95cUxQaHVndHlGUWxVUnloRm9ISTB6X2V5M0RBZEtscHo5SUZkXzhhdUNNVUExbGtfeHUzYzZDeVJTenMzWExzc2p2Mm9MS3ZQWlZMc0s5alZNMGRkaXZpaE45SWxlMWxrQ2EzOW8yQk8xMFJtamdXSG1vSHVXbXQzNUFJcVV1QnRvcEk5YW9IMFIwczJkaVhxOUN1UmNlXzdrN1RfeVlSNWlTSGltSHNXWmg1RXR2ZENOaGM5ZklydHVhRl83MnI2cEhIZ1FldEVfcUFXN0U1aGstemhRUENvUWZDdWZpNEE?oc=5",
+        "source_date": "2026-11-14",
+        "source_title": "International Roundup: Brooks Bags As Rayan Misses Japan Game Through Injury - roundtable.io"
       },
       {
         "player_id": 109,
         "name": "Bart Verbruggen",
         "club": "Brighton",
         "status": "no_news",
-        "start_chance": null,
-        "reason": "No news in the headlines.",
+        "start_chance": 50,
+        "reason": "No news for Bart Verbruggen in the provided headlines.",
         "source_url": null,
         "source_date": null,
         "source_title": null
@@ -2425,7 +2414,7 @@
         "club": "Arsenal",
         "status": "no_news",
         "start_chance": null,
-        "reason": "No news in the headlines",
+        "reason": "No news found in headlines",
         "source_url": null,
         "source_date": null,
         "source_title": null
@@ -2435,8 +2424,8 @@
         "name": "Erling Haaland",
         "club": "Man City",
         "status": "no_news",
-        "start_chance": 100,
-        "reason": "No mention in headlines.",
+        "start_chance": null,
+        "reason": "International round-up mentioned him, but no current match injury news.",
         "source_url": null,
         "source_date": null,
         "source_title": null
@@ -2447,7 +2436,7 @@
         "club": "Arsenal",
         "status": "no_news",
         "start_chance": null,
-        "reason": "No news in the headlines",
+        "reason": "No news found in headlines",
         "source_url": null,
         "source_date": null,
         "source_title": null
@@ -2458,7 +2447,7 @@
         "club": "Arsenal",
         "status": "no_news",
         "start_chance": null,
-        "reason": "No news in the headlines",
+        "reason": "No news found in headlines",
         "source_url": null,
         "source_date": null,
         "source_title": null
@@ -2468,8 +2457,8 @@
         "name": "Harvey Barnes",
         "club": "Newcastle",
         "status": "no_news",
-        "start_chance": 100,
-        "reason": "No mention in headlines.",
+        "start_chance": null,
+        "reason": "No relevant news found in the headlines.",
         "source_url": null,
         "source_date": null,
         "source_title": null
@@ -2479,8 +2468,8 @@
         "name": "Morgan Rogers",
         "club": "Chelsea",
         "status": "no_news",
-        "start_chance": null,
-        "reason": "No news in the headlines.",
+        "start_chance": 50,
+        "reason": "No news for Morgan Rogers in the provided headlines.",
         "source_url": null,
         "source_date": null,
         "source_title": null
@@ -2490,8 +2479,8 @@
         "name": "Murillo Costa dos Santos",
         "club": "Nott'm Forest",
         "status": "no_news",
-        "start_chance": 100,
-        "reason": "No mention in headlines.",
+        "start_chance": null,
+        "reason": "No relevant news found in the headlines.",
         "source_url": null,
         "source_date": null,
         "source_title": null
@@ -2501,8 +2490,8 @@
         "name": "Nordi Mukiele",
         "club": "Sunderland",
         "status": "no_news",
-        "start_chance": 100,
-        "reason": "None",
+        "start_chance": null,
+        "reason": "No relevant team news found in the headlines",
         "source_url": null,
         "source_date": null,
         "source_title": null
@@ -2512,19 +2501,8 @@
         "name": "Pascal Gro\u00df",
         "club": "Brighton",
         "status": "no_news",
-        "start_chance": null,
-        "reason": "No news in the headlines.",
-        "source_url": null,
-        "source_date": null,
-        "source_title": null
-      },
-      {
-        "player_id": 67,
-        "name": "Rayan Vitor Simpl\u00edcio Rocha",
-        "club": "Bournemouth",
-        "status": "no_news",
-        "start_chance": null,
-        "reason": "No news in the headlines",
+        "start_chance": 50,
+        "reason": "No news for Pascal Gro\u00df in the provided headlines.",
         "source_url": null,
         "source_date": null,
         "source_title": null
@@ -2534,19 +2512,30 @@
         "name": "Sven Botman",
         "club": "Newcastle",
         "status": "no_news",
-        "start_chance": 100,
-        "reason": "No mention in headlines.",
+        "start_chance": null,
+        "reason": "No relevant news found in the headlines.",
         "source_url": null,
         "source_date": null,
         "source_title": null
+      },
+      {
+        "player_id": 403,
+        "name": "S\u00e1vio Moreira de Oliveira",
+        "club": "Spurs",
+        "status": "no_news",
+        "start_chance": null,
+        "reason": "Returned to training",
+        "source_url": "https://news.google.com/rss/articles/CBMiwwFBVV95cUxPbmpsZ2JJdnBMSXlYcW5wQXpFN3h6QVVpeWNvajJMUVdreC1GMGd6a3I5Zl80TDhIY1FOdWx6NUVmby04cWlXQ0pvOFdQVXhBb3cyWlZOWWtHQTFBcjdlZ0l1Ny1wTnJLUWlKMHBSQXdtSGhVWnhRZGdrcmhrcUxRT3E4MUs3dWlKcE1JZDBOTXlqYWFOR1QxVjVlTF9pR2JMNE9FT1gzeHpwbmJJWXJOZTRyX1FzNF84MHFyd0dSLWpvcEU?oc=5",
+        "source_date": "2026-11-19",
+        "source_title": "Savio returns to Spurs training: Tottenham handed double fitness boost for Ipswich clash - Spurs Web"
       },
       {
         "player_id": 249,
         "name": "Thierno Barry",
         "club": "Everton",
         "status": "no_news",
-        "start_chance": null,
-        "reason": "No news in the headlines.",
+        "start_chance": 50,
+        "reason": "No news for Thierno Barry in the provided headlines.",
         "source_url": null,
         "source_date": null,
         "source_title": null
@@ -2680,7 +2669,7 @@
     }
   },
   "other_matches": {
-    "from": "2026-11-20T04:58:06.644136",
+    "from": "2026-11-20T08:22:55.336780",
     "to": "2026-12-26T11:00:00",
     "clubs": [
       {
@@ -3608,6 +3597,26 @@
       }
     },
     {
+      "player_id": 566,
+      "name": "Silva",
+      "position": "DEF",
+      "team": "Bournemouth",
+      "cost_m": 5.1,
+      "next": 4.0,
+      "six_weeks": 15.2,
+      "start_probability": 0.94,
+      "if_he_plays": 4.24,
+      "why": {
+        "defending": 0.08,
+        "minutes and rotation": -0.0,
+        "other": -0.04,
+        "price and ownership": 0.01,
+        "recent form": -0.34,
+        "season form": 0.57,
+        "team and fixture": 0.37
+      }
+    },
+    {
       "player_id": 390,
       "name": "R\u00faben",
       "position": "DEF",
@@ -3625,26 +3634,6 @@
         "recent form": -0.16,
         "season form": 0.07,
         "team and fixture": 0.68
-      }
-    },
-    {
-      "player_id": 566,
-      "name": "Silva",
-      "position": "DEF",
-      "team": "Bournemouth",
-      "cost_m": 5.1,
-      "next": 3.98,
-      "six_weeks": 15.15,
-      "start_probability": 0.94,
-      "if_he_plays": 4.23,
-      "why": {
-        "defending": 0.09,
-        "minutes and rotation": -0.0,
-        "other": -0.04,
-        "price and ownership": -0.0,
-        "recent form": -0.34,
-        "season form": 0.57,
-        "team and fixture": 0.37
       }
     },
     {
@@ -5434,7 +5423,7 @@
       "team": "Aston Villa",
       "cost_m": 6.2,
       "next": 2.14,
-      "six_weeks": 11.05,
+      "six_weeks": 11.03,
       "start_probability": 0.65,
       "if_he_plays": 4.68,
       "why": {
@@ -6748,26 +6737,6 @@
       }
     },
     {
-      "player_id": 277,
-      "name": "Egan",
-      "position": "DEF",
-      "team": "Hull City",
-      "cost_m": 4.1,
-      "next": 1.91,
-      "six_weeks": 8.38,
-      "start_probability": 0.63,
-      "if_he_plays": 2.91,
-      "why": {
-        "defending": 0.12,
-        "minutes and rotation": -0.05,
-        "other": -0.12,
-        "price and ownership": -0.18,
-        "recent form": 0.1,
-        "season form": 0.3,
-        "team and fixture": -0.85
-      }
-    },
-    {
       "player_id": 656,
       "name": "Mfuni",
       "position": "DEF",
@@ -6785,6 +6754,26 @@
         "recent form": 0.08,
         "season form": 0.13,
         "team and fixture": -0.29
+      }
+    },
+    {
+      "player_id": 277,
+      "name": "Egan",
+      "position": "DEF",
+      "team": "Hull City",
+      "cost_m": 4.1,
+      "next": 1.9,
+      "six_weeks": 8.34,
+      "start_probability": 0.62,
+      "if_he_plays": 2.91,
+      "why": {
+        "defending": 0.12,
+        "minutes and rotation": -0.05,
+        "other": -0.12,
+        "price and ownership": -0.18,
+        "recent form": 0.1,
+        "season form": 0.3,
+        "team and fixture": -0.85
       }
     },
     {
