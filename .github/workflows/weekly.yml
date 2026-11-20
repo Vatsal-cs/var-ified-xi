@@ -89,5 +89,12 @@ jobs:
             echo "Nothing changed — skipping commit."
           else
             git commit -m "Refresh squad for GW${{ steps.gate.outputs.gameweek }}"
-            git push
+            # A push to main during the run (it takes several minutes) used to
+            # reject this one and lose the refresh (2026-11-20). This commit
+            # only touches data files, so rebase onto whatever landed and retry.
+            for attempt in 1 2 3; do
+              git pull --rebase origin main && git push && break
+              [ "$attempt" = 3 ] && exit 1
+              sleep 10
+            done
           fi
