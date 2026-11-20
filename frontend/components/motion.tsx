@@ -113,6 +113,211 @@ export function Tilt({ children, max = 8, className = "" }: { children: ReactNod
   );
 }
 
+/** A damped spring: pulled towards its target, carrying its speed, so it
+ *  settles with a little overshoot instead of easing in a straight line. */
+type Spring = { x: number; v: number; target: number };
+const STIFFNESS = 110;
+const DAMPING = 14; // under the critical 21, so it overshoots once, slightly
+function step(s: Spring, dt: number) {
+  s.v += (STIFFNESS * (s.target - s.x) - DAMPING * s.v) * dt;
+  s.x += s.v * dt;
+}
+const settled = (s: Spring) => Math.abs(s.target - s.x) < 0.01 && Math.abs(s.v) < 0.01;
+
+/** A 3D stage you can look round. Writes --orbit-tilt (how far the stage is
+ *  tipped back, in degrees) and --orbit-spin (how far it's turned) on its
+ *  element, for the children to use in their transforms. With a mouse it
+ *  leans towards the pointer; on any device it can be dragged round, and on
+ *  letting go it springs back. As it scrolls into view the camera cranes
+ *  down from overhead to its resting angle. Reduced motion gets it still,
+ *  at rest. */
+export function Orbit({
+  children,
+  className = "",
+  rest = 46,
+  crane = 16,
+  lean = 7,
+  drag = 26,
+}: {
+  children: ReactNode;
+  className?: string;
+  /** The resting tilt, in degrees. */
+  rest?: number;
+  /** How much flatter it starts, before it has scrolled into view. */
+  crane?: number;
+  /** How far it leans towards the pointer, in degrees. */
+  lean?: number;
+  /** How far a drag can turn it, in degrees. */
+  drag?: number;
+}) {
+  const ref = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const write = (tilt: number, spin: number) => {
+      el.style.setProperty("--orbit-tilt", `${tilt.toFixed(2)}deg`);
+      el.style.setProperty("--orbit-spin", `${spin.toFixed(2)}deg`);
+    };
+    write(rest, 0);
+    if (reduced()) return;
+
+    const tilt: Spring = { x: rest - crane, v: 0, target: rest - crane };
+    const spin: Spring = { x: 0, v: 0, target: 0 };
+    let raf = 0;
+    let last = 0;
+    const tick = (now: number) => {
+      const dt = Math.min(0.032, (now - last) / 1000 || 0.016);
+      last = now;
+      step(tilt, dt);
+      step(spin, dt);
+      write(tilt.x, spin.x);
+      raf = settled(tilt) && settled(spin) ? 0 : requestAnimationFrame(tick);
+    };
+    const kick = () => {
+      if (!raf) {
+        last = performance.now();
+        raf = requestAnimationFrame(tick);
+      }
+    };
+
+    // The camera cranes down as the stage comes up the screen.
+    let craned = 0;
+    const onScroll = () => {
+      const r = el.getBoundingClientRect();
+      const vh = window.innerHeight;
+      craned = Math.min(1, Math.max(0, (vh - r.top) / (vh * 0.7)));
+      tilt.target = rest - crane * (1 - craned) + leanTilt;
+      kick();
+    };
+
+    // Leaning towards the pointer, on a device with a mouse.
+    let leanTilt = 0;
+    const fine = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+    const onMove = (e: PointerEvent) => {
+      if (dragging) return;
+      const r = el.getBoundingClientRect();
+      const nx = Math.max(-1, Math.min(1, ((e.clientX - r.left) / r.width - 0.5) * 2));
+      const ny = Math.max(-1, Math.min(1, ((e.clientY - r.top) / r.height - 0.5) * 2));
+      spin.target = nx * lean;
+      leanTilt = ny * lean * 0.6;
+      tilt.target = rest - crane * (1 - craned) + leanTilt;
+      kick();
+    };
+    const onLeave = () => {
+      if (dragging) return;
+      spin.target = 0;
+      leanTilt = 0;
+      tilt.target = rest - crane * (1 - craned);
+      kick();
+    };
+
+    // Dragging it round. Sideways only on a touch screen, so the page still
+    // scrolls; a drag that moved doesn't count as a tap on what's under it.
+    let dragging = false;
+    let moved = false;
+    let startX = 0;
+    let startSpin = 0;
+    const onDown = (e: PointerEvent) => {
+      dragging = true;
+      moved = false;
+      startX = e.clientX;
+      startSpin = spin.x;
+    };
+    const onDragMove = (e: PointerEvent) => {
+      if (!dragging) return;
+      const dx = e.clientX - startX;
+      if (Math.abs(dx) > 6) moved = true;
+      if (!moved) return;
+      const r = el.getBoundingClientRect();
+      spin.target = Math.max(-drag, Math.min(drag, startSpin + (dx / r.width) * drag * 2.2));
+      kick();
+    };
+    const onUp = () => {
+      if (!dragging) return;
+      dragging = false;
+      if (moved) {
+        spin.target = 0; // let go: it springs back past the middle and settles
+        kick();
+      }
+    };
+    const onClick = (e: MouseEvent) => {
+      if (moved) {
+        e.stopPropagation();
+        e.preventDefault();
+        moved = false;
+      }
+    };
+
+    onScroll();
+    write(tilt.x, spin.x);
+    kick();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    if (fine) {
+      el.addEventListener("pointermove", onMove);
+      el.addEventListener("pointerleave", onLeave);
+    }
+    el.addEventListener("pointerdown", onDown);
+    window.addEventListener("pointermove", onDragMove);
+    window.addEventListener("pointerup", onUp);
+    window.addEventListener("pointercancel", onUp);
+    el.addEventListener("click", onClick, true);
+    return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener("scroll", onScroll);
+      el.removeEventListener("pointermove", onMove);
+      el.removeEventListener("pointerleave", onLeave);
+      el.removeEventListener("pointerdown", onDown);
+      window.removeEventListener("pointermove", onDragMove);
+      window.removeEventListener("pointerup", onUp);
+      window.removeEventListener("pointercancel", onUp);
+      el.removeEventListener("click", onClick, true);
+    };
+  }, [rest, crane, lean, drag]);
+  return (
+    <div ref={ref} className={`touch-pan-y select-none ${className}`} style={{ ["--orbit-tilt" as string]: `${rest}deg`, ["--orbit-spin" as string]: "0deg" }}>
+      {children}
+    </div>
+  );
+}
+
+/** Follows the pointer across the whole page, on a spring, and writes where
+ *  it is as --px and --py (-1 to 1 from the middle of the screen) on the
+ *  root, so backgrounds can shift with it in layers, nearer layers more.
+ *  Mouse only; touch and reduced motion leave them at 0. */
+export function PointerDepth() {
+  useEffect(() => {
+    if (reduced() || !window.matchMedia("(hover: hover) and (pointer: fine)").matches) return;
+    const root = document.documentElement;
+    const px: Spring = { x: 0, v: 0, target: 0 };
+    const py: Spring = { x: 0, v: 0, target: 0 };
+    let raf = 0;
+    let last = 0;
+    const tick = (now: number) => {
+      const dt = Math.min(0.032, (now - last) / 1000 || 0.016);
+      last = now;
+      step(px, dt);
+      step(py, dt);
+      root.style.setProperty("--px", px.x.toFixed(4));
+      root.style.setProperty("--py", py.x.toFixed(4));
+      raf = settled(px) && settled(py) ? 0 : requestAnimationFrame(tick);
+    };
+    const onMove = (e: PointerEvent) => {
+      px.target = (e.clientX / window.innerWidth - 0.5) * 2;
+      py.target = (e.clientY / window.innerHeight - 0.5) * 2;
+      if (!raf) {
+        last = performance.now();
+        raf = requestAnimationFrame(tick);
+      }
+    };
+    window.addEventListener("pointermove", onMove, { passive: true });
+    return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener("pointermove", onMove);
+    };
+  }, []);
+  return null;
+}
+
 /** A number that counts up to its value once, on first render. */
 export function CountUp({ value, decimals = 1, duration = 900 }: { value: number; decimals?: number; duration?: number }) {
   const [shown, setShown] = useState(value);

@@ -7,9 +7,9 @@
 import type { Metadata } from "next";
 import { getTeamData } from "@/lib/getTeamData";
 import PageShell, { NoData } from "@/components/PageShell";
-import LabChart, { Marker, ProofLine } from "@/components/LabChart";
+import LabChart, { Marker, ProofLine, ReadingKey, signed } from "@/components/LabChart";
 import { PageIntro, Section } from "@/components/ui";
-import { BENCH_FIXES, LAB_CHECKS, LAB_TESTS, studyCount } from "@/lib/lab";
+import { BENCH_FIXES, LAB_CHECKS, LAB_TESTS, studyCount, type Verdict } from "@/lib/lab";
 
 export const metadata: Metadata = {
   title: "The lab — VAR-ified XI",
@@ -36,6 +36,41 @@ const STEPS: { title: string; body: string }[] = [
   },
 ];
 
+/** What the tests found, in plain words: the headline of each lesson, the
+ *  number behind it, and why it matters. Numbers from lib/lab.ts. */
+const FINDINGS: { figure: string; verdict: Verdict; title: string; body: string }[] = [
+  {
+    figure: signed(122),
+    verdict: "shipped",
+    title: "A hidden input was switched off",
+    body: "Ownership was listed as an input, but it was zero in every training row, so the model never learned from it. Filled in properly, it was the biggest single gain.",
+  },
+  {
+    figure: signed(102),
+    verdict: "shipped",
+    title: "The last three games is too short a window",
+    body: "Form over the last ten games and the whole season beat the last-three-games form most managers go on. Recent form is overrated.",
+  },
+  {
+    figure: signed(87),
+    verdict: "shipped",
+    title: "Midweek games matter",
+    body: "How many cup, European and international games a player has just played, and how much rest he's had since, is worth real points.",
+  },
+  {
+    figure: "29 of 37",
+    verdict: "none",
+    title: "Most ideas can't be told apart from luck",
+    body: "Changing nothing but the model's random seed moved a two-season score by 175 points. Most ideas land inside that noise, so they aren't used.",
+  },
+  {
+    figure: signed(-3),
+    verdict: "none",
+    title: "An idea that looked good failed on new seasons",
+    body: "Saving the Free Hit for blank weeks was +29 on the seasons it came from and −3 on two it had never seen. That is why every change has to pass on unseen seasons.",
+  },
+];
+
 export default function LabPage() {
   const team = getTeamData();
   if (!team) return <NoData />;
@@ -43,20 +78,56 @@ export default function LabPage() {
   const count = (v: string) => LAB_TESTS.filter((t) => t.verdict === v).length;
 
   return (
-    <PageShell team={team}>
+    <PageShell team={team} chalk={false}>
       <PageIntro
         kicker="Research lab"
         title="The lab"
-        sub="Nothing here ships because it sounds smart. A change has to score more real points than the model it would replace, by more than the noise, on a rule written down before the first result. This is every test so far, including the ones that failed."
+        sub="Every idea tried on the model, judged on one thing: did it score more real FPL points in replayed seasons, by more than luck? Most didn't. They're all here, the failures included."
         figures={[
-          { label: "Studies", value: studies },
-          { label: "Shipped", value: count("shipped") },
-          { label: "Clearly worse", value: count("worse") },
-          { label: "Plan committed first", value: `${planFirst} of ${studies}` },
+          { label: "Ideas tested", value: studies },
+          { label: "Kept", value: count("shipped") },
+          { label: "Made it worse", value: count("worse") },
+          { label: "Too close to call", value: count("none") },
         ]}
       />
 
-      <Section id="rules" eyebrow="The rules" title="How a change gets in">
+      <Section id="findings" eyebrow="Findings" title="What the tests found">
+        <ol className="divide-y divide-line border-y border-line">
+          {FINDINGS.map((f) => (
+            <li key={f.title} className="grid gap-x-8 gap-y-2 py-6 sm:grid-cols-[12.5rem_minmax(0,1fr)]">
+              <p className="flex items-center gap-2.5 whitespace-nowrap font-display text-[40px] font-extrabold leading-none tabular-nums text-ink-100 sm:text-[46px]">
+                <Marker verdict={f.verdict} className="flex-none" />
+                {f.figure}
+              </p>
+              <div className="max-w-[62ch]">
+                <p className="text-[19px] font-semibold leading-snug text-ink-100">{f.title}</p>
+                <p className="mt-1.5 text-[15.5px] leading-relaxed text-ink-200">{f.body}</p>
+              </div>
+            </li>
+          ))}
+        </ol>
+        <p className="mt-4 text-[13.5px] text-ink-400">Points over two replayed seasons, against the model as it ran at the time.</p>
+      </Section>
+
+      <Section id="read" eyebrow="Before the chart" title="How to read it">
+        <ReadingKey />
+      </Section>
+
+      <Section
+        id="tests"
+        eyebrow="Every idea"
+        title={`All ${LAB_TESTS.length}, on one scale`}
+        lede="Points gained or lost over two replayed seasons. Open a row for the question, what happened and when its plan was committed."
+      >
+        <LabChart />
+        <p className="callout mt-8 max-w-[68ch] text-[14px] leading-relaxed text-ink-300">
+          About the dates. Each study&rsquo;s plan and result are separate files, and the history shows when each went in:
+          every commit on this page opens on GitHub. For {planFirst} of {studies} studies the plan is there first. For the other {studies - planFirst} they went in
+          together, so for those the order rests on my word.
+        </p>
+      </Section>
+
+      <Section id="rules" eyebrow="The method" title="How an idea gets tested">
         <ol className="grid gap-x-10 gap-y-6 border-t border-line pt-6 sm:grid-cols-2">
           {STEPS.map((s, i) => (
             <li key={s.title} className="flex gap-4">
@@ -68,20 +139,6 @@ export default function LabPage() {
             </li>
           ))}
         </ol>
-      </Section>
-
-      <Section
-        id="tests"
-        eyebrow="Every tested change"
-        title={`${LAB_TESTS.length} changes, one scale`}
-        lede="Points gained or lost against the model at the time, over two replayed seasons. The marker is the best estimate and the line its 95% interval: a line crossing zero means the test can't tell. Open a row for the question, the seasons and when its plan was committed."
-      >
-        <LabChart />
-        <p className="callout mt-8 max-w-[68ch] text-[14px] leading-relaxed text-ink-300">
-          About the dates. Each study&rsquo;s plan and result are separate files, and the history shows when each went in:
-          every commit on this page opens on GitHub. For {planFirst} of {studies} studies the plan is there first. For the other {studies - planFirst} they went in
-          together, so for those the order rests on my word.
-        </p>
       </Section>
 
       <Section

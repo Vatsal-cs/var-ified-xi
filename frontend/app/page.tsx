@@ -74,7 +74,7 @@ export default function Home() {
         <div className="grid items-start gap-12 lg:grid-cols-[1.2fr_1fr] lg:gap-14">
           {/* Each block stands up as it scrolls into view, then plays its animations */}
           <div>
-            <OnView className="depth-rise">
+            <OnView>
               <PitchView startingXi={team.starting_xi} coinFlipIds={flipIds} board={board} />
             </OnView>
             <OnView className="depth-rise mt-8">

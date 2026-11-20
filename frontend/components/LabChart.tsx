@@ -17,21 +17,21 @@ const MAX = 250;
 const TICKS = [-300, -200, -100, 0, 100, 200];
 const x = (v: number) => ((v - MIN) / (MAX - MIN)) * 100;
 
-const GROUPS: { verdict: Verdict; name: string; blurb: string }[] = [
+export const GROUPS: { verdict: Verdict; name: string; blurb: string }[] = [
   {
     verdict: "shipped",
-    name: "Shipped",
-    blurb: "Better on the tuning seasons, then ahead on two seasons it never saw.",
+    name: "Kept",
+    blurb: "Clearly better on two replayed seasons, then ahead again on two seasons it had never seen. These are in the model.",
   },
   {
     verdict: "worse",
-    name: "Worse",
-    blurb: "The whole interval below zero, and behind in both seasons.",
+    name: "Made it worse",
+    blurb: "The whole range is below zero: clearly fewer points. Not used.",
   },
   {
     verdict: "none",
-    name: "No detectable effect",
-    blurb: "The interval crosses zero: the test can't tell, so the model stays as it is.",
+    name: "Too close to call",
+    blurb: "The range crosses zero, so the test can't tell a gain from luck. The model stays as it was.",
   },
 ];
 
@@ -125,6 +125,54 @@ function Axis() {
   );
 }
 
+/** How to read a row, shown on three real ones: one kept, one worse and one
+ *  too close to call, each with the zero line marked. */
+const EXAMPLES: { t: Pick<LabTest, "verdict" | "est" | "lo" | "hi">; title: string; text: string }[] = [
+  { t: { verdict: "shipped", est: 102, lo: 9, hi: 187 }, title: "Clearly better", text: "The whole range sits right of zero." },
+  { t: { verdict: "worse", est: -111, lo: -198, hi: -27 }, title: "Clearly worse", text: "The whole range sits left of zero." },
+  { t: { verdict: "none", est: 18, lo: -65, hi: 99 }, title: "Too close to call", text: "The range crosses zero, so it could be luck." },
+];
+
+// The examples on a closer scale than the chart's, so each line is easy to see.
+const kx = (v: number) => ((v + 220) / 440) * 100;
+
+export function ReadingKey() {
+  return (
+    <div>
+      <div className="grid gap-x-10 gap-y-7 border-t border-line pt-6 sm:grid-cols-3">
+        {EXAMPLES.map(({ t, title, text }) => (
+          <div key={title}>
+            <div aria-hidden className="relative h-9">
+              <span className="absolute inset-y-0 w-px bg-ink-300" style={{ left: `${kx(0)}%` }} />
+              <span className="absolute -bottom-4 -translate-x-1/2 text-[11px] text-ink-400" style={{ left: `${kx(0)}%` }}>
+                0
+              </span>
+              <span
+                className="absolute top-1/2 h-[3px] -translate-y-1/2 rounded-full"
+                style={{ left: `${kx(t.lo)}%`, width: `${kx(t.hi) - kx(t.lo)}%`, background: COLOUR[t.verdict] }}
+              />
+              <span className="absolute top-1/2 -translate-x-1/2 -translate-y-1/2 scale-125" style={{ left: `${kx(t.est)}%` }}>
+                <Marker verdict={t.verdict} />
+              </span>
+            </div>
+            <p className="mt-6 flex items-center gap-2 font-semibold text-ink-100">
+              <Marker verdict={t.verdict} />
+              {title}
+            </p>
+            <p className="mt-1 text-[14.5px] leading-relaxed text-ink-300">{text}</p>
+          </div>
+        ))}
+      </div>
+      <p className="mt-6 max-w-[68ch] text-[15px] leading-relaxed text-ink-200">
+        Each row is one idea. The <b className="font-semibold text-ink-100">dot</b> is the best estimate of the points it
+        gained or lost over two replayed seasons. The <b className="font-semibold text-ink-100">line</b> is the range the
+        real effect could be, given how much luck there is in a season of football. Only an idea whose whole line clears
+        zero counts.
+      </p>
+    </div>
+  );
+}
+
 /** When the plan and the result went into the history, in words. */
 export function ProofLine({ proof }: { proof: Proof }): ReactNode {
   // Each commit opens on GitHub, where its date and contents can be checked.
@@ -165,13 +213,13 @@ function Row({ t }: { t: LabTest }) {
     <li>
       <details className="group">
         <summary className="grid cursor-pointer list-none grid-cols-[minmax(0,1fr)_4.75rem] md:grid-cols-[17rem_minmax(0,1fr)_7.5rem_1rem] items-center gap-x-4 gap-y-1 py-2.5 [grid-template-areas:'label_toggle'_'plot_value'] marker:content-none hover:bg-ink-100/[0.03] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink-300 md:py-0 md:[grid-template-areas:'label_plot_value_toggle'] [&::-webkit-details-marker]:hidden">
-          <span className="min-w-0 text-[14.5px] leading-snug text-ink-200 [grid-area:label] md:py-2">
+          <span className="min-w-0 text-[15px] leading-snug text-ink-100 [grid-area:label] md:py-2.5">
             {t.label}
             {t.note && <span className="ml-1.5 whitespace-nowrap text-[12px] text-ink-400">· {t.note}</span>}
           </span>
           <Plot t={t} />
           <span className="flex flex-col items-end leading-tight [grid-area:value] md:block md:text-right">
-            <span className="text-[14.5px] font-semibold tabular-nums text-ink-100">{signed(t.est)}</span>{" "}
+            <span className="text-[15.5px] font-semibold tabular-nums text-ink-100">{signed(t.est)}</span>{" "}
             <span className="whitespace-nowrap text-[12px] text-ink-400">
               [{signed(t.lo)}, {signed(t.hi)}]
             </span>
@@ -222,7 +270,7 @@ export default function LabChart() {
         ))}
         <li className="flex items-center gap-2">
           <span aria-hidden className="block h-[2px] w-5 rounded-full bg-ink-400" />
-          95% interval
+          Range it could really be (95%)
         </li>
       </ul>
 
@@ -240,7 +288,7 @@ export default function LabChart() {
                 {g.name} <span className="text-ink-400">{rows.length}</span>
               </h3>
             </div>
-            <p className="mb-3 text-[14px] text-ink-400">{g.blurb}</p>
+            <p className="mb-3 max-w-[68ch] text-[14.5px] text-ink-300">{g.blurb}</p>
             <ul className="divide-y divide-line border-y border-line">
               {rows.map((t) => (
                 <Row key={t.label} t={t} />

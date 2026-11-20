@@ -57,15 +57,29 @@
   --lamp-frame: linear-gradient(180deg, #6a6f75, #464a50);
   --bloom: transparent;
   --mast: rgba(21, 23, 27, 0.12);
-  --stadium-line: rgba(255, 255, 255, 0.55);
+  --stadium-line: rgba(255, 255, 255, 0.92);
   --boards: rgba(21, 23, 27, 0.1);
   --mist: rgba(255, 255, 255, 0.45);
   --wash: rgba(255, 255, 255, 0.55);
   --grain: 0.22;
-  --page-turf-a: rgba(46, 125, 74, 0.012);
-  --page-turf-b: rgba(46, 125, 74, 0.04);
+  --page-turf-a: rgba(46, 125, 74, 0.055);
+  --page-turf-b: rgba(46, 125, 74, 0.115);
   --doodle: rgba(21, 23, 27, 0.09);
   --doodle-text: rgba(21, 23, 27, 0.14);
+  /* The stadium at the top of the page (PageShell): a day match. A pale sky
+     over the far stand, the stand in afternoon shade, sunlit grass. */
+  --horizon: 13vh;
+  --stadium-sky: linear-gradient(180deg, #a9cbe6 0%, #d6e6ef 70%, #e4ece9 100%);
+  --stand-roof: #4e5963;
+  --stand-a: #8b98a3;
+  --stand-b: #9aa6b0;
+  --stand-shade: rgba(30, 40, 50, 0.28);
+  --stand-boards: repeating-linear-gradient(90deg, #2e6a45 0 180px, #1f4f8a 180px 300px, #c8341f 300px 380px, #2e6a45 380px 520px, #e4e0d6 520px 600px);
+  --crowd: 0.8;
+  --stadium-surround: #a9cc94;
+  --stadium-grass-a: #b8d8a4;
+  --stadium-grass-b: #accf96;
+  --read-shade: rgba(237, 234, 228, 0.7);
 }
 
 [data-theme="dark"] {
@@ -112,7 +126,7 @@
   --lamp-frame: linear-gradient(180deg, #2c2f34, #141618);
   --bloom: rgba(255, 240, 212, 0.22);
   --mast: rgba(255, 255, 255, 0.07);
-  --stadium-line: rgba(255, 255, 255, 0.1);
+  --stadium-line: rgba(255, 255, 255, 0.45);
   --boards: rgba(255, 214, 140, 0.2);
   --mist: rgba(170, 205, 190, 0.07);
   --wash: rgba(255, 255, 255, 0.045);
@@ -121,6 +135,20 @@
   --page-turf-b: rgba(60, 150, 95, 0.075);
   --doodle: rgba(242, 240, 236, 0.1);
   --doodle-text: rgba(242, 240, 236, 0.15);
+  /* Under lights: a black sky, the far stand dark with the crowd catching
+     the floodlights, the grass a deep lit green. */
+  --horizon: 13vh;
+  --stadium-sky: linear-gradient(180deg, #06080b 0%, #0b0f14 100%);
+  --stand-roof: #1b1f24;
+  --stand-a: #12161a;
+  --stand-b: #171b20;
+  --stand-shade: rgba(0, 0, 0, 0.45);
+  --stand-boards: repeating-linear-gradient(90deg, #3a2f14 0 180px, #12233a 180px 300px, #3d1712 300px 380px, #3a2f14 380px 520px, #2a2c30 520px 600px);
+  --crowd: 0.42;
+  --stadium-surround: #18402a;
+  --stadium-grass-a: #1f4d30;
+  --stadium-grass-b: #255a37;
+  --read-shade: rgba(14, 15, 17, 0.72);
 }
 
 html {
@@ -291,11 +319,9 @@ body > * {
 }
 @keyframes depth-rise {
   from {
-    opacity: 0.35;
     transform: perspective(1600px) rotateX(16deg) translateY(48px) scale(0.97);
   }
   to {
-    opacity: 1;
     transform: none;
   }
 }
@@ -455,4 +481,36 @@ body > * {
 }
 *::-webkit-scrollbar-track {
   background: transparent;
+}
+
+/* Standing on the 3D pitch (PitchView): a shirt, the ball or the board is
+   laid out flat on the turf from a point and turned up about its bottom edge
+   to stand on it. They pop up in turn as the pitch comes into view, rocking
+   past upright before settling. */
+.stand {
+  transform-origin: 50% 100%;
+  transform: translateX(-50%) rotateX(-90deg);
+}
+.stand-up {
+  animation: stand-up 0.9s cubic-bezier(0.3, 1.2, 0.5, 1) both;
+}
+@keyframes stand-up {
+  0% {
+    opacity: 0;
+    transform: translateX(-50%) rotateX(0deg);
+  }
+  20% {
+    opacity: 1;
+  }
+  65% {
+    transform: translateX(-50%) rotateX(-100deg);
+  }
+  100% {
+    transform: translateX(-50%) rotateX(-90deg);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .stand-up {
+    animation: none;
+  }
 }

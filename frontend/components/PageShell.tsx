@@ -9,6 +9,7 @@
 import type { OptimizedTeam } from "@/lib/types";
 import SiteHeader, { type NavPage } from "./SiteHeader";
 import Chalkboard from "./Chalkboard";
+import { PointerDepth } from "./motion";
 
 // How brightly each of the twelve lamps burns: never all quite the same.
 const LAMPS = [1, 1, 0.9, 1, 0.95, 1, 1, 0.85, 1, 0.92, 1, 1];
@@ -24,7 +25,12 @@ function Floodlight({ side }: { side: "left" | "right" }) {
   return (
     <div
       className="absolute w-[clamp(28px,3.6vw,58px)]"
-      style={{ top: "calc(var(--header-h) + clamp(4px, 1vw, 16px))", [side]: "clamp(10px, 2.4vw, 46px)" }}
+      style={{
+        top: "calc(var(--header-h) + clamp(4px, 1vw, 16px))",
+        [side]: "clamp(10px, 2.4vw, 46px)",
+        // Nearer than the pitch, so it shifts further as the camera moves
+        translate: "calc(var(--px, 0) * -16px) calc(var(--py, 0) * -8px)",
+      }}
     >
       <div
         className="floodlight-beam absolute left-[calc(50%-110vh)] top-1/2 h-[110vh] w-[220vh] origin-top"
@@ -87,7 +93,7 @@ function StadiumPitch() {
         top: metres(4),
         width: metres(105),
         height: metres(68),
-        backgroundImage: "repeating-linear-gradient(90deg, var(--turf-b) 0 5.5556%, var(--turf-a) 5.5556% 11.1111%)",
+        backgroundImage: "repeating-linear-gradient(90deg, var(--stadium-grass-b) 0 5.5556%, var(--stadium-grass-a) 5.5556% 11.1111%)",
       }}
     >
       <div
@@ -106,41 +112,67 @@ function StadiumPitch() {
   );
 }
 
-/** The ground behind the top of every page: a stadium at night, the wide shot
- *  from the main stand. Floodlights in the top corners, their light in the
- *  sky over the far stand, and the pitch laid out in perspective below the
- *  horizon. It scrolls away with the first screen and fades into the page
- *  below it; pinned to the screen, its floodlights sat on top of whatever
- *  scrolled past. */
+// The crowd in the far stand, seen from across the ground: specks of every
+// shirt colour, thinned out so the seats show between them.
+const CROWD =
+  "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='320' height='160'%3E%3Cfilter id='c'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' seed='7'/%3E%3CfeColorMatrix type='saturate' values='2.4'/%3E%3CfeComponentTransfer%3E%3CfeFuncA type='discrete' tableValues='0 0 0 0.9 1'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23c)'/%3E%3C/svg%3E\")";
+
+/** The ground behind the top of every page: the wide shot from the main
+ *  stand. The far stand along the top, its roof, its crowd and the boards
+ *  along its front, with a floodlight on each corner; then the pitch, mown in
+ *  stripes, tipped back in perspective below it. A day match in light mode,
+ *  under lights in dark. The camera moves with the pointer and cranes up as
+ *  the page scrolls, and the whole shot fades into the page below. */
 function Stadium() {
   return (
     <div aria-hidden className="depth-far pointer-events-none absolute inset-x-0 top-0 z-0 h-[100svh] overflow-hidden">
-      {/* The sky over the stand, lit from below */}
-      <div className="absolute inset-0 bg-[radial-gradient(90%_36%_at_50%_10%,var(--sky-glow),transparent_72%)]" />
+      <div className="absolute inset-0" style={{ background: "var(--stadium-sky)" }} />
+      {/* The far stand, a little nearer than the pitch's far side */}
+      <div
+        className="absolute inset-x-[-4%]"
+        style={{
+          top: "calc(var(--header-h) - 1vh)",
+          height: "calc(var(--horizon) + 1.5vh)",
+          translate: "calc(var(--px, 0) * -5px) 0",
+        }}
+      >
+        <div className="absolute inset-x-0 top-0 h-[16%] bg-[var(--stand-roof)] shadow-[0_6px_10px_rgba(0,0,0,0.25)]" />
+        <div className="absolute inset-x-0 bottom-[11%] top-[16%] bg-[repeating-linear-gradient(180deg,var(--stand-a)_0_7px,var(--stand-b)_7px_14px)]">
+          <div className="absolute inset-0" style={{ backgroundImage: CROWD, opacity: "var(--crowd)" }} />
+          <div className="absolute inset-0 bg-[linear-gradient(180deg,var(--stand-shade),transparent_70%)]" />
+        </div>
+        <div className="absolute inset-x-0 bottom-0 h-[11%] brightness-90" style={{ background: "var(--stand-boards)" }} />
+      </div>
       <Floodlight side="left" />
       <Floodlight side="right" />
       {/* The ground: the pitch on a wider plane of grass, tipped back. Its far
-          side sits just under the header, level with the floodlights, so the
-          page reads as standing on it rather than a line running through it. */}
+          side meets the boards along the front of the stand. */}
       <div
-        className="absolute inset-x-0 bottom-0 [perspective-origin:50%_0%] [perspective:700px]"
-        style={{ top: "calc(var(--header-h) + 2.5vh)" }}
+        className="absolute inset-x-0 bottom-0 [perspective:700px]"
+        // The camera moves with the pointer (PointerDepth): the pitch's lines
+        // swing round as you would see them from a step to the side.
+        style={{
+          top: "calc(var(--header-h) + var(--horizon))",
+          perspectiveOrigin: "calc(50% + var(--px, 0) * 14%) calc(var(--py, 0) * 6%)",
+        }}
       >
         <div
-          className="depth-turf absolute left-1/2 top-0 h-[1400px] w-[400vw] origin-top bg-[var(--turf-a)]"
+          className="depth-turf absolute left-1/2 top-0 h-[1400px] w-[400vw] origin-top bg-[var(--stadium-surround)]"
           style={{ transform: "translateX(-50%) rotateX(64deg)" }}
         >
           <StadiumPitch />
         </div>
       </div>
-      {/* Mist where the pitch meets the stand, and the corners falling into shadow */}
+      {/* Haze where the pitch meets the stand, the corners falling away, and
+          a little shade behind the words so they read over the grass */}
       <div
-        className="absolute inset-x-0 h-[14vh] bg-[linear-gradient(180deg,transparent,var(--mist)_50%,transparent)]"
-        style={{ top: "calc(var(--header-h) + 2.5vh - 7vh)" }}
+        className="absolute inset-x-0 h-[8vh] bg-[linear-gradient(180deg,transparent,var(--mist)_50%,transparent)]"
+        style={{ top: "calc(var(--header-h) + var(--horizon) - 4vh)" }}
       />
-      <div className="absolute inset-0 bg-[radial-gradient(140%_95%_at_50%_42%,transparent_55%,rgb(var(--c-base)/0.85)_100%)]" />
+      <div className="absolute inset-0 bg-[radial-gradient(140%_95%_at_50%_42%,transparent_60%,rgb(var(--c-base)/0.6)_100%)]" />
+      <div className="absolute inset-0 bg-[linear-gradient(90deg,var(--read-shade),transparent_65%)]" />
       {/* No edge where the stadium ends */}
-      <div className="absolute inset-x-0 bottom-0 h-[35%] bg-gradient-to-b from-transparent to-base" />
+      <div className="absolute inset-x-0 bottom-0 h-[38%] bg-gradient-to-b from-transparent to-base" />
     </div>
   );
 }
@@ -171,16 +203,21 @@ export function pagesFor(team: OptimizedTeam): NavPage[] {
 export default function PageShell({
   team,
   children,
+  chalk = true,
 }: {
   team: OptimizedTeam;
   children: React.ReactNode;
+  /** The coach's-board drawings behind the page. Off where they'd sit behind
+   *  a chart and make it harder to read (the lab). */
+  chalk?: boolean;
 }) {
   return (
     <div id="top" className="relative overflow-x-clip">
       <SiteHeader team={team} pages={pagesFor(team)} />
+      <PointerDepth />
       <Stadium />
       <PageTurf />
-      <Chalkboard team={team} />
+      {chalk && <Chalkboard team={team} />}
       <main className="relative mx-auto max-w-6xl space-y-14 px-4 py-8 pb-24 sm:space-y-20 sm:px-6 sm:py-12">
         {children}
         <footer className="border-t border-line pt-8 text-center text-[12.5px] text-ink-500">
