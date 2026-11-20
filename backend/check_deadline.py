@@ -17,6 +17,10 @@ points and autosubs added, usually some hours later), if the league table on
 the dashboard was read before then: otherwise it shows provisional standings
 until the next deadline window.
 
+And at least once a day whatever the calendar (MAX_AGE): between GW10 and
+GW11 2026-27, a two-week international break, the dashboard went ten days
+without reading the news, and still started a player who had been ruled out.
+
 Writes `should_run` and `gameweek` to $GITHUB_OUTPUT for later workflow steps.
 Run it locally too — it prints the same answer to stderr.
 """
@@ -38,6 +42,19 @@ WINDOW_HOURS = 30
 
 # A match is over this long after kickoff (stoppage time, plus a margin).
 MATCH_LENGTH = timedelta(hours=2)
+# The dashboard is refreshed when it's older than this, deadline or not, so
+# injury news and the team-news reader stay current through long breaks. The
+# repo is public, so Actions minutes are free.
+MAX_AGE = timedelta(hours=24)
+
+
+def _stale(now: datetime) -> bool:
+    """True if the dashboard was generated more than MAX_AGE ago (or can't be read)."""
+    try:
+        generated = datetime.fromisoformat(json.loads(FRONTEND_JSON_PATH.read_text())["generated_at"])
+    except (OSError, KeyError, ValueError):
+        return True
+    return now - generated > MAX_AGE
 
 
 def _finished_since_refresh(bootstrap: dict, now: datetime) -> bool:
@@ -115,9 +132,12 @@ def main() -> int:
                       and _finished_since_refresh(bootstrap, now))
     confirmed = (not force and hours > WINDOW_HOURS and not after_gameweek
                  and _standings_confirmed_since_refresh(bootstrap))
-    should_run = force or hours <= WINDOW_HOURS or after_gameweek or confirmed
+    stale = (not force and hours > WINDOW_HOURS and not after_gameweek and not confirmed
+             and _stale(now))
+    should_run = force or hours <= WINDOW_HOURS or after_gameweek or confirmed or stale
     reason = (" — a gameweek just finished" if after_gameweek
-              else " — FPL confirmed the gameweek's points" if confirmed else "")
+              else " — FPL confirmed the gameweek's points" if confirmed
+              else " — the dashboard is over a day old" if stale else "")
     print(
         f"GW{gameweek} deadline in {hours:.1f}h "
         f"({'running' if should_run else 'skipping'}{reason}).",

@@ -1,9 +1,10 @@
 name: Refresh squad
 
 # Runs the data engine before each FPL deadline and commits the result, which
-# is what triggers Vercel to redeploy the dashboard. The whole thing fits in
-# GitHub's free tier: the job only does real work in the hours before a
-# deadline, and exits in seconds otherwise.
+# is what triggers Vercel to redeploy the dashboard. The job does real work in
+# the hours before a deadline, after a gameweek, and at least once a day so the
+# news stays current through breaks (check_deadline.py); otherwise it exits in
+# seconds. The repo is public, so Actions minutes are free.
 on:
   schedule:
     # Every four hours. GitHub's scheduler is best-effort and runs late under

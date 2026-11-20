@@ -71,5 +71,26 @@ class StandingsConfirmed(unittest.TestCase):
         self.assertFalse(self._run(True, None))
 
 
+class DailyRefresh(unittest.TestCase):
+    """GW10 to GW11 2026-27: ten days without a refresh over the international
+    break, so the dashboard still started a player since ruled out."""
+    def _run(self, generated):
+        with tempfile.TemporaryDirectory() as d:
+            path = Path(d) / "optimized_team.json"
+            path.write_text(json.dumps({"generated_at": generated.isoformat()}))
+            with mock.patch.object(check_deadline, "FRONTEND_JSON_PATH", path):
+                return check_deadline._stale(NOW)
+
+    def test_runs_when_over_a_day_old(self):
+        self.assertTrue(self._run(NOW - timedelta(hours=25)))
+
+    def test_not_when_refreshed_today(self):
+        self.assertFalse(self._run(NOW - timedelta(hours=20)))
+
+    def test_runs_when_the_dashboard_cant_be_read(self):
+        with mock.patch.object(check_deadline, "FRONTEND_JSON_PATH", Path("/nonexistent/x.json")):
+            self.assertTrue(check_deadline._stale(NOW))
+
+
 if __name__ == "__main__":
     unittest.main()
