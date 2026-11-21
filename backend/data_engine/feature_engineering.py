@@ -108,6 +108,9 @@ ROLLING_FEATURE_SPEC = [
     # it gives points per match played. Under test in research/2026-10-form-tilt;
     # computed always, not a model input.
     ("played", "played_avg", [5]),
+    # Points in the last match alone, for the early-season after-a-haul
+    # correction (research/2026-11-haul-dampen). Not a model input.
+    ("total_points", "points_avg", [1]),
     # Long-run level: the last ten gameweeks and the whole season so far, so a
     # good player in a cold patch isn't judged on his last three to five games
     # alone (config.LONG_FORM_FEATURE, research/2026-10-long-form).
