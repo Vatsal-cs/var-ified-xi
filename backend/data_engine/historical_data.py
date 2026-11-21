@@ -148,6 +148,9 @@ def fetch_season(season: str, season_index: int):
         # Bonus-point proxy and start-share signal — present in every season.
         "bps": _numeric(gw_df, "bps"),
         "bonus": _numeric(gw_df, "bonus"),
+        # Scoring parts, targets only (research/2026-11-components).
+        "goals_scored": _numeric(gw_df, "goals_scored"),
+        "assists": _numeric(gw_df, "assists"),
         "starts": _numeric(gw_df, "starts"),
         # Split xG/xA carry more signal than the combined involvement figure:
         # a striker's xG and a playmaker's xA decay differently.

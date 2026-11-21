@@ -635,6 +635,15 @@ VARIANTS = {
         predict=_bundle_predict,
         context=_lagged_ratings_ctx,
     ),
+    "points_by_part": Variant(
+        name="points_by_part",
+        description="lagged_ratings, but stage 2 predicts goals, assists, clean sheet, bonus "
+                    "and the rest separately and adds them with FPL's scoring "
+                    "(config.POINTS_BY_PART, research/2026-11-components)",
+        fit=lambda df: train_model.train_models(df, save=False),
+        predict=_bundle_predict,
+        context=lambda: _nested(_lagged_ratings_ctx(), _config_values(POINTS_BY_PART=True)),
+    ),
     "pit_ratings": Variant(
         name="pit_ratings",
         description="NO DETECTABLE EFFECT vs lagged_ratings (Oct 2026, 5 seeds): -3 [-131, +122], "

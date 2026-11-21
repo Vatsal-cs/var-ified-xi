@@ -320,6 +320,10 @@ def build_gameweek_history_df(bootstrap: dict, player_histories: dict,
                 "expected_assists": float(gw.get("expected_assists", 0) or 0),
                 "bps": float(gw.get("bps", 0) or 0),
                 "bonus": float(gw.get("bonus", 0) or 0),
+                # Scoring parts, for the points-by-part model
+                # (research/2026-11-components). Targets only, never inputs.
+                "goals_scored": float(gw.get("goals_scored", 0) or 0),
+                "assists": float(gw.get("assists", 0) or 0),
                 "starts": float(gw.get("starts", 0) or 0),
                 "defensive_contribution": float(gw.get("defensive_contribution", 0) or 0),
                 "saves": float(gw.get("saves", 0) or 0),
