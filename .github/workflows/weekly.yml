@@ -68,6 +68,18 @@ jobs:
           FORCE: ${{ inputs.force }}
         run: python check_deadline.py
 
+      # Data that can't be got back after the deadline: FPL's own view of
+      # every player, and bookmakers' player odds when the free ODDS_API_KEY
+      # secret is set (data_engine/deadline_snapshot.py). Collected for later
+      # tests, not used by the model. A failure here never blocks the refresh.
+      - name: Save deadline data
+        if: steps.gate.outputs.should_run == 'true'
+        continue-on-error: true
+        working-directory: backend
+        env:
+          ODDS_API_KEY: ${{ secrets.ODDS_API_KEY }}
+        run: python -m data_engine.deadline_snapshot
+
       - name: Run the data engine
         if: steps.gate.outputs.should_run == 'true'
         working-directory: backend
@@ -85,6 +97,7 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add frontend/public/optimized_team.json backend/data/injury_log.json
           git add backend/data/team_news.json backend/data/team_news_log.json backend/data/team_news_calls.json 2>/dev/null || true
+          git add backend/data/deadline 2>/dev/null || true
           if git diff --staged --quiet; then
             echo "Nothing changed — skipping commit."
           else
