@@ -66,6 +66,7 @@ class OncePerGameweek(unittest.TestCase):
              mock.patch.object(ds.fetch_data, "fetch_bootstrap_static", return_value=_boot()), \
              mock.patch.object(ds.fetch_data, "fetch_fixtures", return_value=[]), \
              mock.patch.object(ds, "odds_snapshot", return_value={"events": [1]}) as odds, \
+             mock.patch.object(ds, "_odds_get", return_value=([], "500")), \
              mock.patch.dict(ds.os.environ, {"ODDS_API_KEY": key}):
             ds.main(now)
             ds.main(now)

@@ -169,6 +169,13 @@ def main(now: datetime = None) -> int:
         snap = odds_snapshot(key, deadline, following, now)
         if snap and snap["events"]:
             _write(odds_path, snap)
+    else:
+        # Not time yet: confirm the key works with the sports list, which
+        # costs no credits, so a bad key shows up before the deadline.
+        sports, remaining = _odds_get("https://api.the-odds-api.com/v4/sports", key)
+        if sports is not None:
+            logger.info("Odds key OK; %s credits left. Odds for GW%d save within %dh of "
+                        "the deadline.", remaining, gameweek, ODDS_WINDOW_HOURS)
     return 0
 
 
