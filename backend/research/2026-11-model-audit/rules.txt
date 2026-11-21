@@ -1,0 +1,48 @@
+rows_live.csv  rounds 4-10  player-weeks 4672
+  top 10 season scorers so far: predicted 4.24  scored 4.23  gap -0.01/wk
+  top 30 season scorers so far: predicted 3.92  scored 4.10  gap +0.19/wk
+  last-5 avg 6+: predicted 3.93  scored 4.45  gap +0.52  n 150
+  best 15 by each rule, points/wk: {'pred': np.float64(73.7), 'std_pgw': np.float64(61.6), 'form5': np.float64(74.4), 'actual': np.float64(169.0)}
+  captain (top of rule), pts/wk: {'pred': np.float64(6.86), 'std_pgw': np.float64(4.43), 'form5': np.float64(4.43)}
+         pred  scored       n
+band                         
+<5.5     1.14    1.12  3815.0
+5.5-7.5  2.20    2.28   743.0
+7.5-10   3.93    3.73   100.0
+10+      5.81    4.57    14.0
+rows_2023-24.csv  rounds 4-38  player-weeks 26804
+  top 10 season scorers so far: predicted 4.94  scored 4.80  gap -0.14/wk
+  top 30 season scorers so far: predicted 4.11  scored 4.09  gap -0.02/wk
+  last-5 avg 6+: predicted 4.60  scored 4.71  gap +0.11  n 448
+  best 15 by each rule, points/wk: {'pred': np.float64(73.7), 'std_pgw': np.float64(62.7), 'form5': np.float64(61.9), 'actual': np.float64(176.1)}
+  captain (top of rule), pts/wk: {'pred': np.float64(6.23), 'std_pgw': np.float64(5.54), 'form5': np.float64(4.8)}
+         pred  scored        n
+band                          
+<5.5     0.88    0.86  23628.0
+5.5-7.5  2.36    2.41   2506.0
+7.5-10   3.75    3.98    535.0
+10+      3.74    3.76    135.0
+rows_2024-25.csv  rounds 4-38  player-weeks 25340
+  top 10 season scorers so far: predicted 5.22  scored 4.89  gap -0.33/wk
+  top 30 season scorers so far: predicted 4.15  scored 4.04  gap -0.11/wk
+  last-5 avg 6+: predicted 3.67  scored 4.77  gap +1.10  n 600
+  best 15 by each rule, points/wk: {'pred': np.float64(79.6), 'std_pgw': np.float64(62.3), 'form5': np.float64(64.0), 'actual': np.float64(172.8)}
+  captain (top of rule), pts/wk: {'pred': np.float64(9.31), 'std_pgw': np.float64(8.63), 'form5': np.float64(7.49)}
+         pred  scored        n
+band                          
+<5.5     0.82    0.98  21744.0
+5.5-7.5  2.22    2.33   3060.0
+7.5-10   4.06    3.93    402.0
+10+      6.01    5.39    134.0
+rows_2025-26.csv  rounds 4-38  player-weeks 27231
+  top 10 season scorers so far: predicted 4.44  scored 4.42  gap -0.02/wk
+  top 30 season scorers so far: predicted 3.88  scored 3.91  gap +0.03/wk
+  last-5 avg 6+: predicted 4.01  scored 4.01  gap -0.00  n 509
+  best 15 by each rule, points/wk: {'pred': np.float64(76.2), 'std_pgw': np.float64(61.3), 'form5': np.float64(59.1), 'actual': np.float64(172.4)}
+  captain (top of rule), pts/wk: {'pred': np.float64(7.23), 'std_pgw': np.float64(5.6), 'form5': np.float64(4.57)}
+         pred  scored        n
+band                          
+<5.5     0.84    0.91  22671.0
+5.5-7.5  2.15    2.24   3847.0
+7.5-10   3.02    3.25    553.0
+10+      3.61    3.84    160.0

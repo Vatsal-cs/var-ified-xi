@@ -1,0 +1,101 @@
+== by position (all rows) ==
+      pred  actual   p60  played60     n
+posn                                    
+DEF   1.43    1.50  0.36      0.37  1941
+FWD   1.37    1.35  0.24      0.24   703
+GK    0.92    0.99  0.27      0.28   654
+MID   1.37    1.39  0.28      0.30  2654
+
+== start chance calibration ==
+              pred_p60  actual_60     n
+pbin                                   
+(0.0, 0.1]       0.022      0.020  2885
+(0.1, 0.3]       0.187      0.209   812
+(0.3, 0.5]       0.398      0.411   494
+(0.5, 0.7]       0.607      0.655   565
+(0.7, 0.85]      0.780      0.826   522
+(0.85, 0.95]     0.905      0.917   580
+(0.95, 1.01]     0.960      0.979    94
+
+== points if he plays 60+: calibration by position (players who did play 60+) ==
+      pred_if60  actual    n
+posn                        
+DEF        3.72    3.77  716
+FWD        4.40    4.47  168
+GK         3.40    3.59  180
+MID        3.98    3.82  792
+
+== relevant players only (pred>=3.5): residual by position ==
+      pred  actual    n
+posn                   
+DEF   4.08    4.41  199
+FWD   4.41    4.78   76
+GK    3.95    4.24   41
+MID   4.25    3.94  219
+
+== by team, relevant players (pred>=3) ==
+       pred  actual   n   gap
+teamn                        
+NFO    3.82    2.60  52 -1.22
+NEW    3.72    2.96  53 -0.76
+MCI    4.30    3.64  81 -0.66
+MUN    3.94    3.35  52 -0.60
+BRE    3.66    3.07  57 -0.59
+CRY    3.56    2.98  48 -0.58
+IPS    3.35    2.77  22 -0.58
+SUN    3.64    3.12  25 -0.52
+CHE    4.01    3.64  45 -0.37
+HUL    3.30    3.00  18 -0.30
+FUL    3.53    3.38  55 -0.14
+COV    3.24    3.44  16  0.20
+ARS    4.30    4.77  70  0.47
+EVE    3.85    4.36  50  0.51
+TOT    3.49    4.07  27  0.58
+BOU    3.61    4.22  63  0.62
+LIV    3.90    4.56  59  0.66
+LEE    3.63    4.46  46  0.82
+AVL    3.31    4.25  40  0.94
+BHA    3.76    6.14  49  2.38
+
+== hauls (10+) the model rated under 3 ==
+hauls 115, rated <3: 49, rated 3-5: 57, rated 5+: 9
+ round    web_name teamn posn  now_cost  pred      p60  actual  minutes
+     6   Henderson   CHE  MID        49  1.33 0.273171      18       90
+     5     Brobbey   SUN  FWD        58  2.26 0.647145      17       90
+    10     Alysson   AVL  MID        49  1.62 0.351076      16       70
+     4       Bogle   LEE  DEF        45  2.63 0.667118      15       82
+     5     Dasilva   COV  DEF        40  2.43 0.801734      15       90
+     2      Cherki   MCI  MID        75  1.10 0.156355      14       81
+     3       Bogle   LEE  DEF        45  1.93 0.718736      14       60
+     5        Groß   BHA  MID        57  2.77 0.966989      14       90
+     5    Schuster   BRE  DEF        45  2.08 0.591332      14       90
+     4       Davis   IPS  DEF        40  2.93 0.901969      14       90
+     5    Manzambi   AVL  MID        59  1.07 0.129196      13       71
+     2 Gibbs-White   NFO  MID        80  2.71 0.703055      13       90
+     4    Belloumi   HUL  MID        50  2.59 0.819614      13       59
+     2        Groß   BHA  MID        55  2.27 0.696214      13       90
+    10       Delap   NFO  FWD        54  2.54 0.640476      13       86
+     8   N.Jackson   AVL  FWD        66  2.67 0.850070      13       81
+     4    Emersonn   IPS  FWD        55  2.56 0.574154      12       62
+     6        Doku   MCI  MID        74  1.07 0.110005      12       34
+     5     Buendía   AVL  MID        59  2.66 0.495426      12       90
+     6      Cherif   COV  FWD        50  0.94 0.099721      12       77
+
+== top projections that flopped (pred>=5, actual<=2) ==
+pred 5+: 56, flopped <=2: 22, of which didn't play 60: 7
+ round    web_name teamn posn  pred      p60  actual  minutes
+     3 B.Fernandes   MUN  MID  8.04 0.964048       2       90
+     5 Gibbs-White   NFO  MID  6.91 0.945432       2       90
+     7     Semenyo   MCI  MID  6.67 0.916512       1       13
+     5 B.Fernandes   MUN  MID  6.20 0.958955       2       90
+     6     Gabriel   ARS  DEF  6.16 0.935512       2       90
+     3       Foden   MCI  MID  6.13 0.835422       1       24
+    10     Haaland   MCI  FWD  6.09 0.933079       2       90
+     6 B.Fernandes   MUN  MID  6.00 0.894767       1       90
+     7      Cherki   MCI  MID  5.92 0.744845       0        0
+     6        Saka   ARS  MID  5.91 0.825142       2       90
+     9     Haaland   MCI  FWD  5.77 0.946207       2       90
+     8      Palmer   CHE  MID  5.60 0.921944      -1       79
+     8      Rogers   CHE  MID  5.39 0.934509       1       90
+     6        Hall   NEW  DEF  5.34 0.895538       0       90
+     5        Saka   ARS  MID  5.26 0.859823       2       80

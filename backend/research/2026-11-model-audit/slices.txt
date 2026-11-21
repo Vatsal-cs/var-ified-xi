@@ -1,0 +1,23 @@
+                           slice        live      2023-24      2024-25      2025-26
+          all relevant (pred>=3) +0.05 (928) -0.04 (2884) -0.22 (2992) +0.01 (3839)
+     top 3 projections each week  -0.43 (27)  -1.25 (111)  -1.95 (111)  -1.18 (111)
+    top 20 projections each week +0.19 (180)  -0.24 (740)  -0.70 (740)  -0.31 (740)
+    just hauled (10+ last match)  -0.20 (71)  -0.32 (313)  -0.50 (303)  -0.19 (335)
+                  ... and GW<=14  -0.20 (71)   -0.88 (96)  -1.18 (103)  -0.91 (110)
+        blanked last match (<=2) +0.12 (372) -0.09 (1362) -0.00 (1308) +0.08 (1533)
+missed last match, played before      -  (8)   -0.64 (41)   -0.79 (32)   -0.73 (33)
+   little history (<2 of last 3)  -0.47 (75)  -0.06 (417)  -0.10 (602)  +0.23 (554)
+   points far above xGI (lucky?)  +0.05 (23)   -0.38 (26)   -0.10 (47)   -0.98 (77)
+ high xGI, low points (unlucky?)  +0.24 (16)   -0.51 (87)   +0.75 (64)   -0.22 (67)
+    defensive-contribution heavy -0.14 (305)       -  (0)       -  (0) +0.03 (1256)
+                     price 10.0+  +0.22 (18)   -0.35 (86)  -0.47 (132)  -0.25 (102)
+                 price under 5.5 +0.12 (396) -0.23 (1263) -0.24 (1200) -0.00 (1846)
+           double gameweek match      -  (0)  +0.05 (402)  +0.70 (178)  +0.04 (208)
+                         GW 2-10 +0.05 (928)  -0.25 (756)  -0.59 (705)  -0.08 (820)
+                          GW 30+      -  (0)  +0.25 (753)  -0.27 (775)  +0.11 (926)
+
+Start-chance calibration on relevant players (pred>=3): predicted P(60+) vs actual
+  live: 0.843 vs 0.869  | points if 60+: 4.37 vs 4.31
+  2023-24: 0.835 vs 0.848  | points if 60+: 4.55 vs 4.41
+  2024-25: 0.848 vs 0.841  | points if 60+: 4.64 vs 4.35
+  2025-26: 0.844 vs 0.863  | points if 60+: 4.37 vs 4.26
