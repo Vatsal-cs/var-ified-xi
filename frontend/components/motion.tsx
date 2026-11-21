@@ -124,26 +124,24 @@ function step(s: Spring, dt: number) {
 }
 const settled = (s: Spring) => Math.abs(s.target - s.x) < 0.01 && Math.abs(s.v) < 0.01;
 
-/** A 3D stage you can look round. Writes --orbit-tilt (how far the stage is
- *  tipped back, in degrees) and --orbit-spin (how far it's turned) on its
- *  element, for the children to use in their transforms. With a mouse it
- *  leans towards the pointer; on any device it can be dragged round, and on
- *  letting go it springs back. As it scrolls into view the camera cranes
- *  down from overhead to its resting angle. Reduced motion gets it still,
- *  at rest. */
+/** A 3D stage you can look round. Its children use --orbit-tilt (how far
+ *  the stage is tipped back) and --orbit-spin (how far it's turned) in their
+ *  transforms. The resting tilt comes from the stage's own CSS, so it can
+ *  differ by screen size, and is what renders before any JavaScript. On a
+ *  large screen with a mouse it leans towards the pointer and the camera
+ *  cranes down from overhead as it scrolls into view. On any device it can
+ *  be dragged round, and springs back when let go. Phones do nothing on
+ *  scroll, which keeps scrolling smooth. Reduced motion gets it still. */
 export function Orbit({
   children,
   className = "",
-  rest = 46,
   crane = 16,
   lean = 7,
   drag = 26,
 }: {
   children: ReactNode;
   className?: string;
-  /** The resting tilt, in degrees. */
-  rest?: number;
-  /** How much flatter it starts, before it has scrolled into view. */
+  /** How much flatter it starts, before it has scrolled into view (desktop). */
   crane?: number;
   /** How far it leans towards the pointer, in degrees. */
   lean?: number;
@@ -153,15 +151,21 @@ export function Orbit({
   const ref = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const el = ref.current;
-    if (!el) return;
+    if (!el || reduced()) return;
+    const rest = parseFloat(getComputedStyle(el).getPropertyValue("--orbit-tilt")) || 46;
+    const big = window.matchMedia("(hover: hover) and (pointer: fine) and (min-width: 768px)").matches;
+
     const write = (tilt: number, spin: number) => {
       el.style.setProperty("--orbit-tilt", `${tilt.toFixed(2)}deg`);
       el.style.setProperty("--orbit-spin", `${spin.toFixed(2)}deg`);
     };
-    write(rest, 0);
-    if (reduced()) return;
+    // Back at rest: hand the angle back to the stylesheet.
+    const release = () => {
+      el.style.removeProperty("--orbit-tilt");
+      el.style.removeProperty("--orbit-spin");
+    };
 
-    const tilt: Spring = { x: rest - crane, v: 0, target: rest - crane };
+    const tilt: Spring = big ? { x: rest - crane, v: 0, target: rest - crane } : { x: rest, v: 0, target: rest };
     const spin: Spring = { x: 0, v: 0, target: 0 };
     let raf = 0;
     let last = 0;
@@ -170,8 +174,14 @@ export function Orbit({
       last = now;
       step(tilt, dt);
       step(spin, dt);
+      if (settled(tilt) && settled(spin)) {
+        raf = 0;
+        if (tilt.target === rest && spin.target === 0) release();
+        else write(tilt.target, spin.target);
+        return;
+      }
       write(tilt.x, spin.x);
-      raf = settled(tilt) && settled(spin) ? 0 : requestAnimationFrame(tick);
+      raf = requestAnimationFrame(tick);
     };
     const kick = () => {
       if (!raf) {
@@ -180,19 +190,23 @@ export function Orbit({
       }
     };
 
-    // The camera cranes down as the stage comes up the screen.
-    let craned = 0;
-    const onScroll = () => {
-      const r = el.getBoundingClientRect();
-      const vh = window.innerHeight;
-      craned = Math.min(1, Math.max(0, (vh - r.top) / (vh * 0.7)));
+    // Desktop only: the camera cranes down as the stage comes up the screen,
+    // and the stage leans towards the pointer.
+    let craned = 1;
+    let leanTilt = 0;
+    const aim = () => {
       tilt.target = rest - crane * (1 - craned) + leanTilt;
       kick();
     };
-
-    // Leaning towards the pointer, on a device with a mouse.
-    let leanTilt = 0;
-    const fine = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+    const onScroll = () => {
+      const r = el.getBoundingClientRect();
+      const vh = window.innerHeight;
+      const next = Math.min(1, Math.max(0, (vh - r.top) / (vh * 0.7)));
+      if (next !== craned) {
+        craned = next;
+        aim();
+      }
+    };
     const onMove = (e: PointerEvent) => {
       if (dragging) return;
       const r = el.getBoundingClientRect();
@@ -200,19 +214,18 @@ export function Orbit({
       const ny = Math.max(-1, Math.min(1, ((e.clientY - r.top) / r.height - 0.5) * 2));
       spin.target = nx * lean;
       leanTilt = ny * lean * 0.6;
-      tilt.target = rest - crane * (1 - craned) + leanTilt;
-      kick();
+      aim();
     };
     const onLeave = () => {
       if (dragging) return;
       spin.target = 0;
       leanTilt = 0;
-      tilt.target = rest - crane * (1 - craned);
-      kick();
+      aim();
     };
 
-    // Dragging it round. Sideways only on a touch screen, so the page still
-    // scrolls; a drag that moved doesn't count as a tap on what's under it.
+    // Dragging it round, on any device. Sideways only on a touch screen, so
+    // the page still scrolls; a drag that moved doesn't count as a tap on
+    // what's under it.
     let dragging = false;
     let moved = false;
     let startX = 0;
@@ -248,16 +261,17 @@ export function Orbit({
       }
     };
 
-    onScroll();
-    write(tilt.x, spin.x);
-    kick();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    if (fine) {
+    if (big) {
+      craned = 0;
+      onScroll();
+      write(tilt.x, spin.x);
+      kick();
+      window.addEventListener("scroll", onScroll, { passive: true });
       el.addEventListener("pointermove", onMove);
       el.addEventListener("pointerleave", onLeave);
     }
     el.addEventListener("pointerdown", onDown);
-    window.addEventListener("pointermove", onDragMove);
+    window.addEventListener("pointermove", onDragMove, { passive: true });
     window.addEventListener("pointerup", onUp);
     window.addEventListener("pointercancel", onUp);
     el.addEventListener("click", onClick, true);
@@ -272,9 +286,9 @@ export function Orbit({
       window.removeEventListener("pointercancel", onUp);
       el.removeEventListener("click", onClick, true);
     };
-  }, [rest, crane, lean, drag]);
+  }, [crane, lean, drag]);
   return (
-    <div ref={ref} className={`touch-pan-y select-none ${className}`} style={{ ["--orbit-tilt" as string]: `${rest}deg`, ["--orbit-spin" as string]: "0deg" }}>
+    <div ref={ref} className={`touch-pan-y select-none ${className}`}>
       {children}
     </div>
   );

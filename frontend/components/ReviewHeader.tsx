@@ -15,7 +15,7 @@ function formatTimestamp(iso: string) {
 
 export default function ReviewHeader({ team }: { team: OptimizedTeam }) {
   return (
-    <header className="sticky top-0 z-30 border-b border-line bg-base/90 backdrop-blur">
+    <header className="sticky top-0 z-30 border-b border-line bg-base md:bg-base/90 md:backdrop-blur">
       <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-3 px-6 py-4">
         <div className="flex items-center gap-3">
           <span className="relative flex h-2.5 w-2.5">

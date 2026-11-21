@@ -157,7 +157,7 @@ function Stadium() {
         }}
       >
         <div
-          className="depth-turf absolute left-1/2 top-0 h-[1400px] w-[400vw] origin-top bg-[var(--stadium-surround)]"
+          className="depth-turf absolute left-1/2 top-0 h-[1400px] w-[400vw] origin-top bg-[var(--stadium-surround)] max-md:h-[900px] max-md:w-[250vw]"
           style={{ transform: "translateX(-50%) rotateX(64deg)" }}
         >
           <StadiumPitch />

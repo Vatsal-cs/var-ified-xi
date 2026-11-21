@@ -274,7 +274,7 @@ export default function LabChart() {
         </li>
       </ul>
 
-      <div className="sticky top-[var(--header-h)] z-10 border-b border-line bg-base/95 backdrop-blur-sm">
+      <div className="sticky top-[var(--header-h)] z-10 border-b border-line bg-base md:bg-base/95 md:backdrop-blur-sm">
         <Axis />
       </div>
 

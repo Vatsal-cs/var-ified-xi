@@ -56,7 +56,7 @@ function SwapShirt({ move, tone, uid }: { move?: TransferMove; tone: "out" | "in
         }`}
       />
       {/* Its shadow on the floor */}
-      <span aria-hidden className="-mt-3 h-3 w-[96px] rounded-[50%] bg-black/30 blur-[6px] lg:w-[124px]" />
+      <span aria-hidden className="-mt-3 h-3 w-[96px] rounded-[50%] bg-[radial-gradient(closest-side,rgba(0,0,0,0.35),transparent)] lg:w-[124px]" />
       <p className="mt-2 flex items-center justify-center gap-1.5 text-[17px] font-semibold tracking-[-0.01em] text-ink-100 sm:text-[18px]">
         <Crest team={move?.team} className="h-[18px] w-[18px] flex-none" />
         <span className={isOut ? "line-through decoration-risk decoration-2" : ""}>{move?.name ?? "—"}</span>

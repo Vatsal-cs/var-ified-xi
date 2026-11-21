@@ -144,7 +144,7 @@ const BALL_SEAMS = Array.from({ length: 5 }, (_, i) => {
 function Ball() {
   return (
     <span aria-hidden className="pointer-events-none absolute left-1/2 top-1/2 h-0 w-0 [transform-style:preserve-3d]">
-      <span className="absolute -left-[2cqw] -top-[0.6cqw] h-[1.2cqw] w-[4cqw] rounded-[50%] bg-black/45 blur-[2px]" />
+      <span className="absolute -left-[2.2cqw] -top-[0.8cqw] h-[1.6cqw] w-[4.4cqw] bg-[radial-gradient(closest-side,rgba(0,0,0,0.5),transparent)]" />
       <span className="stand absolute bottom-0 left-0 block w-[3cqw]">
       <svg viewBox="0 0 20 20" className="relative block w-full">
         <defs>
@@ -181,16 +181,16 @@ function Hoarding({ messages }: { messages: string[] }) {
   return (
     // Standing well behind the far goal line, facing the camera.
     <div aria-hidden className="pointer-events-none absolute left-1/2 top-[-9%] h-0 w-0 [transform-style:preserve-3d]">
-      <div className="stand absolute bottom-0 left-0 flex w-[62cqw] flex-col items-center">
-        <div className="relative h-[6.4cqw] w-full overflow-hidden rounded-[3px] bg-[#0B0C0D] shadow-[inset_0_0_0_2px_#2A2D31,0_6px_14px_rgba(0,0,0,0.45)]">
-          <div className="flex h-full w-max animate-hoarding items-center whitespace-nowrap font-display text-[max(3.6cqw,12px)] font-extrabold uppercase leading-none tracking-[0.08em] text-[#FFC247]">
+      <div className="stand absolute bottom-0 left-0 flex w-[62cqw] flex-col items-center max-sm:w-[84cqw]">
+        <div className="relative h-[6.4cqw] w-full overflow-hidden rounded-[3px] max-sm:h-[9cqw] bg-[#0B0C0D] shadow-[inset_0_0_0_2px_#2A2D31,0_6px_14px_rgba(0,0,0,0.45)]">
+          <div className="flex h-full w-max animate-hoarding items-center whitespace-nowrap font-display text-[max(3.6cqw,12px)] font-extrabold max-sm:text-[5.2cqw] uppercase leading-none tracking-[0.08em] text-[#FFC247]">
             <span>{run}</span>
             <span>{run}</span>
           </div>
           <div className="absolute inset-0 bg-[radial-gradient(circle,transparent_0.6px,#0B0C0D_0.9px)] [background-size:2px_2px]" />
         </div>
         {/* The posts */}
-        <div className="flex h-[10cqw] w-[78%] justify-between">
+        <div className="flex h-[10cqw] w-[78%] justify-between max-sm:h-[17cqw]">
           <span className="block h-full w-[0.9cqw] bg-gradient-to-b from-[#3A3E44] to-[#1E2125]" />
           <span className="block h-full w-[0.9cqw] bg-gradient-to-b from-[#3A3E44] to-[#1E2125]" />
         </div>
@@ -282,6 +282,7 @@ function PlayerShirt({
   isActive,
   coinFlip,
   onSelect,
+  across,
 }: {
   player: Player;
   /** Where he stands on the turf, in % of its width and of its length from
@@ -293,6 +294,8 @@ function PlayerShirt({
   isActive: boolean;
   coinFlip: boolean;
   onSelect: () => void;
+  /** How many share his line, so the shirts can be as big as fits. */
+  across: number;
 }) {
   const pts = player.predicted_points;
   return (
@@ -312,19 +315,22 @@ function PlayerShirt({
         aria-hidden
         className="absolute left-0 top-0 h-0 w-0 transition-transform duration-500 [transition-timing-function:cubic-bezier(0.3,1.5,0.5,1)] group-hover:scale-[0.7]"
       >
-        <span className="absolute -left-[4.5cqw] -top-[1.1cqw] h-[2.2cqw] w-[9cqw] rounded-[50%] bg-black/45 blur-[3px]" />
+        <span className="absolute -left-[5cqw] -top-[1.4cqw] h-[2.8cqw] w-[10cqw] bg-[radial-gradient(closest-side,rgba(0,0,0,0.5),transparent)]" />
         {SHADOWS.map((s) => (
           <span
             key={s.angle}
-            className="absolute left-0 top-[-0.6cqw] h-[1.2cqw] origin-left rounded-full bg-black/20 blur-[2px]"
+            className="absolute left-0 top-[-0.6cqw] h-[1.2cqw] origin-left rounded-full bg-[linear-gradient(90deg,rgba(0,0,0,0.28),transparent)]"
             style={{ width: `${s.length}cqw`, transform: `rotate(${s.angle}deg)` }}
           />
         ))}
       </span>
 
       <span
-        className="stand stand-up absolute bottom-0 left-0 flex w-[15cqw] flex-col items-center"
-        style={{ animationDelay: `${0.25 + order * 0.07}s` }}
+        className="stand stand-up absolute bottom-0 left-0 flex flex-col items-center"
+        style={{
+          animationDelay: `${0.25 + order * 0.07}s`,
+          width: `min(var(--shirt), calc(var(--stage) * ${(0.92 / (across + 1)).toFixed(3)}))`,
+        }}
       >
         {/* Quick look on hover (desktop), above the shirt */}
         <span className="pointer-events-none absolute bottom-[calc(100%+6px)] left-1/2 z-20 hidden w-44 -translate-x-1/2 translate-y-1.5 rounded-lg border border-line-strong bg-surface p-3 text-left opacity-0 shadow-raised transition-all duration-200 group-hover:translate-y-0 group-hover:opacity-100 md:block">
@@ -360,7 +366,7 @@ function PlayerShirt({
             captain={player.is_captain}
             vice={player.is_vice_captain}
             armbandDelay={1.4}
-            className={`relative z-[1] block w-full drop-shadow-[0_5px_5px_rgba(0,0,0,0.3)] transition-transform duration-300 ${
+            className={`relative z-[1] block w-full transition-transform duration-300 md:drop-shadow-[0_5px_5px_rgba(0,0,0,0.3)] ${
               isActive ? "scale-110" : ""
             }`}
           />
@@ -374,7 +380,7 @@ function PlayerShirt({
           )}
         </span>
         <span
-          className={`relative z-[2] -mt-[0.8cqw] max-w-[130%] truncate rounded-md px-[1.4cqw] py-px text-[clamp(9px,2.4cqw,12px)] font-semibold leading-snug shadow-[0_2px_6px_rgba(0,0,0,0.35)] transition-colors duration-300 group-focus-visible:outline group-focus-visible:outline-2 group-focus-visible:outline-gold ${
+          className={`relative z-[2] -mt-[0.8cqw] max-w-[130%] truncate rounded-md px-[1.4cqw] py-px text-[clamp(10.5px,2.4cqw,12px)] font-semibold leading-snug shadow-[0_2px_6px_rgba(0,0,0,0.35)] transition-colors duration-300 group-focus-visible:outline group-focus-visible:outline-2 group-focus-visible:outline-gold ${
             isActive ? "bg-gold text-[#2A1A00]" : "bg-plate text-plate-text"
           }`}
         >
@@ -403,7 +409,12 @@ export default function PitchView({
   );
 
   const placed = ROW_ORDER.flatMap((pos) =>
-    rows[pos].map((p, i) => ({ player: p, x: (100 / (rows[pos].length + 1)) * (i + 1), y: ROW_Y[pos] * 100 }))
+    rows[pos].map((p, i) => ({
+      player: p,
+      x: (100 / (rows[pos].length + 1)) * (i + 1),
+      y: ROW_Y[pos] * 100,
+      across: rows[pos].length,
+    }))
   );
 
   return (
@@ -411,10 +422,10 @@ export default function PitchView({
       {/* The ground as a model on a table: the turf tipped back in real
           perspective, the shirts standing on it. It leans towards the
           pointer and can be dragged round; let go and it springs back. */}
-      <Orbit rest={56} crane={18} className="relative mx-auto aspect-[1/0.95] w-full cursor-grab [container-type:inline-size] active:cursor-grabbing">
+      <Orbit crane={18} className="relative mx-auto aspect-[1/0.95] w-full cursor-grab [--orbit-spin:0deg] [--orbit-tilt:56deg] [--shirt:15cqw] [--stage:78cqw] [container-type:inline-size] active:cursor-grabbing max-sm:aspect-[1/1.3] max-sm:[--orbit-tilt:52deg] max-sm:[--shirt:24cqw] max-sm:[--stage:94cqw]">
         <div className="absolute inset-0 [perspective-origin:50%_0%] [perspective:200cqw]">
           <div
-            className="absolute left-[11%] top-[0%] aspect-[1/1.2] w-[78%] [transform-style:preserve-3d]"
+            className="absolute left-[11%] top-[0%] aspect-[1/1.2] w-[78%] [transform-style:preserve-3d] max-sm:left-[3%] max-sm:top-[6%] max-sm:w-[94%]"
             style={{ transform: "rotateX(var(--orbit-tilt)) rotateZ(var(--orbit-spin))", transformOrigin: "50% 58%" }}
           >
             {/* The turf: mown in bands, the light ones a touch yellower where
@@ -425,7 +436,7 @@ export default function PitchView({
               className="absolute inset-0 overflow-hidden rounded-lg bg-[repeating-linear-gradient(180deg,rgb(var(--c-grass))_0,rgb(var(--c-grass))_7.9%,rgb(var(--c-grass-dark))_8.4%,rgb(var(--c-grass-dark))_16.2%,rgb(var(--c-grass))_16.7%)] shadow-[0_40px_60px_-20px_rgba(0,0,0,0.7)] transition-colors duration-300"
             >
               <div className="absolute inset-0 bg-[repeating-linear-gradient(180deg,rgba(255,236,150,0.05)_0_8.33%,transparent_8.33%_16.66%)]" />
-              <div className="turf-blades absolute inset-0" />
+              <div className="turf-blades absolute inset-0 max-sm:hidden" />
               <div className="absolute inset-0 bg-[radial-gradient(55%_40%_at_0%_0%,rgba(255,244,214,0.16),transparent_70%),radial-gradient(55%_40%_at_100%_0%,rgba(255,244,214,0.16),transparent_70%),radial-gradient(55%_40%_at_0%_100%,rgba(214,232,255,0.1),transparent_70%),radial-gradient(55%_40%_at_100%_100%,rgba(214,232,255,0.1),transparent_70%),radial-gradient(45%_35%_at_50%_62%,rgba(255,255,255,0.05),transparent_75%)]" />
               <div className="absolute inset-0 shadow-[inset_0_0_80px_rgba(0,0,0,0.45)]" />
               <Markings />
@@ -434,12 +445,13 @@ export default function PitchView({
             <Hoarding messages={board} />
             <Ball />
 
-            {placed.map(({ player, x, y }) => (
+            {placed.map(({ player, x, y, across }) => (
               <PlayerShirt
                 key={player.player_id}
                 player={player}
                 x={x}
                 y={y}
+                across={across}
                 order={hangIndex.get(player.player_id) ?? 0}
                 isActive={active?.player_id === player.player_id}
                 coinFlip={coinFlipIds.includes(player.player_id)}

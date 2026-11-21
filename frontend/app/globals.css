@@ -292,7 +292,7 @@ body > * {
                     off, and has faded by the time the content is over it;
      .depth-turf    its pitch, seen from a camera that cranes up. */
 @supports (animation-timeline: view()) {
-  @media (prefers-reduced-motion: no-preference) {
+  @media (prefers-reduced-motion: no-preference) and (min-width: 768px) {
     .depth-rise {
       transform-origin: 50% 100%;
       animation: depth-rise linear both;
@@ -401,7 +401,7 @@ body > * {
   offset-distance: 0%;
 }
 @supports (animation-timeline: view()) {
-  @media (prefers-reduced-motion: no-preference) {
+  @media (prefers-reduced-motion: no-preference) and (min-width: 768px) {
     .chalk-draw path {
       animation: chalk-draw linear both;
       animation-timeline: view();
@@ -485,14 +485,15 @@ body > * {
 
 /* Standing on the 3D pitch (PitchView): a shirt, the ball or the board is
    laid out flat on the turf from a point and turned up about its bottom edge
-   to stand on it. They pop up in turn as the pitch comes into view, rocking
-   past upright before settling. */
+   until it faces the camera, whatever the pitch's tilt, so it's always seen
+   full height. They pop up in turn as the pitch comes into view, rocking a
+   little past before settling. */
 .stand {
   transform-origin: 50% 100%;
-  transform: translateX(-50%) rotateX(-90deg);
+  transform: translateX(-50%) rotateX(calc(var(--orbit-tilt) * -1));
 }
 .stand-up {
-  animation: stand-up 0.9s cubic-bezier(0.3, 1.2, 0.5, 1) both;
+  animation: stand-up 0.9s cubic-bezier(0.3, 1.2, 0.5, 1) backwards;
 }
 @keyframes stand-up {
   0% {
@@ -503,14 +504,35 @@ body > * {
     opacity: 1;
   }
   65% {
-    transform: translateX(-50%) rotateX(-100deg);
+    transform: translateX(-50%) rotateX(calc(var(--orbit-tilt) * -1 - 10deg));
   }
   100% {
-    transform: translateX(-50%) rotateX(-90deg);
+    transform: translateX(-50%) rotateX(calc(var(--orbit-tilt) * -1));
   }
 }
 @media (prefers-reduced-motion: reduce) {
   .stand-up {
     animation: none;
+  }
+}
+
+/* Phones and tablets: the effects that cost the most on a phone's graphics
+   chip go. The grain is blended over the whole screen, so every scroll frame
+   re-blends every pixel; the floodlight beams are huge masked layers; the
+   blend on the pitch's grass sits inside its 3D scene. */
+@media (max-width: 767px), (hover: none) {
+  body::before {
+    display: none;
+  }
+  .floodlight-beam {
+    display: none;
+  }
+  .turf-blades {
+    mix-blend-mode: normal;
+    opacity: 0.12;
+  }
+  /* At phone size the crowd's specks read as static on a screen */
+  html[data-theme] {
+    --crowd: 0.2;
   }
 }

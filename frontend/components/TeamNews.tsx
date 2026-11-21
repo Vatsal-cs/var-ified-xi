@@ -186,7 +186,7 @@ export default function TeamNews({ news }: { news?: TeamNewsView }) {
       )}
       {quiet.length > 0 && (
         <details className="mt-2 group">
-          <summary className="cursor-pointer tabular-nums text-[11px] text-ink-400 hover:text-ink-200">
+          <summary className="cursor-pointer text-[11px] text-ink-400 hover:text-ink-200">
             {quiet.length} more: expected to start or no news
           </summary>
           <ul className="mt-1 divide-y divide-line">
@@ -197,7 +197,7 @@ export default function TeamNews({ news }: { news?: TeamNewsView }) {
         </details>
       )}
       {!!news.errors && (
-        <p className="mt-2 tabular-nums text-[10.5px] text-ink-500">
+        <p className="mt-2 text-[10.5px] text-ink-500">
           {news.errors} club group{news.errors === 1 ? "" : "s"} couldn&apos;t be read this run.
         </p>
       )}

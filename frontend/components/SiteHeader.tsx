@@ -35,9 +35,20 @@ export default function SiteHeader({ team, pages }: { team: OptimizedTeam; pages
     ro.observe(el);
     return () => ro.disconnect();
   }, []);
+  // On a phone the nav row scrolls sideways: bring the current page into it.
+  const navRef = useRef<HTMLUListElement>(null);
+  useEffect(() => {
+    const row = navRef.current;
+    const here = row?.querySelector<HTMLElement>('[aria-current="page"]');
+    if (row && here && row.scrollWidth > row.clientWidth) {
+      const r = row.getBoundingClientRect();
+      const h = here.getBoundingClientRect();
+      row.scrollLeft += h.left - r.left - (r.width - h.width) / 2;
+    }
+  }, [pathname]);
 
   return (
-    <header ref={ref} className="sticky top-0 z-50 border-b border-line bg-base/95 backdrop-blur-md transition-colors duration-300">
+    <header ref={ref} className="sticky top-0 z-50 border-b border-line bg-base md:bg-base/95 md:backdrop-blur-md transition-colors duration-300">
       <div className="mx-auto grid max-w-6xl grid-cols-[1fr_auto] items-center gap-x-2.5 gap-y-2.5 px-4 py-3 [grid-template-areas:'brand_chip'_'nav_nav'] sm:px-6 md:grid-cols-[auto_1fr_auto_auto] md:gap-x-3 md:py-3.5 md:[grid-template-areas:'brand_nav_chip_actions']">
         <Link href="/" aria-label="VAR-ified XI, this week" className="group flex items-center gap-2.5 [grid-area:brand]">
           <LogoMark className="h-8 w-8 flex-none drop-shadow-[0_3px_6px_rgba(0,0,0,0.3)] transition-transform duration-300 group-hover:-rotate-6 sm:h-10 sm:w-10" />
@@ -53,7 +64,7 @@ export default function SiteHeader({ team, pages }: { team: OptimizedTeam; pages
 
         {pages.length > 0 && (
           <nav aria-label="Pages" className="min-w-0 pr-[88px] [grid-area:nav] md:ml-4 md:border-l md:border-line md:pl-6 md:pr-0">
-            <ul className="flex gap-5 overflow-x-auto [scrollbar-width:none] sm:gap-6 [&::-webkit-scrollbar]:hidden">
+            <ul ref={navRef} className="flex gap-5 overflow-x-auto [scrollbar-width:none] max-md:[mask-image:linear-gradient(90deg,#000_80%,transparent)] max-md:pr-8 sm:gap-6 [&::-webkit-scrollbar]:hidden">
               {pages.map((l) => {
                 const isActive = pathname === l.href;
                 return (
