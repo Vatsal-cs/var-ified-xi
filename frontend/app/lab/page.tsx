@@ -58,7 +58,7 @@ const FINDINGS: { figure: string; verdict: Verdict; title: string; body: string 
     body: "How many cup, European and international games a player has just played, and how much rest he's had since, is worth real points.",
   },
   {
-    figure: "29 of 37",
+    figure: "31 of 39",
     verdict: "none",
     title: "Most ideas can't be told apart from luck",
     body: "Changing nothing but the model's random seed moved a two-season score by 175 points. Most ideas land inside that noise, so they aren't used.",
