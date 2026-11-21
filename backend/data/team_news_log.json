@@ -4451,5 +4451,188 @@
     "source_title": "Everton to face Brentford without Igor Thiago as Nathan Collins injury concern grows - Read Everton"
    }
   ]
+ },
+ {
+  "gameweek": 11,
+  "fetched_at": "2026-11-21T02:10:06.462626+00:00",
+  "model": "gemini-3.5-flash-lite",
+  "items": [
+   {
+    "player_id": 1,
+    "name": "David Raya Mart\u00edn",
+    "club": "Arsenal",
+    "status": "no_news",
+    "start_chance": null,
+    "reason": "No news in headlines regarding injury or status.",
+    "source_url": null,
+    "source_date": null,
+    "source_title": null
+   },
+   {
+    "player_id": 4,
+    "name": "Gabriel dos Santos Magalh\u00e3es",
+    "club": "Arsenal",
+    "status": "no_news",
+    "start_chance": null,
+    "reason": "No news in headlines regarding injury or status.",
+    "source_url": null,
+    "source_date": null,
+    "source_title": null
+   },
+   {
+    "player_id": 31,
+    "name": "Ezri Konsa Ngoyo",
+    "club": "Arsenal",
+    "status": "no_news",
+    "start_chance": null,
+    "reason": "No news in headlines.",
+    "source_url": null,
+    "source_date": null,
+    "source_title": null
+   },
+   {
+    "player_id": 67,
+    "name": "Rayan Vitor Simpl\u00edcio Rocha",
+    "club": "Bournemouth",
+    "status": "no_news",
+    "start_chance": null,
+    "reason": "No news in headlines.",
+    "source_url": null,
+    "source_date": null,
+    "source_title": null
+   },
+   {
+    "player_id": 106,
+    "name": "Igor Thiago Nascimento Rodrigues",
+    "club": "Brentford",
+    "status": "out",
+    "start_chance": 0,
+    "reason": "Missing for Everton match due to a ban.",
+    "source_url": "https://news.google.com/rss/articles/CBMiY0FVX3lxTE5oeTJTOTFBTFk4VU9RWFR0bGE4dUl1SXFKRi1TUVBXM0hTRi1ldVJEQzA3bHFSemRMU1ViWU9CT2g5OTJOdGVJYjh6aE9GMXYtVl9VV05QSG5vSEc5UjI5SVZPaw?oc=5",
+    "source_date": "2026-11-20",
+    "source_title": "Brentford vs Everton Preview: Team News and Thiago Ban - Dave.Sport"
+   },
+   {
+    "player_id": 109,
+    "name": "Bart Verbruggen",
+    "club": "Brighton",
+    "status": "no_news",
+    "start_chance": null,
+    "reason": "No news in the headlines.",
+    "source_url": null,
+    "source_date": null,
+    "source_title": null
+   },
+   {
+    "player_id": 124,
+    "name": "Pascal Gro\u00df",
+    "club": "Brighton",
+    "status": "no_news",
+    "start_chance": null,
+    "reason": "No news in the headlines.",
+    "source_url": null,
+    "source_date": null,
+    "source_title": null
+   },
+   {
+    "player_id": 40,
+    "name": "Morgan Rogers",
+    "club": "Chelsea",
+    "status": "no_news",
+    "start_chance": null,
+    "reason": "No news in the headlines.",
+    "source_url": null,
+    "source_date": null,
+    "source_title": null
+   },
+   {
+    "player_id": 249,
+    "name": "Thierno Barry",
+    "club": "Everton",
+    "status": "no_news",
+    "start_chance": null,
+    "reason": "No news in the headlines.",
+    "source_url": null,
+    "source_date": null,
+    "source_title": null
+   },
+   {
+    "player_id": 411,
+    "name": "Erling Haaland",
+    "club": "Man City",
+    "status": "no_news",
+    "start_chance": null,
+    "reason": "no_news",
+    "source_url": null,
+    "source_date": null,
+    "source_title": null
+   },
+   {
+    "player_id": 453,
+    "name": "Harvey Barnes",
+    "club": "Newcastle",
+    "status": "no_news",
+    "start_chance": null,
+    "reason": "no_news",
+    "source_url": null,
+    "source_date": null,
+    "source_title": null
+   },
+   {
+    "player_id": 447,
+    "name": "Sven Botman",
+    "club": "Newcastle",
+    "status": "no_news",
+    "start_chance": null,
+    "reason": "no_news",
+    "source_url": null,
+    "source_date": null,
+    "source_title": null
+   },
+   {
+    "player_id": 472,
+    "name": "Murillo Costa dos Santos",
+    "club": "Nott'm Forest",
+    "status": "no_news",
+    "start_chance": null,
+    "reason": "no_news",
+    "source_url": null,
+    "source_date": null,
+    "source_title": null
+   },
+   {
+    "player_id": 403,
+    "name": "S\u00e1vio Moreira de Oliveira",
+    "club": "Spurs",
+    "status": "expected_to_start",
+    "start_chance": 100,
+    "reason": "S\u00e1vio is available for the Ipswich clash.",
+    "source_url": "https://news.google.com/rss/articles/CBMivwFBVV95cUxONzlIU05BV3dJNWhMa2c3TmlVWm5GLWJySEdtbEJvT1NENFctSU5WNnQtbmVpa3dzTUVPWVZyRHVJVGpSUFNPZlRSTGhYTWR1Q3NmWDFtekVyTXhaZnVsYjhxM1FzVG9RcXp5cmc2Z0tPaGlfOXlrRHllbWhNNFZSV0FuandIS1dib1RBWFcyLVRqQmVrall3dC14UVpYdHhMaEhJNHJhbm1NYkk3dEcxYmh2NmszaVhidG5lNjhsMA?oc=5",
+    "source_date": "2026-11-20",
+    "source_title": "Team news | Bergvall, Savio, Udogie available, Tel and Tosin out of Ipswich clash - Tottenham Hotspur"
+   },
+   {
+    "player_id": 544,
+    "name": "Granit Xhaka",
+    "club": "Sunderland",
+    "status": "no_news",
+    "start_chance": null,
+    "reason": "No relevant news found in the headlines for this player.",
+    "source_url": null,
+    "source_date": null,
+    "source_title": null
+   },
+   {
+    "player_id": 533,
+    "name": "Nordi Mukiele",
+    "club": "Sunderland",
+    "status": "no_news",
+    "start_chance": null,
+    "reason": "No relevant news found in the headlines for this player.",
+    "source_url": null,
+    "source_date": null,
+    "source_title": null
+   }
+  ]
  }
 ]
