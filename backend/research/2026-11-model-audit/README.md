@@ -21,8 +21,8 @@ a better way to predict exists.
 
 | # | Finding | Seasons it holds in | Status |
 |---|---|---|---|
-| 1 | **Early-season after-a-haul over-rating.** Projected 3+ straight after a 10+ match, GW2-14: −0.88 / −1.18 / −0.91 / −0.20 a match. Among each week's top 10 projections: −1.7 to −2.6 (−0.96 live), against −0.3 to −0.8 for everyone else. These are the players the planner buys and captains (Fernandes 8.3 in GW3 2026-27, scored 2). | all four | **under test**: `research/2026-11-haul-dampen` |
-| 2 | **One regressor on total points.** A total mixes events that score differently by position (a goal is 6/5/4, a clean sheet 4/1/0). Published forecasters (OpenFPL, commercial services) model the parts; this repo never had. | structural | **under test**: `research/2026-11-components` |
+| 1 | **Early-season after-a-haul over-rating.** Projected 3+ straight after a 10+ match, GW2-14: −0.88 / −1.18 / −0.91 / −0.20 a match. Among each week's top 10 projections: −1.7 to −2.6 (−0.96 live), against −0.3 to −0.8 for everyone else. These are the players the planner buys and captains (Fernandes 8.3 in GW3 2026-27, scored 2). | all four | tested: −7 [−36, +19], −21 / +14, **not used** (`2026-11-haul-dampen`) |
+| 2 | **One regressor on total points.** A total mixes events that score differently by position (a goal is 6/5/4, a clean sheet 4/1/0). Published forecasters (OpenFPL, commercial services) model the parts; this repo never had. | structural | tested: −22 [−149, +103], +10 / −32, **not used** (`2026-11-components`) |
 | 3 | **Captaincy, 2026-27.** The live captains scored 50 over GW2-10; Haaland every week would have scored 68. Most of the gap was GW2-6, before the October fixes (ownership read as 0 in training, an age leak). Replayed with today's model, the top projection averages 6.9 a week over GW4-10. | live only | crowd captain already tested, no effect (`2026-10-captain-crowd`) |
 | 4 | **Bench points.** 124 points sat on the bench over GW2-10 (14 a week); top-10k managers leave about 10 (`2026-10-top-gap`). The cause is the GW2 squad builder valuing bench players; a planned Wildcard gives a lean bench. | live | bench weight already tested, no effect (`2026-10-bench-weight`) |
 | 5 | **The top 3 projections each week run high**: −0.43 / −1.25 / −1.95 / −1.18. | all four | pulling them back was tested; it changes almost no picks (`2026-10-projection-shrink`) |
@@ -60,8 +60,29 @@ biggest misses both ways.
 
 ## Results of the tests
 
-Pending: backtest run 44948255122, 5 seeds × 2 tuning seasons, paired
-against lagged_ratings.
+Both were pre-registered and run in one backtest: 5 seeds × 2 tuning
+seasons, paired against lagged_ratings (run 44948255122).
+
+| Variant | Pooled | 2024-25 | 2025-26 | Verdict |
+|---|---:|---:|---:|---|
+| points_by_part | −22 [−149, +103] | +10 | −32 | no detectable effect |
+| haul_dampen | −7 [−36, +19] | −21 | +14 | no detectable effect |
+
+## Verdict
+
+Nothing in the model is broken.
+- Its one consistent miss (early-season after-a-haul) is real, but
+  correcting it doesn't win points.
+- The most promising method from the literature (points by part) is no
+  better.
+- Together with the earlier rejected variants, this says the projection
+  model is at the ceiling of the free public data it uses.
+- The gap to top managers is mostly the variance of a single season, not a
+  fixable error. The October audit found none of today's top-10k managers
+  finished top 10k last season.
+
+**Recommendation:** stop changing the predictor. Keep the live model as it
+is, and present this audit, misses included, as the work.
 
 ## Reproduce
 
