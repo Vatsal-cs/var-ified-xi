@@ -1,6 +1,6 @@
 {
  "gameweek": 11,
- "fetched_at": "2026-11-21T02:37:46.706248+00:00",
+ "fetched_at": "2026-11-21T09:06:37.319754+00:00",
  "model": "gemini-3.5-flash-lite",
  "prompt_version": 3,
  "clubs": [
@@ -23,7 +23,7 @@
    "club": "Arsenal",
    "status": "no_news",
    "start_chance": null,
-   "reason": "No news in the headlines.",
+   "reason": "No news in headlines",
    "source_url": null,
    "source_date": null,
    "source_title": null
@@ -34,7 +34,7 @@
    "club": "Arsenal",
    "status": "no_news",
    "start_chance": null,
-   "reason": "No news in the headlines.",
+   "reason": "No news in headlines",
    "source_url": null,
    "source_date": null,
    "source_title": null
@@ -45,7 +45,7 @@
    "club": "Arsenal",
    "status": "no_news",
    "start_chance": null,
-   "reason": "No news in the headlines.",
+   "reason": "No news in headlines",
    "source_url": null,
    "source_date": null,
    "source_title": null
@@ -56,7 +56,7 @@
    "club": "Bournemouth",
    "status": "no_news",
    "start_chance": null,
-   "reason": "No news in the headlines.",
+   "reason": "No news in headlines",
    "source_url": null,
    "source_date": null,
    "source_title": null
@@ -65,20 +65,20 @@
    "player_id": 106,
    "name": "Igor Thiago Nascimento Rodrigues",
    "club": "Brentford",
-   "status": "no_news",
-   "start_chance": null,
-   "reason": "No news in the headlines.",
-   "source_url": null,
-   "source_date": null,
-   "source_title": null
+   "status": "out",
+   "start_chance": 0,
+   "reason": "Brentford boss discusses how the team will approach Thiago's absence",
+   "source_url": "https://news.google.com/rss/articles/CBMinwFBVV95cUxNSUtLZmI5Qkh3M1lwS3p5N2k1YXlsazlPRl9zN0ptYTdPdDI4Y3FfdnF2WFdGVE1HVlF4T3R6V3EtR1kxMzdZRmphMTEzVFBGTmlnTmxlV3pLWXJkQTJFOEE4dndFbWF0Mi1IdEkzMVBRMnM3Q0dNUnpMamxqUFlxZnNfWEFFa0ctTFFtUkswdXJjZUVlMnA4UHdtbmNiNUk?oc=5",
+   "source_date": "2026-11-20",
+   "source_title": "Andrews: How Brentford will approach Thiago absence - Brentford FC"
   },
   {
    "player_id": 109,
    "name": "Bart Verbruggen",
    "club": "Brighton",
    "status": "no_news",
-   "start_chance": null,
-   "reason": "No news in the headlines.",
+   "start_chance": 100,
+   "reason": "No news regarding injury or suspension found in the headlines.",
    "source_url": null,
    "source_date": null,
    "source_title": null
@@ -88,8 +88,8 @@
    "name": "Pascal Gro\u00df",
    "club": "Brighton",
    "status": "no_news",
-   "start_chance": null,
-   "reason": "No news in the headlines.",
+   "start_chance": 100,
+   "reason": "Mentioned in articles regarding contract announcement and team preview, but no injury or doubt reported.",
    "source_url": null,
    "source_date": null,
    "source_title": null
@@ -99,8 +99,8 @@
    "name": "Morgan Rogers",
    "club": "Chelsea",
    "status": "no_news",
-   "start_chance": null,
-   "reason": "No news in the headlines.",
+   "start_chance": 100,
+   "reason": "No news regarding injury or suspension found in the headlines.",
    "source_url": null,
    "source_date": null,
    "source_title": null
@@ -110,8 +110,8 @@
    "name": "Thierno Barry",
    "club": "Everton",
    "status": "no_news",
-   "start_chance": null,
-   "reason": "No news in the headlines.",
+   "start_chance": 100,
+   "reason": "No news regarding injury or suspension found in the headlines.",
    "source_url": null,
    "source_date": null,
    "source_title": null
@@ -122,7 +122,7 @@
    "club": "Man City",
    "status": "no_news",
    "start_chance": null,
-   "reason": "No relevant news in the headlines.",
+   "reason": "No relevant news found in headlines",
    "source_url": null,
    "source_date": null,
    "source_title": null
@@ -133,7 +133,7 @@
    "club": "Newcastle",
    "status": "no_news",
    "start_chance": null,
-   "reason": "No relevant news in the headlines.",
+   "reason": "No relevant news found in headlines",
    "source_url": null,
    "source_date": null,
    "source_title": null
@@ -144,7 +144,7 @@
    "club": "Newcastle",
    "status": "no_news",
    "start_chance": null,
-   "reason": "No relevant news in the headlines.",
+   "reason": "No relevant news found in headlines",
    "source_url": null,
    "source_date": null,
    "source_title": null
@@ -155,7 +155,7 @@
    "club": "Nott'm Forest",
    "status": "no_news",
    "start_chance": null,
-   "reason": "No relevant news in the headlines.",
+   "reason": "No relevant news found in headlines",
    "source_url": null,
    "source_date": null,
    "source_title": null
@@ -166,7 +166,7 @@
    "club": "Spurs",
    "status": "no_news",
    "start_chance": null,
-   "reason": "No news in the provided headlines",
+   "reason": "None",
    "source_url": null,
    "source_date": null,
    "source_title": null
@@ -177,7 +177,7 @@
    "club": "Sunderland",
    "status": "no_news",
    "start_chance": null,
-   "reason": "No news in the provided headlines",
+   "reason": "None",
    "source_url": null,
    "source_date": null,
    "source_title": null
@@ -188,7 +188,7 @@
    "club": "Sunderland",
    "status": "no_news",
    "start_chance": null,
-   "reason": "No news in the provided headlines",
+   "reason": "None",
    "source_url": null,
    "source_date": null,
    "source_title": null
