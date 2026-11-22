@@ -80,7 +80,7 @@ def rival_ownership(league_id: int, top: int, me: int, gameweek: int) -> tuple:
     counts = {}
     for entry in managers:
         try:
-            picks = entry_data.fetch_picks(entry, gameweek - 1)["picks"]
+            picks = entry_data.owned_picks(entry, gameweek - 1)["picks"]
         except Exception:
             continue
         for p in picks:

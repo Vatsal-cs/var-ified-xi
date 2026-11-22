@@ -31,7 +31,7 @@ import logging
 import requests
 
 import config
-from data_engine.entry_data import _get, fetch_entry, fetch_picks
+from data_engine.entry_data import _get, fetch_entry, owned_picks
 
 logger = logging.getLogger(__name__)
 
@@ -114,7 +114,7 @@ def build_league_view(entry_id: int, bootstrap: dict, gameweek: int) -> dict:
         squads, chips, failed = {}, {}, 0
         for row in rows[:MAX_RIVALS]:
             try:
-                picks = fetch_picks(row["entry"], last_played)
+                picks = owned_picks(row["entry"], last_played)
             except requests.RequestException:
                 failed += 1
                 continue

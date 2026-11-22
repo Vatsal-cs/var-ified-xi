@@ -75,6 +75,21 @@ def fetch_picks(entry_id: int, gameweek: int) -> dict:
     return _get(f"entry/{entry_id}/event/{gameweek}/picks/")
 
 
+def owned_picks(entry_id: int, gameweek: int) -> dict:
+    """The picks of the squad a manager owns after `gameweek`.
+
+    A Free Hit squad lasts one week, then the team goes back to the squad
+    from before it. So if `gameweek` was a Free Hit, the squad (and bank)
+    come from the last week before it that wasn't one. GW11 2026-27: the
+    GW12 plan was built on the Free Hit squad, players the team no longer had.
+    """
+    picks = fetch_picks(entry_id, gameweek)
+    while picks.get("active_chip") == "freehit" and gameweek > 1:
+        gameweek -= 1
+        picks = fetch_picks(entry_id, gameweek)
+    return picks
+
+
 def fetch_transfers(entry_id: int) -> list:
     return _get(f"entry/{entry_id}/transfers/")
 
@@ -247,7 +262,7 @@ def build_team_state(entry_id: int, bootstrap: dict, player_histories: dict,
             "before gameweek 1."
         )
 
-    picks = fetch_picks(entry_id, last_played)
+    picks = owned_picks(entry_id, last_played)
     squad = [p["element"] for p in picks["picks"]]
 
     entry_history = picks.get("entry_history", {})
