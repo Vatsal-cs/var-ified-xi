@@ -17,6 +17,7 @@ import TeamNews from "./TeamNews";
 import CoinFlips from "./CoinFlips";
 import { CountUp, OnView, Tilt } from "./motion";
 import { pct } from "@/lib/odds";
+import { caps } from "@/lib/names";
 
 const CHIP_LABEL: Record<string, string> = { wildcard: "Wildcard", freehit: "Free Hit" };
 
@@ -370,7 +371,7 @@ function Captain({ team }: { team: OptimizedTeam }) {
           />
         </Tilt>
         <div className="min-w-0">
-          <p className="font-display text-[30px] font-extrabold uppercase leading-none text-ink-100">{cap.name}</p>
+          <p className="font-display text-[30px] font-extrabold uppercase leading-none text-ink-100">{caps(cap.name)}</p>
           <p className="mt-0.5 text-[13px] leading-snug text-ink-400">
             {cap.team}
             {haul != null && <> &middot; {pct(haul)} chance of 10+</>}

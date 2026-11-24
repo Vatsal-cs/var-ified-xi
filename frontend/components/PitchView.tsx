@@ -17,6 +17,7 @@ import type { Player, PointsDist } from "@/lib/types";
 import Crest from "@/components/Crest";
 import Shirt from "@/components/Shirt";
 import { pct } from "@/lib/odds";
+import { caps } from "@/lib/names";
 import { Orbit } from "@/components/motion";
 
 const ROW_ORDER: Player["position"][] = ["FWD", "MID", "DEF", "GK"];
@@ -177,7 +178,7 @@ function Ball() {
  *  showing through a grid of holes over the text. */
 function Hoarding({ messages }: { messages: string[] }) {
   if (messages.length === 0) return null;
-  const run = messages.map((m) => `${m} ◆ `).join("");
+  const run = messages.map((m) => `${caps(m)} ◆ `).join("");
   return (
     // Standing well behind the far goal line, facing the camera.
     <div aria-hidden className="pointer-events-none absolute left-1/2 top-[-9%] h-0 w-0 [transform-style:preserve-3d]">
