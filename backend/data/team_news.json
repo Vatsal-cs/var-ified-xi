@@ -1,6 +1,6 @@
 {
  "gameweek": 12,
- "fetched_at": "2026-11-26T22:19:07.451285+00:00",
+ "fetched_at": "2026-11-27T04:42:06.762693+00:00",
  "model": "gemini-3.5-flash-lite",
  "prompt_version": 3,
  "clubs": [
@@ -23,17 +23,17 @@
    "club": "Arsenal",
    "status": "doubtful",
    "start_chance": 50,
-   "reason": "Raya is an injury doubt for the match against Man City.",
-   "source_url": "https://news.google.com/rss/articles/CBMiZkFVX3lxTFBsS3Y4ZjFmcjJ0dzd4VkRxVGprT3BIWkhBR0laUDN6c0Z5WkNPT1ZZVW1QYjBtN1VySTlvejQ2OUFRa3QxNnJGa2hNcUlmczktXzFxakdJaVJOcFVKd21ybG9IeXdTZw?oc=5",
+   "reason": "Arteta says injury not too serious and avoids surgery, but Raya's availability remains uncertain.",
+   "source_url": "https://news.google.com/rss/articles/CBMijgFBVV95cUxQcDRHVWdNWkxUcV9LMlNIeWw3dVNjb1ROVkJuVDZpeU56bHNTS0FaVXE3S2dlR3pPU2k1VFVCSUtVZWtZVjdKOFF6ZlJKaUFhUldVOWtTaDA4dzlnNERFMlZ4dzVsMjlTNHhpWFJ1M0dEVUloYm9LUmJUcFBmNTdfdy1HRjNDbWFsM01RSTBn?oc=5",
    "source_date": "2026-11-25",
-   "source_title": "FPL GW12 Injury News: Raya 50% for Arsenal v City - The False 9"
+   "source_title": "Arsenal\u2019s David Raya to avoid surgery, injury not \u2018too serious\u2019 \u2013 Mikel Arteta - The New York Times"
   },
   {
    "player_id": 4,
    "name": "Gabriel dos Santos Magalh\u00e3es",
    "club": "Arsenal",
    "status": "no_news",
-   "start_chance": null,
+   "start_chance": 100,
    "reason": "None",
    "source_url": null,
    "source_date": null,
@@ -44,7 +44,7 @@
    "name": "Ezri Konsa Ngoyo",
    "club": "Arsenal",
    "status": "no_news",
-   "start_chance": null,
+   "start_chance": 100,
    "reason": "None",
    "source_url": null,
    "source_date": null,
@@ -55,7 +55,7 @@
    "name": "Rayan Vitor Simpl\u00edcio Rocha",
    "club": "Bournemouth",
    "status": "no_news",
-   "start_chance": null,
+   "start_chance": 100,
    "reason": "None",
    "source_url": null,
    "source_date": null,
@@ -66,7 +66,7 @@
    "name": "Igor Thiago Nascimento Rodrigues",
    "club": "Brentford",
    "status": "no_news",
-   "start_chance": null,
+   "start_chance": 100,
    "reason": "None",
    "source_url": null,
    "source_date": null,
@@ -78,7 +78,7 @@
    "club": "Brighton",
    "status": "no_news",
    "start_chance": null,
-   "reason": "No news in the headlines.",
+   "reason": "No news in the provided headlines",
    "source_url": null,
    "source_date": null,
    "source_title": null
@@ -89,7 +89,7 @@
    "club": "Brighton",
    "status": "no_news",
    "start_chance": null,
-   "reason": "No news in the headlines.",
+   "reason": "No news in the provided headlines",
    "source_url": null,
    "source_date": null,
    "source_title": null
@@ -100,7 +100,7 @@
    "club": "Chelsea",
    "status": "no_news",
    "start_chance": null,
-   "reason": "No news in the headlines.",
+   "reason": "No news in the provided headlines",
    "source_url": null,
    "source_date": null,
    "source_title": null
@@ -111,7 +111,7 @@
    "club": "Everton",
    "status": "no_news",
    "start_chance": null,
-   "reason": "No news in the headlines.",
+   "reason": "No news in the provided headlines",
    "source_url": null,
    "source_date": null,
    "source_title": null
@@ -122,7 +122,7 @@
    "club": "Man City",
    "status": "expected_to_start",
    "start_chance": 100,
-   "reason": "Predicted to start or feature in the upcoming match against Arsenal.",
+   "reason": "Predicted to hit the net against Arsenal.",
    "source_url": "https://news.google.com/rss/articles/CBMiggFBVV95cUxNNFNLRTNYcnhFTWhkWnJzUGN0ajRWSFRzcnprZlhKcFRiM0oyaEhRSWlnU3dxblJEM2dGRW9nUl9aY1NnUlcyM1E5TDczbkZwSlRMNWFJUjctbWdUa29QYXNVVkNCaDRJTTB5RHE5d3dqT2Rtd1V6ekhIdmNybEtndjB3?oc=5",
    "source_date": "2026-11-26",
    "source_title": "Arsenal vs Manchester City prediction: Havertz and Haaland to hit net - Football365"
@@ -133,7 +133,7 @@
    "club": "Newcastle",
    "status": "no_news",
    "start_chance": null,
-   "reason": "No recent news found for this player in the headlines.",
+   "reason": "No relevant news found in headlines.",
    "source_url": null,
    "source_date": null,
    "source_title": null
@@ -144,7 +144,7 @@
    "club": "Newcastle",
    "status": "no_news",
    "start_chance": null,
-   "reason": "No recent news found for this player in the headlines.",
+   "reason": "No relevant news found in headlines.",
    "source_url": null,
    "source_date": null,
    "source_title": null
@@ -155,7 +155,7 @@
    "club": "Nott'm Forest",
    "status": "no_news",
    "start_chance": null,
-   "reason": "No recent news found for this player in the headlines.",
+   "reason": "No relevant news found in headlines.",
    "source_url": null,
    "source_date": null,
    "source_title": null
@@ -177,7 +177,7 @@
    "club": "Sunderland",
    "status": "no_news",
    "start_chance": null,
-   "reason": "",
+   "reason": "No relevant news found in the headlines.",
    "source_url": null,
    "source_date": null,
    "source_title": null
@@ -188,7 +188,7 @@
    "club": "Sunderland",
    "status": "no_news",
    "start_chance": null,
-   "reason": "",
+   "reason": "No relevant news found in the headlines.",
    "source_url": null,
    "source_date": null,
    "source_title": null

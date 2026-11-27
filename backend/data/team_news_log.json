@@ -5366,5 +5366,188 @@
     "source_title": null
    }
   ]
+ },
+ {
+  "gameweek": 12,
+  "fetched_at": "2026-11-27T04:42:06.762693+00:00",
+  "model": "gemini-3.5-flash-lite",
+  "items": [
+   {
+    "player_id": 1,
+    "name": "David Raya Mart\u00edn",
+    "club": "Arsenal",
+    "status": "doubtful",
+    "start_chance": 50,
+    "reason": "Arteta says injury not too serious and avoids surgery, but Raya's availability remains uncertain.",
+    "source_url": "https://news.google.com/rss/articles/CBMijgFBVV95cUxQcDRHVWdNWkxUcV9LMlNIeWw3dVNjb1ROVkJuVDZpeU56bHNTS0FaVXE3S2dlR3pPU2k1VFVCSUtVZWtZVjdKOFF6ZlJKaUFhUldVOWtTaDA4dzlnNERFMlZ4dzVsMjlTNHhpWFJ1M0dEVUloYm9LUmJUcFBmNTdfdy1HRjNDbWFsM01RSTBn?oc=5",
+    "source_date": "2026-11-25",
+    "source_title": "Arsenal\u2019s David Raya to avoid surgery, injury not \u2018too serious\u2019 \u2013 Mikel Arteta - The New York Times"
+   },
+   {
+    "player_id": 4,
+    "name": "Gabriel dos Santos Magalh\u00e3es",
+    "club": "Arsenal",
+    "status": "no_news",
+    "start_chance": 100,
+    "reason": "None",
+    "source_url": null,
+    "source_date": null,
+    "source_title": null
+   },
+   {
+    "player_id": 31,
+    "name": "Ezri Konsa Ngoyo",
+    "club": "Arsenal",
+    "status": "no_news",
+    "start_chance": 100,
+    "reason": "None",
+    "source_url": null,
+    "source_date": null,
+    "source_title": null
+   },
+   {
+    "player_id": 67,
+    "name": "Rayan Vitor Simpl\u00edcio Rocha",
+    "club": "Bournemouth",
+    "status": "no_news",
+    "start_chance": 100,
+    "reason": "None",
+    "source_url": null,
+    "source_date": null,
+    "source_title": null
+   },
+   {
+    "player_id": 106,
+    "name": "Igor Thiago Nascimento Rodrigues",
+    "club": "Brentford",
+    "status": "no_news",
+    "start_chance": 100,
+    "reason": "None",
+    "source_url": null,
+    "source_date": null,
+    "source_title": null
+   },
+   {
+    "player_id": 109,
+    "name": "Bart Verbruggen",
+    "club": "Brighton",
+    "status": "no_news",
+    "start_chance": null,
+    "reason": "No news in the provided headlines",
+    "source_url": null,
+    "source_date": null,
+    "source_title": null
+   },
+   {
+    "player_id": 124,
+    "name": "Pascal Gro\u00df",
+    "club": "Brighton",
+    "status": "no_news",
+    "start_chance": null,
+    "reason": "No news in the provided headlines",
+    "source_url": null,
+    "source_date": null,
+    "source_title": null
+   },
+   {
+    "player_id": 40,
+    "name": "Morgan Rogers",
+    "club": "Chelsea",
+    "status": "no_news",
+    "start_chance": null,
+    "reason": "No news in the provided headlines",
+    "source_url": null,
+    "source_date": null,
+    "source_title": null
+   },
+   {
+    "player_id": 249,
+    "name": "Thierno Barry",
+    "club": "Everton",
+    "status": "no_news",
+    "start_chance": null,
+    "reason": "No news in the provided headlines",
+    "source_url": null,
+    "source_date": null,
+    "source_title": null
+   },
+   {
+    "player_id": 411,
+    "name": "Erling Haaland",
+    "club": "Man City",
+    "status": "expected_to_start",
+    "start_chance": 100,
+    "reason": "Predicted to hit the net against Arsenal.",
+    "source_url": "https://news.google.com/rss/articles/CBMiggFBVV95cUxNNFNLRTNYcnhFTWhkWnJzUGN0ajRWSFRzcnprZlhKcFRiM0oyaEhRSWlnU3dxblJEM2dGRW9nUl9aY1NnUlcyM1E5TDczbkZwSlRMNWFJUjctbWdUa29QYXNVVkNCaDRJTTB5RHE5d3dqT2Rtd1V6ekhIdmNybEtndjB3?oc=5",
+    "source_date": "2026-11-26",
+    "source_title": "Arsenal vs Manchester City prediction: Havertz and Haaland to hit net - Football365"
+   },
+   {
+    "player_id": 453,
+    "name": "Harvey Barnes",
+    "club": "Newcastle",
+    "status": "no_news",
+    "start_chance": null,
+    "reason": "No relevant news found in headlines.",
+    "source_url": null,
+    "source_date": null,
+    "source_title": null
+   },
+   {
+    "player_id": 447,
+    "name": "Sven Botman",
+    "club": "Newcastle",
+    "status": "no_news",
+    "start_chance": null,
+    "reason": "No relevant news found in headlines.",
+    "source_url": null,
+    "source_date": null,
+    "source_title": null
+   },
+   {
+    "player_id": 472,
+    "name": "Murillo Costa dos Santos",
+    "club": "Nott'm Forest",
+    "status": "no_news",
+    "start_chance": null,
+    "reason": "No relevant news found in headlines.",
+    "source_url": null,
+    "source_date": null,
+    "source_title": null
+   },
+   {
+    "player_id": 403,
+    "name": "S\u00e1vio Moreira de Oliveira",
+    "club": "Spurs",
+    "status": "out",
+    "start_chance": 0,
+    "reason": "Ruled out for several weeks with a hamstring injury.",
+    "source_url": "https://news.google.com/rss/articles/CBMitgFBVV95cUxNSmRFUFZvQkU1Njk1ZGQtNGs4OG5kNUpkVkc2Nzh4b19IZVY2SGh0dDRxX1pZdkt0ak53eXQwTzlYeHk3T3NlZEZoSlRBN1ZOZTVydXMzYTVUc0M5T01HWVNhTUxoTS02N19XaXgzTXBYZjdPd2ZUbmpTWE53YlJybmhnQ0ZaMWRXR3NuWHFrMFJVOFpkb0F2NHpselBqUlJTUm0wUFh0aFZ0aUhmMXp1dVBFVUUzd9IBuwFBVV95cUxQTU5aUkRSRElIV05XOVR0cy1hSGFSaUFXQnd4UE5pU0I4ZGlQa1J6UUd3Qjh4blh1OFQ5TVhubGdSdUFGMlExdm9VMFkzOGZNVnd2VF9WbTNVaUE0SkFJd184Z1pOdWtJLUI4NkZfUlNuZ19HUUZ6QXBJejlfcFpNdm5LLWI0QmRhdzhVVldTbk9WUFlkSVBjYkJtR1Zha25aYnhDNnBFSjdVcmc2T2FaUjFnZ1RxVGZPVTdZ?oc=5",
+    "source_date": "2026-11-26",
+    "source_title": "Tottenham Hotspur forward Savio ruled out for several weeks with hamstring injury - SportsView"
+   },
+   {
+    "player_id": 544,
+    "name": "Granit Xhaka",
+    "club": "Sunderland",
+    "status": "no_news",
+    "start_chance": null,
+    "reason": "No relevant news found in the headlines.",
+    "source_url": null,
+    "source_date": null,
+    "source_title": null
+   },
+   {
+    "player_id": 533,
+    "name": "Nordi Mukiele",
+    "club": "Sunderland",
+    "status": "no_news",
+    "start_chance": null,
+    "reason": "No relevant news found in the headlines.",
+    "source_url": null,
+    "source_date": null,
+    "source_title": null
+   }
+  ]
  }
 ]
