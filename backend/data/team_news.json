@@ -1,6 +1,6 @@
 {
  "gameweek": 12,
- "fetched_at": "2026-11-27T04:42:06.762693+00:00",
+ "fetched_at": "2026-11-27T09:40:03.751762+00:00",
  "model": "gemini-3.5-flash-lite",
  "prompt_version": 3,
  "clubs": [
@@ -23,10 +23,10 @@
    "club": "Arsenal",
    "status": "doubtful",
    "start_chance": 50,
-   "reason": "Arteta says injury not too serious and avoids surgery, but Raya's availability remains uncertain.",
-   "source_url": "https://news.google.com/rss/articles/CBMijgFBVV95cUxQcDRHVWdNWkxUcV9LMlNIeWw3dVNjb1ROVkJuVDZpeU56bHNTS0FaVXE3S2dlR3pPU2k1VFVCSUtVZWtZVjdKOFF6ZlJKaUFhUldVOWtTaDA4dzlnNERFMlZ4dzVsMjlTNHhpWFJ1M0dEVUloYm9LUmJUcFBmNTdfdy1HRjNDbWFsM01RSTBn?oc=5",
-   "source_date": "2026-11-25",
-   "source_title": "Arsenal\u2019s David Raya to avoid surgery, injury not \u2018too serious\u2019 \u2013 Mikel Arteta - The New York Times"
+   "reason": "Raya still 50% ahead of Man City clash",
+   "source_url": "https://news.google.com/rss/articles/CBMihAFBVV95cUxQRnBpVHpQME5WZjM0eXhpR0xNVXQ2OFZUR3lHczlWaWpmS1h6Umo0R1VTRk9XaW93SlIzUDhNd2hIU3oybWZ4NXFWcXNWZW5nYnUxei1XQW90WFhfTUZrZW93MDlZY0ZOZGl6dlptZG1mempSVTM1UlhxS0w2TzVidWF4NHo?oc=5",
+   "source_date": "2026-11-26",
+   "source_title": "FPL GW12 Injury News: Caicedo Cleared, Munoz 75%, Raya Still 50% (26 November) - The False 9"
   },
   {
    "player_id": 4,
@@ -34,7 +34,7 @@
    "club": "Arsenal",
    "status": "no_news",
    "start_chance": 100,
-   "reason": "None",
+   "reason": "",
    "source_url": null,
    "source_date": null,
    "source_title": null
@@ -45,7 +45,7 @@
    "club": "Arsenal",
    "status": "no_news",
    "start_chance": 100,
-   "reason": "None",
+   "reason": "",
    "source_url": null,
    "source_date": null,
    "source_title": null
@@ -56,7 +56,7 @@
    "club": "Bournemouth",
    "status": "no_news",
    "start_chance": 100,
-   "reason": "None",
+   "reason": "",
    "source_url": null,
    "source_date": null,
    "source_title": null
@@ -67,7 +67,7 @@
    "club": "Brentford",
    "status": "no_news",
    "start_chance": 100,
-   "reason": "None",
+   "reason": "",
    "source_url": null,
    "source_date": null,
    "source_title": null
@@ -78,7 +78,7 @@
    "club": "Brighton",
    "status": "no_news",
    "start_chance": null,
-   "reason": "No news in the provided headlines",
+   "reason": "No news in the headlines.",
    "source_url": null,
    "source_date": null,
    "source_title": null
@@ -89,7 +89,7 @@
    "club": "Brighton",
    "status": "no_news",
    "start_chance": null,
-   "reason": "No news in the provided headlines",
+   "reason": "No news in the headlines.",
    "source_url": null,
    "source_date": null,
    "source_title": null
@@ -100,7 +100,7 @@
    "club": "Chelsea",
    "status": "no_news",
    "start_chance": null,
-   "reason": "No news in the provided headlines",
+   "reason": "No news in the headlines.",
    "source_url": null,
    "source_date": null,
    "source_title": null
@@ -111,7 +111,7 @@
    "club": "Everton",
    "status": "no_news",
    "start_chance": null,
-   "reason": "No news in the provided headlines",
+   "reason": "No news in the headlines.",
    "source_url": null,
    "source_date": null,
    "source_title": null
@@ -122,7 +122,7 @@
    "club": "Man City",
    "status": "expected_to_start",
    "start_chance": 100,
-   "reason": "Predicted to hit the net against Arsenal.",
+   "reason": "Haaland predicted to hit net against Arsenal.",
    "source_url": "https://news.google.com/rss/articles/CBMiggFBVV95cUxNNFNLRTNYcnhFTWhkWnJzUGN0ajRWSFRzcnprZlhKcFRiM0oyaEhRSWlnU3dxblJEM2dGRW9nUl9aY1NnUlcyM1E5TDczbkZwSlRMNWFJUjctbWdUa29QYXNVVkNCaDRJTTB5RHE5d3dqT2Rtd1V6ekhIdmNybEtndjB3?oc=5",
    "source_date": "2026-11-26",
    "source_title": "Arsenal vs Manchester City prediction: Havertz and Haaland to hit net - Football365"
@@ -133,7 +133,7 @@
    "club": "Newcastle",
    "status": "no_news",
    "start_chance": null,
-   "reason": "No relevant news found in headlines.",
+   "reason": "No news in the provided headlines.",
    "source_url": null,
    "source_date": null,
    "source_title": null
@@ -144,7 +144,7 @@
    "club": "Newcastle",
    "status": "no_news",
    "start_chance": null,
-   "reason": "No relevant news found in headlines.",
+   "reason": "No news in the provided headlines.",
    "source_url": null,
    "source_date": null,
    "source_title": null
@@ -155,7 +155,7 @@
    "club": "Nott'm Forest",
    "status": "no_news",
    "start_chance": null,
-   "reason": "No relevant news found in headlines.",
+   "reason": "No news in the provided headlines.",
    "source_url": null,
    "source_date": null,
    "source_title": null
@@ -175,20 +175,20 @@
    "player_id": 544,
    "name": "Granit Xhaka",
    "club": "Sunderland",
-   "status": "no_news",
-   "start_chance": null,
-   "reason": "No relevant news found in the headlines.",
-   "source_url": null,
-   "source_date": null,
-   "source_title": null
+   "status": "out",
+   "start_chance": 0,
+   "reason": "Xhaka out according to Sunderland news.",
+   "source_url": "https://news.google.com/rss/articles/CBMifkFVX3lxTE1UZThPM2YzT0loeldpdWJLNy1jM3JGNHc3aVh0T20xcFRNM2NkbUFydjZxaVUxNWpmWEJaSWloenVsbFFpQk5ndnBWOHFCTmJ6ZW1kaFVsV2VyaklZNzlfajBIR2Y2ZmZXV3FoRmxLdktVY05ZU3EyZEJTN0lrZw?oc=5",
+   "source_date": "2026-11-27",
+   "source_title": "Sunderland News Today: Europa Draw, Xhaka Out, Danso Ineligible (27 November) - thefalse9.com"
   },
   {
    "player_id": 533,
    "name": "Nordi Mukiele",
    "club": "Sunderland",
    "status": "no_news",
-   "start_chance": null,
-   "reason": "No relevant news found in the headlines.",
+   "start_chance": 50,
+   "reason": "",
    "source_url": null,
    "source_date": null,
    "source_title": null
