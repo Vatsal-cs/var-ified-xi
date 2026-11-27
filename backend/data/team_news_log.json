@@ -5732,5 +5732,188 @@
     "source_title": null
    }
   ]
+ },
+ {
+  "gameweek": 12,
+  "fetched_at": "2026-11-27T16:37:49.825283+00:00",
+  "model": "gemini-3.5-flash-lite",
+  "items": [
+   {
+    "player_id": 1,
+    "name": "David Raya Mart\u00edn",
+    "club": "Arsenal",
+    "status": "doubtful",
+    "start_chance": 50,
+    "reason": "Returned to training but Mikel Arteta is tight-lipped over whether he will be fit.",
+    "source_url": "https://news.google.com/rss/articles/CBMiswFBVV95cUxNSnFQekNHTllrRmR0a3dWM2ozMWZzeWsxaWFSYmVCSHRSc0dybXhtUzRLb3EybDRvYXdNWG1zeldNUFJ6NFBzUVRORXhXUmhhQ0ZEdTY4bVV6d2ZLa0dXLWV5Y184NWdwa3RaTDRibHZleVpCdnRZaWRWZWV3RmViQ1FkZDJLWVNMMFBBR0hPLUl4bmN5N3hidlRoOVBVR2lxUFgzYlMxbWVTVGZ5cWpSZzUyQQ?oc=5",
+    "source_date": "2026-11-27",
+    "source_title": "Mikel Arteta tight-lipped over whether David Raya will be fit for Man City clash - The Independent"
+   },
+   {
+    "player_id": 4,
+    "name": "Gabriel dos Santos Magalh\u00e3es",
+    "club": "Arsenal",
+    "status": "no_news",
+    "start_chance": 100,
+    "reason": "",
+    "source_url": null,
+    "source_date": null,
+    "source_title": null
+   },
+   {
+    "player_id": 31,
+    "name": "Ezri Konsa Ngoyo",
+    "club": "Arsenal",
+    "status": "no_news",
+    "start_chance": 100,
+    "reason": "",
+    "source_url": null,
+    "source_date": null,
+    "source_title": null
+   },
+   {
+    "player_id": 67,
+    "name": "Rayan Vitor Simpl\u00edcio Rocha",
+    "club": "Bournemouth",
+    "status": "no_news",
+    "start_chance": 100,
+    "reason": "",
+    "source_url": null,
+    "source_date": null,
+    "source_title": null
+   },
+   {
+    "player_id": 106,
+    "name": "Igor Thiago Nascimento Rodrigues",
+    "club": "Brentford",
+    "status": "no_news",
+    "start_chance": 100,
+    "reason": "",
+    "source_url": null,
+    "source_date": null,
+    "source_title": null
+   },
+   {
+    "player_id": 109,
+    "name": "Bart Verbruggen",
+    "club": "Brighton",
+    "status": "no_news",
+    "start_chance": null,
+    "reason": "No news found in the headlines.",
+    "source_url": null,
+    "source_date": null,
+    "source_title": null
+   },
+   {
+    "player_id": 124,
+    "name": "Pascal Gro\u00df",
+    "club": "Brighton",
+    "status": "no_news",
+    "start_chance": null,
+    "reason": "No news found in the headlines.",
+    "source_url": null,
+    "source_date": null,
+    "source_title": null
+   },
+   {
+    "player_id": 40,
+    "name": "Morgan Rogers",
+    "club": "Chelsea",
+    "status": "no_news",
+    "start_chance": null,
+    "reason": "No news found in the headlines.",
+    "source_url": null,
+    "source_date": null,
+    "source_title": null
+   },
+   {
+    "player_id": 249,
+    "name": "Thierno Barry",
+    "club": "Everton",
+    "status": "no_news",
+    "start_chance": null,
+    "reason": "No news found in the headlines.",
+    "source_url": null,
+    "source_date": null,
+    "source_title": null
+   },
+   {
+    "player_id": 411,
+    "name": "Erling Haaland",
+    "club": "Man City",
+    "status": "no_news",
+    "start_chance": null,
+    "reason": "No relevant news found in headlines",
+    "source_url": null,
+    "source_date": null,
+    "source_title": null
+   },
+   {
+    "player_id": 453,
+    "name": "Harvey Barnes",
+    "club": "Newcastle",
+    "status": "no_news",
+    "start_chance": null,
+    "reason": "No relevant news found in headlines",
+    "source_url": null,
+    "source_date": null,
+    "source_title": null
+   },
+   {
+    "player_id": 447,
+    "name": "Sven Botman",
+    "club": "Newcastle",
+    "status": "no_news",
+    "start_chance": null,
+    "reason": "No injury or fitness news mentioned in headlines",
+    "source_url": null,
+    "source_date": null,
+    "source_title": null
+   },
+   {
+    "player_id": 472,
+    "name": "Murillo Costa dos Santos",
+    "club": "Nott'm Forest",
+    "status": "no_news",
+    "start_chance": null,
+    "reason": "No relevant news found in headlines",
+    "source_url": null,
+    "source_date": null,
+    "source_title": null
+   },
+   {
+    "player_id": 403,
+    "name": "S\u00e1vio Moreira de Oliveira",
+    "club": "Spurs",
+    "status": "out",
+    "start_chance": 0,
+    "reason": "Out for several weeks with a hamstring injury.",
+    "source_url": "https://news.google.com/rss/articles/CBMiuwFBVV95cUxPSjBPamtMbWozUlFDcDBCMHllSjIzTkVPRHhmYi0ycGNKTV95V05OcnBfQWxubnZpc0FTOFdBNmJNZk5CU214MjQ1eFVNWGp6RXN1cFpray1oZXRHa0VIQXhTTG1rbktyZFQ1NU5TWEpCQ2NYWWhaVVFoTS15TkROMndvSWdidUM4dC12b0wwcThrN3ZvWGtTSW1mSEpsel8ybTQxSDJlMmhPMGk1RmtXcjUwWTVneEt4eTNz?oc=5",
+    "source_date": "2026-11-27",
+    "source_title": "Spurs' Savio to miss Christmas period with hamstring injury, says De Zerbi - Reuters"
+   },
+   {
+    "player_id": 544,
+    "name": "Granit Xhaka",
+    "club": "Sunderland",
+    "status": "out",
+    "start_chance": 0,
+    "reason": "Ruled out for Sunderland.",
+    "source_url": "https://news.google.com/rss/articles/CBMifkFVX3lxTE1UZThPM2YzT0loeldpdWJLNy1jM3JGNHc3aVh0T20xcFRNM2NkbUFydjZxaVUxNWpmWEJaSWloenVsbFFpQk5ndnBWOHFCTmJ6ZW1kaFVsV2VyaklZNzlfajBIR2Y2ZmZXV3FoRmxLdktVY05ZU3EyZEJTN0lrZw?oc=5",
+    "source_date": "2026-11-27",
+    "source_title": "Sunderland News Today: Europa Draw, Xhaka Out, Danso Ineligible (27 November) - thefalse9.com"
+   },
+   {
+    "player_id": 533,
+    "name": "Nordi Mukiele",
+    "club": "Sunderland",
+    "status": "no_news",
+    "start_chance": null,
+    "reason": "",
+    "source_url": null,
+    "source_date": null,
+    "source_title": null
+   }
+  ]
  }
 ]

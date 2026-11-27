@@ -1,6 +1,6 @@
 {
  "gameweek": 12,
- "fetched_at": "2026-11-27T09:40:03.751762+00:00",
+ "fetched_at": "2026-11-27T16:37:49.825283+00:00",
  "model": "gemini-3.5-flash-lite",
  "prompt_version": 3,
  "clubs": [
@@ -23,10 +23,10 @@
    "club": "Arsenal",
    "status": "doubtful",
    "start_chance": 50,
-   "reason": "Raya still 50% ahead of Man City clash",
-   "source_url": "https://news.google.com/rss/articles/CBMihAFBVV95cUxQRnBpVHpQME5WZjM0eXhpR0xNVXQ2OFZUR3lHczlWaWpmS1h6Umo0R1VTRk9XaW93SlIzUDhNd2hIU3oybWZ4NXFWcXNWZW5nYnUxei1XQW90WFhfTUZrZW93MDlZY0ZOZGl6dlptZG1mempSVTM1UlhxS0w2TzVidWF4NHo?oc=5",
-   "source_date": "2026-11-26",
-   "source_title": "FPL GW12 Injury News: Caicedo Cleared, Munoz 75%, Raya Still 50% (26 November) - The False 9"
+   "reason": "Returned to training but Mikel Arteta is tight-lipped over whether he will be fit.",
+   "source_url": "https://news.google.com/rss/articles/CBMiswFBVV95cUxNSnFQekNHTllrRmR0a3dWM2ozMWZzeWsxaWFSYmVCSHRSc0dybXhtUzRLb3EybDRvYXdNWG1zeldNUFJ6NFBzUVRORXhXUmhhQ0ZEdTY4bVV6d2ZLa0dXLWV5Y184NWdwa3RaTDRibHZleVpCdnRZaWRWZWV3RmViQ1FkZDJLWVNMMFBBR0hPLUl4bmN5N3hidlRoOVBVR2lxUFgzYlMxbWVTVGZ5cWpSZzUyQQ?oc=5",
+   "source_date": "2026-11-27",
+   "source_title": "Mikel Arteta tight-lipped over whether David Raya will be fit for Man City clash - The Independent"
   },
   {
    "player_id": 4,
@@ -78,7 +78,7 @@
    "club": "Brighton",
    "status": "no_news",
    "start_chance": null,
-   "reason": "No news in the headlines.",
+   "reason": "No news found in the headlines.",
    "source_url": null,
    "source_date": null,
    "source_title": null
@@ -89,7 +89,7 @@
    "club": "Brighton",
    "status": "no_news",
    "start_chance": null,
-   "reason": "No news in the headlines.",
+   "reason": "No news found in the headlines.",
    "source_url": null,
    "source_date": null,
    "source_title": null
@@ -100,7 +100,7 @@
    "club": "Chelsea",
    "status": "no_news",
    "start_chance": null,
-   "reason": "No news in the headlines.",
+   "reason": "No news found in the headlines.",
    "source_url": null,
    "source_date": null,
    "source_title": null
@@ -111,7 +111,7 @@
    "club": "Everton",
    "status": "no_news",
    "start_chance": null,
-   "reason": "No news in the headlines.",
+   "reason": "No news found in the headlines.",
    "source_url": null,
    "source_date": null,
    "source_title": null
@@ -120,12 +120,12 @@
    "player_id": 411,
    "name": "Erling Haaland",
    "club": "Man City",
-   "status": "expected_to_start",
-   "start_chance": 100,
-   "reason": "Haaland predicted to hit net against Arsenal.",
-   "source_url": "https://news.google.com/rss/articles/CBMiggFBVV95cUxNNFNLRTNYcnhFTWhkWnJzUGN0ajRWSFRzcnprZlhKcFRiM0oyaEhRSWlnU3dxblJEM2dGRW9nUl9aY1NnUlcyM1E5TDczbkZwSlRMNWFJUjctbWdUa29QYXNVVkNCaDRJTTB5RHE5d3dqT2Rtd1V6ekhIdmNybEtndjB3?oc=5",
-   "source_date": "2026-11-26",
-   "source_title": "Arsenal vs Manchester City prediction: Havertz and Haaland to hit net - Football365"
+   "status": "no_news",
+   "start_chance": null,
+   "reason": "No relevant news found in headlines",
+   "source_url": null,
+   "source_date": null,
+   "source_title": null
   },
   {
    "player_id": 453,
@@ -133,7 +133,7 @@
    "club": "Newcastle",
    "status": "no_news",
    "start_chance": null,
-   "reason": "No news in the provided headlines.",
+   "reason": "No relevant news found in headlines",
    "source_url": null,
    "source_date": null,
    "source_title": null
@@ -144,7 +144,7 @@
    "club": "Newcastle",
    "status": "no_news",
    "start_chance": null,
-   "reason": "No news in the provided headlines.",
+   "reason": "No injury or fitness news mentioned in headlines",
    "source_url": null,
    "source_date": null,
    "source_title": null
@@ -155,7 +155,7 @@
    "club": "Nott'm Forest",
    "status": "no_news",
    "start_chance": null,
-   "reason": "No news in the provided headlines.",
+   "reason": "No relevant news found in headlines",
    "source_url": null,
    "source_date": null,
    "source_title": null
@@ -166,10 +166,10 @@
    "club": "Spurs",
    "status": "out",
    "start_chance": 0,
-   "reason": "Ruled out for several weeks with a hamstring injury.",
-   "source_url": "https://news.google.com/rss/articles/CBMitgFBVV95cUxNSmRFUFZvQkU1Njk1ZGQtNGs4OG5kNUpkVkc2Nzh4b19IZVY2SGh0dDRxX1pZdkt0ak53eXQwTzlYeHk3T3NlZEZoSlRBN1ZOZTVydXMzYTVUc0M5T01HWVNhTUxoTS02N19XaXgzTXBYZjdPd2ZUbmpTWE53YlJybmhnQ0ZaMWRXR3NuWHFrMFJVOFpkb0F2NHpselBqUlJTUm0wUFh0aFZ0aUhmMXp1dVBFVUUzd9IBuwFBVV95cUxQTU5aUkRSRElIV05XOVR0cy1hSGFSaUFXQnd4UE5pU0I4ZGlQa1J6UUd3Qjh4blh1OFQ5TVhubGdSdUFGMlExdm9VMFkzOGZNVnd2VF9WbTNVaUE0SkFJd184Z1pOdWtJLUI4NkZfUlNuZ19HUUZ6QXBJejlfcFpNdm5LLWI0QmRhdzhVVldTbk9WUFlkSVBjYkJtR1Zha25aYnhDNnBFSjdVcmc2T2FaUjFnZ1RxVGZPVTdZ?oc=5",
-   "source_date": "2026-11-26",
-   "source_title": "Tottenham Hotspur forward Savio ruled out for several weeks with hamstring injury - SportsView"
+   "reason": "Out for several weeks with a hamstring injury.",
+   "source_url": "https://news.google.com/rss/articles/CBMiuwFBVV95cUxPSjBPamtMbWozUlFDcDBCMHllSjIzTkVPRHhmYi0ycGNKTV95V05OcnBfQWxubnZpc0FTOFdBNmJNZk5CU214MjQ1eFVNWGp6RXN1cFpray1oZXRHa0VIQXhTTG1rbktyZFQ1NU5TWEpCQ2NYWWhaVVFoTS15TkROMndvSWdidUM4dC12b0wwcThrN3ZvWGtTSW1mSEpsel8ybTQxSDJlMmhPMGk1RmtXcjUwWTVneEt4eTNz?oc=5",
+   "source_date": "2026-11-27",
+   "source_title": "Spurs' Savio to miss Christmas period with hamstring injury, says De Zerbi - Reuters"
   },
   {
    "player_id": 544,
@@ -177,7 +177,7 @@
    "club": "Sunderland",
    "status": "out",
    "start_chance": 0,
-   "reason": "Xhaka out according to Sunderland news.",
+   "reason": "Ruled out for Sunderland.",
    "source_url": "https://news.google.com/rss/articles/CBMifkFVX3lxTE1UZThPM2YzT0loeldpdWJLNy1jM3JGNHc3aVh0T20xcFRNM2NkbUFydjZxaVUxNWpmWEJaSWloenVsbFFpQk5ndnBWOHFCTmJ6ZW1kaFVsV2VyaklZNzlfajBIR2Y2ZmZXV3FoRmxLdktVY05ZU3EyZEJTN0lrZw?oc=5",
    "source_date": "2026-11-27",
    "source_title": "Sunderland News Today: Europa Draw, Xhaka Out, Danso Ineligible (27 November) - thefalse9.com"
@@ -187,7 +187,7 @@
    "name": "Nordi Mukiele",
    "club": "Sunderland",
    "status": "no_news",
-   "start_chance": 50,
+   "start_chance": null,
    "reason": "",
    "source_url": null,
    "source_date": null,
