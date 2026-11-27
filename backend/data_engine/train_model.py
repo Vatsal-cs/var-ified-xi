@@ -137,6 +137,9 @@ def _predict_conditional_points(bundle: dict, X: pd.DataFrame, element_types: pd
     """E[points | played 60+], from either the pooled regressor or the
     position-specific ones when the bundle carries them.
     """
+    if bundle.get("parts"):
+        return np.clip(_calibrate(_shrink(bundle, _predict_parts(bundle["parts"], X, element_types),
+                                          element_types), element_types), 0, None)
     by_pos = bundle.get("points_reg_by_pos")
     if not by_pos:
         return np.clip(_calibrate(_shrink(bundle, bundle["points_reg"].predict(X), element_types),
@@ -240,6 +243,56 @@ def _ceiling_regressor() -> "xgb.XGBRegressor":
     )
 
 
+# FPL points per goal and per clean sheet, by element_type (GK, DEF, MID,
+# FWD). Whatever these miss (a keeper's goal under a later rule, defensive
+# contributions, saves, goals conceded, cards) lands in the "rest" part,
+# so the parts always add up to total points exactly.
+GOAL_POINTS = {1: 6, 2: 6, 3: 5, 4: 4}
+CLEAN_SHEET_POINTS = {1: 4, 2: 4, 3: 1, 4: 0}
+ASSIST_POINTS = 3
+APPEARANCE_POINTS = 2  # a 60+ minute appearance
+
+
+def _part_regressor(objective: str) -> "xgb.XGBRegressor":
+    return xgb.XGBRegressor(
+        n_estimators=400, max_depth=config.TREE_MAX_DEPTH, learning_rate=0.03,
+        subsample=0.8, colsample_bytree=0.8, reg_lambda=1.5,
+        objective=objective, random_state=config.MODEL_SEED, n_jobs=-1,
+    )
+
+
+def _fit_parts(full_rows: pd.DataFrame, X_full: pd.DataFrame, w=None) -> dict:
+    """One model per scoring part, on 60+ minute rows (POINTS_BY_PART)."""
+    et = full_rows["element_type"].astype(int)
+    goals = full_rows.get("goals_scored", pd.Series(0, index=full_rows.index)).astype(float)
+    assists = full_rows.get("assists", pd.Series(0, index=full_rows.index)).astype(float)
+    cs = full_rows["clean_sheets"].astype(float).clip(0, 1)
+    bonus = full_rows["bonus"].astype(float)
+    rest = (full_rows[TARGET_COL].astype(float) - APPEARANCE_POINTS
+            - goals * et.map(GOAL_POINTS) - ASSIST_POINTS * assists
+            - cs * et.map(CLEAN_SHEET_POINTS) - bonus)
+    parts = {}
+    for name, y, objective in (("goals", goals, "count:poisson"),
+                               ("assists", assists, "count:poisson"),
+                               ("clean_sheet", cs, "binary:logistic"),
+                               ("bonus", bonus, "count:poisson"),
+                               ("rest", rest, "reg:squarederror")):
+        reg = _part_regressor(objective)
+        reg.fit(X_full, y.fillna(0), sample_weight=w, verbose=False)
+        parts[name] = reg
+    return parts
+
+
+def _predict_parts(parts: dict, X: pd.DataFrame, element_types: pd.Series) -> np.ndarray:
+    et = pd.Series(np.asarray(element_types), index=X.index).astype(int)
+    return (APPEARANCE_POINTS
+            + parts["goals"].predict(X) * et.map(GOAL_POINTS).to_numpy()
+            + ASSIST_POINTS * parts["assists"].predict(X)
+            + parts["clean_sheet"].predict(X) * et.map(CLEAN_SHEET_POINTS).to_numpy()
+            + parts["bonus"].predict(X)
+            + parts["rest"].predict(X))
+
+
 def _fit_bundle(part: pd.DataFrame, per_position: bool = False,
                 quality_filter: bool = False, recency_weight: bool = False) -> dict:
     """Fits the two-stage bundle (minutes classifier + conditional points
@@ -296,6 +349,7 @@ def _fit_bundle(part: pd.DataFrame, per_position: bool = False,
     w_full = _recency_weights(full_rows) if recency_weight else None
     points_reg = _points_regressor()
     points_reg.fit(X_full, y_full, sample_weight=w_full, verbose=False)
+    parts = _fit_parts(full_rows, X_full, w_full) if config.POINTS_BY_PART else None
 
     # The ceiling (quantile) model is fussier about tiny/degenerate inputs;
     # only fit it when there's real data, otherwise the captain pick falls
@@ -334,6 +388,7 @@ def _fit_bundle(part: pd.DataFrame, per_position: bool = False,
         "full_means": {int(k): float(v) for k, v in full_means.items()},
         "ceiling_reg": ceiling_reg,
         "points_reg_by_pos": points_reg_by_pos,
+        "parts": parts,
         "cameo_means": cameo_means,
         "cameo_global": cameo_global,
     }

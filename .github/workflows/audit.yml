@@ -1,0 +1,67 @@
+name: Model audit replay
+
+# Walk-forward replay that keeps every player-gameweek's projection next to
+# what happened (research/2026-10-projection-bias/collect.py), for the model
+# audit in research/2026-11-model-audit. Runs on GitHub's machines so nothing
+# heavy runs locally. Research only: nothing downstream depends on it.
+on:
+  push:
+    branches: ["audit/**"]
+    paths: [".github/workflows/audit.yml"]
+  workflow_dispatch:
+
+jobs:
+  replay:
+    runs-on: ubuntu-latest
+    timeout-minutes: 350
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - {season: live, args: "--last-gw 10"}
+          - {season: 2024-25, args: ""}
+          - {season: 2025-26, args: "--prior 2024-25"}
+          - {season: 2023-24, args: "--prior 2022-23"}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: backend/requirements.txt
+
+      - name: Install dependencies
+        working-directory: backend
+        run: pip install -r requirements.txt
+
+      - name: Restore historical data cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            backend/data/raw/historical_*
+            backend/data/raw/availability_*
+          key: fpl-historical-v2
+
+      - name: Restore other-matches cache
+        uses: actions/cache@v4
+        with:
+          path: backend/data/raw/espn
+          key: espn-audit-${{ github.run_id }}
+          restore-keys: espn-
+
+      - name: Replay
+        working-directory: backend
+        run: |
+          set -o pipefail
+          python -u research/2026-10-projection-bias/collect.py ${{ matrix.season }} ${{ matrix.args }} 2>&1 | grep -v "WORSE than the flat" | tee replay.log
+
+      - name: Upload rows
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: rows-${{ matrix.season }}
+          path: |
+            backend/research/2026-10-projection-bias/rows_*.csv
+            backend/replay.log
+          retention-days: 30

@@ -1,0 +1,22 @@
+
+============================================================================================
+POOLED RESULTS (10 file(s))
+============================================================================================
+variant             season    seeds  GWs     mean     sd        range    MAE  rank-r  Brier60
+--------------------------------------------------------------------------------------------
+haul_dampen         2024-25       5   37   2423.2   23.6    2391-2447  0.992   0.719   0.0858
+haul_dampen         2025-26       5   37   2310.8   62.9    2230-2375  0.910   0.752   0.0771
+lagged_ratings      2024-25       5   37   2444.2   27.0    2412-2480  0.994   0.720   0.0858
+lagged_ratings      2025-26       5   37   2297.2   59.1    2209-2341  0.912   0.752   0.0771
+points_by_part      2024-25       5   37   2454.6   36.6    2403-2504  0.968   0.719   0.0858
+points_by_part      2025-26       5   37   2264.8   29.3    2232-2312  0.910   0.752   0.0771
+--------------------------------------------------------------------------------------------
+Paired against lagged_ratings, per-gameweek, averaged over seeds (block bootstrap, 4-GW blocks, 95% CI):
+  points_by_part     pooled   -22.0 [-149, +103]  won 5/10 cells  -> NO DETECTABLE EFFECT
+                     2024-25 +10 [-91,+101]  2025-26 -32 [-111,+54]
+  haul_dampen        pooled    -7.4 [-36, +19]  won 4/10 cells  -> NO DETECTABLE EFFECT
+                     2024-25 -21 [-46,-1]  2025-26 +14 [+0,+31]
+============================================================================================
+better = pooled CI above zero and ahead in every season; worse = the
+mirror image; anything else is no detectable effect, not a rejection.
+

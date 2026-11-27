@@ -1,0 +1,8 @@
+live     | top10 hauled, GW<=14: -0.96 (14) | top10 not hauled, GW<=14: +0.25 (76) | top10 hauled, GW15+: +nan (0) | top10 not hauled, GW15+: +nan (0)
+          captain = top projection: 80 pts over 9 GWs; after -1 for early hauled: 65; -2: 65
+2023-24  | top10 hauled, GW<=14: -1.67 (27) | top10 not hauled, GW<=14: -0.25 (103) | top10 hauled, GW15+: -0.98 (48) | top10 not hauled, GW15+: -0.37 (192)
+          captain = top projection: 225 pts over 37 GWs; after -1 for early hauled: 230; -2: 234
+2024-25  | top10 hauled, GW<=14: -1.68 (43) | top10 not hauled, GW<=14: -0.78 (87) | top10 hauled, GW15+: -1.31 (52) | top10 not hauled, GW15+: -0.25 (188)
+          captain = top projection: 337 pts over 37 GWs; after -1 for early hauled: 337; -2: 331
+2025-26  | top10 hauled, GW<=14: -2.55 (22) | top10 not hauled, GW<=14: -0.31 (108) | top10 hauled, GW15+: -0.08 (43) | top10 not hauled, GW15+: -0.53 (197)
+          captain = top projection: 265 pts over 37 GWs; after -1 for early hauled: 263; -2: 264

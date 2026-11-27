@@ -462,6 +462,24 @@ def _residual_predict(bundle, df):
     return pd.Series(out, index=base.index)
 
 
+# Early-season after-a-haul correction (research/2026-11-haul-dampen): points
+# taken off a player who scored 10+ in his last match, up to GW14. Each
+# season's amount is the miss measured on the OTHER tuning season in the
+# November 2026 audit replays, never its own; held-back seasons get the
+# tuning seasons' average.
+HAUL_DAMPEN_BY_SEASON = {"2024-25": 0.91, "2025-26": 1.18, "2022-23": 1.05, "2023-24": 1.05}
+HAUL_POINTS, HAUL_LAST_GW = 10, 14
+
+
+def _haul_dampen_predict(bundle, df):
+    base = _bundle_predict(bundle, df)
+    k = HAUL_DAMPEN_BY_SEASON.get(str(df["season"].iloc[0])) if "season" in df.columns else None
+    if not k or "points_avg_1" not in df.columns:
+        return base
+    hit = (df["points_avg_1"].to_numpy() >= HAUL_POINTS) & (df["round"].to_numpy() <= HAUL_LAST_GW)
+    return pd.Series(np.where(hit, np.clip(base.to_numpy() - k, 0, None), base.to_numpy()), index=base.index)
+
+
 class _bag_ctx:
     """Temporarily sets the seed-averaging bag size used while fitting."""
     def __init__(self, size): self.size = size
@@ -633,6 +651,26 @@ VARIANTS = {
                     "no hindsight from the season being replayed",
         fit=lambda df: train_model.train_models(df, save=False),
         predict=_bundle_predict,
+        context=_lagged_ratings_ctx,
+    ),
+    "points_by_part": Variant(
+        name="points_by_part",
+        description="NO DETECTABLE EFFECT (Nov 2026, 5 seeds): -22 [-149, +103], +10 and -32 by "
+                    "season. lagged_ratings, but stage 2 predicts goals, assists, clean sheet, bonus "
+                    "and the rest separately and adds them with FPL's scoring "
+                    "(config.POINTS_BY_PART, research/2026-11-components)",
+        fit=lambda df: train_model.train_models(df, save=False),
+        predict=_bundle_predict,
+        context=lambda: _nested(_lagged_ratings_ctx(), _config_values(POINTS_BY_PART=True)),
+    ),
+    "haul_dampen": Variant(
+        name="haul_dampen",
+        description="NO DETECTABLE EFFECT (Nov 2026, 5 seeds): -7 [-36, +19], -21 and +14 by "
+                    "season. lagged_ratings, minus about a point (HAUL_DAMPEN_BY_SEASON, measured on the "
+                    "other season) for a player who scored 10+ in his last match, up to GW14 "
+                    "(research/2026-11-haul-dampen)",
+        fit=lambda df: train_model.train_models(df, save=False),
+        predict=_haul_dampen_predict,
         context=_lagged_ratings_ctx,
     ),
     "pit_ratings": Variant(

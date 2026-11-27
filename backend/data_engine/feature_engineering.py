@@ -108,6 +108,9 @@ ROLLING_FEATURE_SPEC = [
     # it gives points per match played. Under test in research/2026-10-form-tilt;
     # computed always, not a model input.
     ("played", "played_avg", [5]),
+    # Points in the last match alone, for the early-season after-a-haul
+    # correction (research/2026-11-haul-dampen). Not a model input.
+    ("total_points", "points_avg", [1]),
     # Long-run level: the last ten gameweeks and the whole season so far, so a
     # good player in a cold patch isn't judged on his last three to five games
     # alone (config.LONG_FORM_FEATURE, research/2026-10-long-form).
@@ -320,6 +323,10 @@ def build_gameweek_history_df(bootstrap: dict, player_histories: dict,
                 "expected_assists": float(gw.get("expected_assists", 0) or 0),
                 "bps": float(gw.get("bps", 0) or 0),
                 "bonus": float(gw.get("bonus", 0) or 0),
+                # Scoring parts, for the points-by-part model
+                # (research/2026-11-components). Targets only, never inputs.
+                "goals_scored": float(gw.get("goals_scored", 0) or 0),
+                "assists": float(gw.get("assists", 0) or 0),
                 "starts": float(gw.get("starts", 0) or 0),
                 "defensive_contribution": float(gw.get("defensive_contribution", 0) or 0),
                 "saves": float(gw.get("saves", 0) or 0),

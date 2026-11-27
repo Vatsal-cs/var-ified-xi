@@ -88,6 +88,8 @@ const P = {
   teamNews: { plan: c("0774190", "2026-10-14T19:15:53-06:00") },
   chipTiming: { plan: c("a1211d4", "2026-11-15T08:49:49-06:00"), result: c("c525f8a", "2026-11-15T19:17:20-06:00") },
   freeHitBlank: { plan: c("09ad754", "2026-11-15T19:21:38-06:00"), result: c("e3600bc", "2026-11-15T20:56:44-06:00") },
+  pointsByPart: { plan: c("57e84ca", "2026-11-21T14:35:31-06:00"), result: c("55ac535", "2026-11-21T15:20:38-06:00") },
+  haulDampen: { plan: c("2fc51ea", "2026-11-21T14:48:45-06:00"), result: c("55ac535", "2026-11-21T15:20:38-06:00") },
 } satisfies Record<string, Proof>;
 
 export const LAB_TESTS: LabTest[] = [
@@ -297,6 +299,26 @@ export const LAB_TESTS: LabTest[] = [
     harness:
       "Season simulator with chips: each chip's realised gain scored in every week of the model's own season, 5 seeds a season, decided on 2022-23 and 2023-24.",
     proof: P.freeHitBlank,
+  },
+  {
+    label: "Predict goals, assists, clean sheets and bonus separately",
+    est: -22, lo: -149, hi: 103, seasons: [10, -32],
+    verdict: "none",
+    question:
+      "The model predicts a player's total points in one go, but a goal is worth 6, 5 or 4 depending on position. Most published forecasters predict each part and add them up with FPL's scoring. Is that better?",
+    finding:
+      "Accuracy improved a little in one season and was level in the other, and points didn't move. The total-points model already learns the scoring from position and form, so splitting it mostly changes which close call comes out on top.",
+    harness: BACKTEST, proof: P.pointsByPart,
+  },
+  {
+    label: "Mark down a player straight after a big game, early in the season",
+    est: -7, lo: -36, hi: 19, seasons: [-21, 14],
+    verdict: "none",
+    question:
+      "Early in a season, a player coming off a 10+ point game scores about a point less than projected, in all four seasons replayed. Does taking that point off win points?",
+    finding:
+      "The miss is real, but correcting it split the seasons: −21 and +14. Each season's correction was measured on the other season, so this is a fair test. The players it marks down are mostly close calls either way.",
+    harness: BACKTEST, proof: P.haulDampen,
   },
   {
     label: "Season stage (matches played)",

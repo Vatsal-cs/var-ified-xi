@@ -200,6 +200,12 @@ TREE_MAX_DEPTH = 4
 FORM_SHRINKAGE_GAMES = 0.0
 TARGET_COL = "total_points"
 
+# Points-by-part model (research/2026-11-components): stage 2 predicts goals,
+# assists, clean sheets, bonus and the rest separately and adds them up with
+# FPL's scoring, instead of one regressor on total points. Off until a
+# pre-registered backtest says otherwise.
+POINTS_BY_PART = False
+
 # The model's input columns. Every one of these is produced identically for
 # live FPL data and for the historical archive (see
 # feature_engineering.ROLLING_FEATURE_SPEC), so the training and prediction
